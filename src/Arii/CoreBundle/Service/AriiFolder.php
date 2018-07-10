@@ -136,7 +136,7 @@ class AriiFolder {
             }
         }
         else {
-            exit();
+            return;
         }
         return $xml;
     }

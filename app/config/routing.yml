@@ -119,8 +119,8 @@ arii_mft:
 # ========================================
 # Graphviz
 # ----------------------------------------
-arii_GVZ:
-    resource: "@AriiGVZBundle/Resources/config/routing.yml"
+arii_Graphviz:
+    resource: "@AriiGraphvizBundle/Resources/config/routing.yml"
     prefix:   /gvz/{_locale}
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 

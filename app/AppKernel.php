@@ -26,7 +26,7 @@ class AppKernel extends Kernel
         new Arii\I5Bundle\AriiI5Bundle(),
         new Arii\JOCBundle\AriiJOCBundle(),
         new Arii\MFTBundle\AriiMFTBundle(),
-        new Arii\GVZBundle\AriiGVZBundle(),
+        new Arii\GraphvizBundle\AriiGraphvizBundle(),
         new Arii\ATSBundle\AriiATSBundle(),
         new Arii\ReportBundle\AriiReportBundle(),
         new Arii\TimeBundle\AriiTimeBundle(),

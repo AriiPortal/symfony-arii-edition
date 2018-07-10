@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SchedulerOrderHistory
  *
- * @ORM\Table(name="scheduler_order_history", indexes={@ORM\Index(name="SCHEDULER_O_HISTORY_SPOOLER_ID", columns={"SPOOLER_ID"}), @ORM\Index(name="SCHEDULER_O_HISTORY_JOB_CHAIN", columns={"JOB_CHAIN", "ORDER_ID"}), @ORM\Index(name="SCHEDULER_O_HISTORY_START_TIME", columns={"START_TIME"})})
+ * @ORM\Table(name="SCHEDULER_ORDER_HISTORY", indexes={@ORM\Index(name="SCHEDULER_O_HISTORY_SPOOLER_ID", columns={"SPOOLER_ID"}), @ORM\Index(name="SCHEDULER_O_HISTORY_JOB_CHAIN", columns={"JOB_CHAIN", "ORDER_ID"}), @ORM\Index(name="SCHEDULER_O_HISTORY_START_TIME", columns={"START_TIME"})})
  * @ORM\Entity(readOnly=true,repositoryClass="Arii\JIDBundle\Entity\SchedulerOrderHistoryRepository")
  */
 class SchedulerOrderHistory

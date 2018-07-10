@@ -413,10 +413,7 @@ Gris    #f2f2f2
     {
         $Default = array(
         // TRANSFERTS
-            'unknown' => '#ffffff',
-            'success' => '#ccebc5',
-            'error' =>   '#fbb4ae',
-            'transfer_aborted' =>   '#ff66cc',
+            'TRANSFERT_ABORTED' =>   '#ff66cc',
         // JOBS
             'REFUSED' => '#fbb4ae',
             'SUCCESS'  => '#ccebc5',
@@ -480,8 +477,7 @@ Gris    #f2f2f2
         // COMMUN
             'DOWNTIME' => '#decbe4',
             'UNKNOW' => '#BBB',
-            'UNKNOWN' => '#BBB',
-            'unknown' => '#BBB'
+            'UNKNOWN' => '#BBB'
         );
 
         // On stocke dans la base de données
@@ -1599,10 +1595,10 @@ Gris    #f2f2f2
                 $AriiSchedulerFS = new \Arii\CoreBundle\Entity\NodeConnection();
             
             $AriiSchedulerFS->setNode($AriiScheduler);
-            $AriiSchedulerFS->setConnection($FS);
+            $AriiSchedulerFS->setConnection($Config);
             $AriiSchedulerFS->setPriority(0);
             $AriiSchedulerFS->setDisabled(false);
-            $AriiSchedulerFS->setDescription($AriiScheduler->getName().' -> '.$FS->getName());
+            $AriiSchedulerFS->setDescription($AriiScheduler->getName().' -> '.$Config->getName());
             $this->em->persist($AriiSchedulerFS);
             
             $this->em->flush();                    

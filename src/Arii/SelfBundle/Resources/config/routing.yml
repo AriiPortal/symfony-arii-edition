@@ -96,7 +96,11 @@ xml_Self_requests_tree:
 xml_Self_requests_grid_menu:
     path:  /requests/menu.xml
     defaults: { _controller: AriiSelfBundle:Requests:menu }
-    
+
+json_Self_jobs_count:
+    path:  /requests/count.json
+    defaults: { _controller: AriiSelfBundle:Requests:count }
+
 #=====================
 # Request
 #---------------------
@@ -126,6 +130,63 @@ html_Self_history_status:
 xml_Self_history_grid_menu:
     path:  /history/menu.xml
     defaults: { _controller: AriiSelfBundle:History:menu }
+
+#=====================
+# Running
+#---------------------
+arii_Self_running:
+    path:  /running
+    defaults: { _controller: AriiSelfBundle:Running:index }
+
+xml_Self_running_grid:
+    path:  /running/grid.xml
+    defaults: { _controller: AriiSelfBundle:Running:grid }
+
+html_Self_running_status:
+    path:  /running/status.xml
+    defaults: { _controller: AriiSelfBundle:Running:status }
+
+xml_Self_running_grid_menu:
+    path:  /running/menu.xml
+    defaults: { _controller: AriiSelfBundle:Running:menu }
+
+#=====================
+# Queued
+#---------------------
+arii_Self_queued:
+    path:  /queued
+    defaults: { _controller: AriiSelfBundle:Queued:index }
+
+xml_Self_queued_grid:
+    path:  /queued/grid.xml
+    defaults: { _controller: AriiSelfBundle:Queued:grid }
+
+html_Self_queued_status:
+    path:  /queued/status.xml
+    defaults: { _controller: AriiSelfBundle:Queued:status }
+
+xml_Self_queued_grid_menu:
+    path:  /queued/menu.xml
+    defaults: { _controller: AriiSelfBundle:Queued:menu }
+
+#=====================
+# Failure
+#---------------------
+arii_Self_failure:
+    path:  /failure
+    defaults: { _controller: AriiSelfBundle:Failure:index }
+
+xml_Self_failure_grid:
+    path:  /failure/grid.xml
+    defaults: { _controller: AriiSelfBundle:Failure:grid }
+
+html_Self_failure_status:
+    path:  /failure/status.xml
+    defaults: { _controller: AriiSelfBundle:Failure:status }
+
+xml_Self_failure_grid_menu:
+    path:  /failure/menu.xml
+    defaults: { _controller: AriiSelfBundle:Failure:menu }
 
 #=====================
 # Exchange

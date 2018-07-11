@@ -3,35 +3,22 @@
 <script language="javascript">
 function Init() {
     
-    myLayout = globalLayout.cells("c").attachLayout("2E");
+    myLayout = globalLayout.cells("c").attachLayout("1C");
     myLayout.cells("a").setText("{{ "History" | trans }}");
-    myLayout.cells("b").collapse();
-    myLayout.cells("b").setText("{{ "Detail" | trans }}");
     
     myRequests = myLayout.cells("a").attachGrid();
     myRequests.setImagePath( "{{ asset('/images/') }}");
     myRequests.setHeader("{{ "Requests" | trans }},{{ "Reference" | trans }},{{ "Parameters" | trans }},{{ "Status" | trans }},{{ "Created" | trans }},{{ "Planned" | trans }},{{ "Processed" | trans }},{{ "User" | trans }}");
     myRequests.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#select_filter");
-    myRequests.setInitWidths("*,200,100,150,0,150,150,150");
+    myRequests.setInitWidths("*,200,*,150,0,150,0,150");
     myRequests.setColAlign("left,left,left,center,right,right,right,right");
     myRequests.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
     myRequests.setColSorting("str,str,str,str,date,date,date,str");
     myRequests.init();
-    myRequests.load( "{{ url('xml_Self_history_grid') }}");    
-    
-    myLayout.attachEvent("onContentLoaded", function(){
-        myLayout.cells("b").progressOff();
-    });
-    
-    myRequests.attachEvent("onRowDblClicked", function(id) {
-        myLayout.cells("b").expand();
-        myLayout.cells("b").progressOn();
-        myLayout.cells("b").attachURL("{{ url('html_Self_history_status') }}?id="+id);        
-    });  
 }
 
-function GridRefresh() {
-    myRequests.load( "{{ url('xml_Self_history_grid') }}");       
+function PageRefresh() {
+    myRequests.load( "{{ url('xml_Self_queued_grid') }}");       
 }
 </script>
 {% endblock %}

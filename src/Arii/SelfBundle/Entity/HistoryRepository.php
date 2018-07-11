@@ -49,5 +49,4 @@ class HistoryRepository extends EntityRepository
             return $query->getQuery()
                     ->getResult();
     }
-    
 }

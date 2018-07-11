@@ -17,7 +17,6 @@ function Init() {
     myRequests.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
     myRequests.setColSorting("str,str,str,str,date,date,date,str");
     myRequests.init();
-    myRequests.load( "{{ url('xml_Self_history_grid') }}");    
     
     myLayout.attachEvent("onContentLoaded", function(){
         myLayout.cells("b").progressOff();
@@ -30,8 +29,8 @@ function Init() {
     });  
 }
 
-function GridRefresh() {
-    myRequests.load( "{{ url('xml_Self_history_grid') }}");       
+function PageRefresh() {
+    myRequests.load( "{{ url('xml_Self_running_grid') }}");       
 }
 </script>
 {% endblock %}

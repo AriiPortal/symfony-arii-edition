@@ -91,6 +91,18 @@ class RequestController extends Controller
                 "value": "'.$form.'"
             },
             {
+                "type": "input",
+                "name": "DESCRIPTION",
+                "label": "Description",
+                "rows": 3,
+                "note": {
+                    "text": "Décrire la raison de la demande" 
+                }            
+            },
+            {
+                "type": "newcolumn"
+            },
+            {
                 "type": "calendar",
                 "name": "PLANNED",
                 "label": "Date de déclenchement", 
@@ -99,13 +111,9 @@ class RequestController extends Controller
                 "enableTime": "true"
             },
             {
-                "type": "input",
-                "name": "DESCRIPTION",
-                "label": "Description",
-                "rows": 3,
-                "note": {
-                    "text": "Décrire la raison de la demande" 
-                }            
+                "type": "checkbox",
+                "name": "TEMPLATE",
+                "label": "Template"
             },
             {
                 "type": "button",

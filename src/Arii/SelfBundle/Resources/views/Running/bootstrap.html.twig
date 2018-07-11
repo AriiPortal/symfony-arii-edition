@@ -1,0 +1,50 @@
+{% extends "AriiCoreBundle::base.html.twig" %}
+{% block head %}
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+<!-- Optional theme -->
+<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap-theme.min.css') }}">
+<!-- Latest compiled and minified JavaScript -->
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+{% endblock %} 
+{% block body %}
+<body>
+<div class="container-fluid">
+<div class="jumbotron">
+<img style="float: right;" src="{{ asset('logo.png') }}"/>
+  <h1>{{ name }}</h1>
+  <h2>{{ title }}</h2>
+  <blockquote class="blockquote-reverse">
+{{ description }}
+  </blockquote>
+  <footer><cite title="Source Title">{{ username }}</cite></footer>  
+</div>
+  <h2>{{ "Parameters" | trans }}</h2>
+<table class="table table-striped">
+{% for k,v in parameters %}
+    <tr><th>{{ k}}</th><td>{{ v }}</td></tr>
+{% endfor %}  
+</table>  
+{% for h in history %}
+<blockquote>
+{% if h.status == 'SUCCESS' %}<button type="button" class="btn btn-success">{{ h.status }}</button>
+{% elseif h.status == 'FAILURE' %}<button type="button" class="btn btn-danger">{{ h.status }}</button>
+{% else %}    
+<button type="button" class="btn btn-default">{{ h.status }}</button>
+{% endif %}
+{{ h.processed }}
+{% if h.exit > 0 %}<p>Exit {{ h.exit }}</p>{% endif %}
+<p>Client: {{ h.client_ip }}</p>
+<pre><code>{{ h.log }}</code></pre>
+</blockquote>
+{% endfor %} 
+
+{% if code is not empty %}
+<h1>{{ "Code" | trans }}</h1>
+<pre><code>{{ code }}</code></pre>
+{% endif %}
+</script>
+</body>
+{% endblock %}
+{% block cron %}{% endblock %}

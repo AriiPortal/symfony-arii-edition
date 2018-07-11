@@ -45,6 +45,13 @@ class Request
     /**
      * @var string
      *
+     * @ORM\Column(name="template", type="boolean")
+     */
+    private $template=0;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="reference", type="string", length=255,nullable=true)
      */
     private $reference;

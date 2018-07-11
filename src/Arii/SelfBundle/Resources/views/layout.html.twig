@@ -10,26 +10,46 @@
 var bundle='Self';
 var update=30;
 dhtmlxEvent(window,"load",function(){   
-    var size=250;
+    var size=350;
     globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
     globalLayout.cells("a").setHeight(120); 
     globalLayout.cells("b").setWidth(size); 
     globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
-
+    globalLayout.cells("c").hideHeader();
+        
     myRibbon = globalLayout.cells("a").attachRibbon(); 
     myRibbon.setIconPath( "{{ asset('/images/') }}" );
     myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
     myRibbon.attachEvent("onStateChange", StateRibbon );
     myRibbon.attachEvent("onClick", ClickRibbon );
 
-    mySidebar = globalLayout.cells("b").attachSidebar({
+    myAccordion = globalLayout.cells("b").attachLayout("2E");
+    myAccordion.cells("b").setHeight(150);
+    myAccordion.cells("a").setText("{{ "Requests" | trans }}");
+    myAccordion.cells("b").setText("{{ "Jobs" | trans }}");
+
+    myTree = myAccordion.cells("a").attachTree();
+    myTree.setImagePath("{{ asset('/images/') }}");
+    myTree.load( '{{ url('xml_Self_tree') }}');
+    myTree.attachEvent("onClick", function(id) {
+        switch (id.substr(0,1)) {
+            case 'T':
+                window.location = "{{ url('arii_Self_request') }}?request="+id.substr(1);
+                break;
+            default:
+                return;
+        }
+    });
+
+    mySidebar = myAccordion.cells("b").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         width: size,
         items:
         [
-            { id:"request", text: "{{ "New request" | trans }}", icon: "edit.png" },
-            { id:"requests", text: "{{ "Running requests" | trans }}", icon: "cog.png" },
-            { id:"history", text: "{{ "Requests history" | trans }}", icon: "table.png" }
+            { id:"queued", text: "{{ "Queued" | trans }}", icon: "clock.png" },
+            { id:"running", text: "{{ "Running" | trans }}", icon: "cog.png" },
+            { id:"failure", text: "{{ "Execution failed" | trans }}", icon: "error.png" },
+            { id:"history", text: "{{ "History" | trans }}", icon: "accept.png" }
         ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){
@@ -43,10 +63,15 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });
     
+    myToolbar = globalLayout.cells("c").attachToolbar();
+    myToolbar.setIconsPath( "{{ asset('/images/') }}" );    
+    myToolbar.loadStruct('{{ url('xml_Self_toolbar') }}?refresh=1', function() {
+        ToolbarTime();
+    });    
     Init();    
     globalLayout.cells("a").hideHeader();
-    globalLayout.cells("c").hideHeader();
-//    autorefresh = setInterval( "GlobalRefresh()",update*1000);
+    autorefresh = setInterval( "GlobalRefresh()",update*1000);
+    GlobalRefresh();
 });
 </script>
 {% endblock onload %}
@@ -54,6 +79,29 @@ dhtmlxEvent(window,"load",function(){
 {% block script %}
 <script language="javascript">      
 function GlobalRefresh() {
+    var t;
+    dhx4.ajax.get( "{{ url('json_Self_jobs_count') }}?status=QUEUED",function(r1) {  
+        t = dhx4.s2j(r1.xmlDoc.responseText);
+        if (t['count']>0) 
+            mySidebar.cells("queued").setBubble(t['count']);
+        else
+            mySidebar.cells("queued").clearBubble();     
+        dhx4.ajax.get( "{{ url('json_Self_jobs_count') }}?status=RUNNING",function(r1) {  
+            t = dhx4.s2j(r1.xmlDoc.responseText);
+            if (t['count']>0) 
+                mySidebar.cells("running").setBubble(t['count']);
+            else
+                mySidebar.cells("running").clearBubble();     
+            dhx4.ajax.get( "{{ url('json_Self_jobs_count') }}?status=FAILURE",function(r1) {  
+                t = dhx4.s2j(r1.xmlDoc.responseText);
+                if (t['count']>0) 
+                    mySidebar.cells("failure").setBubble(t['count']);
+                else
+                    mySidebar.cells("failure").clearBubble();     
+            });
+        });
+    });
+    PageRefresh();
 }
 
 function StateRibbon (itemid,state) {

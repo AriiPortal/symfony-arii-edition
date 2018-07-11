@@ -158,6 +158,13 @@ class RequestsController extends Controller
 
         $response->setContent( $list );
         return $response;        
+    }
 
-    }    
+    public function countAction()
+    {
+        $request = Request::createFromGlobals();        
+        $status = $request->get('status');
+        return new Response( '{ count: "'.$this->getDoctrine()->getRepository('AriiSelfBundle:Request')->countStatus($status).'" }' );
+    }
+    
 }

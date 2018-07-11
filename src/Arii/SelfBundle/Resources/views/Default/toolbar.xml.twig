@@ -1,3 +1,12 @@
 <toolbar>    
-    <item type="button" id="refresh" text="{{ "Refresh" | trans }}" img="refresh.png"/>
+    <item type="buttonSelect" id="refresh" text="{{ "Refresh" | trans }}" img="refresh.png" imgdis="filter.png">
+        <item type="button" id="5s" text="5 {{ "seconds" | trans }}"/>
+        <item type="button" id="30s" text="30 {{ "seconds" | trans }}"/>
+        <item type="button" id="1m" text="1 {{ "minute" | trans }}"/>
+        <item type="button" id="5m" text="5 {{ "minutes" | trans }}"/>
+        <item type="button" id="15m" text="15 {{ "minutes" | trans }}"/>
+    </item>
+    <item type="separator"/>
+    <item type="buttonSelect" id="template" text="{{ "Templates" | trans }}" img="wand.png">
+    </item>
 </toolbar>

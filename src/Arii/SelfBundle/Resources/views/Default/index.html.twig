@@ -2,13 +2,7 @@
 {% block body %}
 <script language="javascript">
 function Init() {
-    myToolbar.loadStruct('{{ url('xml_ARII_toolbar') }}?refresh=1', function() {
-        ToolbarTime();
-    });
-
-    myLayout = globalLayout.cells("c").attachURL('{{ url('html_Self_help') }}');
-    
+    myLayout = globalLayout.cells("c").attachURL('{{ url('html_Self_help') }}');   
 }
-
 </script>
 {% endblock %}

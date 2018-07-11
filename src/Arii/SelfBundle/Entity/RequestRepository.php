@@ -35,7 +35,18 @@ class RequestRepository extends EntityRepository
         return $query->getQuery()
                     ->getResult();
     }   
-        
+
+    public function findByStatus($status='FAILURE')
+    {
+        $query = $this->createQueryBuilder('e')
+            ->Select('e')
+            ->Where('e.req_status = :status')
+            ->setParameter('status',$status)
+            ->orderBy('e.created,e.planned,e.processed','DESC ');
+            return $query->getQuery()
+                    ->getResult();
+    }
+    
     public function findProcessed($name)
     {
         $query = $this->createQueryBuilder('job')
@@ -55,5 +66,14 @@ class RequestRepository extends EntityRepository
             return $query->getQuery()
                     ->getResult();
     }
+
+    public function countStatus($status) {
+        return $this->createQueryBuilder('e')
+            ->select('COUNT(e)')
+            ->Where('e.req_status = :status')
+            ->setParameter('status',$status)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }    
     
 }

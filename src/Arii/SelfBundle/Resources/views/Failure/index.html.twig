@@ -12,12 +12,11 @@ function Init() {
     myRequests.setImagePath( "{{ asset('/images/') }}");
     myRequests.setHeader("{{ "Requests" | trans }},{{ "Reference" | trans }},{{ "Parameters" | trans }},{{ "Status" | trans }},{{ "Created" | trans }},{{ "Planned" | trans }},{{ "Processed" | trans }},{{ "User" | trans }}");
     myRequests.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#select_filter");
-    myRequests.setInitWidths("*,200,100,150,0,150,150,150");
+    myRequests.setInitWidths("*,200,100,150,0,0,150,150");
     myRequests.setColAlign("left,left,left,center,right,right,right,right");
     myRequests.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
     myRequests.setColSorting("str,str,str,str,date,date,date,str");
     myRequests.init();
-    myRequests.load( "{{ url('xml_Self_history_grid') }}");    
     
     myLayout.attachEvent("onContentLoaded", function(){
         myLayout.cells("b").progressOff();
@@ -30,8 +29,8 @@ function Init() {
     });  
 }
 
-function GridRefresh() {
-    myRequests.load( "{{ url('xml_Self_history_grid') }}");       
+function PageRefresh() {
+    myRequests.load( "{{ url('xml_Self_running_grid') }}");       
 }
 </script>
 {% endblock %}

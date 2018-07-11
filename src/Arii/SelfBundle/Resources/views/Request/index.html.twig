@@ -4,25 +4,11 @@
 var last="{{ request }}";
 var mode="{{ mode }}";    
 function Init() {
-    
-    myLayout = globalLayout.cells("c").attachLayout("3U");
+
+    myLayout = globalLayout.cells("c").attachLayout("2E");
     myLayout.cells("a").setText("{{ "Requests" | trans }}");
-    myLayout.cells("a").setWidth(300);
-    myLayout.cells("b").hideHeader();
-            
-    myTree = myLayout.cells("a").attachTree();
-    myTree.setImagePath("{{ asset('/images/') }}");
-    myTree.load( '{{ url('xml_Self_tree') }}');
-    myTree.attachEvent("onClick", function(id) {
-        switch (id.substr(0,1)) {
-            case 'T':
-                window.location = "{{ url('arii_Self_request') }}?request="+id.substr(1);
-                break;
-            default:
-                return;
-        }
-    });
-        
+    myLayout.cells("a").hideHeader();
+
     myGridMenu = new dhtmlXMenuObject(null);
     myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
     myGridMenu.renderAsContextMenu();
@@ -34,14 +20,11 @@ function Init() {
     myGridMenu2.renderAsContextMenu();
     myGridMenu2.loadStruct("{{ url('xml_Self_grid_menu2') }}");
 
-    myTabbar = myLayout.cells("c").attachTabbar();
-    myTabbar.addTab("request","{{ "Requests" | trans }}","120px",null,true);
-    myTabbar.addTab("history","{{ "Processed" | trans }}","120px");
-
-    detailLayout = myTabbar.cells("request").attachLayout("2U");  
+    detailLayout = myLayout.cells("b").attachLayout("2U");  
     detailLayout.cells('b').setWidth(400);
     detailLayout.cells('a').hideHeader();
-    detailLayout.cells('b').hideHeader();
+    detailLayout.cells('b').setText("{{ "Parameters" | trans }}");
+    detailLayout.cells('b').collapse();
 
     myRequests = detailLayout.cells('a').attachGrid();
     myRequests.setImagePath( "{{ asset('/images/') }}");
@@ -54,12 +37,8 @@ function Init() {
     myRequests.enableContextMenu(myGridMenu);
     myRequests.init();
     myRequests.load( "{{ url('xml_Self_requests_grid') }}?request="+last);
-
-    myTabbar2 = detailLayout.cells("b").attachTabbar();
-    myTabbar2.addTab("params","{{ "Parameters" | trans }}","120px",null,true);
-    myTabbar2.addTab("history","{{ "History" | trans }}","120px");
     
-    myParameters = myTabbar2.cells('params').attachGrid();
+    myParameters = detailLayout.cells('b').attachGrid();
     myParameters.setImagePath( "{{ asset('/images/') }}");
     myParameters.setHeader("{{ "Name" | trans }},{{ "Value" | trans }}");
     myParameters.attachHeader("#text_filter,#text_filter");
@@ -69,56 +48,25 @@ function Init() {
     myParameters.setColSorting("str,str");
     myParameters.init();    
 
-    myHistory = myTabbar2.cells('history').attachGrid();
-    myHistory.setImagePath( "{{ asset('/images/') }}");
-    myHistory.setHeader("{{ "Status" | trans }},{{ "Start time" | trans }},{{ "End time" | trans }}");
-    myHistory.attachHeader("#select_filter,#text_filter,#text_filter");
-    myHistory.setInitWidths("100,150,150");
-    myHistory.setColAlign("left,left,left");
-    myHistory.setColTypes("ro,ro,ro");
-    myHistory.setColSorting("str,date,date");
-    myHistory.init();    
-    
     myRequests.attachEvent("onRowSelect", function(id,ind){
-        myRequests.setRowTextNormal(last_row);
+        if (typeof last_row !== 'undefined')
+            myRequests.setRowTextNormal(last_row);
         myRequests.setRowTextBold(id);
         last_row=id;
         detailLayout.cells('b').progressOn();
         myParameters.load( "{{ url('xml_Self_request_parameters') }}?id="+last_row, function() {
-            myHistory.load( "{{ url('xml_Self_request_history') }}?id="+last_row, function() {            
-                detailLayout.cells('b').progressOff();
-            });
+            detailLayout.cells('b').progressOff();
+            detailLayout.cells('b').expand();
         });
     });
-
-    myProcessed = myTabbar.cells("history").attachGrid();
-    myProcessed.setImagePath( "{{ asset('/images/') }}");
-    myProcessed.setHeader("{{ "Request" | trans }},{{ "Reference" | trans }},{{ "Parameters" | trans }},{{ "Status" | trans }},{{ "Created" | trans }},{{ "Planned" | trans }},{{ "Processed" | trans }},{{ "User" | trans }}");
-    myProcessed.attachHeader("#text_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#select_filter");
-    myProcessed.setInitWidths("0,200,*,100,150,150,0,100");
-    myProcessed.setColAlign("left,left,left,center,right,right,right,right,right");
-    myProcessed.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
-    myProcessed.setColSorting("str,str,str,str,date,date,date,str");
-    myProcessed.enableContextMenu(myGridMenu2);    
-    myProcessed.init();
-    myProcessed.load("{{ url('xml_Self_history_grid') }}?request="+last);    
     
     {% if request is not empty %}
     form("{{request}}");
     {% else %}
-    globalLayout.cells("c").attachURL('{{ asset('/bundles/ariicore/images/arii.jpg') }}');     
-    {% endif %}
-
-    myProcessed.attachEvent("onRowDblClicked", function(id) {
-        log(id);
-        globalLayout.cells("b").progressOn();
-        globalLayout.cells("c").progressOn();
-        GridRefresh();
-    });      
     form(last);
+    {% endif %}
     
     myRequests.attachEvent("onRowDblClicked", function(id) {
-        myTabbar.tabs("edit").setActive();
         globalLayout.cells("b").progressOn();
         myForm.load("{{ url('json_Self_load') }}?id="+id, function() {
             globalLayout.cells("b").progressOff();
@@ -163,38 +111,16 @@ function Init() {
         return true;
     });
     
-    myGridMenu2.attachEvent("onClick", function (menuitemId, type) {
-        var data = myProcessed.contextID.split("_");
-        //rowInd_colInd;
-        var rId = data[0];
-        var cInd = data[1];
-        switch (menuitemId) {
-            case "log":
-                logRequest(rId);
-                break;
-            case "queue":
-                dhx4.ajax.get( "{{ url('html_Self_queuing') }}?id="+rId, function() {
-                    globalLayout.cells("c").progressOn();
-                    GridRefresh();
-                });
-                break;
-        break;
-            default:
-                alert("inconnu ! "+menuitemId);    
-        }
-        return true;
-    });
-    
     autorefresh = setInterval( "GridRefresh()",update*1000);        
 }
 
 function form(id) {
 
     globalLayout.cells("c").progressOn();
-    var obj = myLayout.cells("b").getAttachedObject();
+    var obj = myLayout.cells("a").getAttachedObject();
     if (typeof(window.dhtmlXFormObject) == "function" && obj instanceof dhtmlXFormObject)
         myForm.clear();
-    myForm = myLayout.cells("b").attachForm();
+    myForm = myLayout.cells("a").attachForm();
     myForm.loadStruct("{{ url('json_Self_form') }}?form="+id, function() {
         globalLayout.cells("c").progressOff();
         GridRefresh();
@@ -243,11 +169,6 @@ function GridRefresh() {
         myRequests.refreshFilters();
         myRequests.filterByAll();    
         globalLayout.cells("c").progressOff();
-        myProcessed.load( "{{ url('xml_Self_history_grid') }}?request="+last, function() {
-            myProcessed.refreshFilters();
-            myProcessed.filterByAll();    
-            globalLayout.cells("b").progressOff();
-        });    
     });    
 }
 </script>

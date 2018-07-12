@@ -63,20 +63,13 @@ class OrdersController extends Controller
         return $response;
     }
 
-    public function gridAction($db,$history_max=0,$nested=false,$only_warning=true,$sort='last')
+    public function gridAction($db,$history_max=0,$nested=false,$only_warning=false,$sort='last')
     {
-        $request = Request::createFromGlobals();
-        if ($request->get('history')>0) {
-            $history_max = $request->get('history');
-        }
-        $nested = $request->get('chained');
-        $only_warning = $request->get('only_warning');
-        $sort = $request->get('sort');
-
-        $history = $this->container->get('arii_jid.history');
-        $history->setDB($db);
-        $Orders = $history->Orders($history_max,$nested,$only_warning,$sort);
-
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
+        $em = $this->getDoctrine()->getManager($db);        
+        $history = $this->container->get('arii_jid.history2');        
+        $Orders = $history->Orders($em,$Filters['start'],$Filters['end'],$history_max=999,$nested=false,$only_warning);
+        
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
         $list = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -86,18 +79,13 @@ class OrdersController extends Controller
                 <call command="clearAll"/>
             </afterInit>
         </head>';
-        
-        $portal = $this->container->get('arii_core.portal');
-        $ColorStatus = $portal->getColors();
 
         // ksort($Orders);
         foreach ($Orders as $k=>$line) {
             $spooler = $line['SPOOLER_ID'];
             $status = $line['STATUS'];
              
-            if (isset($ColorStatus[$status]['bgcolor'])) $color=$ColorStatus[$status]['bgcolor'];
-                else $color='yellow';
-            $list .=  '<row id="'.$line['HISTORY_ID'].'"  style="background-color: '.$color.';">';
+            $list .=  '<row id="'.$line['HISTORY_ID'].'"  style="background-color: '.$line['COLOR'].';">';
             
             # Cell color pour identifier le point de blocage
             $cellcolor='';
@@ -115,7 +103,7 @@ class OrdersController extends Controller
             $list .=  '<cell>'.$status.'</cell>';
             $list .=  '<cell>'.$line['START_TIME'].'</cell>';
             $list .=  '<cell>'.$line['END_TIME'].'</cell>';
-            $list .=  '<cell>'.$line['NEXT_TIME'].'</cell>';
+            $list .=  '<cell>'.($line['NEXT_TIME']?$line['NEXT_TIME']->format('Y-m-d H:i:s'):'').'</cell>';
             $list .=  '<cell>'.$line['STATE_TEXT'].'</cell>';
             $list .=  '</row>';
         }

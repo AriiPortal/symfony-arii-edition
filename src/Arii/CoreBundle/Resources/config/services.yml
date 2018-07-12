@@ -26,6 +26,10 @@ services:
         class: Arii\CoreBundle\Service\AriiSQL
         arguments: [ "@arii_core.portal" ]
 
+    arii.filter:
+        class: Arii\CoreBundle\Service\AriiFilter
+        arguments: [ "@arii_core.portal" ]
+
     arii_core.date:
         class: Arii\CoreBundle\Service\AriiDate
         arguments: [ "@arii_core.portal", @translator ]
@@ -91,6 +95,10 @@ services:
         arguments: [ "@service_container", "@arii_core.portal" ]
 
 # Deprecated
+    arii_core.sql:
+        class: Arii\CoreBundle\Service\AriiSQL
+        arguments: [ "@arii_core.portal" ]
+
     arii_core.plantuml:
         class: Arii\CoreBundle\Service\AriiPlantuml
         arguments: [ "@service_container", "@arii_core.portal" ]

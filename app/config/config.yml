@@ -239,10 +239,14 @@ parameters:
     
 services:
     # Oracle
-#    oracle.listener:
-#        class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
-#        tags:
-#            - { name: doctrine.event_listener, event: postConnect }
+    ojs.oracle.listener:
+        class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
+        tags:
+            - { name: doctrine.event_listener, event: postConnect, connection: ojs_db }
+    ats.oracle.listener:
+        class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
+        tags:
+            - { name: doctrine.event_listener, event: postConnect, connection: ats_db }
     
     pdo:
         class: PDO

@@ -104,54 +104,6 @@ function GlobalRefresh() {
     PageRefresh();
 }
 
-function StateRibbon (itemid,state) {
-    switch(itemid) {
-        case 'home':
-            
-        default:
-            alert(itemid);
-    }
-    GlobalRefresh();    
-}
-
-function ClickRibbon (itemid,state) {
-    var id = itemid.split('_');
-    switch (id[0]) {
-        case 'BUNDLE':
-            window.location = '{{ path('arii_homepage') }}'+id[1]+'/{{ app.request.locale }}';
-            break;
-        case 'LANG':
-            window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/'+id[1];
-            break;
-        case 'USER':
-            switch (id[1]) {
-                case 'logout':
-                    window.location = '{{ path('fos_user_security_logout') }}';
-                    break;
-            }
-            break;
-        case 'HELP':
-            switch (id[1]) {
-                case 'sos':
-                    window.location = 'http://www.sos-paris.com';
-                    break;
-                case 'github':
-                    window.location = 'https://github.com/AriiPortal';
-                    break;
-                case 'readme':
-                    window.location = '{{ path('arii_Self_readme') }}';
-                    break;
-                default:
-                    alert(id[1]);
-                    break;                    
-            }
-            break;
-        default:
-            alert(id[0]);
-            break;
-    }
-}
-
 function ToolbarTime() {
     var currentTime = new Date();
     var hours = currentTime.getHours();
@@ -166,6 +118,7 @@ function ToolbarTime() {
 //    myToolbar.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );
 }
 </script>
+{% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}
 
             

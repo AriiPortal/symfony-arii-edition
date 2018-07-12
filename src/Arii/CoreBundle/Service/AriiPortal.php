@@ -34,7 +34,7 @@ class AriiPortal
         $this->parameters = $kernel->getContainer()->getParameterBag()->all();
         $this->rootDir = $kernel->getRootDir();
     }
-
+    
     // appel de toutes les fonctions de population
     public function setDefaults() {
         $this->setConnections();

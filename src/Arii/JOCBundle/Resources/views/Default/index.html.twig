@@ -1,47 +1,8 @@
-{# src/Arii/JOCBundle/Resources/views/Default/index.html.twig #}
 {% extends "AriiJOCBundle::layout.html.twig" %}
 {% block body %}
-<script type="text/javascript">
-var update=10;
-var page = 1;
-var autorefresh;
-dhtmlxEvent(window,"load",function(){     
-var size=400;
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
-    globalLayout.cells("a").setWidth(size); 
-    
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_JOC_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    myDataView = globalLayout.cells("a").attachDataView({
-        type:{
-            template: function (obj) {
-                var result = '<p class="title"/><img src="{{ asset('/images/') }}'+obj.img+'.png"/>&nbsp;'+obj.name;
-                var color = '#ffffff';
-                if (obj.warning>0) {
-                    result += '&nbsp;&nbsp;&nbsp;<span class="warning">'+obj.warning+'</span>';
-                    color = '#ffffcc';
-                }
-                if (obj.error>0) {
-                    result += '&nbsp;&nbsp;&nbsp;<span class="error">'+obj.error+'</span>';
-                    color = '#fbb4ae';
-                }
-                return '<div  style="background-color: '+color+'">'+result+'</div>';
-            },
-            css: "arii",
-            height:15,
-            width: size
-        }
-    });
- 
-    myCarousel  = globalLayout.cells("b").attachCarousel({
+<script language="javascript">
+function Init() {    
+    myCarousel  = globalLayout.cells("c").attachCarousel({
         effect: "cards"
     });
     Carousel=[];                        
@@ -275,68 +236,56 @@ var size=400;
                 align:"left"
             } 
     });
-
-    myDataView.attachEvent("onItemClick", function(id){
-        myCarousel.cells(Carousel[id]).setActive();
-    });
     
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-    
-    autorefresh = setInterval( "GlobalRefresh()",update*10000);
-    GlobalRefresh();
-});
+}
 
-function GlobalRefresh() {
-    myDataView.load("{{ url('xml_JOC_menu') }}", function () {
-        SpoolersChart.load( "{{ url('xml_JOC_spoolers_pie') }}", function () {
-            SpoolersLayout.cells("b").progressOn();
-            SpoolersGrid.load("{{ url('xml_JOC_spoolers_list') }}", function () {
-                SpoolersGrid.refreshFilters();
-                SpoolersGrid.filterByAll();
-                SpoolersLayout.cells("b").progressOff();
-                OrdersChart.load("{{ url('xml_JOC_orders_pie') }}", function () {
-                    OrdersLayout.cells("b").progressOn();
-                    OrdersGrid.load("{{ url('xml_JOC_orders_list') }}", function () {                        
-                        OrdersGrid.refreshFilters();
-                        OrdersGrid.filterByAll();
-                        OrdersLayout.cells("b").progressOff();
-                        ChainsChart.load("{{ url('xml_JOC_chains_pie') }}", function () {
-                            ChainsLayout.cells("b").progressOn();
-                            ChainsGrid.load("{{ url('xml_JOC_chains_list') }}", function () {
-                                ChainsLayout.cells("b").progressOff();
-                                ChainsGrid.refreshFilters();
-                                ChainsGrid.filterByAll();
-                                JobsChart.load("{{ url('xml_JOC_jobs_pie') }}", function () {
-                                    JobsLayout.cells("b").progressOn();
-                                    JobsGrid.load("{{ url('xml_JOC_jobs_list') }}", function () {
-                                        JobsGrid.refreshFilters();
-                                        JobsGrid.filterByAll();
-                                        JobsLayout.cells("b").progressOff();
-                                        ClassesChart.load("{{ url('xml_JOC_process_classes_pie') }}", function () {
-                                            ClassesLayout.cells("b").progressOn();
-                                            ClassesGrid.load("{{ url('xml_JOC_process_classes_list') }}", function () {
-                                                ClassesLayout.cells("b").progressOff();
-                                                ClassesGrid.refreshFilters();
-                                                ClassesGrid.filterByAll();
-                                                LocksChart.load("{{ url('xml_JOC_locks_pie') }}", function () {
-                                                    LocksLayout.cells("b").progressOn();
-                                                    LocksGrid.load("{{ url('xml_JOC_locks_list') }}", function () {
-                                                        LocksGrid.refreshFilters();
-                                                        LocksGrid.filterByAll();       
-                                                        LocksLayout.cells("b").progressOff();
-                                                        LocksUseChart.load("{{ url('xml_JOC_locks_use_pie') }}", function () {
-                                                            LocksUseLayout.cells("b").progressOn();
-                                                            LocksUseGrid.load("{{ url('xml_JOC_locks_use_list') }}", function () {
-                                                                LocksUseGrid.refreshFilters();
-                                                                LocksUseGrid.filterByAll();                                        
-                                                                LocksUseLayout.cells("b").progressOff();
-                                                                if (myCarousel.getActiveIndex() > 5)
-                                                                    myCarousel.goFirst();
-                                                                else
-                                                                    myCarousel.goNext();                                        
-                                                                myDataView.select(myCarousel.getActiveIndex()+1);
-                                                            });
+function PageRefresh() {
+    SpoolersChart.load( "{{ url('xml_JOC_spoolers_pie') }}", function () {
+        SpoolersLayout.cells("b").progressOn();
+        SpoolersGrid.load("{{ url('xml_JOC_spoolers_list') }}", function () {
+            SpoolersGrid.refreshFilters();
+            SpoolersGrid.filterByAll();
+            SpoolersLayout.cells("b").progressOff();
+            OrdersChart.load("{{ url('xml_JOC_orders_pie') }}", function () {
+                OrdersLayout.cells("b").progressOn();
+                OrdersGrid.load("{{ url('xml_JOC_orders_list') }}", function () {                        
+                    OrdersGrid.refreshFilters();
+                    OrdersGrid.filterByAll();
+                    OrdersLayout.cells("b").progressOff();
+                    ChainsChart.load("{{ url('xml_JOC_chains_pie') }}", function () {
+                        ChainsLayout.cells("b").progressOn();
+                        ChainsGrid.load("{{ url('xml_JOC_chains_list') }}", function () {
+                            ChainsLayout.cells("b").progressOff();
+                            ChainsGrid.refreshFilters();
+                            ChainsGrid.filterByAll();
+                            JobsChart.load("{{ url('xml_JOC_jobs_pie') }}", function () {
+                                JobsLayout.cells("b").progressOn();
+                                JobsGrid.load("{{ url('xml_JOC_jobs_list') }}", function () {
+                                    JobsGrid.refreshFilters();
+                                    JobsGrid.filterByAll();
+                                    JobsLayout.cells("b").progressOff();
+                                    ClassesChart.load("{{ url('xml_JOC_process_classes_pie') }}", function () {
+                                        ClassesLayout.cells("b").progressOn();
+                                        ClassesGrid.load("{{ url('xml_JOC_process_classes_list') }}", function () {
+                                            ClassesLayout.cells("b").progressOff();
+                                            ClassesGrid.refreshFilters();
+                                            ClassesGrid.filterByAll();
+                                            LocksChart.load("{{ url('xml_JOC_locks_pie') }}", function () {
+                                                LocksLayout.cells("b").progressOn();
+                                                LocksGrid.load("{{ url('xml_JOC_locks_list') }}", function () {
+                                                    LocksGrid.refreshFilters();
+                                                    LocksGrid.filterByAll();       
+                                                    LocksLayout.cells("b").progressOff();
+                                                    LocksUseChart.load("{{ url('xml_JOC_locks_use_pie') }}", function () {
+                                                        LocksUseLayout.cells("b").progressOn();
+                                                        LocksUseGrid.load("{{ url('xml_JOC_locks_use_list') }}", function () {
+                                                            LocksUseGrid.refreshFilters();
+                                                            LocksUseGrid.filterByAll();                                        
+                                                            LocksUseLayout.cells("b").progressOff();
+                                                            if (myCarousel.getActiveIndex() >= 5)
+                                                                myCarousel.goFirst();
+                                                            else
+                                                                myCarousel.goNext();                                        
                                                         });
                                                     });
                                                 });
@@ -350,7 +299,7 @@ function GlobalRefresh() {
                 });
             });
         });
-    }); 
+    });
 }
 </script>
 {% endblock %}

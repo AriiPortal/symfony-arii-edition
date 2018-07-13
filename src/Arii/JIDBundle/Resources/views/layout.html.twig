@@ -5,142 +5,78 @@
 {% endblock dhtmlx %}
 {% block dhtmlx_plus %}
 {% endblock dhtmlx_plus %}
-{% block body %}
-{% endblock body %}
-{% block script %}
-<script>
-function StateRibbon (itemid,state) {
-    switch(itemid) {
-         case 'chained':
-            chained = (state?1:0);
-            globalLayout.progressOn();
-            break;
-         case 'only_warning':
-            only_warning = (state?1:0);
-            globalLayout.progressOn();
-            break;
-        default:
-            alert(itemid);
-    }
+{% block onload %}
+<script language="javascript">
+var bundle='JID';
+var db="{{ db }}";
+var max_history = 0; // pas d'historique
+var chained = 0; // que des chaines normales
+var only_warning = 0;
+var update = 30;
+var autorefresh;
+var status;
+var sort="last";
+var update=5;
+
+dhtmlxEvent(window,"load",function(){   
+    var size=180;
+    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
+    globalLayout.cells("a").setHeight(120); 
+    globalLayout.cells("b").setWidth(size); 
+    globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
+    globalLayout.cells("a").hideHeader();
+    globalLayout.cells("c").hideHeader();
+
+    myRibbon = globalLayout.cells("a").attachRibbon(); 
+    myRibbon.setIconPath( "{{ asset('/images/') }}" );
+    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
+    myRibbon.attachEvent("onStateChange", StateRibbon );
+    myRibbon.attachEvent("onClick", ClickRibbon );
+
+    menuLayout = globalLayout.cells("b").attachLayout("2E");
+    menuLayout.cells("b").setHeight(size);
+    menuLayout.cells("b").hideHeader();
+    
+    mySidebar = menuLayout.cells("a").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:"orders", text: "{{ "Orders" | trans }}", icon: "order.png" },
+        ]
+    });
+    mySidebar.attachEvent("onBubbleClick", function(id, value){
+        // bubble clicked, your code here
+        // 'return true' means item allowed to be selected
+        // false - otherwise
+        return true;
+    });    
+    mySidebar.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_JID_index') }}/db/"+db+"/"+id;
+        return true;
+    });
+
+    myToolbar = globalLayout.cells("c").attachToolbar();
+    myToolbar.setIconsPath( "{{ asset('/images/') }}" );
+    Init();
     GlobalRefresh();
+    autorefresh = setInterval( "GlobalRefresh()",update*1000);
+});
+</script>
+{% endblock onload %}
+{% block body %}{% endblock%}
+{% block script %}
+<script language="javascript">
+function GlobalRefresh() {
+    PageRefresh();
 }
-
-function ClickRibbon (itemid,state) {
-    switch(itemid) {
-    case '-1': case '-2': case '-3': case '-4': case '-5': case '-6':
-    case '-7': case '-14': case '-21':
-    case '-30': case '-60': case '-90': case '-120':
-    case '-365':
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?ref_past="+itemid, function() {
-            var currentTime = new Date();
-            var newTime = new Date();
-            newTime.setDate(currentTime.getDate() + Number(itemid) );
-            var day = newTime.getDate();
-            var month = newTime.getMonth()+1;
-            var year = newTime.getFullYear();
-            if (day < 10){
-            day = "0" + day;
-            }
-            if (month < 10){
-            month = "0" + month;
-            }
-            myRibbon.setItemText( "ref_past", year + "-" + month + "-" +  day );
-            globalLayout.progressOn();
-            GlobalRefresh();
-        });
-        break;
-     case '5':
-    case '30':
-    case '60':
-    case '300':
-    case '900':
-    case '1800':
-    case '3600':
-        update = itemid;
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?refresh="+itemid);
-        GlobalRefresh();
-        break;
-    case 'silent_install':
-        window.location = "{{ url('arii_JID_silent') }}";
-        break;
-    case 'cron_converter':
-        window.location = "{{ url('arii_JID_cron') }}";
-        break;
-    case 'menu_index':
-        window.location = "{{ url('arii_JID_index') }}";
-        break;
-    case 'menu_config':
-        window.location = "{{ url('arii_JID_config') }}";
-        break;
-    case 'menu_process':
-        window.location = "{{ url('arii_JID_processes') }}";
-        break;
-    case 'menu_chain':
-        window.location = "{{ url('arii_JID_chains') }}";
-        break;
-    case 'menu_history':
-        window.location = "{{ url('arii_JID_history') }}";
-        break;
-    case 'menu_job':
-        window.location = "{{ url('arii_JID_jobs') }}";
-        break;
-    case 'menu_order':
-        window.location = "{{ url('arii_JID_orders', {'db': db }) }}";
-        break;
-    case 'menu_spooler':
-        window.location = "{{ url('arii_JID_spoolers') }}";
-        break;
-    case 'menu_messages':
-        window.location = "{{ url('arii_JID_messages') }}";
-        break;
-   case 'filter_edit':
-        window.location = "{{ url('arii_filters') }}";
-        break;
-/*  case 'menu_stat':
-        window.location = "{ { url('arii_stat') }}";
-        break;
-*/    case 'filter_all':
-            globalLayout.cells("a").progressOn();
-            globalLayout.cells("b").progressOn();
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?filter=-1"+itemid.substr(7), function(){
-                GridRefresh();
-            });
-        break;
-
-    default:
-        if (itemid.substr(0,6)=='filter') {
-            globalLayout.cells("a").progressOn();
-            globalLayout.cells("b").progressOn();
-//            this.setItemText( 'filter', this.getListOptionText('filter',itemid));
-            this.setItemText("current_filter",myRibbon.getItemOptionText('Filters',itemid));
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?filter="+itemid.substr(7), function(){
-                GridRefresh();
-            });
-        }
-        else if (itemid.substr(0,7)=='request') {
-            window.location = "{{ url('arii_JID_requests') }}?request="+itemid.substr(8);
-        }
-        else if (itemid.substr(0,2)=='DB') {
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?database="+itemid.substr(2), function(loader,response) {
-                dhtmlx.message({
-                    type: "Notice",
-                    text: loader.xmlDoc.responseText,
-                    width: "800"
-                });
-                if (typeof GlobalRefresh == 'function') { GlobalRefresh(); }
-                else if (typeof GridRefresh == 'function') { GridRefresh(); }
-                // on recree le ruban
-                myRibbon.loadStruct("{{ url('json_JID_ribbon') }}");
-            } );
-        }
-        else {
-          //if(itemid != "menu_range")
-            alert(itemid);
-        }
-    }
-}
-
-
+/*
+myDonut.load( "{{ url('xml_JID_orders_pie') }}?chained="+chained+"&only_warning="+only_warning,
+    function () {
+        myDonut.refresh(); 
+    });
+*/
 function Chain(id,command,message,chain)
 {
     dhtmlx.message({
@@ -154,7 +90,7 @@ function Chain(id,command,message,chain)
         width: "500px",
         text: loader.xmlDoc.responseText
         });
-        GridRefresh();
+        PageRefresh();
     });
 }
 
@@ -172,7 +108,7 @@ function Node(id,nid,command,message,chain)
         width: "500px",
         text: loader.xmlDoc.responseText
         });
-        GridRefresh();
+        PageRefresh();
     });
 }
 
@@ -219,7 +155,7 @@ function PurgeJob( id ) {
                     expire: 10000,
                     width: "500px",
                     text: loader.xmlDoc.responseText });
-                    GridRefresh();
+                    PageRefresh();
                 });
                 break;
             case "cancel":
@@ -308,7 +244,7 @@ function Order( Command, id, Text, Toolbar, Time, chain )
                         width: "500px",
                         text: loader.xmlDoc.responseText
                     });
-                    GridRefresh();
+                    PageRefresh();
                     winLayout.cells("a").progressOff();
                     msg.close();
                 });
@@ -405,7 +341,7 @@ var largeur = 600;
                     expire: 10000,
                     width: "500px",
                     text: loader.xmlDoc.responseText });
-                    GridRefresh();
+                    PageRefresh();
                     winLayout.cells("a").progressOff();
                     msg.close();
                 });
@@ -451,7 +387,7 @@ function CheckSpooler(spooler)
             width: "500px",
             text: loader.xmlDoc.responseText
         });
-        GridRefresh();
+        PageRefresh();
     });
 return true;
 }
@@ -465,7 +401,7 @@ function CheckSpoolerId(rid)
             width: "500px",
             text: loader.xmlDoc.responseText
         });
-        GridRefresh();
+        PageRefresh();
     });
 return true;
 }
@@ -499,10 +435,11 @@ function XMLCommand(id,Command)
             width: "500px",
             text: loader.xmlDoc.responseText
         });
-        GridRefresh();
+        PageRefresh();
         globalLayout.cells("a").progressOff();
         msg.close();
     });
 }
 </script>
+{% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}

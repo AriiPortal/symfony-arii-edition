@@ -1,80 +1,16 @@
-{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiJIDBundle::layout.html.twig" %}
 {% block body %}
-<script type="text/javascript">
-var max_history = 0; // pas d'historique
-var chained = 0; // que des chaines normales
-var only_warning = 0;
-var update = 30;
-var autorefresh;
-var status;
-var sort="last";
+<script language="javascript">
+function Init() {
 
-dhtmlxEvent(window,"load",function(){
+    myLayout =  globalLayout.cells("c").attachLayout("2E");
     
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(350); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").setText("{{ "Orders" | trans }}"); 
-    globalLayout.cells("c").setText("{{ "Detail" | trans }}"); 
-    globalLayout.cells("c").collapse();
-    
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_JID_ribbon') }}", function() {
-        myCalendarFrom = new dhtmlXCalendarObject(myRibbon.getInput("calendar_from"));
-        myCalendarFrom.setDateFormat("%Y-%m-%d %H:%i:%s");
-        myCalendarFrom.setWeekStartDay(1);
-        myRibbon.setValue("calendar_from", myCalendarFrom.getFormatedDate());        
-        myCalendarTo = new dhtmlXCalendarObject(myRibbon.getInput("calendar_to"));
-        myCalendarTo.setDateFormat("%Y-%m-%d %H:%i:%s");
-        myCalendarTo.setWeekStartDay(1);
-        myRibbon.setValue("calendar_to", myCalendarTo.getFormatedDate());        
-    });
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
     myGridMenu = new dhtmlXMenuObject(null);
     myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
     myGridMenu.renderAsContextMenu();
     myGridMenu.loadStruct("{{ url('xml_JID_orders_grid_menu') }}");
-          
-    myAccordion = globalLayout.cells("a").attachAccordion();
-    myAccordion.addItem("a1", "{{ "Status" | trans }}");
-//    myAccordion.addItem("a2", "{{ "Folders" | trans }}");
 
-    myDonut =  myAccordion.cells("a1").attachChart({
-            view:"donut",
-            container:"pie_chart_container",
-            value:"#JOBS#",
-            label:"",
-            tooltip: "#STATUS#",
-            color: "#COLOR#",
-            border:false,
-            pieInnerText: "#JOBS#",
-            shadow: 0,
-            legend:{
-                  width: 0,
-                  template: "#STATUS#",
-                valign:"top",
-                align:"left"
-            } 
-    });
-    myAccordion.cells("a1").progressOn();
-/*             
-    myTree = myAccordion.cells("a2").attachTree();
-//    myTree = globalLayout.cells("a").attachTree();
-    myTree.setImagesPath("{{ asset('/images/') }}");
-    myTree.attachEvent("onDblClick", function(id){
-        globalLayout.cells("a").progressOn();
-        GlobalRefresh();
-    });
-*/    
-    myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("a").attachGrid();
     myGrid.setImagePath( "{{ asset('/images/') }}");
     myGrid.setHeader("{{ "Spooler" | trans }},{{ "Folder" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "Begin" | trans }},{{ "End" | trans }},{{ "Next" | trans }},{{ "Information" | trans }}");
     myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter");
@@ -92,21 +28,15 @@ dhtmlxEvent(window,"load",function(){
     myGrid.setColumnHidden(8,true); 
     myGrid.enableSmartRendering(true,50);
     myGrid.attachEvent("onRowDblClicked",OrderDetail );
-    globalLayout.cells("b").progressOn();
+    myLayout.cells("a").progressOn();
         
-    myDonut.attachEvent("onItemClick",function(id, value){
-        status = id;
-        myGrid.filterBy(5, status);
-        myGrid.getFilterElement(5).value = status;        
-    });
-
-    myGridToolbar = globalLayout.cells("b").attachToolbar();
+    myGridToolbar = myLayout.cells("a").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");
     myGridToolbar.loadStruct( "{{ url('xml_JID_orders_grid_toolbar') }}");
     myGridToolbar.attachEvent("onClick",function(itemid){
          switch (itemid) {
             case 'refresh':
-                globalLayout.cells("b").progressOn();
+                myLayout.cells("a").progressOn();
                 GlobalRefresh();
                 break;
             case "print":
@@ -116,12 +46,12 @@ dhtmlxEvent(window,"load",function(){
                 document.location.href = "{{ url('rss_JID_history_orders') }}";
                 break;
             case 'undock':
-                globalLayout.cells("b").undock();
+                myLayout.cells("a").undock();
                 break;
             default:
                 if (itemid.substr(0,5)==='sort_') {
                     sort = itemid.substr(5);
-                    globalLayout.cells("b").progressOn();
+                    myLayout.cells("a").progressOn();
                     GlobalRefresh();
                 }
                 else {
@@ -230,13 +160,12 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });
 
-    globalLayout.cells("c").setHeight(300); 
-    myTabbar = globalLayout.cells("c").attachTabbar();
+    myLayout.cells("b").setHeight(300); 
+    myTabbar = myLayout.cells("b").attachTabbar();
     myTabbar.addTab("order","{{ "Order" | trans }}","100px", null, true);
     myTabbar.addTab("chain","{{ "Chain" | trans }}","100px" );
     myTabbar.addTab("log","{{ "Log" | trans }}","100px");
     myTabbar.addTab("history","{{ "History" | trans }}","100px");
-
 
     myDetailLayout = myTabbar.cells("order").attachLayout("2U");
     myDetailLayout.cells("a").hideHeader(); 
@@ -325,15 +254,14 @@ dhtmlxEvent(window,"load",function(){
                 dhtmlx.message({
                 type: "Notice",
                 text: Text });
-                globalLayout.cells("a").progressOn();        
-                globalLayout.cells("b").progressOff();                
+                myLayout.cells("a").progressOff();                
                 dhx4.ajax.post("{{ url('arii_XML_Command') }}","command="+itemid+"&params="+encodeURIComponent(params)+"&time="+start_time+"&order_id="+id,function(loader,response){
                     dhtmlx.message({
                     type: "Notice",
                     expire: 10000,
                     width: "500px",
                     text: loader.xmlDoc.responseText });
-                    // globalLayout.cells("b").attachHTMLString(loader.xmlDoc.responseText);
+                    // myLayout.cells("a").attachHTMLString(loader.xmlDoc.responseText);
                     OrderDetail(id);
                     GlobalRefresh();                    
                 });
@@ -396,7 +324,7 @@ dhtmlxEvent(window,"load",function(){
                     expire: 10000,
                     width: "500px",
                     text: loader.xmlDoc.responseText });
-                    globalLayout.progressOn();   
+                    myLayout.progressOn();   
                     GlobalRefresh();
 {% if is_granted('ROLE_OPERATOR') %}
                     if (itemid=='stop_chain') {
@@ -425,17 +353,7 @@ dhtmlxEvent(window,"load",function(){
     mySteps.setColumnHidden(6,true);  
     mySteps.enableAlterCss("","");
     mySteps.init();
-/*    
-    myLog = myTabbar.cells("log").attachGrid();
-    myLog.setHeader("{{ "Date" | trans }},{{ "Part" | trans }},{{ "Message" | trans }},{{ "Code" | trans }}");
-    myLog.attachHeader("#text_filter,#select_filter,#text_filter,#select_filter");
-    myLog.setInitWidths("160,200,*,60");
-    myLog.setColAlign("right,left,left,right");
-    myLog.setColTypes("ro,ro,ro,ro");
-    myLog.setColSorting("date,str,str,int");
-    myLog.init();
-    myLog.enableSmartRendering(true,50);
-*/
+
     myHistory = myTabbar.cells("history").attachGrid();
     myHistory.setHeader("{{ "Start" | trans }},{{ "End" | trans }},{{ "State" | trans }},!,{{ "Message" | trans }}");
     myHistory.attachHeader("#text_filter,#text_filter,#select_filter,#select_filter,#text_filter");
@@ -447,16 +365,9 @@ dhtmlxEvent(window,"load",function(){
     myHistory.enableSmartRendering(true,50);
     myHistory.enableAlterCss("","");
 
-    autorefresh = setInterval( "GlobalRefresh()", update*1000 );
-    GlobalRefresh();
-});
-
-function GlobalRefresh() {
-    GridRefresh();
 }
 
-function GridRefresh(detail) {
-    clearInterval( autorefresh );    
+function PageRefresh(detail) {
     detail = typeof detail !== 'undefined' ? detail : 0;
     var currentTime = new Date();
     var hours = currentTime.getHours();
@@ -470,18 +381,11 @@ function GridRefresh(detail) {
     }
     myRibbon.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );    
     myGrid.load("{{ url('xml_JID_orders_grid') }}?time="+seconds+"&history="+max_history+"&chained="+chained+"&only_warning="+only_warning+"&sort="+sort, function(){
-        globalLayout.cells("b").progressOff();
+        myLayout.cells("a").progressOff();
         myGrid.filterBy(5, status);  
         if (detail>0) OrderDetail(id);
-        myDonut.load( "{{ url('xml_JID_orders_pie') }}?chained="+chained+"&only_warning="+only_warning,
-            function () {
-                myDonut.refresh(); 
-                myAccordion.cells("a1").progressOff();
-            });
-            globalLayout.progressOff();
-            globalLayout.cells("a").progressOff();
+        myLayout.progressOff();
         myGrid.filterByAll();
-        autorefresh = setInterval( "GridRefresh()", update*1000 );
     });    
 }
 
@@ -521,7 +425,7 @@ function OrderDetail(id) {
             myTabbar.cells("chain").progressOff();
                 myHistory.clearAndLoad("{{ url('xml_JID_order_history') }}?id="+id, function() {                   
                     myTabbar.cells("history").progressOff();    
-                    globalLayout.cells("c").progressOff(); 
+                    myLayout.cells("b").progressOff(); 
                     autorefresh = setInterval( "GridRefresh()", update*1000 );
                 });  
         });

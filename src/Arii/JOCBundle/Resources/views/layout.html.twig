@@ -2,15 +2,15 @@
 {% block dhtmlx %}
 <link rel="stylesheet" type="text/css" href="{{ asset('dhtmlx/skins/terrace/dhtmlx.css') }}" />
 <script src="{{ asset('dhtmlx/codebase/dhtmlx.js') }}" type="text/javascript"></script>
+{% endblock dhtmlx %}
+{% block dhtmlx_plus %}
+<link rel="stylesheet" type="text/css" href="{{ asset('dhtmlx/skins/terrace/dhtmlx.css') }}" />
+<script src="{{ asset('dhtmlx/codebase/dhtmlx.js') }}" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="{{ asset('dhtmlx_scheduler/codebase/dhtmlxscheduler.css') }}" />
 <script src="{{ asset('dhtmlx_scheduler/codebase/dhtmlxscheduler.js') }}" type="text/javascript"></script>
 <script src="{{ asset('dhtmlx_scheduler/codebase/ext/dhtmlxscheduler_agenda_view.js') }}" type="text/javascript"></script>
-{% endblock dhtmlx %}
-{% block dhtmlx_plus %}
 {% endblock dhtmlx_plus %}
-{% block body %}
-{% endblock body %}
-{% block script %}
+{% block onload %}
 <style>
     .arii {
         background-color: red;
@@ -59,9 +59,61 @@ span.error {
   width: 1.6em; 
 }    
 </style>    
-<script>
-setInterval( "SyncAll()",30*1000);
+<script language="javascript">
+var bundle='JOC';
+var update=5;
 
+dhtmlxEvent(window,"load",function(){   
+    var size=180;
+
+    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
+    globalLayout.cells("a").setHeight(120); 
+    globalLayout.cells("b").setWidth(size); 
+    globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
+
+    myRibbon = globalLayout.cells("a").attachRibbon(); 
+    myRibbon.setIconPath( "{{ asset('/images/') }}" );
+    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
+    myRibbon.attachEvent("onStateChange", StateRibbon );
+    myRibbon.attachEvent("onClick", ClickRibbon );
+
+    mySidebar = globalLayout.cells("b").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:"orders", text: "{{ "Orders" | trans }}", icon: "order.png" },
+        ]
+    });
+    mySidebar.attachEvent("onBubbleClick", function(id, value){
+        // bubble clicked, your code here
+        // 'return true' means item allowed to be selected
+        // false - otherwise
+        return true;
+    });    
+    mySidebar.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_JOC_index') }}"+id;
+        return true;
+    });
+
+    myToolbar = globalLayout.cells("c").attachToolbar();
+    myToolbar.setIconsPath( "{{ asset('/images/') }}" );
+    Init();    
+    globalLayout.cells("a").hideHeader();
+    globalLayout.cells("c").hideHeader();
+    GlobalRefresh();
+    autorefresh = setInterval( "GlobalRefresh()",update*1000);
+});
+</script>
+{% endblock onload %}
+{% block body %}{% endblock%}
+{% block script %}
+<script language="javascript">
+function GlobalRefresh() {
+    PageRefresh();
+}    
+    
 function SyncAll () {
     dhx4.ajax.get( "{{ url('arii_JOC_sync_all') }}" ,function(loader,response){
         if (loader.xmlDoc.responseText!='') {
@@ -72,86 +124,6 @@ function SyncAll () {
             text: loader.xmlDoc.responseText });                  
         }
     });
-}
-
-function StateRibbon (itemid,state) {
-    switch(itemid) {
-         case 'chained':
-            chained = (state?1:0);
-            globalLayout.progressOn();
-            break;
-         case 'only_warning':
-            only_warning = (state?1:0);
-            globalLayout.progressOn();
-            break;
-        default:
-            alert(itemid);
-    }
-    GlobalRefresh();    
-}
-
-function ClickRibbon (itemid,state) {
-    switch(itemid) {
-         case 'chained':
-            chained = state;
-            break;
-         case 'stopped':
-            stopped = state;
-            break;
-    case '-1': case '-2': case '-3': case '-4': case '-5': case '-6':
-    case '-7': case '-14': case '-21': 
-    case '-30': case '-60': case '-90': case '-120':
-    case '-365':
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?ref_past="+itemid, function() {
-            var currentTime = new Date();
-            var newTime = new Date();
-            newTime.setDate(currentTime.getDate() + Number(itemid) );
-            var day = newTime.getDate();
-            var month = newTime.getMonth()+1;
-            var year = newTime.getFullYear();
-            if (day < 10){
-            day = "0" + day;
-            }
-            if (month < 10){
-            month = "0" + month;
-            }
-            myRibbon.setItemText( "ref_past", year + "-" + month + "-" +  day );
-            globalLayout.progressOn();
-            GlobalRefresh();    
-        });
-        break;
-     case '5':
-    case '30':
-    case '60':
-    case '300':
-    case '900':
-    case '1800':
-    case '3600':
-        update = itemid;
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?refresh="+itemid);
-        globalLayout.progressOn();
-        GlobalRefresh();
-        break;
-    case 'menu_index':
-        window.location = "{{ url('arii_JOC_index') }}";
-        break;
-    default:
-        if (itemid.substr(0,6)=='filter') {
-            globalLayout.cells("a").progressOn();
-            globalLayout.cells("b").progressOn();
-//            this.setItemText( 'filter', this.getListOptionText('filter',itemid));
-            this.setItemText("current_filter",myRibbon.getItemOptionText('Filters',itemid));
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?filter="+itemid.substr(7), function(){
-                GridRefresh();
-            });
-        }
-        else if (itemid.substr(0,7)=='request') {
-            window.location = "{{ url('arii_JOC_requests') }}?request="+itemid.substr(8);
-        }
-        else {
-            window.location = "{{ url('arii_JOC_index') }}"+itemid;
-        }
-    }
 }
 
 function Chain(id,command,message,chain)
@@ -226,6 +198,5 @@ function ShowWhy( id ) {
     });
 }
 </script>
+{% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}
-
-            

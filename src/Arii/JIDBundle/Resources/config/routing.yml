@@ -7,7 +7,7 @@ arii_JID_rest:
 # --------------------------------------------------------------------------
 arii_JID_index:
     path:  /{db}
-    defaults: { _controller: AriiJIDBundle:Orders:index, db: ojs_db }
+    defaults: { _controller: AriiJIDBundle:Default:index, db: ojs_db }
 
 html_JID_summary:
     path:  /{db}/summary.html
@@ -182,21 +182,20 @@ xml_JID_job_history:
 arii_JID_history_job:
     path:  /history/job
     defaults: { _controller: AriiJIDBundle:History:job }
-
-
+    
 # --------------------------------------------------------------------------
 # Orders
 # --------------------------------------------------------------------------
 arii_JID_orders:
-    path:  /{db}/orders
+    path:  /db/{db}/orders
     defaults: { _controller: AriiJIDBundle:Orders:index, db: ojs_db }
     
 xml_JID_orders_grid:
-    path:  /{db}/orders/grid.xml
+    path:  /db/{db}/orders/grid.xml
     defaults: { _controller: AriiJIDBundle:Orders:grid, db: ojs_db }
 
 xml_JID_orders_pie:
-    path:  /{db}/orders/pie.xml
+    path:  /db/{db}/orders/pie.xml
     defaults: { _controller: AriiJIDBundle:Orders:pie, db: ojs_db }
 
 xml_JID_orders_grid_menu:
@@ -263,7 +262,7 @@ xml_JID_order_history:
     defaults: { _controller: AriiJIDBundle:Order:history, db: ojs_db }
 
 xml_JID_order_history_by_id:
-    path:  /{db}/order/{id}/history.xml
+    path:  /db/{db}/order/{id}/history.xml
     defaults: { _controller: AriiJIDBundle:Order:historyById, db: ojs_db }
 
 svg_JID_process_steps:

@@ -1,31 +1,18 @@
-{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiJIDBundle::layout.html.twig" %}
 {% block body %}
-<script type="text/javascript">
-dhtmlxEvent(window,"load",function(){     
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
-    globalLayout.cells("a").setWidth(350); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_JID_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    myTree = globalLayout.cells("a").attachTree();
+<script language="javascript">
+function Init() {
+    globalLayout.cells("c").setText("{{ "Orders" | trans }}");
+    
+    myLayout = globalLayout.cells("c").attachLayout("1C");
+    myLayout.cells("a").hideHeader();
+    
+    myTree = myLayout.cells("a").attachTree();
     myTree.setImagesPath("{{ asset('/images/') }}");
     myTree.load("{{ url('xml_JID_tree') }}");
     myTree.attachEvent("onClick", function(id) {
         if (id.substr(0,2)=='s.') return true;
-        globalLayout.cells("b").attachURL('{{ url('html_JID_summary') }}?db='+id); 
-    })    
-    globalLayout.cells("b").attachURL('{{ url('html_JID_summary') }}'); 
-});
+    })
+}
 </script>
 {% endblock %}

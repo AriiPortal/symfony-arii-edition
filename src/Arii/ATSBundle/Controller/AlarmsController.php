@@ -16,9 +16,9 @@ class AlarmsController extends Controller
           $this->images = $request->getUriForPath('/../bundles/ariicore/images/wa');          
     }
 
-    public function indexAction()
+    public function indexAction($db)
     {
-        return $this->render('AriiATSBundle:Alarms:index.html.twig');
+        return $this->render('AriiATSBundle:Alarms:index.html.twig', [ 'db' => $db ]);
     }
     
     public function toolbarAction()
@@ -35,24 +35,11 @@ class AlarmsController extends Controller
         return $this->render('AriiATSBundle:Alarms:grid_menu.xml.twig',array(), $response );
     }
 
-    public function gridAction($only_open=0)
+    public function gridAction($db,$only_open=0)
     {
-        $request = Request::createFromGlobals();
-        if ($request->query->get( 'only_open' )!='')
-            $only_open=$request->query->get( 'only_open');
-
-        $sql = $this->container->get('arii_core.sql');
-        
-        $qry = $sql->Select(
-                    array(  'a.EOID','a.ALARM','a.ALARM_TIME','a.JOID','a.EVT_NUM','a.STATE','a.THE_USER','a.STATE_TIME','a.EVENT_COMMENT','a.LEN','a.RESPONSE',
-                            'j.JOB_NAME'))                
-                .$sql->From(array('UJO_ALARM a'))
-                .$sql->LeftJoin('UJO_JOB j',array('a.JOID','j.JOID'))
-                  .$sql->Where(array('{start_timestamp}'=> 'a.ALARM_TIME', 'j.IS_ACTIVE' => 1))
-                .$sql->OrderBy(array('a.ALARM_TIME desc'));
-
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('data');
+        $em = $this->getDoctrine()->getManager($db);        
+        $state = $this->container->get('arii_ats.state2');        
+        $Alarms = $state->Changes($em);
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
@@ -64,58 +51,48 @@ class AlarmsController extends Controller
             </afterInit>
         </head>';
 
-        $res = $data->sql->query($qry);
-        $autosys = $this->container->get('arii_ats.autosys');
-        $date = $this->container->get('arii_core.date');
-        while ($line = $data->sql->get_next($res))
+        foreach ($Alarms as $k=>$Alarm) 
         {
-            if ($only_open and ($line['STATE']==45)) continue;
-            
-            $list .= '<row id="'.$line['EOID'].'"';            
-            if ($line['STATE']==43) {
-                $list .= ' bgColor="#fbb4ae"';
-            }
-            elseif ($line['STATE']==44) {
-                $list .= ' bgColor="#ffffcc"';
-            } 
-            else {
-                $list .= ' bgColor="#ccebc5"';
-            }
-            $list .= '>';
-            $list .= '<cell>'.$date->Time2Local($line['ALARM_TIME'],'',true).'</cell>';
-            $list .= '<cell>'.$autosys->Alarm($line['ALARM']).'</cell>';
-            $list .= '<cell>'.$autosys->AlarmState($line['STATE']).'</cell>';
-            $list .= '<cell>'.$line['JOB_NAME'].'</cell>';
-            $list .= '<cell>'.$line['THE_USER'].'</cell>';
-            $list .= '<cell><![CDATA['.$line['EVENT_COMMENT'].']]></cell>';
-            $list .= '<cell><![CDATA['.$line['RESPONSE'].']]></cell>';
-            $list .= '<cell>'.$line['EVT_NUM'].'</cell>';
+            $list .= '<row id="'.$Alarm['eoid'].'" bgColor="'.$Alarm['color'].'">';            
+            $list .= '<cell>'.$Alarm['alarmTime']->format("Y-m-d h:m:s").'</cell>';
+            $list .= '<cell>'.$Alarm['jobName'].'</cell>';
+            $list .= '<cell>'.$Alarm['alarm'].'</cell>';
+            $list .= '<cell>'.$Alarm['state_grid'].'</cell>';
+            $list .= '<cell>'.$Alarm['status'].'</cell>';
+            $list .= '<cell>'.$Alarm['theUser'].'</cell>';
+            $list .= '<cell><![CDATA['.$Alarm['eventComment'].']]></cell>';
+            $list .= '<cell><![CDATA['.$Alarm['nb'].']]></cell>';
             $list .= '</row>'; 
         }
         $list .= "</rows>\n";
         $response->setContent( $list );
-        return $response;        
+        return $response; 
     }
 
-   public function DetailAction()
+    public function DetailAction($db)
     {
         $request = Request::createFromGlobals();
-        $id = $request->get('id');
-        $sql = $this->container->get('arii_core.sql');                  
-        $qry = $sql->Select(array('*'))
-                .$sql->From(array('UJO_PROC_EVENT'))
-                .$sql->Where(array('EOID' => $id));
+        $eoid= $request->query->get( 'id' );
+            
+        $em = $this->getDoctrine()->getManager($db);        
+        $state = $this->container->get('arii_ats.state2');        
+        list($Alarm) = $em->getRepository("AriiATSBundle:UjoAlarm")->findAlarm( $eoid );
         
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('grid');
-//        $data->event->attach("beforeRender",array($this,"detail_render"));
-        $data->render_sql($qry,'EOID','EVENT,STATUS,GLOBAL_VALUE');
-    }
-
-    function detail_render ($data){
-        $data->set_value( 'VALUE', $data->get_value('VALUE1').' '.$data->get_value('VALUE2') );
-        if ($data->get_value('IS_EDIT')=='Y')
-            $data->set_row_color("#00cccc");
+        $autosys = $this->container->get('arii_ats.autosys');
+        
+        $xml = "<?xml version='1.0' encoding='iso-8859-1'?>";
+        $xml .= '<data>';
+        foreach(array('response','jobName') as $k) {
+            if (isset($Alarm[$k]))
+                $xml .= '<'.$k.'>'.$Alarm[$k].'</'.$k.'>';
+        }
+        $xml .= '<status>'.$autosys->Status($Alarm['status']).'</status>';
+        $xml .= "</data>\n";
+        
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        $response->setContent( $xml );
+        return $response;     
     }
 
     public function pieAction($only_warning=0) {

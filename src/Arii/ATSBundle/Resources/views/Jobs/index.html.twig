@@ -490,45 +490,6 @@ function EditNote(jobname,description) {
             label: "{{ "Note"| trans }}", 
             inputHeight:400
         }
-/*
-        {
-          type: "select",
-          name: "NOTE_TYPE",
-          label: "{{ "Note type" | trans}}",
-          options:[
-                {
-                    text: "{{ "New note" | trans }}", 
-                    value: "note",
-                    list: [ 
-                        {   type: 'checkbox', 
-                            name: 'IS_TEMPLATE',
-                            label: "{{ "Is a template"| trans }}", 
-                            position: "label-left",
-                            labelAlign: "right"
-                        },
-                        {   type: 'editor', 
-                            toolbar: true,
-                            iconsPath: "{{ asset('dhtmlx/skins/terrace/imgs/') }}",
-                            name: 'JOB_NOTE',
-                            label: "{{ "Note"| trans }}", 
-                            inputHeight:400
-                        }
-                    ]
-                },
-                {   
-                    text: "{{ "Use template" | trans }}", 
-                    value: "template",
-                    list: [ 
-                        {   type: 'select', 
-                            name: 'TEMPLATE_ID',
-                            label: "{{ "Template"| trans }}",
-                            connector: "{ { url('xml_ATS_note_templates') }}?job="+job
-                        }                
-                    ]                        
-                }
-            ]
-        }
-*/
     ];
 
     myFormToolbar = myWin.attachToolbar();
@@ -570,7 +531,7 @@ function EditNote(jobname,description) {
                 break;
         }
     });
-    
+
 }
 </script>
 {% endblock %}

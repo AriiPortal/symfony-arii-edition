@@ -2,27 +2,12 @@
 {% block body %}
 <script language="javascript">
 function Init() {    
-    myCarousel  = globalLayout.cells("c").attachCarousel({
-        effect: "cards"
-    });
-    Carousel=[];                        
-    Carousel[0] = myCarousel.addCell();
-    SpoolersLayout =  myCarousel.cells(Carousel[0]).attachLayout("2U");    
-    SpoolersLayout.cells("a").setText("{{ "Status" | trans }}");
-    SpoolersLayout.cells("b").hideHeader();
     
-    SpoolersGrid = SpoolersLayout.cells("b").attachGrid();
-    SpoolersGrid.setHeader("{{ "Spooler" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    SpoolersGrid.attachHeader("#text_filter,#select_filter,#text_filter");
-    SpoolersGrid.setInitWidths("*,100,150");
-    SpoolersGrid.setColAlign("left,center,right");
-    SpoolersGrid.setColTypes("ro,ro,ro");
-    SpoolersGrid.setColSorting("str,str,date");
-    SpoolersGrid.enableAlterCss("even_row","odd_row");  
-    SpoolersGrid.init();
-    SpoolersGrid.enableSmartRendering(true,50); 
+    Dashboard = globalLayout.cells("c").attachLayout("2E");
+    myLayoutUp = Dashboard.cells("a").attachLayout("3W");
+    myLayoutDown = Dashboard.cells("b").attachLayout("3W");
     
-    SpoolersChart = SpoolersLayout.cells("a").attachChart({
+    SpoolersChart = myLayoutUp.cells("a").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -39,23 +24,7 @@ function Init() {
             } 
     });
 
-    Carousel[1] = myCarousel.addCell();
-    ChainsLayout =  myCarousel.cells(Carousel[1]).attachLayout("2U");    
-    ChainsLayout.cells("b").hideHeader();
-    ChainsLayout.cells("a").setText("{{ "Job chains" | trans }}");
-    
-    ChainsGrid = ChainsLayout.cells("b").attachGrid();
-    ChainsGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "Status" | trans }},{{ "Orders" | trans }},{{ "Time" | trans }}");
-    ChainsGrid.attachHeader("#select_filter,#text_filter,#select_filter,#text_filter,#text_filter");
-    ChainsGrid.setInitWidths("*,*,120,100,150");
-    ChainsGrid.setColAlign("left,left,center,center,right");
-    ChainsGrid.setColTypes("ro,ro,ro,ro,ro");
-    ChainsGrid.setColSorting("str,str,str,str,date");
-    ChainsGrid.enableAlterCss("even_row","odd_row");  
-    ChainsGrid.init();
-    ChainsGrid.enableSmartRendering(true,50);    
-
-    ChainsChart = ChainsLayout.cells("a").attachChart({
+    ChainsChart = myLayoutUp.cells("b").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -72,23 +41,7 @@ function Init() {
             } 
     });
 
-    Carousel[2] = myCarousel.addCell();
-    OrdersLayout =  myCarousel.cells(Carousel[2]).attachLayout("2U");    
-    OrdersLayout.cells("b").hideHeader();
-    OrdersLayout.cells("a").setText("{{ "Spoolers" | trans }}");
-    
-    OrdersGrid = OrdersLayout.cells("b").attachGrid();
-    OrdersGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "Order" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    OrdersGrid.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#select_filter,#text_filter");
-    OrdersGrid.setInitWidths("*,*,*,120,120,150");
-    OrdersGrid.setColAlign("left,left,left,center,center,right");
-    OrdersGrid.setColTypes("ro,ro,ro,ro,ro,ro");
-    OrdersGrid.setColSorting("str,str,str,str,str,date");
-    OrdersGrid.enableAlterCss("even_row","odd_row");  
-    OrdersGrid.init();
-    OrdersGrid.enableSmartRendering(true,50);    
-
-    OrdersChart = OrdersLayout.cells("a").attachChart({
+    OrdersChart = myLayoutUp.cells("c").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -105,23 +58,7 @@ function Init() {
             } 
     });
 
-    Carousel[3] = myCarousel.addCell();
-    JobsLayout =  myCarousel.cells(Carousel[3]).attachLayout("2U");    
-    JobsLayout.cells("b").hideHeader();
-    JobsLayout.cells("a").setText("{{ "Jobs" | trans }}");
-    
-    JobsGrid = JobsLayout.cells("b").attachGrid();
-    JobsGrid.setHeader("{{ "Spooler" | trans }},{{ "Job" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    JobsGrid.attachHeader("#select_filter,#text_filter,#select_filter,#numeric_filter,#text_filter");
-    JobsGrid.setInitWidths("*,*,120,150");
-    JobsGrid.setColAlign("left,left,center,right");
-    JobsGrid.setColTypes("ro,ro,ro,ro");
-    JobsGrid.setColSorting("str,str,str,str,date");
-    JobsGrid.enableAlterCss("even_row","odd_row");  
-    JobsGrid.init();
-    JobsGrid.enableSmartRendering(true,50);    
-
-    JobsChart = JobsLayout.cells("a").attachChart({
+    JobsChart = myLayoutDown.cells("a").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -138,23 +75,7 @@ function Init() {
             } 
     });
 
-    Carousel[3] = myCarousel.addCell();
-    ClassesLayout =  myCarousel.cells(Carousel[3]).attachLayout("2U");    
-    ClassesLayout.cells("b").hideHeader();
-    ClassesLayout.cells("a").setText("{{ "Process classes" | trans }}");
-    
-    ClassesGrid = ClassesLayout.cells("b").attachGrid();
-    ClassesGrid.setHeader("{{ "Spooler" | trans }},{{ "Job" | trans }},{{ "Status" | trans }},{{ "Remote" | trans }},{{ "Time" | trans }}");
-    ClassesGrid.attachHeader("#select_filter,#text_filter,#select_filter,#text_filter,#text_filter");
-    ClassesGrid.setInitWidths("*,*,120,*,150");
-    ClassesGrid.setColAlign("left,left,center,left,right");
-    ClassesGrid.setColTypes("ro,ro,ro,ro,ro");
-    ClassesGrid.setColSorting("str,str,str,str,str,date");
-    ClassesGrid.enableAlterCss("even_row","odd_row");  
-    ClassesGrid.init();
-    ClassesGrid.enableSmartRendering(true,50);    
-
-    ClassesChart = ClassesLayout.cells("a").attachChart({
+    ClassesChart = myLayoutDown.cells("b").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -171,24 +92,7 @@ function Init() {
             } 
     });
 
-    Carousel[5] = myCarousel.addCell();
-    LocksAllLayout = myCarousel.cells(Carousel[5]).attachLayout("2E");    
-    LocksLayout =  LocksAllLayout.cells("a").attachLayout("2U");    
-    LocksLayout.cells("b").hideHeader();
-    LocksLayout.cells("a").setText("{{ "Locks" | trans }}");
-    
-    LocksGrid = LocksLayout.cells("b").attachGrid();
-    LocksGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "Lock" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    LocksGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
-    LocksGrid.setInitWidths("*,*,120,120,150");
-    LocksGrid.setColAlign("left,left,left,center,right");
-    LocksGrid.setColTypes("ro,ro,ro,ro,ro");
-    LocksGrid.setColSorting("str,str,str,str,date");
-    LocksGrid.enableAlterCss("even_row","odd_row");  
-    LocksGrid.init();
-    LocksGrid.enableSmartRendering(true,50);    
-
-    LocksChart = LocksLayout.cells("a").attachChart({
+    LocksChart = myLayoutDown.cells("c").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -205,101 +109,22 @@ function Init() {
             } 
     });
 
-    LocksUseLayout =  LocksAllLayout.cells("b").attachLayout("2U");    
-    LocksUseLayout.cells("b").hideHeader();
-    LocksUseLayout.cells("a").setText("{{ "Locks use" | trans }}");
-    
-    LocksUseGrid = LocksUseLayout.cells("b").attachGrid();
-    LocksUseGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "Lock" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    LocksUseGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
-    LocksUseGrid.setInitWidths("*,*,120,120,150");
-    LocksUseGrid.setColAlign("left,left,left,center,right");
-    LocksUseGrid.setColTypes("ro,ro,ro,ro,ro");
-    LocksUseGrid.setColSorting("str,str,str,str,date");
-    LocksUseGrid.enableAlterCss("even_row","odd_row");  
-    LocksUseGrid.init();
-    LocksUseGrid.enableSmartRendering(true,50);    
-
-    LocksUseChart = LocksUseLayout.cells("a").attachChart({
-            view:"donut",
-            value:"#NB#",
-            label:"",
-            tooltip: "#NAME#",
-            color: "#COLOR#",
-            border:false,
-            pieInnerText: "",
-            shadow: 0,
-            legend:{
-                width: 0,
-                template: "#NAME#",
-                valign:"top",
-                align:"left"
-            } 
-    });
-    
 }
 
 function PageRefresh() {
-    SpoolersChart.load( "{{ url('xml_JOC_spoolers_pie') }}", function () {
-        SpoolersLayout.cells("b").progressOn();
-        SpoolersGrid.load("{{ url('xml_JOC_spoolers_list') }}", function () {
-            SpoolersGrid.refreshFilters();
-            SpoolersGrid.filterByAll();
-            SpoolersLayout.cells("b").progressOff();
-            OrdersChart.load("{{ url('xml_JOC_orders_pie') }}", function () {
-                OrdersLayout.cells("b").progressOn();
-                OrdersGrid.load("{{ url('xml_JOC_orders_list') }}", function () {                        
-                    OrdersGrid.refreshFilters();
-                    OrdersGrid.filterByAll();
-                    OrdersLayout.cells("b").progressOff();
-                    ChainsChart.load("{{ url('xml_JOC_chains_pie') }}", function () {
-                        ChainsLayout.cells("b").progressOn();
-                        ChainsGrid.load("{{ url('xml_JOC_chains_list') }}", function () {
-                            ChainsLayout.cells("b").progressOff();
-                            ChainsGrid.refreshFilters();
-                            ChainsGrid.filterByAll();
-                            JobsChart.load("{{ url('xml_JOC_jobs_pie') }}", function () {
-                                JobsLayout.cells("b").progressOn();
-                                JobsGrid.load("{{ url('xml_JOC_jobs_list') }}", function () {
-                                    JobsGrid.refreshFilters();
-                                    JobsGrid.filterByAll();
-                                    JobsLayout.cells("b").progressOff();
-                                    ClassesChart.load("{{ url('xml_JOC_process_classes_pie') }}", function () {
-                                        ClassesLayout.cells("b").progressOn();
-                                        ClassesGrid.load("{{ url('xml_JOC_process_classes_list') }}", function () {
-                                            ClassesLayout.cells("b").progressOff();
-                                            ClassesGrid.refreshFilters();
-                                            ClassesGrid.filterByAll();
-                                            LocksChart.load("{{ url('xml_JOC_locks_pie') }}", function () {
-                                                LocksLayout.cells("b").progressOn();
-                                                LocksGrid.load("{{ url('xml_JOC_locks_list') }}", function () {
-                                                    LocksGrid.refreshFilters();
-                                                    LocksGrid.filterByAll();       
-                                                    LocksLayout.cells("b").progressOff();
-                                                    LocksUseChart.load("{{ url('xml_JOC_locks_use_pie') }}", function () {
-                                                        LocksUseLayout.cells("b").progressOn();
-                                                        LocksUseGrid.load("{{ url('xml_JOC_locks_use_list') }}", function () {
-                                                            LocksUseGrid.refreshFilters();
-                                                            LocksUseGrid.filterByAll();                                        
-                                                            LocksUseLayout.cells("b").progressOff();
-                                                            if (myCarousel.getActiveIndex() >= 5)
-                                                                myCarousel.goFirst();
-                                                            else
-                                                                myCarousel.goNext();                                        
-                                                        });
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
+SpoolersChart.load( "{{ url('xml_JOC_spoolers_pie') }}", function () {
+    OrdersChart.load("{{ url('xml_JOC_orders_pie') }}", function () {
+        ChainsChart.load("{{ url('xml_JOC_chains_pie') }}", function () {
+            JobsChart.load("{{ url('xml_JOC_jobs_pie') }}", function () {
+                ClassesChart.load("{{ url('xml_JOC_process_classes_pie') }}", function () {
+                    LocksChart.load("{{ url('xml_JOC_locks_pie') }}", function () {
                     });
                 });
             });
         });
     });
+});
+
 }
 </script>
 {% endblock %}

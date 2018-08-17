@@ -10,6 +10,10 @@ services:
         class: Arii\ATSBundle\Service\AriiState
         arguments: [ "@arii_core.dhtmlx", "@arii_core.sql", "@arii_core.date", "@arii_core.tools"]
 
+    arii_ats.state2:
+        class: Arii\ATSBundle\Service\AriiState2
+        arguments: [ "@arii_core.portal", "@arii_core.tools", "@arii_ats.autosys" ]
+
     arii_ats.exec:
         class: Arii\ATSBundle\Service\AriiExec
         arguments: [ "@arii_core.portal" ]

@@ -9,7 +9,7 @@ use Symfony\Component\Yaml\Parser;
 
 class DefaultController extends Controller
 {
-    public function indexAction()
+    public function indexAction($db)
     {
         // La db est en parametre ?
         $request = Request::createFromGlobals();
@@ -18,7 +18,7 @@ class DefaultController extends Controller
             $portal->setDatabaseByName($request->get('db'));
         if ($request->get('db_id')!='')
             $portal->setDatabaseById($request->get('db_id'));
-        return $this->render('AriiATSBundle:Default:index.html.twig');
+        return $this->render('AriiATSBundle:Default:index.html.twig', [ 'db' => $db ]);
     }
     
     // Index sur la base de données

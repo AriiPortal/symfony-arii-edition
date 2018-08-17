@@ -1,10 +1,6 @@
 # --------------------------------------------------------------------------
 # PAGES PRINCIPALES
 # --------------------------------------------------------------------------
-arii_ATS_index:
-    path:  /
-    defaults: { _controller: AriiATSBundle:Default:index }
-
 arii_ATS_readme:
     path:  /readme
     defaults: { _controller: AriiATSBundle:Default:readme }
@@ -77,9 +73,9 @@ xml_ATS_nodes_grid:
 # --------------------------------------------------------------------------
 # base de données définie
 # --------------------------------------------------------------------------
-arii_ATS_index_db:
-    path:  /db/{db}
-    defaults: { _controller: AriiATSBundle:Default:db, db: ats_db }
+arii_ATS_index:
+    path:  /{db}
+    defaults: { _controller: AriiATSBundle:Default:index, db: ats_db }
     
 # --------------------------------------------------------------------------
 # Config
@@ -305,20 +301,24 @@ xml_ATS_processed_grid_toolbar:
 # AUDIT
 # --------------------------------------------------------------------------
 arii_ATS_audit:
-    path:  /audit
-    defaults: { _controller: AriiATSBundle:Audit:index }
+    path:  /db/{db}/audit
+    defaults: { _controller: AriiATSBundle:Audit:index, db: ats_db }
 
 xml_ATS_audit_grid:
-    path:  /audit/grid.xml
-    defaults: { _controller: AriiATSBundle:Audit:grid }
+    path:  /db/{db}/audit/grid.xml
+    defaults: { _controller: AriiATSBundle:Audit:grid, db: ats_db }
+
+xml_ATS_audit_jobs:
+    path:  /db/{db}/audit/jobs.xml
+    defaults: { _controller: AriiATSBundle:Audit:jobs, db: ats_db }
+
+xml_ATS_audit_job:
+    path:  /db/{db}/audit/job.xml
+    defaults: { _controller: AriiATSBundle:Audit:detail, db: ats_db }
 
 xml_ATS_audit_pie:
-    path:  /audit/pie.xml
-    defaults: { _controller: AriiATSBundle:Audit:pie }
-
-xml_ATS_audit_detail:
-    path:  /audit/detail.xml
-    defaults: { _controller: AriiATSBundle:Audit:detail }
+    path:  /db/{db}/audit/pie.xml
+    defaults: { _controller: AriiATSBundle:Audit:pie, db: ats_db }
 
 xml_ATS_audit_grid_toolbar:
     path:  /audit/toolbar.xml
@@ -328,28 +328,28 @@ xml_ATS_audit_grid_toolbar:
 # ALARMS
 # --------------------------------------------------------------------------
 arii_ATS_alarms:
-    path:  /alarms
-    defaults: { _controller: AriiATSBundle:Alarms:index }
+    path:  /db/{db}/alarms
+    defaults: { _controller: AriiATSBundle:Alarms:index, db: ats_db }
 
 xml_ATS_alarms_grid:
-    path:  /alarms/grid.xml
-    defaults: { _controller: AriiATSBundle:Alarms:grid }
+    path:  /db/{db}/alarms/grid.xml
+    defaults: { _controller: AriiATSBundle:Alarms:grid, db: ats_db }
 
 xml_ATS_alarms_pie:
-    path:  /alarms/pie.xml
-    defaults: { _controller: AriiATSBundle:Alarms:pie }
+    path:  /db/{db}/alarms/pie.xml
+    defaults: { _controller: AriiATSBundle:Alarms:pie, db: ats_db }
 
 xml_ATS_alarms_detail:
-    path:  /alarms/detail.xml
-    defaults: { _controller: AriiATSBundle:Alarms:detail }
+    path:  /db/{db}/alarms/detail.xml
+    defaults: { _controller: AriiATSBundle:Alarms:detail, db: ats_db }
 
 xml_ATS_alarms_grid_toolbar:
-    path:  /alarms/toolbar.xml
-    defaults: { _controller: AriiATSBundle:Alarms:toolbar }
+    path:  /db/{db}/alarms/toolbar.xml
+    defaults: { _controller: AriiATSBundle:Alarms:toolbar, db: ats_db }
 
 xml_ATS_alarms_grid_menu:
-    path:  /alarms/grid_menu.xml
-    defaults: { _controller: AriiATSBundle:Alarms:grid_menu }
+    path:  /db/{db}/alarms/grid_menu.xml
+    defaults: { _controller: AriiATSBundle:Alarms:grid_menu, db: ats_db }
 
 # --------------------------------------------------------------------------
 # ERRORS

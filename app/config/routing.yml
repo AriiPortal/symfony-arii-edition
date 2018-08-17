@@ -248,3 +248,12 @@ arii_Blockly:
     prefix:   /blockly/{_locale}
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
+
+# ========================================
+# Print serveurs
+# ----------------------------------------
+arii_Print:
+    resource: "@AriiPRTBundle/Resources/config/routing.yml"
+    prefix:   /prt/{_locale}
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 

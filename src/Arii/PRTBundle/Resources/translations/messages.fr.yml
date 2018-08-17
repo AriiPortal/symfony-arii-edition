@@ -1,0 +1,4 @@
+module.PRT: Serveur d'impression
+summary.ACK: Suivi des impressions
+text.ACK: Permet de suivre et contrôler l'état des serveurs d'impressions.
+Author: E. Angenault

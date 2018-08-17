@@ -23,7 +23,6 @@ dhtmlxEvent(window,"load",function(){
     globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
     globalLayout.cells("a").setHeight(120); 
     globalLayout.cells("b").setWidth(size); 
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
     globalLayout.cells("a").hideHeader();
     globalLayout.cells("c").hideHeader();
 
@@ -61,6 +60,7 @@ dhtmlxEvent(window,"load",function(){
     myToolbar.setIconsPath( "{{ asset('/images/') }}" );
     Init();
     GlobalRefresh();
+    globalLayout.cells("b").setText("{{ "Menu" | trans }}");     
     autorefresh = setInterval( "GlobalRefresh()",update*1000);
 });
 </script>

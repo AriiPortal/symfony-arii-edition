@@ -1,66 +1,28 @@
-{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiATSBundle::layout.html.twig" %}
 {% block body %}
-<script type="text/javascript">
-var max_history = 0; // pas d'historique
-var chained = 0; // que des standalone
-var only_warning = 0; // que les problemes
-var update=30;
-var autorefresh;
-var status;
-
-dhtmlxEvent(window,"load",function(){     
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(355); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-    globalLayout.cells("c").hideHeader(); 
-    globalLayout.cells("c").setHeight(260); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ATS_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
+<script language="javascript">
+function Init() {
+    globalLayout.cells("c").setText("{{ "Alarms" | trans }}");
+    
+    myLayout = globalLayout.cells("c").attachLayout("2E");
+    myLayout.cells("a").hideHeader();
+    myLayout.cells("b").setText("{{ "Detail" | trans }}");
+    
     myGridMenu = new dhtmlXMenuObject(null);
     myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
     myGridMenu.renderAsContextMenu();
     myGridMenu.loadStruct("{{ url('xml_ATS_alarms_grid_menu') }}");
 
-    myDonut =  globalLayout.cells("a").attachChart({
-            view:"donut",
-            container:"pie_chart_container",
-            value:"#JOBS#",
-            label:"",
-            tooltip: "#STATUS#",
-            color: "#COLOR#",
-            border:false,
-            pieInnerText: "#JOBS#",
-            shadow: 0,
-            legend:{
-                width: 0,
-                template: "#STATUS#",
-                valign:"top",
-                align:"left"
-            } 
-    });
-    myDonut.load( "{{ url('xml_ATS_alarms_pie') }}?only_warning="+only_warning );
-    
-    myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("a").attachGrid();
     myGrid.selMultiRows = true;
     myGrid.setImagePath( "{{ asset('/images/') }}");
 
-    myGrid.setHeader("{{ "Date" | trans }},{{ "Alarm" | trans }},{{ "State" | trans }},{{ "Job name" | trans }},{{ "User" | trans }},{{ "Comment" | trans }},{{ "Response" | trans }},{{ "#Event" | trans }}");
-    myGrid.attachHeader("#text_filter,#select_filter,#select_filter,#text_filter,#select_filter,#text_filter,#text_filter,#numeric_filter");
-    myGrid.setInitWidths("140,180,180,200,150,*,200,40");
-    myGrid.setColAlign("left,left,left,left,left,left,left,left");
-    myGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
-    myGrid.setColSorting("date,str,str,str,str,str,str,int");
+    myGrid.setHeader("{{ "Date" | trans }},{{ "Job name" | trans }},{{ "Alarm" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "User" | trans }},{{ "Comment" | trans }},#,joid");
+    myGrid.attachHeader("#text_filter,#select_filter,#select_filter,#select_filter,#select_filter,#select_filter,#text_filter,#numeric_filter,#numeric_filter");
+    myGrid.setInitWidths("150,220,140,80,150,150,*,60,50");
+    myGrid.setColAlign("left,left,left,left,left,left,left,left,left");
+    myGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myGrid.setColSorting("date,str,str,str,str,str,str,int,int");
     myGrid.enableContextMenu(myGridMenu);    
     myGrid.enableAlterCss("","");
     myGrid.init();
@@ -83,12 +45,7 @@ dhtmlxEvent(window,"load",function(){
     myGrid.load( "{{ url('xml_ATS_alarms_grid') }}");
     myGrid.attachEvent("onRowDblClicked", Detail );
 
-    myDonut.attachEvent("onItemClick",function(id, value){
-        status = id;
-        myGrid.filterBy(4, status);  
-    });
-
-    myGridToolbar = globalLayout.cells("b").attachToolbar();
+    myGridToolbar = myLayout.cells("a").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");
     myGridToolbar.loadStruct( "{{ url('xml_ATS_alarms_grid_toolbar') }}");
     myGridToolbar.attachEvent("onClick",function(itemid){
@@ -127,7 +84,25 @@ dhtmlxEvent(window,"load",function(){
         }
     });
     
-    myDetail = globalLayout.cells("c").attachGrid();
+    myTabbar = myLayout.cells("b").attachTabbar();
+    myTabbar.addTab("detail","{{ "Detail" | trans }}","100px", null, true);
+    myTabbar.addTab("history","{{ "History" | trans }}","100px");
+    
+    myLayoutHistory = myTabbar.cells("history").attachLayout("2U");
+    myLayoutHistory.cells("a").hideHeader();
+    myLayoutHistory.cells("b").hideHeader();
+
+    formDetailData = [
+        { type: "settings", position: "label-left", labelWidth: 80, inputWidth: 500, noteWidth: 250},
+        { type: "hidden", name: "id" },
+        { type: "input", name: "response", label: "{{ "Response" | trans }}", rows: 5 },
+        { type: "input", name: "status", label: "{{ "Status" | trans }}" },
+        { type: "input", name: "jobName", label: "{{ "Job name" | trans }}" }    
+    ];
+    
+    myFormDetail = myTabbar.cells("detail").attachForm(formDetailData);
+    
+    myDetail = myLayoutHistory.cells("b").attachGrid();
     myDetail.selMultiRows = true;
     myDetail.setImagePath( "{{ asset('/images/') }}");
     myDetail.setHeader("{{ "Alarm" | trans }},{{ "Status" | trans }},{{ "Event" | trans }}");
@@ -138,15 +113,13 @@ dhtmlxEvent(window,"load",function(){
     myDetail.setColSorting("int,str,str");
     myDetail.enableAlterCss("","");
     myDetail.init();
-    
-    // Premier chargement avant le smart rendering
-    autorefresh = setInterval( "GridRefresh()",update*1000);
-});
 
-function GlobalRefresh() {
-    clearInterval( autorefresh );
+    myLayout.cells("b").collapse();
+    
+}
+
+function PageRefresh() {
     GridRefresh();
-    autorefresh = setInterval( "GridRefresh()", update*1000 );
 }
 
 function GridRefresh() {
@@ -162,22 +135,16 @@ function GridRefresh() {
     }
     myRibbon.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );
     myGrid.load("{{ url('xml_ATS_alarms_grid') }}?time="+seconds+"&history="+max_history+"&chained="+chained+"&only_warning="+only_warning, function(){    
-        globalLayout.cells("b").progressOff();
         myGrid.refreshFilters();
         myGrid.filterByAll();
-//        myGrid.filterBy(4, status);  
-        myDonut.load( "{{ url('xml_ATS_alarms_pie') }}?chained="+chained+"&only_warning="+only_warning, function () {
-            myDonut.refresh();                
-            globalLayout.progressOff();
-            globalLayout.cells("a").progressOff();
-        });
     });    
 }
 
-function Detail(id) {
-    globalLayout.cells("c").progressOn();
-    myDetail.clearAndLoad("{{ url('xml_ATS_alarms_detail') }}?id="+id, function(){    
-        globalLayout.cells("c").progressOff();
+function Detail(id) {    
+    myLayout.cells("b").expand();    
+    myTabbar.cells("detail").progressOn();    
+    myFormDetail.load("{{ url('xml_ATS_alarms_detail') }}?id="+id, function(){
+        myTabbar.cells("detail").progressOff();
     });    
 }
 </script>

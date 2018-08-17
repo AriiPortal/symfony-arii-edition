@@ -51,7 +51,11 @@ class AriiPortal
     public function getSessionVar($var) {
         return $this->session->get($var);
     }
-    
+
+    // pour le futur, il faudra passer le TZ du client
+    public function getTimeZone() {      
+        return new \DateTimeZone(ini_get('date.timezone'));
+    }
     /**************************************
      * Utilisateur connecté
      * 
@@ -469,6 +473,7 @@ Gris    #f2f2f2
         // ALERTE
             'OPEN' => '#fbb4ae',
             'ACKNOWLEDGED' => '#ffffcc',
+            'ACK.' => '#ffffcc',
             'CLOSED' => '#ccebc5',
         // LOCK
             'FREE' => '#ccebc5',
@@ -508,6 +513,7 @@ Gris    #f2f2f2
         }
         return array();
     }
+
     
     /**************************************
      * Pays

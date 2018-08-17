@@ -1,0 +1,19 @@
+arii_PRT_index:
+    path:  /
+    defaults: { _controller: AriiPRTBundle:Default:index }
+
+arii_PRT_readme:
+    path:  /readme
+    defaults: { _controller: AriiPRTBundle:Default:readme }
+
+json_PRT_ribbon:
+    path:  /ribbon.json
+    defaults: { _controller: AriiPRTBundle:Default:ribbon }
+
+json_PRT_menu:
+    path:  /menu.json
+    defaults: { _controller: AriiPRTBundle:Default:menu }
+    
+xml_PRT_toolbar:
+    path:  /toolbar.xml
+    defaults: { _controller: AriiPRTBundle:Default:toolbar }

@@ -6,13 +6,12 @@ function Init() {
     
     myLayout = globalLayout.cells("c").attachLayout("1C");
     myLayout.cells("a").hideHeader();
-    
-    myTree = myLayout.cells("a").attachTree();
-    myTree.setImagesPath("{{ asset('/images/') }}");
-    myTree.load("{{ url('xml_JID_tree') }}");
-    myTree.attachEvent("onClick", function(id) {
-        if (id.substr(0,2)=='s.') return true;
-    })
+
+
 }
+
+
+function PageRefresh() {}
+
 </script>
 {% endblock %}

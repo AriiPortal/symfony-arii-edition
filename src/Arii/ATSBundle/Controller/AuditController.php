@@ -22,12 +22,12 @@ class AuditController extends Controller
           $this->images = $request->getUriForPath('/../bundles/ariicore/images/wa');          
     }
 
-    public function indexAction()
+    public function indexAction($db)
     {
-        return $this->render('AriiATSBundle:Audit:index.html.twig');
+        return $this->render('AriiATSBundle:Audit:index.html.twig', [ 'db' => $db ]);
     }
     
-    public function toolbarAction()
+    public function toolbarAction($db)
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
@@ -62,20 +62,13 @@ class AuditController extends Controller
     [GLOBAL_VALUE] => 
     [WF_JOID] => 1
  */
-    public function gridAction()
+    public function gridAction($db)
     {
-        $sql = $this->container->get('arii_core.sql');
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
-        $qry = $sql->Select(
-                    array(  'm.AUDIT_INFO_NUM', 'm.SEQ_NO','m.ATTRIBUTE','m.VALUE1','m.VALUE2','m.IS_EDIT',
-                            'i.ENTITY','i.TIME','i.TYPE'))
-                .$sql->From(array('UJO_AUDIT_INFO i'))
-                .$sql->LeftJoin('UJO_AUDIT_MSG m',array('i.AUDIT_INFO_NUM','m.AUDIT_INFO_NUM'))
-                .$sql->Where(array('{start_timestamp}'=> 'i.TIME'))
-                .$sql->OrderBy(array('AUDIT_INFO_NUM desc'));
-
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('data');
+        $em = $this->getDoctrine()->getManager($db);        
+        $state = $this->container->get('arii_ats.state2');        
+        $Audit = $state->AuditSendevent($em);
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
@@ -86,32 +79,18 @@ class AuditController extends Controller
                 <call command="clearAll"/>
             </afterInit>
         </head>';
-
-        $res = $data->sql->query($qry);
-        $autosys = $this->container->get('arii_ats.autosys');
-        $date = $this->container->get('arii_core.date');
-        while ($line = $data->sql->get_next($res))
-        {
-            if (    (($line['TYPE']=='S') and ($line['SEQ_NO']<>3))
-                    or (($line['TYPE']=='J') and ($line['SEQ_NO']<>1))) continue;
-            
-            $list .= '<row id="'.$line['AUDIT_INFO_NUM'].'"';            
-            if ($line['ATTRIBUTE']=='insert_job') {
-                $list .= '  bgColor="'.$this->Color['insert_job'].'"';
-            }
-            elseif ($line['ATTRIBUTE']=='delete_job') {
-                $list .= '  bgColor="'.$this->Color['delete_job'].'"';
-            } 
-            $list .= '>';
-            
-            list($login,$machine) = explode('@',$line['ENTITY']);
-            $list .= '<cell>'.$date->Time2Local($line['TIME'],'',true).'</cell>';
-            $list .= '<cell>'.$line['TYPE'].'</cell>';
-            $list .= '<cell>'.$line['ATTRIBUTE'].'</cell>';
-            $list .= '<cell><![CDATA['.$line['VALUE1'].' '.$line['VALUE2'].']]></cell>';
-            $list .= '<cell>'.$login.'</cell>';             
-            $list .= '<cell>'.$machine.'</cell>';
-            $list .= '<cell>'.$line['IS_EDIT'].'</cell>';
+        
+        foreach ($Audit as $id=>$Info) {
+            $list .= '<row id="'.$id.'">';            
+            $list .= '<cell>'.$Info['date']->format('Y-m-d H:i:s').'</cell>';
+            $list .= '<cell>'.$Info['event'].'</cell>';
+            $list .= '<cell>'.$Info['job'].'</cell>';
+            $list .= '<cell>'.$Info['status'].'</cell>';
+            $list .= '<cell>'.$Info['global'].'</cell>';
+            $list .= '<cell>'.$Info['user'].'</cell>';             
+            $list .= '<cell>'.$Info['domain'].'</cell>';
+            $list .= '<cell>'.$Info['comment'].'</cell>';
+            $list .= '<cell>'.$Info['instance'].'</cell>';
             $list .= '</row>'; 
         }
         $list .= "</rows>\n";
@@ -119,28 +98,70 @@ class AuditController extends Controller
         return $response;        
     }
 
-   public function DetailAction()
+    public function jobsAction($db)
+    {
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
+        
+        $em = $this->getDoctrine()->getManager($db);        
+        $state = $this->container->get('arii_ats.state2');        
+        $Audit = $state->AuditJobs($em);
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        $list = '<?xml version="1.0" encoding="UTF-8"?>';
+        $list .= "<rows>\n";
+        $list .= '<head>
+            <afterInit>
+                <call command="clearAll"/>
+            </afterInit>
+        </head>';
+        
+        foreach ($Audit as $id=>$Info) {
+            $list .= '<row id="'.$id.'">';            
+            $list .= '<cell>'.$Info['date']->format('Y-m-d H:i:s').'</cell>';
+            $list .= '<cell>'.$Info['event'].'</cell>';
+            $list .= '<cell>'.$Info['job'].'</cell>';
+            $list .= '<cell>'.$Info['user'].'</cell>';             
+            $list .= '<cell>'.$Info['host'].'</cell>';
+            $list .= '</row>'; 
+        }
+        $list .= "</rows>\n";
+        $response->setContent( $list );
+        return $response;        
+    }
+    
+   public function DetailAction($db)
     {
         $request = Request::createFromGlobals();
         $id = $request->get('id');
-        $sql = $this->container->get('arii_core.sql');                  
-        $qry = $sql->Select(array('SEQ_NO','ATTRIBUTE','VALUE1','VALUE2','IS_EDIT'))
-                .$sql->From(array('UJO_AUDIT_MSG'))
-                .$sql->Where(array('AUDIT_INFO_NUM' => $id));
         
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('grid');
-        $data->event->attach("beforeRender",array($this,"detail_render"));
-        $data->render_sql($qry,'SEQ_NO','SEQ_NO,ATTRIBUTE,VALUE');
+        $em = $this->getDoctrine()->getManager($db);
+        $state = $this->container->get('arii_ats.state2');        
+        $Audit = $state->AuditJob($em,$id);
+        
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        $list = '<?xml version="1.0" encoding="UTF-8"?>';
+        $list .= "<rows>\n";
+        $list .= '<head>
+            <afterInit>
+                <call command="clearAll"/>
+            </afterInit>
+        </head>';
+        
+        foreach ($Audit as $id=>$Info) {
+            $list .= '<row id="'.$id.'" style="color: '.$Info['color'].'">';            
+            $list .= '<cell>'.$Info['attribute'].'</cell>';
+            $list .= '<cell><![CDATA['.$Info['value'].']]></cell>';
+            $list .= '<cell>'.$Info['is_edit'].'</cell>';
+            $list .= '</row>'; 
+        }
+        $list .= "</rows>\n";
+        $response->setContent( $list );
+        return $response;        
     }
 
-    function detail_render ($data){
-        $data->set_value( 'VALUE', $data->get_value('VALUE1').' '.$data->get_value('VALUE2') );
-        if ($data->get_value('IS_EDIT')=='Y')
-            $data->set_row_color("#00cccc");
-    }
-
-    public function pieAction() {
+    public function pieAction($db) {
         $dhtmlx = $this->container->get('arii_core.dhtmlx');
         $data = $dhtmlx->Connector('data');
                 

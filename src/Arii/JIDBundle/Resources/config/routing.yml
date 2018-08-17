@@ -5,10 +5,6 @@ arii_JID_rest:
 # --------------------------------------------------------------------------
 # PAGES PRINCIPALES
 # --------------------------------------------------------------------------
-arii_JID_index:
-    path:  /{db}
-    defaults: { _controller: AriiJIDBundle:Default:index, db: ojs_db }
-
 html_JID_summary:
     path:  /{db}/summary.html
     defaults: { _controller: AriiJIDBundle:Default:summary }
@@ -45,6 +41,10 @@ html_JID_config:
     path:  /config.html
     defaults: { _controller: AriiJIDBundle:Config:config }
 
+arii_JID_index:
+    path:  /{db}
+    defaults: { _controller: AriiJIDBundle:Default:index, db: ojs_db }
+
 #--------------------------------------------------------------------
 # Outils communs aux modules JobScheduler
 #--------------------------------------------------------------------
@@ -57,12 +57,8 @@ arii_XML_Command:
 # Jobs
 # --------------------------------------------------------------------------
 arii_JID_jobs:
-    path:  /jobs
-    defaults: { _controller: AriiJIDBundle:Jobs:index }
-
-arii_JID_jobs_index:
-    path:  /jobs
-    defaults: { _controller: AriiJIDBundle:Jobs:index }
+    path:  /db/{db}/jobs
+    defaults: { _controller: AriiJIDBundle:Jobs:index, db: ojs_db }
 
 xml_JID_jobs_tree:
     path:  /jobs/tree.xml
@@ -71,7 +67,6 @@ xml_JID_jobs_tree:
 xml_JID_jobs_grid:
     path:  /jobs/grid.xml/
     defaults: { _controller: AriiJIDBundle:Jobs:grid }
-
 
 xml_JID_jobs_grid_menu:
     path:  /jobs/grid_menu.xml
@@ -127,7 +122,6 @@ xml_JID_job_details:
 xml_JID_jobs_grid_chain:
     path:  /jobs/gridChain.xml/bool={bool}
     defaults: { _controller: AriiJIDBundle:Jobs:gridChain }
-
 
 xml_JID_job_grid_date:
   path: /jobs/gridDate.xml/from={date1}/to={date2}

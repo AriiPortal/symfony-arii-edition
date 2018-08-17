@@ -23,6 +23,20 @@ class AriiState
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
+    public function Alarms($em,$start,$end) {
+      
+       // On regarde les chaines stoppés
+       // On complete avec les ordres stockés
+       $JobChainsStopped = $em->getRepository("AriiJIDBundle:SchedulerJobChains")->findStopped();
+       $nb = 0;
+       $StopChain = array();
+       foreach($JobChainsStopped as $JobChain) {
+           $cn = $JobChain->getSpoolerId().'/'.$JobChain->getPath();
+           $StopChain[$cn]=1;
+       }
+    }
+
+    
    public function Jobs($box='',$only_warning=0,$box_more=0) {   
         $date = $this->date;        
         $sql = $this->sql;

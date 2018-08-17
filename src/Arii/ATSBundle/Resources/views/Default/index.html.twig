@@ -1,24 +1,13 @@
-{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiATSBundle::layout.html.twig" %}
 {% block body %}
-<script type="text/javascript">
-dhtmlxEvent(window,"load",function(){     
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
-    globalLayout.cells("a").setWidth(340); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
+<script language="javascript">
+function Init() {
+    globalLayout.cells("c").setText("{{ "Orders" | trans }}");
     
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
+    myLayout = globalLayout.cells("c").attachLayout("1C");
+    myLayout.cells("a").hideHeader();
 
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ATS_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    myGrid = globalLayout.cells("a").attachGrid();
+    myGrid = myLayout.cells("a").attachGrid();
     myGrid.selMultiRows = true;
     myGrid.setImagePath( "{{ asset('/images/') }}");
     myGrid.setHeader("{{ "Node" | trans }},{{ "Database" | trans }},name");
@@ -30,9 +19,10 @@ dhtmlxEvent(window,"load",function(){
     myGrid.init();
     myGrid.load( "{{ url('xml_ATS_nodes_grid') }}");
     myGrid.attachEvent("onRowDblClicked",function(id) { 
-        globalLayout.cells("b").attachURL('{{ url('html_ATS_summary') }}?db_id='+this.cells(id,2).getValue()); 
     });
-    globalLayout.cells("b").attachURL('{{ url('html_ATS_summary') }}'); 
-});
+}
+
+function PageRefresh() {}
+
 </script>
 {% endblock %}

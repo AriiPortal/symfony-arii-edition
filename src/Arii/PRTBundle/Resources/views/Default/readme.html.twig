@@ -1,0 +1,9 @@
+{% extends "AriiACKBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    myToolbar.unload();
+    globalLayout.cells("c").attachURL("{{ url('html_Home_readme') }}?route={{ app.request.attributes.get('_route') }}");
+}
+</script>
+{% endblock %}

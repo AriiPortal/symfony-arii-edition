@@ -33,6 +33,7 @@ class AppKernel extends Kernel
         new Arii\SelfBundle\AriiSelfBundle(),
         new Arii\JOBBundle\AriiJOBBundle(),
         new Arii\ACKBundle\AriiACKBundle(),
+        new Arii\PRTBundle\AriiPRTBundle(),
         new Arii\PlumbBundle\AriiPlumbBundle(),
         new Arii\BlocklyBundle\AriiBlocklyBundle()
         );

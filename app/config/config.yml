@@ -129,12 +129,12 @@ doctrine:
                     AriiACKBundle: ~
                 dql:
                     datetime_functions:
-                        Hour:  Arii\CoreBundle\DQL\%database_driver%\Hour
-                        Date:  Arii\CoreBundle\DQL\%database_driver%\Date
-                        Trunc: Arii\CoreBundle\DQL\%database_driver%\Trunc
-                        Month: Arii\CoreBundle\DQL\%database_driver%\Month
-                        Year:  Arii\CoreBundle\DQL\%database_driver%\Year
-                        Cast:  Arii\CoreBundle\DQL\%database_driver%\Cast
+                        Hour:  Arii\CoreBundle\DQL\%database_ojs_driver%\Hour
+                        Date:  Arii\CoreBundle\DQL\%database_ojs_driver%\Date
+                        Trunc: Arii\CoreBundle\DQL\Trunc
+                        Month: Arii\CoreBundle\DQL\Month
+                        Year:  Arii\CoreBundle\DQL\Year
+                        Cast:  Arii\CoreBundle\DQL\Cast
             ojs_db:
                 connection: ojs_db
                 mappings:

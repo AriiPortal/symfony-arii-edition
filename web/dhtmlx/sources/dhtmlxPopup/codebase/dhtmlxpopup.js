@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -50,7 +50,8 @@ function dhtmlXPopup(conf) {
 			t3: 9   // same as t1, for width
 		},
 		dhx_skyblue: {t0: 12, t1: 9, t2: 12, t3: 9},
-		dhx_web: {t0: 12, t1: 9, t2: 12, t3: 9}
+		dhx_web: {t0: 12, t1: 9, t2: 12, t3: 9},
+		material: {t0: 19, t1: 9, t2: 19, t3: 9}
 	};
 	
 	this.p.ontouchstart = this.p.onclick = function(e) {
@@ -313,7 +314,7 @@ function dhtmlXPopup(conf) {
 	this.clear = function() {
 		
 		if (this._nodeObj) {
-			if (window.dhx4.isIE && typeof(window.dhtmlXLayoutObject) != "undefined" && this._nodeObj instanceof dhtmlXLayoutObject) {
+			if (window.dhx4.isIE && typeof(window.dhtmlXLayoutObject) == "function" && this._nodeObj instanceof window.dhtmlXLayoutObject) {
 				this.p.onmousedown = null;
 			}
 			if (this._nodeObj.unload) {
@@ -554,7 +555,7 @@ function dhtmlXPopup(conf) {
 			if (id != null && that._idExists(id)) return;
 		}
 		// if popup has attached form - skin closing if list clicked (it attached to body)
-		if (typeof(window.dhtmlXForm) != "undefined" && that._nodeObj instanceof window.dhtmlXForm) {
+		if (typeof(window.dhtmlXForm) == "function" && that._nodeObj instanceof window.dhtmlXForm) {
 			var combos = {};
 			var p = 0;
 			var form = that._nodeObj;
@@ -615,10 +616,39 @@ function dhtmlXPopup(conf) {
 	
 	// grid canceling some events, but trigger inner event
 	this.conf.ev_grid_click = window.dhx4.attachEvent("_onGridClick", function(ev, grid){
-		if (that._nodeObj != null && that._nodeObj == grid) return;
-		that._clearClick = false;
-		that._doOnClick(ev);
+		if (that.p.contains(grid.entBox)) {
+			// clicked grid is inside popup, attached directly or to any nested control
+			// do not hide popup by this click
+		} else {
+			// grid is outside of popup
+			that._clearClick = false;
+			that._doOnClick(ev);
+		}
+		grid = null;
 	});
+	
+	this._findGrid = function(obj, grid) {
+		var gridFound = false;
+		if (typeof(window.dhtmlXTabBar) == "function" && obj instanceof window.dhtmlXTabBar) {
+			obj.forEachTab(function(tab){
+				var nested = tab.getAttachedObject();
+				if (gridFound == false && nested != null) {
+					gridFound = gridFound||(nested==grid)||this._findGrid(nested);
+					nested = null;
+				}
+			});
+		}
+		// check if attached to form's container
+		if (typeof(window.dhtmlXForm) == "function" && obj instanceof window.dhtmlXForm) {
+			obj.forEachItem(function(id){
+				if (gridFound != true && obj.getItemType(id) == "container" && grid.entBox == obj.getContainer(id)) {
+					gridFound = true;
+				}
+			});
+		}
+		obj = null;
+		return gridFound;
+	};
 	
 	this._idExists = function(id) {
 		var r = false;
@@ -692,7 +722,7 @@ function dhtmlXPopup(conf) {
 	}
 	
 	// auto-init, toolbar mode
-	if (typeof(window.dhtmlXToolbarObject) != "undefined" && this.conf.toolbar != null && this.conf.toolbar instanceof window.dhtmlXToolbarObject && this.conf.id != null) {
+	if (typeof(window.dhtmlXToolbarObject) == "function" && this.conf.toolbar != null && this.conf.toolbar instanceof window.dhtmlXToolbarObject && this.conf.id != null) {
 		
 		if (!(this.conf.id instanceof Array)) this.conf.id = [this.conf.id];
 		
@@ -731,7 +761,7 @@ function dhtmlXPopup(conf) {
 	}
 	
 	// auto-init, ribbon mode
-	if (typeof(window.dhtmlXRibbon) != "undefined" && this.conf.ribbon != null && this.conf.ribbon instanceof window.dhtmlXRibbon && this.conf.id != null) {
+	if (typeof(window.dhtmlXRibbon) == "function" && this.conf.ribbon != null && this.conf.ribbon instanceof window.dhtmlXRibbon && this.conf.id != null) {
 		
 		if (!(this.conf.id instanceof Array)) this.conf.id = [this.conf.id];
 		
@@ -770,7 +800,7 @@ function dhtmlXPopup(conf) {
 	}
 	
 	// auto-init, form mode
-	if (typeof(window.dhtmlXForm) != "undefined" && this.conf.form != null && this.conf.form instanceof window.dhtmlXForm && this.conf.id != null) {
+	if (typeof(window.dhtmlXForm) == "function" && this.conf.form != null && this.conf.form instanceof window.dhtmlXForm && this.conf.id != null) {
 		
 		if (!(this.conf.id instanceof Array)) this.conf.id = [this.conf.id];
 		
@@ -783,40 +813,43 @@ function dhtmlXPopup(conf) {
 				return this.doWithItem(name, "_getDim");
 			};
 			
-			// file - ??
-			for (var a in {input: 1, password: 1, select: 1, multiselect: 1, checkbox: 1, radio: 1, button: 1, combo: 1, btn2state: 1, calendar: 1, colorpicker: 1, editor: 1}) {
+			for (var a in dhtmlXForm.prototype.items) {
 				
-				if (dhtmlXForm.prototype.items[a] != null) {
-				
-					dhtmlXForm.prototype.items[a]._getDim = function(item) {
-						
-						var t = item;
-						//console.log(item._type)
-						
-						if ({"ta":true,"pw":true,"se":true,"calendar":true,"colorpicker":1,"editor":true}[item._type]) {
-							t = item.childNodes[item._ll?1:0].childNodes[0];
-						}
-						if ({"ch":true,"ra":true,"btn2state":true}[item._type]) {
-							t = item.childNodes[item._ll?1:0].childNodes[1];
-						}
-						if ({"bt":true}[item._type]){
-							t = item.firstChild;
-						}
-						if ({"combo":true}[item._type]){
-							t = item._combo.DOMParent.firstChild;
-						}
-						
-						
-						var p = {
-							left: window.dhx4.absLeft(t),
-							top: window.dhx4.absTop(t),
-							width: t.offsetWidth,
-							height: t.offsetHeight
-						};
-						t = null;
-						return p;
+				dhtmlXForm.prototype.items[a]._getDim = function(item) {
+					
+					var t = item;
+					
+					if ({ta:true, pw:true, se:true, tp:true, fl:true, calendar:true, colorpicker:1, editor:true, container:true}[item._type]) {
+						t = item.childNodes[item._ll?1:0].childNodes[0];
+					}
+					if ({ch:true, ra:true, btn2state:true}[item._type]) {
+						t = item.childNodes[item._ll?1:0].childNodes[1];
+					}
+					if ({bt:true, lb:true, fs:true}[item._type]) {
+						t = item.firstChild;
+					}
+					if ({combo:true}[item._type]) {
+						t = item._combo.DOMParent.firstChild;
+					}
+					if ({image:true}[item._type]) {
+						t = item.childNodes[item._ll?1:0].lastChild;
+					}
+					if ({bl:true}[item._type]) {
+						t = item.firstChild.firstChild.firstChild; // nested form's base
+					}
+					
+					var p = {
+						left: window.dhx4.absLeft(t),
+						top: window.dhx4.absTop(t),
+						width: t.offsetWidth,
+						height: t.offsetHeight
 					};
-				}
+					
+					t = null;
+					return p;
+					
+				};
+				
 			}
 			
 		}
@@ -824,7 +857,7 @@ function dhtmlXPopup(conf) {
 	}
 	
 	// auto-init, slider mode
-	if (typeof(window.dhtmlXSlider) != "undefined" && this.conf.slider != null && this.conf.slider instanceof window.dhtmlXSlider) {
+	if (typeof(window.dhtmlXSlider) == "function" && this.conf.slider != null && this.conf.slider instanceof window.dhtmlXSlider) {
 		
 		if (!this.conf.mode) this.mode = "top"; // default mode for slider
 		
@@ -861,7 +894,7 @@ function dhtmlXPopup(conf) {
 	
 	
 	// define skin
-	this.setSkin(this.skinParent||this.conf.skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhx_popup")||"dhx_skyblue");
+	this.setSkin(this.skinParent||this.conf.skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhx_popup")||"material");
 	
 	return this;
 	
@@ -1047,4 +1080,34 @@ dhtmlXPopup.prototype._attach_init_carousel = function(conf) {
 	conf.conf.parent = this._nodeId;
 	conf.conf.skin = this.conf.skin;
 	this._nodeObj = new dhtmlXCarousel(conf.conf);
+};
+
+// treeview
+dhtmlXPopup.prototype.attachTreeView = function(width, height, conf) {
+	if (conf == null) conf = {};
+	return this._attachNode("treeview", {width: width||400, height: height||300, conf: conf});
+};
+dhtmlXPopup.prototype._attach_init_treeview = function(conf) {
+	conf.conf.parent = this._nodeId;
+	conf.conf.skin = this.conf.skin;
+	this._nodeObj = new dhtmlXTreeView(conf.conf);
+	//
+	this._nodeObj.base.className += " dhxtreeview_with_border";
+	//
+	var evId = this.attachEvent("onShow", function(){
+		if (this._nodeObj instanceof window.dhtmlXTreeView) this._nodeObj.setSizes();
+	});
+	if (this._nodeObjEv == null) this._nodeObjEv = [];
+	this._nodeObjEv.push(evId);
+};
+
+// other functionality
+dhtmlXPopup.prototype.setDimension = function(w, h) {
+	if (this._nodeId == null || (w == null && h == null)) return;
+	var node = document.getElementById(this._nodeId);
+	if (w != null) node.style.width = w+"px";
+	if (h != null) node.style.height = h+"px";
+	this._repaint();
+	if (this._nodeObj != null && typeof(this._nodeObj.setSizes) == "function") this._nodeObj.setSizes();
+	node = null;
 };

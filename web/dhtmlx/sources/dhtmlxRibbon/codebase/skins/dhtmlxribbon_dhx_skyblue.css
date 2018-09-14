@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_skyblue.less */
+/*
+	skin detected: dhx_skyblue
+	include extra file: skins/dhx_skyblue.less
+*/
 
 .dhtmlxribbon_skin_detect {
 	position: absolute;
@@ -96,6 +99,19 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	width: 48px;
 	height: 48px;
 	border: none;
+}
+.dhtmlxribbon_dhx_skyblue .dhxrb_big_button i {
+	position: relative;
+	display: block;
+	margin-top: 2px;
+	margin-bottom: 1px;
+	width: 48px;
+	height: 48px;
+	line-height: 47px;
+	font-size: 30px;
+	color: inherit;
+	cursor: default;
+	text-align: center;
 }
 .dhtmlxribbon_dhx_skyblue .dhxrb_big_button .dhxrb_label_button {
 	margin: 0px auto;
@@ -205,6 +221,23 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	width: 18px;
 	height: 18px;
 	float: left;
+}
+.dhtmlxribbon_dhx_skyblue .dhxrb_3rows_button i,
+.dhtmlxribbon_dhx_skyblue .dhxrb_in_row i,
+.dhtmlxribbon_dhx_skyblue .dhxrb_in_group i {
+	position: relative;
+	float: left;
+	width: 18px;
+	height: 18px;
+	line-height: 17px;
+	font-size: 15px;
+	margin-top: 1px;
+	color: inherit;
+	cursor: default;
+	text-align: center;
+}
+.dhtmlxribbon_dhx_skyblue .dhxrb_item_disable i {
+	color: #999999;
 }
 .dhtmlxribbon_dhx_skyblue .dhxrb_3rows_button .dhxrb_label_button,
 .dhtmlxribbon_dhx_skyblue .dhxrb_in_row .dhxrb_label_button,

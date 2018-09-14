@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -13,6 +13,7 @@ function dhtmlXRibbon(struct) {
 	this.conf = {
 		type: "ribbon",
 		icons_path: (struct && struct.icons_path)?struct.icons_path:"",
+		icons_css: (struct && struct.iconsset == "awesome"),
 		arrows_mode: (struct && struct.arrows_mode)?struct.arrows_mode:null,
 		skin: "dhx_skyblue"
 	};
@@ -275,7 +276,7 @@ function dhtmlXRibbon(struct) {
 		}
 	}
 	
-	_skin = dhx4.skin || (typeof(dhtmlx)!="undefined"?dhtmlx.skin:null) || dhx4.skinDetect("dhtmlxribbon") || "dhx_skyblue";
+	_skin = dhx4.skin || (typeof(dhtmlx)!="undefined"?dhtmlx.skin:null) || dhx4.skinDetect("dhtmlxribbon") || "material";
 	
 	if (typeof(struct) == "object" && struct.skin) {
 		_skin = struct.skin;
@@ -298,9 +299,8 @@ function dhtmlXRibbon(struct) {
 			this.loadStruct(struct.json, struct.onload);
 		} else if (struct.xml) {
 			this.loadStruct(struct.xml, struct.onload);
-		} else {
-			this._renderData(struct);
 		}
+		this._renderData(struct);
 	}
 	
 	this.unload = function() {
@@ -353,6 +353,7 @@ dhtmlXRibbon.prototype._renderData = function(data) {
 	
 	if (data != null) {
 		this.conf.icons_path = data.icons_path || this.conf.icons_path;
+		this.conf.icons_css = this.conf.icons_css || (data.iconset=="awesome");
 		
 		if (data.tabs instanceof Array) {
 			this._base.className = this._base.className.replace(/\s?dhxrb_without_tabbar/i, "");
@@ -624,6 +625,7 @@ dhtmlXRibbon.prototype._addItem = function(blockId, nextToId, itemId, data) {
 		
 		itemData = {
 			icons_path: data.icons_path || this.conf.icons_path,
+			icons_css: this.conf.icons_css,
 			skin: this.conf.skin
 		};
 		
@@ -688,7 +690,8 @@ dhtmlXRibbon.prototype.items.button = {
 				imgdis: null,
 				isbig: false,
 				disable: false,
-				skin: itemData.skin
+				skin: itemData.skin,
+				icons_css: itemData.icons_css
 			}
 		};
 		
@@ -700,8 +703,13 @@ dhtmlXRibbon.prototype.items.button = {
 			item.conf[key] = itemData[key];
 		}
 		
-		cont.innerHTML = "<img class='dhxrb_image"+((item.conf.img)?"'":" dhxrb_invisible'")+" src='"+((item.conf.img)?item.conf.icons_path+item.conf.img:"")+"' />"+
-				"<div class='dhxrb_label_button'>"+item.conf.text+"</div>";
+		if (item.conf.icons_css == true) {
+			var img = "<i class='"+item.conf.icons_path+(item.conf.img||"")+"'></i>";
+		} else {
+			var img = "<img class='dhxrb_image"+((item.conf.img)?"'":" dhxrb_invisible'")+" src='"+((item.conf.img)?item.conf.icons_path+item.conf.img:"")+"' />"
+		}
+		
+		cont.innerHTML = img+"<div class='dhxrb_label_button'>"+item.conf.text+"</div>";
 		
 		if (typeof(this.afterRender) == "function") {
 			this.afterRender(item);
@@ -728,14 +736,14 @@ dhtmlXRibbon.prototype.items.button = {
 	setImage: function(item, img) {
 		item.conf.img = img;
 		if (item.conf.disable == false) {
-			item.base.childNodes[0].src = item.conf.icons_path+item.conf.img;
+			item.base.childNodes[0][item.conf.icons_css?"className":"src"] = item.conf.icons_path+item.conf.img;
 		}
 	},
 	
 	setImageDis: function(item, imgdis) {
 		item.conf.imgdis = imgdis;
 		if (item.conf.disable == true) {
-			item.base.childNodes[0].src = item.conf.icons_path+item.conf.imgdis;
+			item.base.childNodes[0][item.conf.icons_css?"className":"src"] = item.conf.icons_path+item.conf.imgdis;
 		}
 	},
 	
@@ -757,7 +765,7 @@ dhtmlXRibbon.prototype.items.button = {
 			contForText = item.base.childNodes[1];
 		
 		if (item.conf.imgdis) {
-			contForImage.src = item.conf.icons_path+item.conf.imgdis;
+			contForImage[item.conf.icons_css?"className":"src"] = item.conf.icons_path+item.conf.imgdis;
 			if (/\s?dhxrb_invisible/i.test(contForImage.className)) {
 				contForImage.className = contForImage.className.replace(/\s?dhxrb_invisible/i, "");
 			}
@@ -775,7 +783,7 @@ dhtmlXRibbon.prototype.items.button = {
 			contForText = item.base.childNodes[1];
 		
 		if (item.conf.img) {
-			contForImage.src = item.conf.icons_path+item.conf.img;
+			contForImage[item.conf.icons_css?"className":"src"] = item.conf.icons_path+item.conf.img;
 		} else {
 			if (!/\s?dhxrb_invisible/i.test(contForImage.className)) {
 				contForImage.className += " dhxrb_invisible";
@@ -1571,7 +1579,11 @@ dhtmlXRibbon.prototype.items.buttonCombo = {
 				text_pos: "right",
 				width: 140,
 				skin: dataItem.skin,
-				callEvent: true
+				callEvent: true,
+				mode: dataItem.comboType,
+				image_path: dataItem.comboImagePath,
+				default_image: dataItem.comboDefaultImage,
+				default_image_dis: dataItem.comboDefaultImageDis
 			}
 		};
 		
@@ -1675,6 +1687,7 @@ dhtmlXRibbon.prototype.items.buttonCombo = {
 		if (item.combo instanceof dhtmlXCombo) {
 			item.conf.callEvent = callEvent;
 			item.combo.setComboValue(value);
+			item.conf.callEvent = true;
 		}
 	},
 	
@@ -2072,7 +2085,8 @@ dhtmlXRibbon.prototype._removeTab = function(tab,activeTabId) {
 dhtmlXRibbon.prototype._skinCollection = {
 	dhx_skyblue: true,
 	dhx_web: true,
-	dhx_terrace: true
+	dhx_terrace: true,
+	material: true
 };
 
 dhtmlXRibbon.prototype._setSkinForItems = function(value) {
@@ -2197,6 +2211,14 @@ dhtmlXRibbon.prototype.disable = function(id,activetab) {
 		item.base.className += " dhxrb_item_disable";
 	}
 	
+	if (item.base.className.match(/dhxrb_highlight/gi) != null) {
+		if (item.type == "buttonTwoState") {
+			item.base.className = item.base.className.replace(/\s*dhxrb_highlight0/gi, "");
+		} else {
+			item.base.className = item.base.className.replace(/\s*dhxrb_highlight\d/gi, "");
+		}
+	}
+	
 	item.conf.disable = true;
 };
 
@@ -2283,6 +2305,10 @@ dhtmlXRibbon.prototype.getItemState = function(id) {
 
 dhtmlXRibbon.prototype.setIconPath = function(str) {
 	this.conf.icons_path = str;
+};
+
+dhtmlXRibbon.prototype.setIconset = function(name) {
+	this.conf.icons_css = (name == "awesome");
 };
 
 dhtmlXRibbon.prototype.removeItem = function(id) {
@@ -2504,8 +2530,9 @@ if (typeof(window.dhtmlXCellObject) != "undefined") {
 	
 	dhtmlXCellObject.prototype.detachRibbon = function() {
 		
-		if (!this.dataNodes.ribbon) return;
-		this.dataNodes.ribbon.unload();
+		if (this.dataNodes.ribbon == null) return;
+		
+		if (typeof(this.dataNodes.ribbon.unload) == "function") this.dataNodes.ribbon.unload();
 		this.dataNodes.ribbon = null;
 		delete this.dataNodes.ribbon;
 		

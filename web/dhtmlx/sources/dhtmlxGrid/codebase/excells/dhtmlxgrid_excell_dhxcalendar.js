@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -32,28 +32,35 @@ function eXcell_dhxCalendar(cell) {
 eXcell_dhxCalendar.prototype = new eXcell;
 
 eXcell_dhxCalendar.prototype.edit = function() {
-	
+
 	var arPos = this.grid.getPosition(this.cell);
+
 	this.grid._grid_calendarA._show(false, false);
-	this.grid._grid_calendarA.setPosition(arPos[0],arPos[1]+this.cell.offsetHeight);
+	var yPosition = 0;
+	if(!window.innerHeight || (arPos[1] + this.grid._grid_calendarA.base.offsetHeight + this.cell.offsetHeight < window.innerHeight)) {
+		// Enough space to show dhxCalendar below date
+		yPosition = arPos[1]+this.cell.offsetHeight;
+	} else {
+		// Show dhxCalendar above date
+		yPosition = arPos[1]-(this.grid._grid_calendarA.base.offsetHeight);
+	}
+	var xPosition = arPos[0];
+	if (window.innerWidth && (xPosition+this.grid._grid_calendarA.base.clientWidth+ this.cell.offsetWidth>window.innerWidth)) {
+		xPosition = window.innerWidth-this.grid._grid_calendarA.base.clientWidth;
+	}
+	this.grid._grid_calendarA.setPosition(xPosition, yPosition);
 	this.grid._grid_calendarA._last_operation_calendar = false;
-	
-	
+
+
 	this.grid.callEvent("onCalendarShow", [this.grid._grid_calendarA, this.cell.parentNode.idd, this.cell._cellIndex]);
-	//var arPos = this.grid.getPosition(this.cell);
-	//var pval=this._date2str2(this.cell.val||new Date());
-	//window._grid_calendar.render(arPos[0],arPos[1]+this.cell.offsetHeight,this,pval);
 	this.cell._cediton = true;
 	this.val = this.cell.val;
 	this._val = this.cell.innerHTML;
-	// alert(this.cell.val);
 	var t = this.grid._grid_calendarA.draw;
 	this.grid._grid_calendarA.draw = function(){};
 	this.grid._grid_calendarA.setDateFormat((this.grid._dtmask||"%d/%m/%Y"));
 	this.grid._grid_calendarA.setDate(this.val||(new Date()));
 	this.grid._grid_calendarA.draw = t;
-	
-	//this.grid._grid_calendarA.draw();
 }
 eXcell_dhxCalendar.prototype.getDate = function() {
 	if (this.cell.val) return this.cell.val;

@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -28,7 +28,8 @@ dhtmlXForm.prototype.items.editor = {
 			parent: item.childNodes[item._ll?1:0].childNodes[0],
 			content: item._value,
 			iconsPath: data.iconsPath, // path for toolbar icons
-			toolbar: data.toolbar
+			toolbar: data.toolbar,
+			skin: item.getForm().skin
 		});
 		
 		this.editor[item._editor_id].attachEvent("onAccess",function(t, ev){
@@ -39,14 +40,14 @@ dhtmlXForm.prototype.items.editor = {
 			if (t == "blur") {
 				that.doOnBlur(item, this);
 				item.callEvent("onBlur", [item._idd]);
-				if (item.getForm().skin == "dhx_terrace") {
+				if ({dhx_terrace:1, material: 1}[item.getForm().skin] == 1) {
 					var css = item.childNodes[item._ll?1:0].className;
 					if (css.indexOf("dhxeditor_focus") >= 0) item.childNodes[item._ll?1:0].className = (css).replace(/\s{0,}dhxeditor_focus/gi,"");
 				}
 			} else {
 				item.callEvent("onEditorAccess", [item._idd, t, ev, this, item.getForm()]);
 				item.callEvent("onFocus", [item._idd]);
-				if (item.getForm().skin == "dhx_terrace") {
+				if ({dhx_terrace:1, material: 1}[item.getForm().skin] == 1) {
 					var css = item.childNodes[item._ll?1:0].className;
 					if (css.indexOf("dhxeditor_focus") == -1) item.childNodes[item._ll?1:0].className += " dhxeditor_focus";
 				}

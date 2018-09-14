@@ -1,14 +1,14 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
 function dhtmlXColorPicker(base) {
 	
-	if (!(this instanceof dhtmlXColorPicker)) {
+	if (!(this instanceof window.dhtmlXColorPicker)) {
 		return new dhtmlXColorPicker(base);
 	}
 	
@@ -374,7 +374,7 @@ function dhtmlXColorPicker(base) {
 			that._addNode(conf.input, conf.target_color, conf.target_value);
 		}
 		
-		var skin = conf.skin || window.dhx4.skin || (typeof(dhtmlx) != "undefined"? dhtmlx.skin : null) || window.dhx4.skinDetect("dhxcolorpicker") ||"dhx_skyblue";
+		var skin = conf.skin || window.dhx4.skin || (typeof(dhtmlx) != "undefined"? dhtmlx.skin : null) || window.dhx4.skinDetect("dhxcolorpicker") || "material";
 		that.setSkin(skin);
 		
 		// deprecated
@@ -1186,7 +1186,8 @@ dhtmlXColorPicker.prototype.configColorArea = {
 dhtmlXColorPicker.prototype._skinCollection = {
 	dhx_skyblue: true,
 	dhx_web: true,
-	dhx_terrace: true
+	dhx_terrace: true,
+	material: true
 };
 
 dhtmlXColorPicker.prototype.i18n = {
@@ -1541,33 +1542,22 @@ dhtmlXColorPicker.prototype.hideMemory = function() {
 };
 
 dhtmlXColorPicker.prototype.setSkin = function (skin) {
-	skin = skin.toLowerCase();
 	
-	var classes, _int = -1, skinName, className = "dhtmlxcp";
+	if (this._skinCollection[skin] != true) return;
 	
-	classes = this.base.className.match(/\S\w+/ig);
+	var r = "dhtmlxcp_"+(this.skin||"dummy");
+	this.base.className = this.base.className.replace(new RegExp(r), "");
+	this.base.className += " dhtmlxcp_"+skin;
+	this.skin = skin;
 	
-	if (classes instanceof  Array) {
-		for (skinName in this._skinCollection) {
-			if (_int == -1) {
-				_int = this._indexOf(classes, className + "_" + skinName);
-			} else {
-				break;
-			}
-		}
-		
-		_int = (_int == -1)? classes.length: _int;
-	} else {
-		classes = [];
-		_int = 0;
+	if (this.skin == "material") {
+		var t = {labelHue: "H", labelSat: "S", labelLum: "L", labelRed: "R", labelGreen: "G", labelBlue: "B"};
+		for (var a in t) this.i18n.en[a] = t[a];
 	}
 	
-	
-	
-	classes[_int] = className + "_" + skin;
-	
-	this.base.className = classes.join(" ");
-	this.skin = skin;
+	if (this.base.className.match(/dhxcp_shadow/) == null && !(dhx4.isIE6 || dhx4.isIE7 || dhx4.isIE8)) {
+		this.base.className += " dhxcp_shadow";
+	}
 };
 
 dhtmlXColorPicker.prototype.hideOnSelect = function(value) {

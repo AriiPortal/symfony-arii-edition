@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -36,6 +36,10 @@ dhtmlXWindowsCell.prototype._initResize = function() {
 		
 		var x = e.clientX;
 		var y = e.clientY;
+		
+		// body/html scrolls
+		x += (document.documentElement.scrollLeft||document.body.scrollLeft||0);
+		y += (document.documentElement.scrollTop||document.body.scrollTop||0);
 		
 		var x0 = window.dhx4.absLeft(cont);
 		var y0 = window.dhx4.absTop(cont);

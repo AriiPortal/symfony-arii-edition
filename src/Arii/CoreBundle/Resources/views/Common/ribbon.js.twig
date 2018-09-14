@@ -1,58 +1,274 @@
-<script language="javascript">      
-function StateRibbon (itemid,state) {
-    switch(itemid) {        
-        case 'main':
-            window.location = "{{ url('arii_homepage') }}";
-            break;        
-        case 'home':
-            window.location = '{{ path('arii_homepage') }}'+bundle;
-        default:
-            alert(itemid);
-    }
-    GlobalRefresh();    
+<script language="javascript"> 
+var update        = {{ app.session.get('UserInterface').refresh }};
+var refresh_pause = {{ app.session.get('UserInterface').refresh_pause }};
+var day_past      = {{ app.session.get('UserInterface').day_past }};
+var autorefresh;
+var refresh_next;
+var nextTime = new Date();
+// Dates de reference
+var startTime = new Date ("{{ app.session.get('UserInterface').past   | date('Y-m-d H:i:s') }}");
+var endTime =   new Date ("{{ app.session.get('UserInterface').ref_date | date('Y-m-d H:i:s') }}");
+
+function AriiLayout(bundle,activated,size) {
+    globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
+    globalLayout.cells("a").setWidth(size); 
+    globalLayout.cells("a").hideHeader();
+    globalLayout.cells("b").hideHeader();
+    
+    myRibbon = globalLayout.attachRibbon(); 
+    myRibbon.setIconPath( "{{ asset('/images/') }}" );
+    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle+"&activated="+activated, function() {
+        NextRefresh(update);
+        myRibbon.setItemText("date_now", day_past);
+    });
+
+    myRibbon.attachEvent("onClick", function (itemid,state) {
+        var id = itemid.split('_');
+        switch (id[0]) {
+            case 'date':
+                // date de tout de suite
+                endTime = new Date();
+                myRibbon.setValue( "date_end", endTime.Format() );
+                
+                // On recalcule la date de début
+                startTime = endTime.addDays(day_past);
+                myRibbon.setValue( "date_start", startTime.Format() );
+                break;
+            case 'main':
+                window.location = '{{ path('arii_homepage') }}';
+                break;
+            case 'home':
+                window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/{{ app.request.locale }}';        
+                break;
+            case 'BUNDLE':
+                window.location = '{{ path('arii_homepage') }}'+id[1]+'/{{ app.request.locale }}';
+                break;
+            case 'LANG':
+                window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/'+id[1];
+                break;
+            case 'USER':
+                switch (id[1]) {
+                    case 'role':
+                        window.location = '{{ path('arii_my_account') }}';
+                        break;
+                    case 'logout':
+                        window.location = '{{ path('fos_user_security_logout') }}';
+                        break;
+                }
+                break;
+            case 'HELP':
+                switch (id[1]) {
+                    case 'sos':
+                        window.location = 'http://www.sos-paris.com';
+                        break;
+                    case 'github':
+                        window.location = 'https://github.com/AriiPortal';
+                        break;
+                    case 'readme':
+                        window.location = '{{ path('arii_ACK_readme') }}';
+                        break;
+                    default:
+                        alert(id[1]);
+                        break;                    
+                }
+                break;
+            case 'filter':
+            case 'save':
+                dhx4.ajax.post( "{{ url('arii_session_update') }}?refresh="+update, function() {
+                    
+                });
+                break;
+            case 'refresh':
+                switch(id[1]) {
+                    case 'seconds':
+                        update = id[2];
+                        dhx4.ajax.get( "{{ url('arii_session_update') }}?refresh="+update, function() {
+                            // Affiche la nouvelle periode
+                            var textUpdate;
+                            switch(update) {
+                                case '5':
+                                    textUpdate= "5s";
+                                    break;
+                                case '30':
+                                    textUpdate= "30s";
+                                    break;
+                                case '60':
+                                    textUpdate= "1min";
+                                    break;
+                                case '300':
+                                    textUpdate= "5min";
+                                    break;
+                                case '900':
+                                    textUpdate= "15min";
+                                    break;
+                                case '1800':
+                                    textUpdate= "30min";
+                                    break;
+                                case '3600':
+                                    textUpdate= "1h";
+                                    break;
+                                default:
+                                    textUpdate= "?";
+                                    break;
+                            }
+                            myRibbon.setItemText( "refresh_update",textUpdate);
+                            // Calcul du prochain refresh
+                            NextRefresh();
+                        });
+                        break;
+                }
+                break;
+            default:
+                alert('CLICK '+id[0]);
+                break;
+        }
+    });
+    myRibbon.attachEvent("onEnter", function(itemid,value) {
+        var id = itemid.split('_');
+        switch(id[0]) {        
+            case 'date':
+                switch(id[1]) {
+                    case 'start':
+                        startTime = new Date(value); 
+                        // on met a jour le slider
+                        day_past = Math.round((startTime - endTime)/86400000);
+                        myRibbon.setItemText("date_now", day_past);
+                        myRibbon.setValue("date_days",day_past*-1);
+                        break
+                    case 'end':
+                        endTime = new Date(value);
+                        break
+                    default:
+                        alert(itemid);
+                }
+                break
+            default:
+                alert(itemid);
+        }
+        GlobalRefresh();    
+    });
+    myRibbon.attachEvent("onStateChange", function(itemid,state) {
+        var id = itemid.split('_');
+        switch(id[0]) {        
+            case 'refresh':
+                refresh_pause = (state?1:0);
+                dhx4.ajax.get( "{{ url('arii_session_update') }}?refresh_pause="+refresh_pause, function() {
+                    if (refresh_pause==1) {
+                        myRibbon.setItemText( "refresh_next", '00:00:00');
+                        myRibbon.setItemText( "refresh_pause", update);
+                    }
+                    else {
+                        NextRefresh();
+                    }
+                });
+                break;        
+            default:
+                alert('STATE '+itemid);
+        }
+        GlobalRefresh();    
+    });
+    myRibbon.attachEvent("onSelectOption", function(itemid,ind,text) {
+        var id = itemid.split('_');
+        switch(id[0]) {
+            case 'Filters':
+                dhx4.ajax.get("{{ url('xml_filter_form') }}?id="+ind, function (r) {
+                    var items = [];
+                    var xml = r.xmlDoc.responseXML;
+                    if (xml != null) {
+                        var data;
+                        data = xml.getElementsByTagName("title")[0];
+                        if (typeof data !== 'undefined')
+                            myRibbon.setItemText("current_filter",data.childNodes[0].nodeValue);
+                        var Fields = [ "job_chain", "job_name", "trigger_job", "folder" ];                        
+                        Fields.forEach(function(f) {
+                            data = xml.getElementsByTagName(f)[0];
+                            if (typeof data !== 'undefined') 
+                                myRibbon.setValue("filter_"+f,data.childNodes[0].nodeValue);
+                            else {
+                                myRibbon.setValue("filter_"+f,'?');
+                            }
+                        });
+                    } else {
+                        // response is not in json format
+                    }
+                });
+                break;
+            default:
+                alert('SELECT OPTION '+id+' '+ind+' '+text);
+        }
+        GlobalRefresh();    
+    });
+    myRibbon.attachEvent("onValueChange", function(itemid,value) {
+        var id = itemid.split('_');
+        switch(id[0]) { 
+            case 'date':
+                if (day_past*-1===value)
+                    return true;
+                day_past=value*-1; 
+                // Changement
+                myRibbon.setValue("date_days",value);
+                myRibbon.setItemText("date_now", day_past);
+                
+                startTime = new Date(endTime.valueOf());
+                startTime.addDays(day_past);
+                myRibbon.setValue( "date_start", startTime.Format() );
+                // Mise a jour
+                dhx4.ajax.get( "{{ url('arii_session_update') }}?day_past="+day_past, function() {
+                    
+                });                
+                break;
+            default:
+                alert('VALUE '+itemid);
+        }
+        GlobalRefresh();    
+    }); 
+    waitrefresh = setInterval( "WaitRefresh()",1000);    
+    autorefresh = setInterval( "GlobalRefresh()",update*1000);    
 }
 
-function ClickRibbon (itemid,state) {
-    var id = itemid.split('_');
-    switch (id[0]) {
-        case 'main':
-            window.location = '{{ path('arii_homepage') }}';
-            break;
-        case 'home':
-            window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/{{ app.request.locale }}';        
-            break;
-        case 'BUNDLE':
-            window.location = '{{ path('arii_homepage') }}'+id[1]+'/{{ app.request.locale }}';
-            break;
-        case 'LANG':
-            window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/'+id[1];
-            break;
-        case 'USER':
-            switch (id[1]) {
-                case 'logout':
-                    window.location = '{{ path('fos_user_security_logout') }}';
-                    break;
-            }
-            break;
-        case 'HELP':
-            switch (id[1]) {
-                case 'sos':
-                    window.location = 'http://www.sos-paris.com';
-                    break;
-                case 'github':
-                    window.location = 'https://github.com/AriiPortal';
-                    break;
-                case 'readme':
-                    window.location = '{{ path('arii_ACK_readme') }}';
-                    break;
-                default:
-                    alert(id[1]);
-                    break;                    
-            }
-            break;
-        default:
-            alert(id[0]);
-            break;
-    }
+function WaitRefresh() {
+    if (refresh_pause==1)
+        return true; 
+    
+    var currentTime = new Date();
+    myRibbon.setItemText( "refresh_pause", Math.round((nextTime - currentTime)/1000) );
 }
+
+function GlobalRefresh() {
+    if (refresh_pause==1)
+        return true; 
+    
+    refresh_pause=0;
+    PageRefresh();
+    NextRefresh(update);
+}
+
+function NextRefresh() {
+    if (refresh_pause==1)
+        return true; 
+    
+    nextTime = new Date();
+    nextTime.setSeconds(nextTime.getSeconds() + update);
+    myRibbon.setItemText( "refresh_next", ((nextTime.getHours() < 10)?"0":"") + nextTime.getHours() + ":" + ((nextTime.getMinutes() < 10)?"0":"") + nextTime.getMinutes() + ":" +  ((nextTime.getSeconds() < 10)?"0":"") + nextTime.getSeconds() );
+    WaitRefresh();
+}
+
+// Prototypes
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+Date.prototype.Format = function() {
+    var date = new Date(this.valueOf());
+    var text = date.getFullYear() 
+            + "-" + (date.getMonth()  < 9 ?"0":"") + Number(date.getMonth()+1)     
+            + "-" + (date.getDay()    < 10?"0":"") + date.getDay()          
+            + ' ' + (date.getHours()  < 10?"0":"") + date.getHours() 
+            + ":" + (date.getMinutes()< 10?"0":"") + date.getMinutes() 
+            + ":" + (date.getSeconds()< 10?"0":"") + date.getSeconds() ;
+return text;
+}
+
 </script>

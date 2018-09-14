@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -22,6 +22,7 @@ function dhtmlXCellObject(idd, css) {
 			cont: "dhx_cell_cont",
 			pr1: "dhx_cell_progress_bar",
 			pr2: "dhx_cell_progress_img",
+			pr3: "dhx_cell_progress_svg",
 			menu: "dhx_cell_menu",
 			toolbar: "dhx_cell_toolbar",
 			ribbon: "dhx_cell_ribbon",
@@ -68,7 +69,7 @@ function dhtmlXCellObject(idd, css) {
 		// attached node
 		if (this.dataObj != null && typeof(this.dataObj.setSizes) == "function") {
 			// check if dataObj is layuot which was attached separately
-			if (this.dataType == "layout" && typeof(window.dhtmlXLayoutCell) != "undefined" && this instanceof window.dhtmlXLayoutCell && this.dataObj._getMainInst() != this.layout._getMainInst()) {
+			if (this.dataType == "layout" && typeof(window.dhtmlXLayoutCell) == "function" && this instanceof window.dhtmlXLayoutCell && this.dataObj._getMainInst() != this.layout._getMainInst()) {
 				this.dataObj.setSizes();
 				return;
 			}
@@ -108,6 +109,14 @@ function dhtmlXCellObject(idd, css) {
 		
 		var t = this.cell.childNodes[this.conf.idx.cont];
 		
+		// attempt to adjust cell in collapsed layout
+		if (typeof(window.dhtmlXLayoutCell) == "function" && this instanceof window.dhtmlXLayoutCell && this.conf.collapsed == true) {
+			t.style.left = t.style.top = "0px";
+			t.style.width = t.style.height = "200px";
+			t = null;
+			return;
+		}
+		
 		// header height, menu, toolbar if any
 		var ht = 0;
 		for (var a in this.conf.ofs_nodes.t) {
@@ -125,7 +134,7 @@ function dhtmlXCellObject(idd, css) {
 		t.style.left = "0px";
 		t.style.top = ht+"px";
 		
-		if (!this.conf.cells_cont) {
+		if (this.conf.cells_cont == null) {
 			this.conf.cells_cont = {};
 			t.style.width = this.cell.offsetWidth+"px";
 			t.style.height = Math.max(this.cell.offsetHeight-ht-hb,0)+"px";
@@ -406,11 +415,18 @@ dhtmlXCellObject.prototype.progressOn = function() {
 	
 	this.conf.progress = true;
 	
+	// cover
 	var t1 = document.createElement("DIV");
-	t1.className = this.conf.idx_data.pr1; // cover
+	t1.className = this.conf.idx_data.pr1;
 	
+	// image/animation
 	var t2 = document.createElement("DIV");
-	t2.className = this.conf.idx_data.pr2; // image
+	if (this.conf.skin == "material" && (window.dhx4.isFF || window.dhx4.isChrome || window.dhx4.isOpera || window.dhx4.isEdge)) {
+		t2.className = this.conf.idx_data.pr3;
+		t2.innerHTML = '<svg class="dhx_cell_prsvg" viewBox="25 25 50 50"><circle class="dhx_cell_prcircle" cx="50" cy="50" r="20"/></svg>';
+	} else {
+		t2.className = this.conf.idx_data.pr2;
+	}
 	
 	if (this.conf.idx.cover != null) {
 		this.cell.insertBefore(t2, this.cell.childNodes[this.conf.idx.cover]);
@@ -430,8 +446,11 @@ dhtmlXCellObject.prototype.progressOff = function() {
 	
 	if (this.conf.progress != true) return;
 	
-	this.cell.childNodes[this.conf.idx.pr2].parentNode.removeChild(this.cell.childNodes[this.conf.idx.pr2]);
-	this.cell.childNodes[this.conf.idx.pr1].parentNode.removeChild(this.cell.childNodes[this.conf.idx.pr1]);
+	for (var a in {pr3:3,pr2:2,pr1:1}) {
+		var node = this.cell.childNodes[this.conf.idx[a]];
+		if (node != null) node.parentNode.removeChild(node);
+		node = null;
+	}
 	
 	this.conf.progress = false;
 	
@@ -445,7 +464,7 @@ dhtmlXCellObject.prototype._adjustProgress = function() {
 	if (!this.conf.pr) this.conf.pr = {};
 	
 	var p1 = this.cell.childNodes[this.conf.idx.pr1]; // half-transparent cover
-	var p2 = this.cell.childNodes[this.conf.idx.pr2]; // image
+	var p2 = this.cell.childNodes[this.conf.idx.pr2]||this.cell.childNodes[this.conf.idx.pr3]; // image/svg
 	
 	if (!this.conf.pr.ofs) {
 		p2.style.width = p1.offsetWidth + "px";
@@ -568,7 +587,7 @@ dhtmlXCellObject.prototype._unload = function() {
 dhtmlXCellObject.prototype.attachObject = function(obj, adjust) {
 	
 	// adjust - for windows only
-	if (window.dhx4.s2b(adjust) && !(typeof(window.dhtmlXWindowsCell) != "undefined" && (this instanceof window.dhtmlXWindowsCell))) {
+	if (window.dhx4.s2b(adjust) && !(typeof(window.dhtmlXWindowsCell) == "function" && this instanceof window.dhtmlXWindowsCell)) {
 		adjust = false;
 	}
 	
@@ -639,10 +658,16 @@ dhtmlXCellObject.prototype.attachURL = function(url, useAjax, postData) {
 	if (postData == true) postData = {};
 	var postReq = (typeof(postData) != "undefined" && postData != false && postData != null);
 	
-	if (!this.conf.url_data) this.conf.url_data = {};
+	if (this.conf.url_data == null) this.conf.url_data = {};
 	this.conf.url_data.url = url;
 	this.conf.url_data.ajax = (useAjax == true);
 	this.conf.url_data.post_data = (postData==true?{}:(postData||null)); // true or object
+	
+	if (this.conf.url_data.xml_doc != null) {
+		try {this.conf.url_data.xml_doc.xmlDoc.abort();}catch(e){};
+		this.conf.url_data.xml_doc.xmlDoc = null;
+		this.conf.url_data.xml_doc = null;
+	}
 	
 	if (useAjax == true) {
 		
@@ -651,17 +676,21 @@ dhtmlXCellObject.prototype.attachURL = function(url, useAjax, postData) {
 			var params = "";
 			for (var a in postData) params += "&"+encodeURIComponent(a)+"="+encodeURIComponent(postData[a]);
 
-			dhx4.ajax.post(url, params, function(r){
-				t.attachHTMLString("<div style='position:relative;width:100%;height:100%;overflow:auto;'>"+r.xmlDoc.responseText+"</div>");
-				if (typeof(t._doOnFrameContentLoaded) == "function") t._doOnFrameContentLoaded();
-				t.dataType = "url-ajax";
+			this.conf.url_data.xml_doc = dhx4.ajax.post(url, params, function(r){
+				if (t.attachHTMLString != null && typeof(r.xmlDoc.responseText) == "string") {
+					t.attachHTMLString("<div style='position:relative;width:100%;height:100%;overflow:auto;'>"+r.xmlDoc.responseText+"</div>");
+					if (typeof(t._doOnFrameContentLoaded) == "function") t._doOnFrameContentLoaded();
+					t.dataType = "url-ajax";
+				}
 				t = r = null;
 			});
 		} else {
-			dhx4.ajax.get(url, function(r){
-				t.attachHTMLString("<div style='position:relative;width:100%;height:100%;overflow:auto;'>"+r.xmlDoc.responseText+"</div>");
-				if (typeof(t._doOnFrameContentLoaded) == "function") t._doOnFrameContentLoaded();
-				t.dataType = "url-ajax";
+			this.conf.url_data.xml_doc = dhx4.ajax.get(url, function(r){
+				if (t.attachHTMLString != null && typeof(r.xmlDoc.responseText) == "string") {
+					t.attachHTMLString("<div style='position:relative;width:100%;height:100%;overflow:auto;'>"+r.xmlDoc.responseText+"</div>");
+					if (typeof(t._doOnFrameContentLoaded) == "function") t._doOnFrameContentLoaded();
+					t.dataType = "url-ajax";
+				}
 				t = r = null;
 			});
 		}
@@ -686,7 +715,7 @@ dhtmlXCellObject.prototype.attachURL = function(url, useAjax, postData) {
 			if (firstLoad) this._attachURLEvents();
 			fr.src = "about:blank";
 		} else {
-			fr.src = url+(window.dhx4.ajax.cache!=true?(url.indexOf("?")>=0?"&":"?")+"dhxr"+new Date().getTime():"");
+			fr.src = url+window.dhx4.ajax._dhxr(url);
 		}
 		fr = null;
 	}
@@ -814,7 +843,7 @@ dhtmlXCellObject.prototype.attachStatusBar = function(conf) { // args-optinal, n
 	
 	if (conf != null && window.dhx4.s2b(conf.paging) == true) conf.height = null; // will set by css
 	
-	if (this.conf.skin == "dhx_skyblue" && typeof(window.dhtmlXWindowsCell) != "undefined" && (this instanceof dhtmlXWindowsCell)) {
+	if (this.conf.skin == "dhx_skyblue" && typeof(window.dhtmlXWindowsCell) == "function" && this instanceof window.dhtmlXWindowsCell) {
 		 this.cell.childNodes[this.conf.idx.cont].className += " dhx_cell_statusbar_attached";
 	}
 	this.dataNodes.sb = this._attachObject("sb", conf);
@@ -831,7 +860,7 @@ dhtmlXCellObject.prototype.detachStatusBar = function() {
 	
 	if (!this.dataNodes.sb) return;
 	
-	if (this.conf.skin == "dhx_skyblue"  && typeof(window.dhtmlXWindowsCell) != "undefined" && (this instanceof dhtmlXWindowsCell)) {
+	if (this.conf.skin == "dhx_skyblue"  && typeof(window.dhtmlXWindowsCell)== "function" && this instanceof window.dhtmlXWindowsCell) {
 		 this.cell.childNodes[this.conf.idx.cont].className = this.cell.childNodes[this.conf.idx.cont].className.replace(/\s{0,}dhx_cell_statusbar_attached/,"");
 	}
 	
@@ -929,6 +958,8 @@ dhtmlXCellObject.prototype._detachURLEvents = function(fr) {
 		if (this.dataType != "url") return;
 		fr = this.cell.childNodes[this.conf.idx.cont].firstChild;
 	}
+	if (!fr) return;
+
 	if (typeof(window.addEventListener) == "function") {
 		fr.onload = null;
 		try { fr.contentWindow.document.body.removeEventListener("mousedown", this._doOnFrameMouseDown, false); } catch(e) {/* console.log("error: url detach mousedown event fail"); */};
@@ -988,8 +1019,16 @@ dhtmlXCellObject.prototype._detachObject = function(obj, remove, moveTo) {
 	}
 	
 	// clear obj
-	
 	if (moveTo === false) {
+		// cancel ajax-request if unloading
+		if (this.conf.unloading == true && String(this.dataType).match(/ajax/) != null) {
+			if (this.conf.url_data != null && this.conf.url_data.xml_doc != null) {
+				try {this.conf.url_data.xml_doc.xmlDoc.abort();}catch(e){};
+				this.conf.url_data.xml_doc.xmlDoc = null;
+				this.conf.url_data.xml_doc = null;
+			}
+		}
+		//
 		if (this.dataType == "url") {
 			this._detachURLEvents();
 		} else if (this.dataObj != null) {
@@ -1038,17 +1077,17 @@ dhtmlXCellObject.prototype._attachFromCell = function(cell) {
 	this.detachObject(true);
 	
 	var mode = "layout";
-	if (typeof(window.dhtmlXWindowsCell) != "undefined" && this instanceof window.dhtmlXWindowsCell) {
+	if (typeof(window.dhtmlXWindowsCell) == "function" && this instanceof window.dhtmlXWindowsCell) {
 		mode = "window";
 	}
 	
 	// check opacity:
 	// 1) detach from window cell, opacity set to 0.4
-	if (typeof(window.dhtmlXWindowsCell) != "undefined" && cell instanceof window.dhtmlXWindowsCell && cell.wins.w[cell._idd].conf.parked) {
+	if (typeof(window.dhtmlXWindowsCell) == "function" && cell instanceof window.dhtmlXWindowsCell && cell.wins.w[cell._idd].conf.parked == true) {
 		cell.wins._winCellSetOpacity(cell._idd, "open", false);
 	}
 	// 2) acc-cell collapsed
-	if (typeof(window.dhtmlXAccordionCell) != "undefined" && cell instanceof window.dhtmlXAccordionCell && cell.conf.opened == false) {
+	if (typeof(window.dhtmlXAccordionCell) == "function" && cell instanceof window.dhtmlXAccordionCell && cell.conf.opened == false) {
 		cell._cellSetOpacity("open", false);
 	}
 	
@@ -1181,7 +1220,8 @@ function dhtmlXCellTop(base, offsets) {
 			var ofsDef = {
 				dhx_skyblue: {t: 2, b: 2, l: 2, r: 2},
 				dhx_web:     {t: 8, b: 8, l: 8, r: 8},
-				dhx_terrace: {t: 9, b: 9, l: 8, r: 8}
+				dhx_terrace: {t: 9, b: 9, l: 8, r: 8},
+				material:    {t: 9, b: 9, l: 8, r: 8}
 			};
 			this.conf.ofs = (ofsDef[this.conf.skin] != null ? ofsDef[this.conf.skin] : ofsDef.dhx_skyblue);
 		}
@@ -1309,9 +1349,14 @@ dhtmlXCellTop.prototype.attachMenu = function(conf) {
 	
 	this.dataNodes.menuEv = this.attachEvent("_onSetSizes", function(){
 		if (this.dataNodes.menuObj.style.display == "none") return;
+		if (this.conf.ofs_menu == null) {
+			this.dataNodes.menuObj.style.width = this.base.offsetWidth-this.conf.ofs.l-this.conf.ofs.r+"px";
+			this.conf.ofs_menu = {w: this.dataNodes.menuObj.offsetWidth-parseInt(this.dataNodes.menuObj.style.width)};
+		}
 		this.dataNodes.menuObj.style.left = this.conf.ofs.l+"px";
 		this.dataNodes.menuObj.style.marginTop = (this.dataNodes.haObj!=null?0:this.conf.ofs.t)+"px";
-		this.dataNodes.menuObj.style.width = this.base.offsetWidth-this.conf.ofs.l-this.conf.ofs.r+"px";
+		this.dataNodes.menuObj.style.width = this.base.offsetWidth-this.conf.ofs.l-this.conf.ofs.r-this.conf.ofs_menu.w+"px";
+		
 	});
 	
 	this.conf.ofs_nodes.t.menuObj = true;
@@ -1601,7 +1646,13 @@ dhtmlXCellTop.prototype.progressOn = function() {
 	this.base.appendChild(t1);
 	
 	var t2 = document.createElement("DIV");
-	t2.className = "dhxcelltop_progress_img";
+	if (this.conf.skin == "material" && (window.dhx4.isFF || window.dhx4.isChrome || window.dhx4.isOpera || window.dhx4.isEdge)) {
+		t2.className = "dhxcelltop_progress_svg";
+		t2.innerHTML = '<svg class="dhx_cell_prsvg" viewBox="25 25 50 50"><circle class="dhx_cell_prcircle" cx="50" cy="50" r="20"/></svg>';
+	} else {
+		var t2 = document.createElement("DIV");
+		t2.className = "dhxcelltop_progress_img";
+	}
 	this.base.appendChild(t2);
 	
 	t1 = t2 = null;
@@ -1612,7 +1663,7 @@ dhtmlXCellTop.prototype.progressOff = function() {
 	
 	if (!this.conf.progress) return;
 	
-	var p = {dhxcelltop_progress: true, dhxcelltop_progress_img: true};
+	var p = {dhxcelltop_progress: true, dhxcelltop_progress_img: true, dhxcelltop_progress_svg: true};
 	for (var q=0; q<this.base.childNodes.length; q++) {
 		if (typeof(this.base.childNodes[q].className) != "undefined" && p[this.base.childNodes[q].className] == true) {
 			p[this.base.childNodes[q].className] = this.base.childNodes[q];

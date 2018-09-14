@@ -4,35 +4,23 @@
 <script src="{{ asset('dhtmlx/codebase/dhtmlx.js') }}" type="text/javascript"></script>
 {% endblock dhtmlx %}
 {% block dhtmlx_plus %}
+{% include "AriiCoreBundle:Common:ribbon.js.twig" %}    
 {% endblock dhtmlx_plus %}
 {% block onload %}
 <script language="javascript">
-var bundle='JID';
+var size=180;
 var db="{{ db }}";
 var max_history = 0; // pas d'historique
 var chained = 0; // que des chaines normales
 var only_warning = 0;
-var update = 30;
-var autorefresh;
 var status;
 var sort="last";
-var update=5;
 
-dhtmlxEvent(window,"load",function(){   
-    var size=180;
-    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
-    globalLayout.cells("a").setHeight(120); 
-    globalLayout.cells("b").setWidth(size); 
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("c").hideHeader();
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    menuLayout = globalLayout.cells("b").attachLayout("2E");
+dhtmlxEvent(window,"load",function(){
+    AriiLayout('JID','filters_ojs,history,refresh',size);
+    
+    menuLayout = globalLayout.cells("a").attachLayout("2E");
+    menuLayout.cells("a").setText("{{ "Menu" | trans }}");
     menuLayout.cells("b").setHeight(size);
     menuLayout.cells("b").hideHeader();
     
@@ -56,21 +44,13 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });
 
-    myToolbar = globalLayout.cells("c").attachToolbar();
-    myToolbar.setIconsPath( "{{ asset('/images/') }}" );
     Init();
-    GlobalRefresh();
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}");     
-    autorefresh = setInterval( "GlobalRefresh()",update*1000);
 });
 </script>
 {% endblock onload %}
 {% block body %}{% endblock%}
 {% block script %}
 <script language="javascript">
-function GlobalRefresh() {
-    PageRefresh();
-}
 /*
 myDonut.load( "{{ url('xml_JID_orders_pie') }}?chained="+chained+"&only_warning="+only_warning,
     function () {

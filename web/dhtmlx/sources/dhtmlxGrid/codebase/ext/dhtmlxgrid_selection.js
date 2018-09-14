@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -30,6 +30,7 @@ dhtmlXGridObject.prototype.enableBlockSelection = function(mode)
 
 	if (!window.dhx4.isIPad){
 		var area = this._clip_area = document.createElement("textarea");
+		area.className = "dhx_tab_ignore";
 		area.style.cssText = "position:absolute; width:1px; height:1px; overflow:hidden; color:transparent; background-color:transparent; bottom:1px; right:1px; border:none;";
 
 		area.onkeydown=function(e){
@@ -54,6 +55,17 @@ dhtmlXGridObject.prototype.enableBlockSelection = function(mode)
 dhtmlXGridObject.prototype.forceLabelSelection = function(mode)
 {
 	this._strictText = dhx4.s2b(mode)
+}
+
+
+dhtmlXGridObject.prototype.selectBlock = function(sx, sy, ex, ey)
+{
+	sy = this.getRowIndex(sy);
+	ey = this.getRowIndex(ey);
+
+	this._CreateSelection(sy, sx);
+    this._selectionArea = this._RedrawSelectionPos(this.cells2(sy, sx).cell, this.cells2(ey, ex).cell);
+    this._ShowSelection();
 }
 
 dhtmlXGridObject.prototype._OnSelectionStart = function(event, obj)

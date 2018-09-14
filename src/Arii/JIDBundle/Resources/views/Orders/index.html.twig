@@ -3,7 +3,12 @@
 <script language="javascript">
 function Init() {
 
-    myLayout =  globalLayout.cells("c").attachLayout("2E");
+    myLayout =  globalLayout.cells("b").attachLayout("2E");
+    myLayout.cells("a").hideHeader();
+    myLayout.cells("b").hideHeader();
+    
+    myToolbar = myLayout.cells("b").attachToolbar();
+    myToolbar.setIconsPath( "{{ asset('/images/') }}" );
     
     myGridMenu = new dhtmlXMenuObject(null);
     myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
@@ -28,17 +33,12 @@ function Init() {
     myGrid.setColumnHidden(8,true); 
     myGrid.enableSmartRendering(true,50);
     myGrid.attachEvent("onRowDblClicked",OrderDetail );
-    myLayout.cells("a").progressOn();
         
     myGridToolbar = myLayout.cells("a").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");
     myGridToolbar.loadStruct( "{{ url('xml_JID_orders_grid_toolbar') }}");
     myGridToolbar.attachEvent("onClick",function(itemid){
          switch (itemid) {
-            case 'refresh':
-                myLayout.cells("a").progressOn();
-                GlobalRefresh();
-                break;
             case "print":
                 myGrid.printView();
                 break;
@@ -80,8 +80,7 @@ function Init() {
                 alert(itemid);
                 break;
         }
-    });
-    
+    });    
     myGridMenu.attachEvent("onClick", function (menuitemId, type) {
         var data = myGrid.contextID.split("_");
         var rId = data[0];
@@ -367,25 +366,12 @@ function Init() {
 
 }
 
-function PageRefresh(detail) {
-    detail = typeof detail !== 'undefined' ? detail : 0;
-    var currentTime = new Date();
-    var hours = currentTime.getHours();
-    var minutes = currentTime.getMinutes();
-    var seconds = currentTime.getSeconds();
-    if (minutes < 10){
-    minutes = "0" + minutes;
-    }
-    if (seconds < 10){
-    seconds = "0" + seconds;
-    }
-    myRibbon.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );    
-    myGrid.load("{{ url('xml_JID_orders_grid') }}?time="+seconds+"&history="+max_history+"&chained="+chained+"&only_warning="+only_warning+"&sort="+sort, function(){
-        myLayout.cells("a").progressOff();
-        myGrid.filterBy(5, status);  
-        if (detail>0) OrderDetail(id);
+function PageRefresh() {
+    myGrid.load("{{ url('xml_JID_orders_grid') }}?history="+max_history+"&chained="+chained+"&only_warning="+only_warning+"&sort="+sort, function(){
         myLayout.progressOff();
+        myGrid.filterBy(5, status);
         myGrid.filterByAll();
+        refresh_pause=0;
     });    
 }
 

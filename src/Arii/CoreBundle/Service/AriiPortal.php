@@ -2001,6 +2001,7 @@ Gris    #f2f2f2
                 'description' => $Filter->getDescription(),
                 'env' => $Filter->getEnv(),
                 'spooler' => $Filter->getSpooler(),
+                'folder' => $Filter->getFolder(),
                 'trigger' => $Filter->getTrigger(),
                 'job_name' => $Filter->getJobName(),
                 'job_chain' => $Filter->getJobChain(),
@@ -2030,7 +2031,16 @@ Gris    #f2f2f2
     // Les filtres mis pour tous
     public function GetPublicFilters()
     { 
-        return $this->session->get('Filters');
+        $Filters = $this->getFilters();
+        $PublicFilters = [];
+        foreach ($Filters as $k=>$Filter) {
+            if ($Filter['type']!=2) continue;
+            // On en profite pour compléter
+            if ($Filter['title']=='')
+                $Filter['title'] = $Filter['name'];
+            $PublicFilters[$k] = $Filter;
+        }
+        return $PublicFilters;
     }
     
     public function resetFilters($force=false) {                    
@@ -2047,6 +2057,7 @@ Gris    #f2f2f2
                 'title'  => 'All jobs',
                 'env' =>  '',
                 'spooler' => '',
+                'folder' => '',
                 'job_name' => '',
                 'job_chain' => '',
                 'job_group' => '',
@@ -2059,6 +2070,7 @@ Gris    #f2f2f2
                 'title'  => 'Jobs in test environment',
                 'env' =>  'T',
                 'spooler' => '',
+                'folder' => '',
                 'job_name' => '',
                 'job_chain' => '',
                 'job_group' => '',
@@ -2071,6 +2083,7 @@ Gris    #f2f2f2
                 'title'  => 'Jobs in prod environment',
                 'env' =>  'P',
                 'spooler' => '',
+                'folder' => '',
                 'job_name' => '',
                 'job_chain' => '',
                 'job_group' => '',
@@ -2083,6 +2096,7 @@ Gris    #f2f2f2
                 'title'  => 'Jobs with status FAILURE',
                 'env' =>  '',
                 'spooler' => '',
+                'folder' => '',
                 'job_name' => '',
                 'job_chain' => '',
                 'job_group' => '',
@@ -2095,6 +2109,7 @@ Gris    #f2f2f2
                 'title'  => 'Jobs for Ari\'i',
                 'env' =>  '',
                 'spooler' => '',
+                'folder' => '',
                 'job_name' => 'ARI%',
                 'job_chain' => 'ARI%',
                 'job_group' => '',
@@ -2107,6 +2122,7 @@ Gris    #f2f2f2
                 'title'  => 'Jobs failed for Ari\'i',
                 'env' =>  '',
                 'spooler' => '',
+                'folder' => '',
                 'job_name' => 'ARI%',
                 'job_chain' => 'ARI%',
                 'job_group' => '',
@@ -2138,6 +2154,7 @@ Gris    #f2f2f2
             $Filter->setEnv($Param['env']);
             $Filter->setTrigger($Param['trigger']);
             $Filter->setSpooler($Param['spooler']);
+            $Filter->setFolder($Param['folder']);
             $Filter->setJobName($Param['job_name']);
             $Filter->setJobChain($Param['job_chain']);
             $Filter->setJobGroup($Param['job_group']);
@@ -2444,8 +2461,8 @@ Gris    #f2f2f2
         $User['ref_past'] = -1;
         $User['ref_future'] = 1;
 
-        // Pour la partie rapports
-        $User['day_past'] = -180;
+        // Pour la majorité des bundles, juste le dernier jour
+        $User['day_past'] = -1;
         $User['day_future'] = 30;
         
         $User['past'] = $this->CalcDate($ref_date, $User['ref_past'] );
@@ -2455,6 +2472,7 @@ Gris    #f2f2f2
         $User['date_future'] = new \DateTime( $User['future'] );
         
         $User['refresh'] = 30;
+        $User['refresh_pause'] = 0;
         
         $User['env'] = 'P';
         $User['app'] = '*';
@@ -2499,6 +2517,13 @@ Gris    #f2f2f2
         return $this->session->set('UserInterface',$User);
     }
 
+    public function setRefreshPause($pause)
+    {
+        $User = $this->getUserInterface();        
+        $User['refresh_pause'] = $pause;                
+        return $this->session->set('UserInterface',$User);
+    }
+    
     public function setApp($app)
     {
         $User = $this->getUserInterface();        

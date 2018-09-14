@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -25,7 +25,10 @@ function dhtmlXEditor(base, skin) {
 		// frame events
 		evs: ["focus", "blur", "keydown", "keyup", "keypress", "mouseup", "mousedown", "click", "touchend"], // touchend is dev_event for fix on iOS/iPad
 		// focus fix on iOS/iPad
-		iOSfix: (navigator.userAgent.match(/Mobile/gi) != null && navigator.userAgent.match(/iPad/gi) != null && navigator.userAgent.match(/AppleWebKit/gi) != null)
+		iOSfix: (navigator.userAgent.match(/Mobile/gi) != null && navigator.userAgent.match(/iPad/gi) != null && navigator.userAgent.match(/AppleWebKit/gi) != null),
+		// extended font conf
+		extra_css: "",
+		font: {family: "Tahoma", size: "12px", color: "black"}
 	};
 	
 	this._doOnFocusChanged = null;
@@ -36,6 +39,7 @@ function dhtmlXEditor(base, skin) {
 		if (base.content != null) this.conf.content = base.content;
 		if (base.contentHTML != null) this.conf.contentHTML = base.contentHTML;
 		if (base.iconsPath != null) this.conf.iconsPath = base.iconsPath;
+		if (base.extraCss != null) this.conf.extra_css = base.extraCss;
 		if (base.toolbar != null) this.conf.toolbar = window.dhx4.s2b(base.toolbar);
 		if (base.onFocusChanged != null) this._doOnFocusChanged = base.onFocusChanged;
 		if (base.onAccess != null) this._doOnAccess = base.onAccess;
@@ -43,7 +47,7 @@ function dhtmlXEditor(base, skin) {
 	}
 	
 	// skin config
-	this.conf.skin = (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxeditor")||"dhx_skyblue");
+	this.conf.skin = (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxeditor")||"material");
 	
 	// configure base
 	if (typeof(base) == "string") base = document.getElementById(base);
@@ -128,26 +132,26 @@ function dhtmlXEditor(base, skin) {
 		var edDoc = this.editor.contentWindow.document;
 		edDoc.open("text/html", "replace");
 		if (window.dhx4.isOpera) {
-			edDoc.write("<html><head>"+
-					"<style> html, body { overflow:auto;-webkit-overflow-scrolling: touch; padding:0px; height:100%; margin:0px; font-family:Tahoma; font-size:12px; background-color:#ffffff;} </style>"+
+			edDoc.write("<html><head>"+this.conf.extra_css+
+					"<style> html, body { overflow:auto;-webkit-overflow-scrolling: touch; padding:0px; height:100%; margin:0px; background-color:#ffffff; "+this._fontConf()+"} </style>"+
 					"</head><body "+(roMode!==true?"contenteditable='true'":"")+" tabindex='0'></body></html>");
 		} else {
 			if (window.dhx4.isKHTML) {
-				edDoc.write("<html><head>"+
+				edDoc.write("<html><head>"+this.conf.extra_css+
 						"<style> html {overflow-x: auto;-webkit-overflow-scrolling: touch; overflow-y: auto;} body { overflow: auto; overflow-y: scroll;} "+
-							"html,body { padding:0px; height:100%; margin:0px; font-family:Tahoma; font-size:12px; background-color:#ffffff;} </style>"+
+							"html,body { padding:0px; height:100%; margin:0px; background-color:#ffffff; "+this._fontConf()+"} </style>"+
 						"</head><body "+(roMode!==true?"contenteditable='true'":"")+" tabindex='0'></body></html>");
 			} else {
 				if (window.dhx4.isIE) {
 					// && navigator.appVersion.indexOf("MSIE 9.0")!= -1
-					edDoc.write("<html><head>"+
+					edDoc.write("<html><head>"+this.conf.extra_css+
 							"<style> html {overflow-y: auto;} body {overflow-y: scroll;-webkit-overflow-scrolling: touch;} "+
-								"html,body { overflow-x: auto; padding:0px; height:100%; margin:0px; font-family:Tahoma; font-size:12px; background-color: #ffffff; outline: none; } </style>"+
+								"html,body { overflow-x: auto; padding:0px; height:100%; margin:0px; background-color: #ffffff; outline: none; "+this._fontConf()+"} </style>"+
 							"</head><body "+(roMode!==true?"contenteditable='true'":"")+" tabindex='0'></body></html>");
 				} else {
-					edDoc.write("<html><head>"+
+					edDoc.write("<html><head>"+this.conf.extra_css+
 							"<style> html,body { overflow-x: auto; overflow-y:-webkit-overflow-scrolling: touch; scroll; "+
-								"padding:0px; height:100%; margin:0px; font-family:Tahoma; font-size:12px; background-color:#ffffff;} </style>"+
+								"padding:0px; height:100%; margin:0px; background-color:#ffffff; "+this._fontConf()+"} </style>"+
 							"</head><body "+(roMode!==true?"contenteditable='true'":"")+" tabindex='0'></body></html>");
 				}
 			}
@@ -351,7 +355,7 @@ function dhtmlXEditor(base, skin) {
 		if (!this.edDoc.body) {
 			return "";
 		} else {
-			if (window.dhx4.isFF) return this.editor.contentWindow.document.body.innerHTML.replace(/<\/{0,}br\/{0,}>\s{0,}$/gi,"");
+			if (window.dhx4.isFF || window.dhx4.isChrome) return this.editor.contentWindow.document.body.innerHTML.replace(/<\/{0,}br\/{0,}>\s{0,}$/gi,"");
 			if (window.dhx4.isIE && this.edDoc.body.innerText.length == 0) return "";
 			return this.edDoc.body.innerHTML;
 		}
@@ -575,6 +579,14 @@ dhtmlXEditor.prototype.setSkin = function(skin) {
 	this.setSizes();
 };
 
+dhtmlXEditor.prototype._fontConf = function() {
+	if (this.conf.skin == "") {
+		var data = {family: this.conf.font.family, size: this.conf.font.size, color: this.conf.font.color};
+	} else {
+		var data = {family: "Roboto, Arial, Helvetica", size: "14px", color: "#404040"};
+	}
+	return window.dhx4.template("font-size: #size#; font-family: #family#; color: #color#;", data);
+};
 window.dhtmlXEditorCell = function(id, editor) {
 	
 	dhtmlXCellObject.apply(this, [id, "_editor"]);
@@ -608,7 +620,7 @@ dhtmlXEditorCell.prototype._stbInit = function() {
 	var that = this;
 	
 	var t = document.createElement("DIV");
-	t.className = "dhx_cell_stb";
+	t.className = "dhx_cell_stb"+(dhx4.isIE6||dhx4.isIE7||dhx4.isIE8?"":" dhx_cell_stb_shadow");
 	this.cell.insertBefore(t, this.cell.childNodes[this.conf.idx.cont]);
 	
 	t.onselectstart = function(e) {
@@ -684,6 +696,8 @@ dhtmlXEditorCell.prototype._stbInit = function() {
 		
 	};
 	
+	this.conf.stb_visible = true;
+	
 	// include into content top offset calculation
 	this.conf.ofs_nodes.t._getStbHeight = "func";
 	
@@ -695,9 +709,16 @@ dhtmlXEditorCell.prototype._stbInit = function() {
 
 dhtmlXEditorCell.prototype._stbHide = function() {
 	this.cell.childNodes[this.conf.idx.stb].style.display = "none";
+	this.conf.stb_visible = false;
 };
 
 dhtmlXEditorCell.prototype._getStbHeight = function() {
+	if (this.conf.stb_visible == true && this.conf.skin == "material") {
+		if (this.conf.stb_height == null) {
+			this.conf.stb_height = window.dhx4.readFromCss("dhxeditor_material stb_height_detect", "scrollHeight", "<div class='dhx_cell_editor'><div class='dhx_cell_stb'></div></div>");
+		}
+		return this.conf.stb_height;
+	}
 	return this.cell.childNodes[this.conf.idx.stb].offsetHeight;
 };
 
@@ -723,7 +744,7 @@ dhtmlXCellObject.prototype.attachEditor = function(conf) {
 	conf = null;
 	
 	// attach to portal extended logic
-	if (typeof(window.dhtmlXPortalCell) != "undefined" && this instanceof window.dhtmlXPortalCell) {
+	if (typeof(window.dhtmlXPortalCell) == "function" && this instanceof window.dhtmlXPortalCell) {
 		
 		if (this.portal.conf.editor_ev == null) {
 			

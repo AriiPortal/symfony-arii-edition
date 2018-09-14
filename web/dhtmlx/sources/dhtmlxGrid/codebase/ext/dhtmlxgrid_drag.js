@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -156,7 +156,7 @@ dhtmlXGridObject.prototype._createSdrgc=function(){
 *   @desc:  create a drag context object
 *   @type:  private
 */
-function dragContext(a,b,c,d,e,f,j,h,k,l){
+function dragContext(a,b,c,d,e,f,j,h,k,l,m){
     this.source=a||"grid";
     this.target=b||"grid";
     this.mode=c||"move";
@@ -167,6 +167,7 @@ function dragContext(a,b,c,d,e,f,j,h,k,l){
     this.tobj=h||null;
    this.sExtra=k||null;
    this.tExtra=l||null;
+   this.before=m||false;
     return this;
 }
 /**
@@ -197,7 +198,7 @@ dragContext.prototype.close=function(){
 *   @type:  private
 */
 dragContext.prototype.copy=function(){
-    return new dragContext(this.source,this.target,this.mode,this.dropmode,this.sid,this.tid,this.sobj,this.tobj,this.sExtra,this.tExtra);
+    return new dragContext(this.source,this.target,this.mode,this.dropmode,this.sid,this.tid,this.sobj,this.tobj,this.sExtra,this.tExtra,this.before);
 }
 /**
 *   @desc:  set a lue of context attribute
@@ -286,6 +287,7 @@ dragContext.prototype.ind=function(){
 
     return (ind+1+((this.target=="treeGrid" && ind>=0 && this.tobj._h2.get[this.tobj.rowsBuffer[ind].idd].state=="minus")?this.tobj._getOpenLenght(this.tobj.rowsBuffer[ind].idd,0):0));
 }
+
 /**
 *   @desc:  get row related image
 *   @type:  private
@@ -314,8 +316,8 @@ dragContext.prototype.slist=function(){
 *   @type:  private
 */
 dhtmlXGridObject.prototype._drag=function(sourceHtmlObject,dhtmlObject,targetHtmlObject,lastLanding){
-   if (this._realfake) return this._fake._drag()	
-   
+   if (this._realfake) return this._fake._drag();
+
    var z=(this.lastLanding)
     //close unfinished tasks
     if  (this._autoOpenTimer) window.clearTimeout(this._autoOpenTimer);
@@ -348,7 +350,11 @@ dhtmlXGridObject.prototype._drag=function(sourceHtmlObject,dhtmlObject,targetHtm
     //complex drag mode - adjust tartget element
     if (((c.tobj.dadmode==2)&&(c.tobj.dadmodec==1))&&(c.tobj.dadmodefix<0))
        if (c.tobj.obj.rows[1].idd!=c.tid) c.tid=r1.previousSibling.idd;
-       else c.tid=0;
+       else {
+         if (this._h2 && c.tid)
+           c.before = true;
+         else c.tid=0;
+       }
 //#}
 
    var el = this.getFirstParentOfType(lastLanding,"TD")
@@ -413,7 +419,7 @@ dhtmlXGridObject.prototype._dragRoutine=function(c){
          	var tr=c.tobj._fake.rowsAr[c.sid];
          	tr.parentNode.removeChild(tr);
      	 }         
-         c.sobj._insertRowAt(fr,c.ind());
+         c.sobj._insertRowAt(fr,c.ind()-(this.pagingOn?((this.currentPage-1)*this.rowsBufferOutSize):0));
 
          c.nid=c.sid;
          c.sobj.callEvent("onGridReconstructed",[]);
@@ -421,13 +427,15 @@ dhtmlXGridObject.prototype._dragRoutine=function(c){
       }
       var new_row;
 		if (this._h2 && typeof c.tid !="undefined" && c.dropmode=="sibling" && (this._sbmod || c.tid)){
-			if (c.alfa && this._sbmod && this._h2.get[c.tid].childs.length){
+      if (c.before)
+        new_row=c.uid().tobj.addRowBefore(c.nid,c.data(),c.tid,c.img(),c.childs());
+			else if (c.alfa && this._sbmod && this._h2.get[c.tid].childs.length){
 				this.openItem(c.tid)
 				new_row=c.uid().tobj.addRowBefore(c.nid,c.data(),this._h2.get[c.tid].childs[0].id,c.img(),c.childs());
 			}
 			else
-			new_row=c.uid().tobj.addRowAfter(c.nid,c.data(),c.tid,c.img(),c.childs());
-			}
+		  	new_row=c.uid().tobj.addRowAfter(c.nid,c.data(),c.tid,c.img(),c.childs());
+		}
 		else
         	new_row=c.uid().tobj.addRow(c.nid,c.data(),c.ind(),c.pid(),c.img(),c.childs());
 

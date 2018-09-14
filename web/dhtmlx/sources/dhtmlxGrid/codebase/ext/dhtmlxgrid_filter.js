@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -95,7 +95,8 @@ dhtmlXGridObject.prototype.collectValues=function(column){
 		if (val && (!col[i]._childIndexes || col[i]._childIndexes[column]!=col[i]._childIndexes[column-1])) c[val]=true;
 	}
 	this.dma(false);
-	var vals= (this.combos[column]||(this._col_combos?this._col_combos[column]:false));
+	var vals= (this.combos[column]||(this._col_combos&&this._col_combos[column]?this._col_combos[column]:((this._sub_trees && this._sub_trees[column])?this._sub_trees[column][0]:false)));
+
 	for (var d in c) 
 		if (c[d]===true){
            if(vals){
@@ -105,7 +106,12 @@ dhtmlXGridObject.prototype.collectValues=function(column){
                else if(vals.getOption&&vals.getOption(d)){
                    d = vals.getOption(d).text;
                }
-
+				else if(vals.getItemText){
+                   var text = vals.getItemText(d);
+                   var t = this._sub_trees[column][1] = this._sub_trees[column][1] || {};
+                   t[text] = d;
+                   d = text;
+               }
            }
            f.push(d);
         }
@@ -142,19 +148,21 @@ dhtmlXGridObject.prototype.filterByAll=function(){
 			val = this.filters[i][0]._filter();
 		
 		var vals;
-		if (typeof val != "function" && (vals=(this.combos[ind]||(this._col_combos?this._col_combos[ind]:false)))){
+		if (typeof val != "function" && (vals=(this.combos[ind]||((this._col_combos&&this._col_combos[ind])?this._col_combos[ind]:((this._sub_trees && this._sub_trees[ind])?this._sub_trees[ind][1]:false))))){
             if(vals.values){
                 ind=vals.values._dhx_find(val);
 			    val=(ind==-1)?val:vals.keys[ind];
             }
 			else if(vals.getOptionByLabel){
                 val=(vals.getOptionByLabel(val)?vals.getOptionByLabel(val).value:val);
-            }
+            } else
+            	val = vals[val];
 		}
 		a.push(val);
 		
 	}
 	if (!this.callEvent("onFilterStart",[b,a])) return;
+
 	this.filterBy(b,a);
 	if (this._cssEven) this._fixAlterCss();
 	this.callEvent("onFilterEnd",[this.filters]);
@@ -366,6 +374,7 @@ dhtmlXGridObject.prototype.refreshFilters=function(){
 
 dhtmlXGridObject.prototype._filters_ready=function(fl,code){
 	this.attachEvent("onXLE",this.refreshFilters);
+	this.attachEvent("onSyncApply",this.refreshFilters);
 	this.attachEvent("onRowCreated",function(id,r){
 		if (this._f_rowsBuffer)
 			for (var i=0; i<this._f_rowsBuffer.length; i++)
@@ -501,12 +510,13 @@ dhtmlXGridObject.prototype._in_header_master_checkbox=function(t,i,c){
 		var val=this.checked?1:0;
 		self.forEachRowA(function(id){
 			var c=this.cells(id,j);
-			if (c.isCheckbox()) {
+			if (c.isCheckbox() && !c.isDisabled()) {
 				c.setValue(val);
 				c.cell.wasChanged = true;
 			}
 			this.callEvent("onEditCell",[1,id,j,val]);
 			this.callEvent("onCheckbox", [id, j, val]);
+			this.callEvent("onCheck", [id, j, val]);
 		});
 		(e||event).cancelBubble=true;
 	}

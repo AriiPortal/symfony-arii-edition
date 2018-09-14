@@ -91,7 +91,7 @@ line-height:26px;
 </textarea>    
 <script language="javascript">
 function Init() {
-    myToolbar = globalLayout.cells("c").attachToolbar();
+    myToolbar = globalLayout.cells("b").attachToolbar();
 
     myToolbar.setIconsPath("{{ asset('/images/cover/') }}");
     myToolbar.loadStruct("{{ url('xml_toolbar') }}");
@@ -146,7 +146,7 @@ function Init() {
             image:getImageStyle
     });
     
-    dhxView = globalLayout.cells("c").attachDataView( 
+    dhxView = globalLayout.cells("b").attachDataView( 
         { 
             type:"bundle2",
             drag: true, 
@@ -160,8 +160,6 @@ function Init() {
             window.location.href = d.url;
         })
     );
-    
-    globalLayout.cells("a").hideHeader();    
 }
 </script>
 {% endblock %}

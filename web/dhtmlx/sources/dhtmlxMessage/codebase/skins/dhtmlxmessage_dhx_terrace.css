@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_terrace.less */
+/*
+	skin detected: dhx_terrace
+	include extra file: skins/dhx_terrace.less
+*/
 
 .dhtmlx_message_area {
 	position: fixed;
@@ -19,13 +22,13 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	color: #333;
 	border-radius: 4px;
 	min-width: 120px;
-	padding: 10px 10px 10px 20px;
+	padding: 10px 10px 8px 15px;
 	background: #fffcef;
 	font-size: 12px;
 	font-family: Arial;
 	z-index: 10000;
 	margin: 0px 5px 5px 5px;
-	border: 1px solid #d3d3d3;
+	border: 1px solid #cccccc;
 	-moz-box-shadow: 0px 0px 5px #ccc;
 	-webkit-box-shadow: 0px 0px 5px #ccc;
 	box-shadow: 0px 0px 5px #ccc;
@@ -44,6 +47,8 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	overflow: hidden;
 }
 .dhtmlx-error {
+	border: 1px solid #f17373;
+	box-shadow: inset 0px 0px 1px 1px #f59696;
 	background: #f17373;
 	color: #fff;
 }
@@ -107,9 +112,9 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	padding: 10px 10px 15px 10px !important;
 }
 .dhtmlx_popup_button {
-	font-size: 13px;
+	font-size: 14px;
 	font-family: Arial;
-	font-weight: bold;
+	font-weight: normal;
 	min-width: 120px;
 	width: 120px;
 	height: 28px;
@@ -156,26 +161,19 @@ div.dhx_modal_cover {
 	color: #ffffff;
 	background: #f17373;
 }
+.dhtmlx-alert-warning,
+.dhtmlx-confirm-warning {
+	border: 1px solid #E6951A;
+}
 .dhtmlx-alert-warning .dhtmlx_popup_title,
 .dhtmlx-confirm-warning .dhtmlx_popup_title {
-	color: #000000;
-	border: 1px solid #f17373;
-	background: #f17373;
-}
-.dhtmlx-alert-warning .dhtmlx_popup_controls,
-.dhtmlx-confirm-warning .dhtmlx_popup_controls {
-	border: 1px solid #f17373;
-	border-width: 0 1px 1px 1px;
-}
-.dhtmlx-alert-warning .dhtmlx_popup_text,
-.dhtmlx-confirm-warning .dhtmlx_popup_text {
-	border: 1px solid #f17373;
-	border-width: 0px;
+	color: #ffffff;
+	background: #E6951A;
 }
 .dhtmlx-alert .dhtmlx_popup_title,
 .dhtmlx-confirm .dhtmlx_popup_title {
 	color: #444;
-	background: #f0ede7;
+	background: #f5f5f5;
 }
 .dhtmlx-alert .dhtmlx_popup_controls,
 .dhtmlx-confirm .dhtmlx_popup_controls {

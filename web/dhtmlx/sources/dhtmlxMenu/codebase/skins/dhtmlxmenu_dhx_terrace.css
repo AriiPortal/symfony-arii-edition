@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_terrace.less */
+/*
+	skin detected: dhx_terrace
+	include extra file: skins/dhx_terrace.less
+*/
 
 .dhxmenu_skin_detect {
 	position: absolute;
@@ -110,6 +113,16 @@ div.dhtmlxMenu_dhx_terrace_TopLevel_Item_Selected div.top_level_text {
 	float: left;
 	margin: 0px 5px;
 }
+div.dhtmlxMenu_dhx_terrace_TopLevel_Item_Normal i,
+div.dhtmlxMenu_dhx_terrace_TopLevel_Item_Disabled i,
+div.dhtmlxMenu_dhx_terrace_TopLevel_Item_Selected i {
+	height: inherit;
+	line-height: inherit;
+	float: left;
+	color: inherit;
+	margin: 0px 5px;
+	font-size: 1.1em;
+}
 div.dhtmlxMenu_dhx_terrace_TopLevel_Item_Disabled {
 	color: #d1d1d1;
 	background-color: #ededed;
@@ -166,6 +179,15 @@ div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tb
 	width: 18px;
 	height: 18px;
 }
+div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tbl td.sub_item_icon i {
+	float: left;
+	text-align: center;
+	width: 18px;
+	height: 18px;
+	line-height: 17px;
+	font-size: 1.1em;
+	color: inherit;
+}
 div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tbl div.sub_item_text {
 	padding: 0px 16px 0px 1px;
 	height: 26px;
@@ -175,6 +197,9 @@ div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tb
 }
 div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tbl tr.sub_item_dis div.sub_item_text {
 	color: #bbbbbb;
+}
+div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tbl tr.sub_item_dis td.sub_item_icon i {
+	color: #bbbbbb !important;
 }
 div.dhtmlxMenu_dhx_terrace_SubLevelArea_Polygon table.dhtmlxMebu_SubLevelArea_Tbl td.sub_item_hk {
 	padding-left: 8px;

@@ -1,26 +1,11 @@
-{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiATSBundle::layout.html.twig" %}
 {% block body %}
-<script type="text/javascript">
-dhtmlxEvent(window,"load",function(){ 
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("a").setWidth(410);
-    globalLayout.cells("b").hideHeader();
-    
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
+<script language="javascript">
+function Init() {
+    myLayout = globalLayout.cells("b").attachLayout("3L");
 
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ATS_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    var myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("b").attachGrid();
+    myLayout.cells("b").hideHeader();
     myGrid.setImagePath( "{{ asset('bundles/ariicore/images/') }}");
     myGrid.setHeader("{{ "Folder" | trans }},{{ "File" | trans }},{{ "Date" | trans }},{{ "Size" | trans }}");
     myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#numeric_filter");
@@ -29,17 +14,27 @@ dhtmlxEvent(window,"load",function(){
     myGrid.setColTypes("ro,ro,ro,ro");
     myGrid.init();
     myGrid.load("{{ url('xml_ATS_templates_files') }}");
+    myGrid.attachEvent("onRowSelect",function(id){    
+        myLayout.cells("c").expand();
+        myLayout.cells("c").progressOn();
+        myTab.cells("jil").attachURL("{{ url('arii_ATS_template_read') }}?file="+encodeURIComponent(id));
+        myTab.cells("diff").attachURL("{{ url('arii_ATS_template_diff') }}?file="+encodeURIComponent(id));
+    });
     
-    var myTab = globalLayout.cells("c").attachTabbar();
+    myTab = myLayout.cells("c").attachTabbar();
+    myLayout.cells("c").collapse();
+    
     myTab.addTab("jil","JIL","100px", null, true);
     myTab.addTab("diff","{{ "Check" | trans }}","100px");
 
-    myTree = globalLayout.cells("a").attachTree();
+    myTree = myLayout.cells("a").attachTree();
+    myLayout.cells("a").setText("{{ "Templates" | trans }}");
+    myLayout.cells("a").setWidth(200);
     myTree.setImagesPath("{{ asset('/images/') }}");
     myTree.load( "{{ url('xml_ATS_templates_tree') }}" );
 
     myTree.attachEvent("onClick",function(id){
-        globalLayout.cells("b").progressOn();   
+        myLayout.cells("b").progressOn();   
         dhx4.ajax.get("{{ url('html_ATS_template_recalc') }}?config="+encodeURIComponent(id),function(loader,response){
             dhtmlx.message({
             type: "Notice",
@@ -47,21 +42,17 @@ dhtmlxEvent(window,"load",function(){
             width: "500px",
             text: loader.xmlDoc.responseText });
             myGrid.load("{{ url('xml_ATS_templates_files') }}", function() {
-                globalLayout.cells("b").progressOff();
+                myGrid.refreshFilters();
+                myGrid.filterByAll();                
+                myLayout.cells("b").progressOff();
             });
         });
     })    
     
     myTab.attachEvent("onContentLoaded", function(id){
-        globalLayout.cells("c").progressOff();
+        myLayout.cells("c").progressOff();
     });
     
-    myGrid.attachEvent("onRowSelect",function(id){    
-        globalLayout.cells("c").progressOn();
-        myTab.cells("jil").attachURL("{{ url('arii_ATS_template_read') }}?file="+encodeURIComponent(id));
-        myTab.cells("diff").attachURL("{{ url('arii_ATS_template_diff') }}?file="+encodeURIComponent(id));
-    });
-
     myMEPToolbar = myTab.cells("diff").attachToolbar();
     myMEPToolbar.setIconsPath("{{ asset('/images/') }}");
     myMEPToolbar.loadStruct( "{{ url('xml_ATS_templates_mep_toolbar') }}");
@@ -75,10 +66,11 @@ dhtmlxEvent(window,"load",function(){
                 break;
         }
     });
-
-    globalLayout.cells("a").hideHeader();
     myTab.cells("jil").attachURL('{{ asset('/bundles/ariicore/images/arii.jpg') }}'); 
-});
+}
 
+function PageRefresh() {
+return true;
+}
 </script>
 {% endblock %}

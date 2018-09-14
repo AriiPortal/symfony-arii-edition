@@ -33,8 +33,8 @@ xml_DS_menu:
 # Jobs
 # --------------------------------------------------------------------------
 arii_DS_jobs:
-    path:  /jobs
-    defaults: { _controller: AriiDSBundle:Jobs:index }
+    path:  /db/{db}/jobs
+    defaults: { _controller: AriiDSBundle:Jobs:index, db: ojs_db }
     
 xml_DS_jobs_grid:
     path:  /jobs/grid.xml
@@ -69,8 +69,8 @@ xml_DS_jobs_form_toolbar:
 # Orders
 # --------------------------------------------------------------------------
 arii_DS_orders:
-    path:  /orders
-    defaults: { _controller: AriiDSBundle:Orders:index }
+    path:  /db/{db}/orders
+    defaults: { _controller: AriiDSBundle:Orders:index, db: ojs_db }
     
 xml_DS_orders_grid:
     path:  /orders/grid.xml

@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -40,6 +40,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 		list_zi_id: window.dhx4.newId(), // "dhxcombo_list_"+window.dhx4.newId(), // z-index id
 		allow_free_text: true,
 		allow_empty_value: true, // allow empty value in combo (when free_text not allowed)
+		free_text_empty: false, // when free text not allowed and incorrect value entered restore last selected value or reset to empty
 		enabled: true,
 		btn_left: ((window.dhx4.isIE6||window.dhx4.isIE7||window.dhx4.isIE8) && typeof(window.addEventListener) == "undefined" ? 1:0), // 1 for IE8-
 		// search in r/o mode
@@ -53,7 +54,8 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 		img_def_dis: true, // if set to true - img_def used for disabled
 		// templates
 		template: {
-			input: "#text#", // template for top-input
+			header: true,    // render header in multicolumn mode, added in 4.5.1
+			input:  "#text#",// template for top-input
 			option: "#text#" // template for option text
 		},
 		// filtering
@@ -88,10 +90,12 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 		clear_bsp: false,
 		clear_key: false,
 		// skin params
+		i_ofs: 23, // top-image offset
 		sp: {
 			dhx_skyblue: {list_ofs: 1, hdr_ofs: 1, scr_ofs: 1},
 			dhx_web: {list_ofs: 0, hdr_ofs: 1, scr_ofs: 0},
-			dhx_terrace: {list_ofs: 1, hdr_ofs: 1, scr_ofs: 1}
+			dhx_terrace: {list_ofs: 1, hdr_ofs: 1, scr_ofs: 1},
+			material: {list_ofs: 0, hdr_ofs: 1, scr_ofs: 1}
 		},
 		// autowidth for columns mode
 		col_w: null
@@ -105,7 +109,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 	//this.base.className = "dhxcombo_"+this.conf.skin;
 	
 	this.base.style.width = this.conf.combo_width+"px";
-	this.base.innerHTML = "<input type='text' class='dhxcombo_input' style='width:"+(this.conf.combo_width-24-(this.conf.combo_image?23:0))+"px;"+(this.conf.combo_image?"margin-left:23px;":"")+"' autocomplete='off'>"+
+	this.base.innerHTML = "<input type='text' class='dhxcombo_input' style='width:"+(this.conf.combo_width-(this.conf.i_ofs+1)-(this.conf.combo_image?this.conf.i_ofs:0))+"px;"+(this.conf.combo_image?"margin-left:"+this.conf.i_ofs+"px;":"")+"' autocomplete='off'>"+
 				"<input type='hidden' value=''>"+ // value
 				"<input type='hidden' value='false'>"+ // new_value
 				"<div class='dhxcombo_select_button'><div class='dhxcombo_select_img'></div></div>"+
@@ -135,7 +139,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 	}
 	
 	// apply skin
-	this.setSkin(skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxcombo")||"dhx_skyblue");
+	this.setSkin(skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxcombo")||"material");
 	
 	this._updateTopImage = function(id) {
 		
@@ -152,10 +156,10 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 	/* filtering */
 	
 	this._filterOpts = function(hiddenMode) {
-		
 		if (this.conf.f_server_tm) window.clearTimeout(this.conf.f_server_tm);
 		
-		var k = String(this.base.firstChild.value).replace(new RegExp(this.conf.f_ac_text+"$","i"),"");
+		var k = String(this.base.firstChild.value).replace(new RegExp(this._fixRE(this.conf.f_ac_text)+"$","i"),"");
+		
 		
 		if (this.conf.f_server_last == k.toLowerCase()) {
 			this._checkForMatch();
@@ -209,7 +213,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 						}
 						// load opts
 						that.clearAll();
-						that.load(r.xmlDoc.responseXML);
+						that.load(r.xmlDoc.responseText);
 						
 						var v = (that.base.offsetWidth > 0 && that.base.offsetHeight > 0);
 						if (v == true && that.conf.enabled == true && that.conf.combo_focus == true && hiddenMode !== true) {
@@ -240,7 +244,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 			// client
 			this.conf.f_server_last = k.toLowerCase();
 			
-			var r = (k.length==0?true:new RegExp((this.conf.f_mode=="start"?"^":"")+String(k).replace(/[\\\^\$\*\+\?\.\(\)\|\{\}\[\]]/gi, "\\$&"),"i"));
+			var r = (k.length==0?true:new RegExp((this.conf.f_mode=="start"?"^":"")+this._fixRE(k),"i"));
 			
 			var acText = null;
 			
@@ -257,7 +261,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 				}
 				if (r === true || t == true) {
 					this.t[a].item.style.display = "";
-					if (acText == null && k.length > 0) acText = String(this.t[a].obj.getText(this.t[a].item, true));//.replace(new RegExp("^"+k,"i"),"");
+					if (acText == null && k.length > 0) acText = String(this.t[a].obj.getText(this.t[a].item, true));
 				} else {
 					this.t[a].item.style.display = "none";
 				}
@@ -298,6 +302,10 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 		this.conf.ro_tm = window.setTimeout(function(){that.conf.ro_text="";}, this.conf.ro_tm_time);
 	}
 	
+	this._fixRE = function(t) {
+		return String(t).replace(/[\\\^\$\*\+\?\.\(\)\|\{\}\[\]]/gi, "\\$&");
+	}
+	
 	// data loading
 	this._initObj = function(data) {
 		if (typeof(data.template) != "undefined") this.setTemplate(data.template);
@@ -313,6 +321,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 			<template>
 				<input>...</input>
 				<option>...</option>
+				<header>false</header> <!-- do not render header for multi-column mode, in 4.5.1 -->
 				<columns>
 					<column width="..." css="option css optional">
 						<header>text in header</header>
@@ -457,7 +466,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 		while (t != null && t != this) {
 			if (typeof(t._optId) != "undefined") {
 				if (that.conf.tm_hover) window.clearTimeout(that.conf.tm_hover);
-				that._setSelected(t._optId);
+				that._setSelected(t._optId, false, false, true);
 			}
 			t = t.parentNode;
 		}
@@ -500,7 +509,7 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 				// but if no match found, check if entered text is same as in option
 				if (that.base.firstChild.value != that.t[sId].obj.getText(that.t[sId].item, true)) sId = null;
 			}
-			that._setSelected(sId, null, true);
+			that._setSelected(sId, null, true, true);
 		},1);
 	}
 	
@@ -565,6 +574,9 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 		// ev
 		if (that.conf.combo_focus == false) {
 			that.conf.combo_focus = true;
+			if (that.conf.skin == "material" && that.base.className.match(/dhxcombo_actv/) == null) {
+				that.base.className += " dhxcombo_actv";
+			}
 			that.callEvent("onFocus",[]);
 		}
 	}
@@ -580,6 +592,9 @@ function dhtmlXCombo(parentId, formName, width, optionType, tabIndex) {
 				// if (that._isListVisible()) that._hideList();
 				that._confirmSelect("blur");
 				that.conf.combo_focus = false;
+				if (that.conf.skin == "material" && that.base.className.match(/dhxcombo_actv/) != null) {
+					that.base.className = that.base.className.replace(/\s*dhxcombo_actv/gi, "");
+				}
 				that.callEvent("onBlur",[]);
 			}
 		},20);
@@ -892,7 +907,11 @@ dhtmlXCombo.prototype.setPlaceholder = function(text) { // new in 4.0, limited s
 dhtmlXCombo.prototype.setTemplate = function(tpl) {
 	for (var a in tpl) {
 		if (typeof(this.conf.template[a]) != "undefined") {
-			this.conf.template[a] = String(tpl[a]);
+			if (a == "header") {
+				this.conf.template[a] = window.dhx4.s2b(tpl[a]);
+			} else {
+				this.conf.template[a] = String(tpl[a]);
+			}
 		}
 	};
 	
@@ -907,7 +926,8 @@ dhtmlXCombo.prototype.setTemplate = function(tpl) {
 	for (var a in this.t) {
 		this.t[a].obj.setText(this.t[a].item, this.t[a].item._conf.text);
 	};
-	this._confirmSelect();
+
+	this._confirmSelect("template");
 };
 
 dhtmlXCombo.prototype.setSkin = function(skin) {
@@ -916,6 +936,8 @@ dhtmlXCombo.prototype.setSkin = function(skin) {
 	this.base.className = "dhxcombo_"+this.conf.skin+(this.conf.enabled?"":" dhxcombo_disabled");
 	this.list.className = "dhxcombolist_"+this.conf.skin+(this.hdr!=null?" dhxcombolist_multicolumn":"");
 	if (this.hdr != null) this.hdr.className = "dhxcombolist_"+this.conf.skin+" dhxcombolist_hdr";
+	this.conf.i_ofs = (skin == "material"?26:23);
+	this._adjustBase();
 };
 
 dhtmlXCombo.prototype.getInput = function() { // returns input, new in 4.0
@@ -991,7 +1013,7 @@ dhtmlXCombo.prototype.getSelectedText = function() { // gets text of selected op
 };
 
 dhtmlXCombo.prototype.getSelectedValue = function() { // gets value of selected item
-	return this._getOptionProp(this.conf.last_selected, "value", null);
+	return this._getOptionProp(this.conf.temp_selected||this.conf.last_selected, "value", null);
 };
 
 dhtmlXCombo.prototype.getActualValue = function() { // gets value which will be sent with form
@@ -1006,7 +1028,7 @@ dhtmlXCombo.prototype.getIndexByValue = function(value) { // returns index of it
 	return (t!=null?t.index:-1);
 };
 
-dhtmlXCombo.prototype.setComboText = function(text) {
+dhtmlXCombo.prototype.setComboText = function(text) { 
 	// sets text in combobox, reset selected option
 	if (this.conf.allow_free_text != true) return;
 	
@@ -1121,7 +1143,7 @@ dhtmlXCombo.prototype.setFilterHandler = function(f) {
 dhtmlXCombo.prototype.enableFilteringMode = function(mode, url, cache, dyn) {
 	if (mode == true || mode == "between") {
 		this.conf.f_mode = (mode==true?"start":"between");
-		if (url != null) {
+		if (url) {
 			this.conf.f_url = url;
 			this.conf.f_cache = window.dhx4.s2b(cache);
 			this.conf.f_dyn = window.dhx4.s2b(dyn);
@@ -1183,8 +1205,9 @@ dhtmlXCombo.prototype.disableAutocomplete = function(mode) {
 	this.enableAutocomplete(!mode);
 };
 
-dhtmlXCombo.prototype.allowFreeText = function(mode) { // new in 4.0
+dhtmlXCombo.prototype.allowFreeText = function(mode, resetToEmpty) { // new in 4.0
 	this.conf.allow_free_text = (typeof(mode)=="undefined"?true:window.dhx4.s2b(mode));
+	this.conf.free_text_empty = (typeof(resetToEmpty)=="undefined"?false:window.dhx4.s2b(resetToEmpty)); // 4.5.1
 };
 
 dhtmlXCombo.prototype._checkForMatch = function(forceClear) {
@@ -1258,23 +1281,23 @@ dhtmlXCombo.prototype._showList = function(autoHide) {
 	}
 	
 	this.list.style.zIndex = window.dhx4.zim.reserve(this.conf.list_zi_id); // get new z-index
-	if (this.hdr != null) this.hdr.style.zIndex = Number(this.list.style.zIndex)+1;
+	if (this.hdr != null && this.conf.template.header == true) this.hdr.style.zIndex = Number(this.list.style.zIndex)+1;
 	
 	this.list.style.visibility = "hidden";
 	this.list.style.display = "";
-	if (this.hdr != null) {
+	if (this.hdr != null && this.conf.template.header == true) {
 		this.hdr.style.visibility = this.list.style.visibility;
 		this.hdr.style.display = this.list.style.display;
 	}
 	
 	// position
-	var h0 = (this.hdr != null ? this.hdr.offsetHeight : 0);
+	var h0 = (this.hdr != null && this.conf.template.header == true ? this.hdr.offsetHeight : 0);
 	
 	this.list.style.width = Math.max(this.conf.opts_width||this.conf.col_w||0, this.conf.combo_width)+"px";
 	this.list.style.top = window.dhx4.absTop(this.base)+h0+this.base.offsetHeight-1+"px";
 	this.list.style.left = window.dhx4.absLeft(this.base)+"px";
 	
-	if (this.hdr != null) {
+	if (this.hdr != null && this.conf.template.header == true) {
 		this.hdr.style.width = this.list.style.width;
 		this.hdr.style.left = this.list.style.left;
 		this.hdr.style.top = parseInt(this.list.style.top)-h0+"px";
@@ -1285,7 +1308,7 @@ dhtmlXCombo.prototype._showList = function(autoHide) {
 	
 	// check bottom overlay
 	this.list.style.visibility = "visible";
-	if (this.hdr != null) this.hdr.style.visibility = "visible";
+	if (this.hdr != null && this.conf.template.header == true) this.hdr.style.visibility = "visible";
 	
 	this.callEvent("onOpen",[]);
 	
@@ -1297,7 +1320,7 @@ dhtmlXCombo.prototype._hideList = function() {
 	
 	window.dhx4.zim.clear(this.conf.list_zi_id); // clear z-index
 	this.list.style.display = "none";
-	if (this.hdr != null) this.hdr.style.display = "none";
+	if (this.hdr != null && this.conf.template.header == true) this.hdr.style.display = "none";
 	
 	this.conf.clear_click = false;
 	
@@ -1335,9 +1358,9 @@ dhtmlXCombo.prototype._checkListHeight = function() {
 	var s = window.dhx4.screenDim();
 	var by = window.dhx4.absTop(this.base);
 	var bh = this.base.offsetHeight;
-	var hh = (this.hdr!=null?this.hdr.offsetHeight:0); // header_height
+	var hh = (this.hdr!=null&&this.conf.template.header==true?this.hdr.offsetHeight:0); // header_height
 	
-	var onTop = Math.max(0, Math.floor((by+hh-s.top)/this.conf.item_h));
+	var onTop = Math.max(0, Math.floor((by-hh-s.top)/this.conf.item_h));
 	var onBottom = Math.max(0, Math.floor((s.bottom-(by+bh+hh))/this.conf.item_h));
 	
 	var itemsCount = this._getListVisibleCount();
@@ -1348,11 +1371,11 @@ dhtmlXCombo.prototype._checkListHeight = function() {
 	var itemsToShow = Math.min((onBottom==null?onTop:onBottom), this.conf.opts_count, itemsCount);
 	var h = (itemsToShow<itemsCount?(itemsToShow*this.conf.item_h)+"px":"");
 	
-	var ofs = this.conf.sp[this.conf.skin][this.hdr!=null?"hdr_ofs":"list_ofs"];
+	var ofs = this.conf.sp[this.conf.skin][this.hdr!=null&&this.conf.template.header==true?"hdr_ofs":"list_ofs"];
 	
 	this.list.style.height = h;
 	this.list.style.top = (onBottom==null?by-this.list.offsetHeight+ofs:by+bh+hh-ofs)+"px";
-	if (this.hdr != null) this.hdr.style.top = (onBottom==null?by-hh-this.list.offsetHeight+ofs:by+bh-ofs)+"px";
+	if (this.hdr != null && this.conf.template.header == true) this.hdr.style.top = (onBottom==null?by-hh-this.list.offsetHeight+ofs:by+bh-ofs)+"px";
 	
 };
 
@@ -1365,16 +1388,18 @@ dhtmlXCombo.prototype._scrollToItem = function(id) {
 	
 	if (y1 < a1) {
 		// on top
-		this.list.scrollTop = y1+(this.hdr!=null?1:0);
+		this.list.scrollTop = y1+(this.hdr!=null&&this.conf.template.header==true?1:0);
 	} else if (y2 > a2) {
 		// on bottom
-		this.list.scrollTop = y2-this.list.clientHeight+(this.hdr!=null?-this.conf.sp[this.conf.skin].scr_ofs:0);
+		this.list.scrollTop = y2-this.list.clientHeight+(this.hdr!=null&&this.conf.template.header==true?-this.conf.sp[this.conf.skin].scr_ofs:0);
 	}
 	
 };
 
 /* in-list selection/highlighting */
-dhtmlXCombo.prototype._setSelected = function(id, scrollToItem, updateImg) {
+dhtmlXCombo.prototype._setSelected = function(id, scrollToItem, updateImg, mouseMove) {
+	
+	this.conf.temp_selected = null;
 	
 	if (updateImg) this._updateTopImage(id);
 	
@@ -1394,7 +1419,10 @@ dhtmlXCombo.prototype._setSelected = function(id, scrollToItem, updateImg) {
 		this.t[id].obj.setSelected(this.t[id].item, true);
 		this.conf.last_hover = id;
 		
-		this.callEvent("onSelectionChange", []);
+		if (mouseMove != true) {
+			this.conf.temp_selected = id;
+			this.callEvent("onSelectionChange", []);
+		}
 		
 		// last item selected, try subload
 		if (this.conf.s_mode == "select" && this.t[id].item == this.t[id].item.parentNode.lastChild) this._subloadRequest();
@@ -1613,8 +1641,8 @@ dhtmlXCombo.prototype._confirmSelect = function(mode, hideList) {
 			// inputs
 			this.base.childNodes[1].value = this.conf.last_text;
 			this.base.childNodes[2].value = "true";
-		} else {
-			this._cancelSelect();
+		} else if (mode != "template"){
+			this._cancelSelect(true);
 			this._updateTopImage(this.conf.last_selected);
 			return;
 		}
@@ -1630,16 +1658,22 @@ dhtmlXCombo.prototype._confirmSelect = function(mode, hideList) {
 	if (hideList) this._hideList();
 	
 	if (wasChanged == true && mode != "onInit" && mode != "onDelete") {
+		this.callEvent("onSelectionChange", []);
 		this.callEvent("onChange", [this.conf.last_value, this.conf.last_text]);
 	}
 	
 };
 
-dhtmlXCombo.prototype._cancelSelect = function() {
-	
+dhtmlXCombo.prototype._cancelSelect = function(freeTextReset) {
 	this._hideList();
-	this.base.firstChild.value = this.conf.last_text;
-	//this.conf.f_server_last = this.base.firstChild.value.toLowerCase();
+	
+	if (freeTextReset == true && this.conf.allow_free_text == false && this.conf.free_text_empty == true) {
+		this.conf.f_server_last = this.conf.last_match = this.conf.last_value = this.conf.last_selected = null;
+		this.base.childNodes[1].value = this.conf.last_text = this.base.firstChild.value = "";
+		this.base.childNodes[2].value = "false";
+	} else {
+		this.base.firstChild.value = this.conf.last_text;
+	}
 	
 	// restore filters if any
 	if (this.conf.f_mode != false) {
@@ -1708,11 +1742,16 @@ dhtmlXCombo.prototype.setSize = function(width) { // changes control size
 	this.conf.combo_width = parseInt(width)-(dhx4.isFF||dhx4.isIE||dhx4.isChrome||dhx4.isOpera?2:0);
 	this.base.style.width = Math.max(0, this.conf.combo_width)+"px";
 	this._adjustBase();
+
+	if (this._isListVisible()){
+		this._hideList();
+		this._showList();
+	}
 };
 
 dhtmlXCombo.prototype._adjustBase = function() {
-	this.base.firstChild.style.width = Math.max(0, (this.conf.combo_width-24-(this.conf.combo_image?23:0)))+"px";
-	this.base.firstChild.style.marginLeft = (this.conf.combo_image?"23px":"0px");
+	this.base.firstChild.style.width = Math.max(0, (this.conf.combo_width-(this.conf.i_ofs+1)-(this.conf.combo_image?this.conf.i_ofs:0)))+"px";
+	this.base.firstChild.style.marginLeft = (this.conf.combo_image?this.conf.i_ofs+"px":"0px");
 };
 
 dhtmlXCombo.prototype.setOptionWidth = function(w) { // sets width of combo list
@@ -1898,9 +1937,9 @@ dhtmlXCombo.prototype.modes.option = {
 		this.setText(item, data.text);
 	},
 	
-	setText: function(item, text) {
+	setText: function(item, text, skip) {
 		item._conf.text = text;
-		var t = (typeof(text) == "object" ? window.dhx4.template(item._tpl.option, this.replaceHtml(item._conf.text), true) : window.dhx4.trim(this.replaceHtml(item._conf.text)||""));
+		var t = (typeof(text) == "object" ? window.dhx4.template(item._tpl.option, this.replaceHtml(item._conf.text, skip), true) : window.dhx4.trim(this.replaceHtml(item._conf.text, skip)||""));
 		item.lastChild.innerHTML = (t.length==0?"&nbsp;":t);
 	},
 	
@@ -1932,13 +1971,16 @@ dhtmlXCombo.prototype.modes.option = {
 		return {type: "option"};
 	},
 	
-	replaceHtml: function(text) {
+	replaceHtml: function(text, skip) {
 		if (this.html == true) return text;
+		if (typeof(skip) == "undefined" || skip == null) skip = {};
 		if (typeof(text) == "object") {
 			var t = {};
-			for (var a in text) t[a] = this.replaceHtml(text[a]);
+			for (var a in text) {
+				t[a] = (skip[a]==true?text[a]:this.replaceHtml(text[a]));
+			}
 		} else {
-			var t = text.replace(/[\<\>\&\s]/g, function(t){
+			var t = (text||"").replace(/[\<\>\&\s]/g, function(t){
 				switch (t) {
 					case "<": return "&lt;";
 					case ">": return "&gt;";
@@ -1958,7 +2000,7 @@ dhtmlXCombo.prototype.modes.option = {
 dhtmlXCombo.prototype.modes.checkbox = {
 	
 	image: true, // disable in code if multicolumn
-	html: true,
+	html: false,
 	image_css: "dhxcombo_checkbox dhxcombo_chbx_#state#",
 	option_css: "dhxcombo_option_text dhxcombo_option_text_chbx",
 	
@@ -1969,8 +2011,12 @@ dhtmlXCombo.prototype.modes.checkbox = {
 		item._conf = {value: data.value, css: "", checked: window.dhx4.s2b(data.checked)};
 		
 		item.className = "dhxcombo_option";
+		
+		var skip = {}; // skip html replace
+		
 		if (data.multicol == true) {
 			data.text.checkbox = "<div class='"+String(this.image_css).replace("#state#",(item._conf.checked?"1":"0"))+"'></div>&nbsp;";
+			skip.checkbox = true;
 			item.innerHTML = "<div class='"+dhtmlXCombo.prototype.modes.option.option_css+"'></div>";
 		} else {
 			item.innerHTML = "<div class='"+String(this.image_css).replace("#state#",(item._conf.checked?"1":"0"))+"'></div>"+
@@ -1982,7 +2028,7 @@ dhtmlXCombo.prototype.modes.checkbox = {
 			item._conf.css = data.css;
 		}
 		
-		this.setText(item, data.text);
+		this.setText(item, data.text, skip);
 		
 		return this;
 	},
@@ -2072,7 +2118,7 @@ dhtmlXCombo.prototype.isChecked = function(index) {
 dhtmlXCombo.prototype.modes.image = {
 	
 	image: true,
-	html: true,
+	html: false,
 	image_css: "dhxcombo_image",
 	option_css: "dhxcombo_option_text dhxcombo_option_text_image",
 	

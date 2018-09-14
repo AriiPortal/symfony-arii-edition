@@ -3,22 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Perl">
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Resources/views/layout.html.twig</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Entity/UjoJobst.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Service/AriiAutosys.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Resources/views/Job/bootstrap.html.twig</file>
-            <file>file:/C:/xampp56/arii/src/Arii/AdminBundle/Resources/views/Groups/index.html.twig</file>
-            <file>file:/C:/xampp56/arii/src/Arii/CoreBundle/Service/AriiDHTMLX.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/CoreBundle/Service/AriiPortal.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/CoreBundle/Service/AriiRender.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Controller/AlarmsController.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Resources/views/Alarms/index.html.twig</file>
-            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Resources/views/Default/index.html.twig</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Service/AriiState2.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Entity/UjoAlarmRepository.php</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Resources/views/Runtimes/index.html.twig</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Resources/config/routing.yml</file>
-            <file>file:/C:/xampp56/arii/src/Arii/ATSBundle/Resources/views/Job/history.html.twig</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Resources/config/routing.yml</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Entity/DailyPlan.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/DSBundle/Service/AriiDailySchedule.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Entity/DaysSchedule.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JOCBundle/Controller/OrdersController.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Service/AriiJID.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Entity/SchedulerOrderHistoryRepository.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/DSBundle/Resources/config/routing.yml</file>
+            <file>file:/C:/xampp56/arii/src/Arii/DSBundle/Controller/OrdersController.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Controller/OrdersController.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Service/AriiHistory2.php</file>
+            <file>file:/C:/xampp56/arii/src/Arii/JIDBundle/Controller/JobsController.php</file>
         </group>
     </open-files>
 </project-private>

@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -691,11 +691,12 @@ dhtmlXFileUploader.prototype.html5.prototype = {
 		
 		var form = new FormData();
 		form.append("file", this._files[id].file);
-		
-		this._loader.open("POST", this._url+(String(this._url).indexOf("?")<0?"?":"&")+"mode=html5&dhxr"+new Date().getTime(), true);
-		this._loader.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-		this._loader.send(form);
-		
+
+		if (this.callEvent("onBeforeFileUpload", ["html5", this.loader, form])){
+			this._loader.open("POST", this._url+(String(this._url).indexOf("?")<0?"?":"&")+"mode=html5"+window.dhx4.ajax._dhxr("&"), true);
+			this._loader.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			this._loader.send(form);
+		}
 	},
 	
 	_uploadStop: function() {
@@ -906,7 +907,7 @@ dhtmlXFileUploader.prototype.html4.prototype = {
 	
 	_uploadStop: function() {
 		if (!this._uploading) return;
-		this.fr.contentWindow.location.href = (this._url)+(this._url.indexOf("?")<0?"?":"&")+"mode=html4&action=cancel&dhxr"+new Date().getTime();
+		this.fr.contentWindow.location.href = (this._url)+(this._url.indexOf("?")<0?"?":"&")+"mode=html4&action=cancel"+window.dhx4.ajax._dhxr("&");
 	},
 	
 	_unloadEngine: function() {
@@ -947,12 +948,11 @@ dhtmlXFileUploader.prototype.flash.prototype = {
 	
 	_initEngine: function() {
 		
-		if (!window.dhtmlXFileUploaderSWFObjects) {
-			window.dhtmlXFileUploaderSWFObjects = {
+		if (window.dhtmlXSWFObjectsPull == null) {
+			window.dhtmlXSWFObjectsPull = {
 				items: {},
 				callEvent: function(id, name, params) {
-					//console.log(arguments)
-					return window.dhtmlXFileUploaderSWFObjects.items[id].uploader[name].apply(window.dhtmlXFileUploaderSWFObjects.items[id].uploader,params);
+					return window.dhtmlXSWFObjectsPull.items[id].uploader[name].apply(window.dhtmlXSWFObjectsPull.items[id].uploader,params);
 				}
 			};
 		}
@@ -960,7 +960,7 @@ dhtmlXFileUploader.prototype.flash.prototype = {
 		var that = this;
 		
 		this._swf_obj_id = "dhtmlXFileUploaderSWFObject_"+window.dhx4.newId();
-		this._swf_file_url = this._swf_file_url+(this._swf_file_url.indexOf("?")>=0?"&":"?")+"dhxr"+new Date().getTime();
+		this._swf_file_url = this._swf_file_url+window.dhx4.ajax._dhxr(this._swf_file_url);
 		this.buttons["browse"].innerHTML = "<div id='"+this._swf_obj_id+"' style='width:100%;height:100%;'></div>";
 		swfobject.embedSWF(this._swf_file_url, this._swf_obj_id, "100%", "100%", "9", null, {ID:this._swf_obj_id,enableLogs:this._swf_logs}, {wmode:"transparent"});
 		
@@ -969,7 +969,7 @@ dhtmlXFileUploader.prototype.flash.prototype = {
 		
 		this._progress_type = "percentage";
 		
-		window.dhtmlXFileUploaderSWFObjects.items[this._swf_obj_id] = {id: this._swf_obj_id, uploader: this};
+		window.dhtmlXSWFObjectsPull.items[this._swf_obj_id] = {id: this._swf_obj_id, uploader: this};
 	},
 	
 	_beforeAddFileToQueue: function(name, size) {
@@ -1038,11 +1038,11 @@ dhtmlXFileUploader.prototype.flash.prototype = {
 		
 		// remove instance from global storage
 		
-		if (window.dhtmlXFileUploaderSWFObjects.items[this._swf_obj_id]) {
-			window.dhtmlXFileUploaderSWFObjects.items[this._swf_obj_id].id = null;
-			window.dhtmlXFileUploaderSWFObjects.items[this._swf_obj_id].uploader = null;
-			window.dhtmlXFileUploaderSWFObjects.items[this._swf_obj_id] = null
-			delete window.dhtmlXFileUploaderSWFObjects.items[this._swf_obj_id];
+		if (window.dhtmlXSWFObjectsPull.items[this._swf_obj_id]) {
+			window.dhtmlXSWFObjectsPull.items[this._swf_obj_id].id = null;
+			window.dhtmlXSWFObjectsPull.items[this._swf_obj_id].uploader = null;
+			window.dhtmlXSWFObjectsPull.items[this._swf_obj_id] = null
+			delete window.dhtmlXSWFObjectsPull.items[this._swf_obj_id];
 		}
 		
 		this._swf_obj_id = null;
@@ -1136,7 +1136,7 @@ dhtmlXFileUploader.prototype.sl.prototype = {
 		var p = this._sl_upload_url.split("?");
 		p = (p[1]!=null?"&"+p[1]:"");
 		//
-		document.getElementById(this._sl_obj_id).Content.a.upload(id, this._sl_upload_url, p+"&mode=sl&dhxr"+new Date().getTime()); // leading "&" required!
+		document.getElementById(this._sl_obj_id).Content.a.upload(id, this._sl_upload_url, p+"&mode=sl"+window.dhx4.ajax._dhxr("&")); // leading "&" required!
 	},
 	
 	_uploadStop: function(id) {

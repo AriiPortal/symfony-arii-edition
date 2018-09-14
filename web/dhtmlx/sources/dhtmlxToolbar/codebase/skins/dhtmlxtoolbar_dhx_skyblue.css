@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_skyblue.less */
+/*
+	skin detected: dhx_skyblue
+	include extra file: skins/dhx_skyblue.less
+*/
 
 .dhxtoolbar_skin_detect {
 	position: absolute;
@@ -34,6 +37,15 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	font-family: Tahoma, Helvetica;
 	font-size: 11px;
 	color: black;
+}
+.dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_24 div.dhx_toolbar_btn i {
+	font-size: 20px;
+}
+.dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_32 div.dhx_toolbar_btn i {
+	font-size: 26px;
+}
+.dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_48 div.dhx_toolbar_btn i {
+	font-size: 38px;
 }
 .dhx_toolbar_dhx_skyblue div.dhxtoolbar_float_left {
 	float: left;
@@ -107,6 +119,23 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	width: 18px;
 	height: 18px;
 	cursor: default;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+.dhx_toolbar_dhx_skyblue div.dhx_toolbar_btn i {
+	float: left;
+	margin: 2px;
+	width: 18px;
+	height: 18px;
+	line-height: 17px;
+	font-size: 1.3em;
+	text-align: center;
+	cursor: default;
+	color: inherit;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
@@ -258,6 +287,11 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	width: 24px;
 	height: 24px;
 }
+.dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_24 div.dhx_toolbar_btn i {
+	width: 24px;
+	height: 24px;
+	line-height: 23px;
+}
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_24 div.dhx_toolbar_btn div.dhxtoolbar_text,
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_24 div.dhx_toolbar_arw div.arwimg {
 	height: 24px;
@@ -294,6 +328,11 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	width: 32px;
 	height: 32px;
 }
+.dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_32 div.dhx_toolbar_btn i {
+	width: 32px;
+	height: 32px;
+	line-height: 31px;
+}
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_32 div.dhx_toolbar_btn div.dhxtoolbar_text,
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_32 div.dhx_toolbar_arw div.arwimg {
 	height: 32px;
@@ -329,6 +368,11 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_48 div.dhx_toolbar_btn img {
 	width: 48px;
 	height: 48px;
+}
+.dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_48 div.dhx_toolbar_btn i {
+	width: 48px;
+	height: 48px;
+	line-height: 47px;
 }
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_48 div.dhx_toolbar_btn div.dhxtoolbar_text,
 .dhx_toolbar_dhx_skyblue.dhxtoolbar_icons_48 div.dhx_toolbar_arw div.arwimg {
@@ -372,6 +416,9 @@ div.dhx_toolbar_poly_dhx_skyblue {
 	-ms-user-select: none;
 	-o-user-select: none;
 	user-select: none;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 div.dhx_toolbar_poly_dhx_skyblue td {
 	font-family: Tahoma, Helvetica;
@@ -398,6 +445,14 @@ div.dhx_toolbar_poly_dhx_skyblue td.td_btn_img {
 div.dhx_toolbar_poly_dhx_skyblue td.td_btn_img img.btn_sel_img {
 	width: 18px;
 	height: 18px;
+}
+div.dhx_toolbar_poly_dhx_skyblue td.td_btn_img i {
+	width: 18px;
+	height: 18px;
+	line-height: 17px;
+	text-align: center;
+	color: inherit;
+	font-size: 1.3em;
 }
 div.dhx_toolbar_poly_dhx_skyblue td.td_btn_txt div.btn_sel_text {
 	padding: 0px 12px 0px 1px;

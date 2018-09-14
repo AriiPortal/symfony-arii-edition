@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -23,7 +23,7 @@ function dhtmlXCarousel(conf, effect, skin) {
 	}
 	
 	this.conf = {
-		skin: (conf.skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxcarousel")||"dhx_skyblue"),
+		skin: (conf.skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxcarousel")||"material"),
 		css: "dhxcarousel", // css prefix for topcell mtb
 		// misc
 		items_count: 0,
@@ -484,11 +484,13 @@ dhtmlXCarousel.prototype._initControls = function() {
 	
 	var that = this;
 	
+	var a = (this.conf.skin=="material"?["",""]:this.conf.arw);
+	
 	this.controls = document.createElement("DIV");
 	this.controls.className = "dhx_carousel_controls";
 	this.controls.innerHTML = "<div class='dhx_carousel_bars'></div>"+
-					"<div class='dhx_carousel_btn dhx_carousel_btn_prev'>"+this.conf.arw[0]+"</div>"+
-					"<div class='dhx_carousel_btn dhx_carousel_btn_next'>"+this.conf.arw[1]+"</div>";
+					"<div class='dhx_carousel_btn dhx_carousel_btn_prev'>"+a[0]+"</div>"+
+					"<div class='dhx_carousel_btn dhx_carousel_btn_next'>"+a[1]+"</div>";
 	
 	this.cont.appendChild(this.controls);
 	
@@ -672,7 +674,7 @@ dhtmlXCellObject.prototype.attachCarousel = function(conf) {
 	obj.style.overflow = "hidden";
 	this._attachObject(obj);
 	
-	if (typeof(window.dhtmlXSideBarCell) != "undefined" && (this instanceof window.dhtmlXSideBarCell)) {
+	if (typeof(window.dhtmlXSideBarCell) == "function" && this instanceof window.dhtmlXSideBarCell) {
 		if (this.conf.skin == "dhx_terrace") {
 			obj._ofs = {t:-1,r:-1,b:-1,l:-1};
 		}

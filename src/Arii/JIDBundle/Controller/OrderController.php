@@ -323,43 +323,6 @@ class OrderController extends Controller {
         }
     }
 
-// rien a faire ici    
-    public function paramsAction() {
-        // recherche des infos
-        $request = Request::createFromGlobals();
-        $id = $request->get('id');
-
-        // Recherche des informations dans la base de données
-        // Nécessaire pour la securité, inutile de faire un accès direct !
-        $sos = $this->container->get('arii_jid.sos');
-        list($spooler_id, $order_id, $job_chain) = $sos->getOrderInfos($id);
-
-        // On recupere les informations du job chain
-        $cmd = '<show_order order="' . $order_id . '" job_chain="' . $job_chain . '" what="payload"/>';
-        $result = $sos->Command($spooler_id, $cmd);
-
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml');
-        $list = '<?xml version="1.0" encoding="UTF-8"?>';
-        $list .= "<rows>\n";
-        if (isset($result['spooler']['answer']['order']['payload']['params']['param'])) {
-            if (!isset($result['spooler']['answer']['order']['payload']['params']['param'][0])) {
-                $result['spooler']['answer']['order']['payload']['params']['param'][0] = $result['spooler']['answer']['order']['payload']['params']['param'];
-            }
-            $n = 0;
-            while (isset($result['spooler']['answer']['order']['payload']['params']['param'][$n])) {
-                if (isset($result['spooler']['answer']['order']['payload']['params']['param'][$n]['attr'])) {
-                    $param = $result['spooler']['answer']['order']['payload']['params']['param'][$n]['attr'];
-                    $list .= "<row><cell>".$param['name']."</cell><cell>".$param['value']."</cell></row>";
-                }
-                $n++;
-            }
-        }
-        $list .= "</rows>\n";
-        $response->setContent($list);
-        return $response;
-    }
-
     public function logDBAction($db)
     {
         # Il est preferable de connaitre le type de base plutot que le deviner

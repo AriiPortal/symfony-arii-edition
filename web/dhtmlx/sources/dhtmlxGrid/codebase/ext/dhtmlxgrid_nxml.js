@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -297,7 +297,7 @@ dhtmlXGridObject.prototype.csvParser={
 };
 dhtmlXGridObject.prototype.csvExtParser={
 	_quote:RegExp('"',"g"),
-	_quote_esc:RegExp("\\\\\"","g"),
+	_quote_esc:RegExp("\"\"","g"),
 	block:function(data,row){
 		return data.join(row);
 	},
@@ -339,7 +339,7 @@ dhtmlXGridObject.prototype.csvExtParser={
 	},
 	str:function(data,cell,row){
 		for (var i=0; i < data.length; i++)
-			data[i] = '"'+data[i].replace(this._quote, "\\\"")+'"';
+			data[i] = '"'+data[i].replace(this._quote, "\"\"")+'"';
 		return data.join(cell);
 	}
 };
@@ -439,7 +439,9 @@ dhtmlXGridObject.prototype.printView = function(before,after){
 	  	for (var i=0; i<this._fake._cCount; i++)
 	  		this._hrrar[i]=null;
 	  }
-	   html+="<base  href='"+(document.location.protocol+"//"+document.location.hostname+document.location.pathname)+"'></base>";
+     var port = document.location.port;
+     var hostname = document.location.hostname;
+	   html+="<base  href='"+(document.location.protocol+"//"+hostname+(port?(":"+port):"")+document.location.pathname)+"'></base>";
 	   if (!this.parentGrid) html+=(before||"");
        html += '<table width="100%" border="2px" cellpadding="0" cellspacing="0">';
        var row_length = Math.max(this.rowsBuffer.length,this.rowsCol.length); //paging and smartrendering

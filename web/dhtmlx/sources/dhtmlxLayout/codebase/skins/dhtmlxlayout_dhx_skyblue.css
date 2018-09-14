@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_skyblue.less */
+/*
+	skin detected: dhx_skyblue
+	include extra file: skins/dhx_skyblue.less
+*/
 
 .dhxlayout_base_dhx_skyblue {
 	background-color: #ebebeb;
@@ -151,6 +154,7 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	transform-origin: left center;
 	color: #3a4854;
 	font-weight: normal;
+	text-overflow: ellipsis;
 }
 .dhxlayout_base_dhx_skyblue .dhxlayout_cont div.dhx_cell_layout.dhxlayout_collapsed_v div.dhx_cell_hdr div.dhx_cell_hdr_text.dhx_cell_hdr_text_ie6 {
 	left: -5px;

@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -253,6 +253,8 @@ dhtmlXAccordion.prototype.enableDND = function() {
 		if (ind0 != ind1) {
 			this.setSizes();
 			this.callEvent("onDrop", [id, ind0, ind1]);
+		} else {
+			this.callEvent("_onDropCancel", [id]);
 		}
 		
 		if (typeof(window.addEventListener) == "function") {

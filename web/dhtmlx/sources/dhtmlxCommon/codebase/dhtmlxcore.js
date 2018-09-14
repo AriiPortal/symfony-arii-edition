@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -801,7 +801,7 @@ dhtmlx.Destruction = {
 	},
 	//will be called automatically on unload, can be called manually
 	//simplifies job of GC
-	destructor:function(){
+	destructor:function(mode){
 		this.destructor=function(){}; //destructor can be called only once
 		
 		//html collection
@@ -817,11 +817,21 @@ dhtmlx.Destruction = {
 			this._obj.innerHTML="";
 			this._obj._htmlmap = null;
 		}
-		this._obj = this._dataobj=null;
+		this._obj = this._dataobj = null;
 		this.data = null;
 		this._events = this._handlers = {};
+		this.canvases = [];
 		if(this.render)
 			this.render = function(){};//need in case of delayed method calls (virtual render case)
+
+		// not effective, need to remove all event listeners as well
+		//
+		// if (mode != -1)
+		// 	for (var i=0; i<dhtmlx.destructors.length; i++)
+		// 		if (dhtmlx.destructors[i] == this){
+		// 			dhtmlx.destructors.splice(i,1);
+		// 			break;
+		// 		}
 	}
 };
 //global list of destructors
@@ -830,7 +840,7 @@ dhtmlx.event(window,"unload",function(){
 	//call all registered destructors
 	if (dhtmlx.destructors){
 		for (var i=0; i<dhtmlx.destructors.length; i++)
-			dhtmlx.destructors[i].destructor();
+			dhtmlx.destructors[i].destructor(-1);
 		dhtmlx.destructors = [];
 	}
 	
@@ -986,7 +996,20 @@ dhtmlx.AtomDataLoader={
 		else
 			this.data.driver = dhtmlx.DataDriver[this._settings.datatype||"xml"];
 		//load data by async ajax call
-		dhtmlx.ajax(url,[this._onLoad,call],this);
+		if (window.dhx4){
+			return dhx4.ajax.get(url,dhtmlx.bind(function(x){
+				var loader = x.xmlDoc;
+				var text = loader.responseText;
+				var xml = loader.responseXML;
+
+				if (this._onLoad)
+					this._onLoad.call(this, text, xml, loader);
+				if (call)
+					call.call(this, text, xml, loader);
+			},this));
+		} else {
+			dhtmlx.ajax(url,[this._onLoad,call],this);
+		}
 	},
 	//loads data from object
 	parse:function(data,type){
@@ -1266,15 +1289,8 @@ dhtmlx.DataDriver.xml={
 		z=z||{};
 		var flag=false;
 		
-		//map attributes
-		var a=tag.attributes;
-		if(a && a.length){
-			for (var i=0; i<a.length; i++)
-		 		z[a[i].name]=a[i].value;
-		 	flag = true;
-	 	}
+
 		//map subtags
-		
 		var b=tag.childNodes;
 		var state = {};
 		for (var i=0; i<b.length; i++){
@@ -1290,6 +1306,14 @@ dhtmlx.DataDriver.xml={
 				flag=true;
 			}
 		}
+
+		//map attributes
+		var a=tag.attributes;
+		if(a && a.length){
+			for (var i=0; i<a.length; i++)
+		 		z[a[i].name]=a[i].value;
+		 	flag = true;
+	 	}
 		
 		if (!flag)
 			return this.nodeValue(tag);
@@ -1565,6 +1589,11 @@ dhtmlx.DataStore.prototype={
 			to = Math.min((this.endOffset||Infinity),(this.dataCount()-1));
 			if (to<0) to = 0; //we have not data in the store
 		}
+
+		if (this.min)
+			from = this.min;
+		if (this.max)
+			to = this.max;
 
 		if (from>to){ //can be in case of backward shift-selection
 			var a=to; to=from; from=a;

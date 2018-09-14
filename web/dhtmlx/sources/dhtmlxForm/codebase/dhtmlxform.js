@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -48,7 +48,7 @@ function dhtmlXForm(parentObj, data, skin) {
 	this.setSkin = function(skin) {
 		this.skin = skin;
 		this.cont.className = "dhxform_obj_"+this.skin;
-		this.cont.style.fontSize = (skin=="dhx_terrace"?"13px":"12px");
+		this.cont.style.fontSize = (skin=="material"?"14px":(skin=="dhx_terrace"?"13px":"12px"));
 		this._updateBlocks();
 		// update calendar skin
 		this.forEachItem(function(id){
@@ -59,7 +59,7 @@ function dhtmlXForm(parentObj, data, skin) {
 		});
 	}
 	
-	this.skin = (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhx_form")||"dhx_skyblue");
+	this.skin = (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhx_form")||"material");
 	
 	this.separator = ",";
 	this.live_validate = false;
@@ -76,7 +76,7 @@ function dhtmlXForm(parentObj, data, skin) {
 		
 		this._parentForm = true;
 		
-		this.cont.style.fontSize = (this.skin=="dhx_terrace"?"13px":"12px");
+		this.cont.style.fontSize = (this.skin=="material"?"14px":(this.skin=="dhx_terrace"?"13px":"12px"));
 		this.cont.className = "dhxform_obj_"+this.skin;
 		
 		this.setFontSize = function(fs) {
@@ -206,6 +206,7 @@ function dhtmlXForm(parentObj, data, skin) {
 			if (type == "newcolumn") {
 				var tr = {};
 			} else {
+				if (this.b_index == null) this._prepare(); // form wasn't inited and item added via dyn funcs
 				var insBeforeBase = this.base[this.b_index];
 				var insBeforeItem = null;
 				if (typeof(pos) != "undefined" && !isNaN(pos) && type != "list") {
@@ -618,7 +619,9 @@ function dhtmlXForm(parentObj, data, skin) {
 				}
 				return res;
 			} else {
-				return this.objPull[this.idPrefix+id][method](this.itemPull[this.idPrefix+id], a, b, c, d);
+				var line = this.objPull[this.idPrefix+id];
+				if (line && line[method])
+					return line[method](this.itemPull[this.idPrefix+id], a, b, c, d);
 			}
 		}
 	}
@@ -824,7 +827,7 @@ function dhtmlXForm(parentObj, data, skin) {
 		item._vcss = null;
 	}
 	this.setValidateCss = function(name, state, custom) {
-		var item = this[this.getItemType(name)=="radio"?"_getRGroup":"_getItemByName"](name);
+		var item = this._getItemByName(name);
 		if (!item) return;
 		if (item._vcss != null) this._resetValidateCss(item);
 		item._vcss = (typeof(custom)=="string"?custom:"validate_"+(state===true?"ok":"error"));
@@ -838,6 +841,14 @@ function dhtmlXForm(parentObj, data, skin) {
 			}
 		}
 	}
+	this._validateLoop = function(handler) { // same as forEach only omit radio button value
+		for (var a in this.objPull) {
+			handler(String(a).replace(this.idPrefix,""));
+			if (this.itemPull[a]._list) {
+				for (var q=0; q<this.itemPull[a]._list.length; q++) this.itemPull[a]._list[q]._validateLoop(handler);
+			}
+		}
+	}
 	// action
 	this.validate = function(type) {
 		
@@ -845,12 +856,11 @@ function dhtmlXForm(parentObj, data, skin) {
 		
 		var completed = true;
 		
-		this.forEachItem(function(name, value){
-			if (typeof(value) != "undefined") name = [name,value];
-			var k = that.doWithItem(name,"_validate");
+		this._validateLoop(function(name, value){
+			var k = that.doWithItem(name, "_validate");
 			if (typeof(k) != "boolean") k = true;
 			completed = k && completed;
-		});
+		}, true);
 		
 		this.callEvent("onAfterValidate",[completed]);
 		return completed;
@@ -1050,8 +1060,9 @@ function dhtmlXForm(parentObj, data, skin) {
 				
 				if (!item._validate || !item._enabled) return true;
 				
-				if (item._type == "ch") {
+				if (item._type == "ch" || item._type == "ra") {
 					var val = (this.isChecked(item)?this.getValue(item):0);
+					if (item._type == "ra" && typeof(val) == "undefined") val = 0;
 				} else {
 					var val = this.getValue(item);
 				}
@@ -1172,7 +1183,9 @@ dhtmlXForm.prototype.items = {};
 
 /* checkbox */
 dhtmlXForm.prototype.items.checkbox = {
-	
+	getInput: function(item) {
+		return item.getElementsByTagName("INPUT")[0];
+	},
 	render: function(item, data) {
 		
 		item._type = "ch";
@@ -1293,11 +1306,17 @@ dhtmlXForm.prototype.items.checkbox = {
 			};
 		}
 		
-		p.appendChild(t);
+		if (el == "SELECT" && data.type == "select" && item.getForm().skin == "material") {
+			if (window.dhx4.isOpera || window.dhx4.isChrome) {
+				t.className += " dhxform_arrow_fix_webkit";
+			} else if (window.dhx4.isEdge) {
+				t.className += " dhxform_arrow_fix_edge";
+			} else if (window.dhx4.isFF) {
+				t.className += " dhxform_fix_ff";
+			}
+		}
 		
-		if (data.readonly) this.setReadonly(item, true);
-		if (data.hidden == true) this.hide(item);
-		if (data.disabled == true) this.userDisable(item);
+		p.appendChild(t);
 		
 		if (pos) {
 			if (!isNaN(data.inputLeft)) p.style.left = parseInt(data.inputLeft)+"px";
@@ -1315,7 +1334,7 @@ dhtmlXForm.prototype.items.checkbox = {
 		t.style.cssText = u;
 		
 		if (data.maxLength) t.setAttribute("maxLength", data.maxLength);
-		if (data.connector) t.setAttribute("connector",data.connector);
+		if (data.connector) t.setAttribute("connector", data.connector);
 		
 		var i = (dhtmlXForm.prototype.items[this.t] != null ? dhtmlXForm.prototype.items[this.t]._dimFix == true : false);
 		if (dimFix && ({input: 1, password:1, select:1, multiselect:1, calendar:1, colorpicker:1}[this.t] == 1 || i)) {
@@ -1332,6 +1351,10 @@ dhtmlXForm.prototype.items.checkbox = {
 			p.appendChild(note);
 			note = null;
 		}
+		
+		if (data.readonly) this.setReadonly(item, true);
+		if (data.disabled == true) this.userDisable(item);
+		if (data.hidden == true && this.t != "combo") this.hide(item);
 		
 	},
 	
@@ -1620,10 +1643,15 @@ dhtmlXForm.prototype.items.radio = {
 			}
 		}
 		
-		var id = item._idd;
+		this.r[item._idd] = null;
+		delete this.r[item._idd];
+		
 		item._doOnFocus = item._doOnBlur = item._updateImgNode = null;
 		this.doUnloadNestedLists(item);
 		this.doDestruct(item);
+		
+		var id = item._idd;
+		item = null;
 		
 		return id;
 		
@@ -1885,31 +1913,36 @@ dhtmlXForm.prototype.items.select = {
 		
 		window.dhx4.ajax.get(url, function(r) {
 			
-			r = r.xmlDoc.responseXML;
-			if (r == null) return;
-			
-			var root = r.getElementsByTagName("data");
-			if (root == null || root[0] == null) return;
-			
-			root = root[0];
-			
-			var opts = [];
-			for (var q=0; q<root.childNodes.length; q++) {
-				if (typeof(root.childNodes[q].tagName) != "undefined" && String(root.childNodes[q].tagName).toLowerCase() == "item") {
-					var option = root.childNodes[q];
-					opts.push({
-						label: option.getAttribute("label"),
-						value: option.getAttribute("value"),
-						selected: (option.getAttribute("selected") != null)
-					});
-					option = null;
+			var t = r.xmlDoc.responseText;
+			if (t.indexOf("{") === 0){
+				//json
+				var data = JSON.parse(t);
+				that.doLoadOpts(item, data, true);
+			} else {
+				r = r.xmlDoc.responseXML;
+				if (r == null) return;
+				
+				var root = r.getElementsByTagName("data");
+				if (root == null || root[0] == null) return;
+				
+				root = root[0];
+				
+				var opts = [];
+				for (var q=0; q<root.childNodes.length; q++) {
+					if (typeof(root.childNodes[q].tagName) != "undefined" && String(root.childNodes[q].tagName).toLowerCase() == "item") {
+						var option = root.childNodes[q];
+						opts.push({
+							label: option.getAttribute("label"),
+							value: option.getAttribute("value"),
+							selected: (option.getAttribute("selected") != null)
+						});
+						option = null;
+					}
 				}
+				that.doLoadOpts(item, {options:opts}, true);
 			}
-			
-			that.doLoadOpts(item, {options:opts}, true);
-			
+						
 			// try to set value if it was called while options loading was in progress
-			
 			item._connector_working = false;
 			if (item._connector_value != null) {
 				that.setValue(item, item._connector_value);
@@ -2164,26 +2197,30 @@ dhtmlXForm.prototype.items.input = {
 	
 	doAttachEvents: function(item) {
 		
-		var that = this;
+		var node = item.childNodes[item._ll?1:0].childNodes[0];
 		
-		if (item._type == "ta" || item._type == "se" || item._type == "pw") {
-			item.childNodes[item._ll?1:0].childNodes[0].onfocus = function() {
+		if (typeof(node.tagName) != "undefined" && {"input":1, "textarea":1, "select":1}[node.tagName.toLowerCase()] == 1) {
+			
+			var that = this;
+			node.onfocus = function() {
 				var i = this.parentNode.parentNode;
 				if (i._df != null) this.value = i._value||"";
 				i.getForm()._ccActivate(i._idd, this, this.value);
 				i.getForm().callEvent("onFocus",[i._idd]);
 				i = null;
 			}
+			node.onblur = function() {
+				var i = this.parentNode.parentNode;
+				i.getForm()._ccDeactivate(i._idd);
+				that.updateValue(i, true);
+				if (i.getForm().live_validate) that._validate(i);
+				i.getForm().callEvent("onBlur",[i._idd]);
+				i = null;
+			}
+			
 		}
+		node = null;
 		
-		item.childNodes[item._ll?1:0].childNodes[0].onblur = function() {
-			var i = this.parentNode.parentNode;
-			i.getForm()._ccDeactivate(i._idd);
-			that.updateValue(i, true);
-			if (i.getForm().live_validate) that._validate(i);
-			i.getForm().callEvent("onBlur",[i._idd]);
-			i = null;
-		}
 	},
 	
 	updateValue: function(item, foc) {
@@ -3228,10 +3265,11 @@ dhtmlXForm.prototype._dp_init = function(dp) {
 	dp._clearUpdateFlag = function(){};
 	
 	dp.attachEvent("onAfterUpdate", function(sid, action, tid, tag){
-		if (action == "inserted" || action == "updated"){
+		if (action == "inserted" || action == "updated" || action == "error" || action == "invalid")
 			this.obj.resetDataProcessor("updated");
+		if (action == "inserted" || action == "updated")
 			this.obj._last_load_data = this.obj.getFormData(true);
-		}
+					
 		this.obj.callEvent("onAfterSave",[this.obj.formId, tag]);
 		return true;
 	});
@@ -3339,11 +3377,18 @@ dhtmlXForm.prototype._checkDim = function(formNode, inpObj) {
 	return dim;
 };
 
+(function(){
+
+var a = [
+	"ftype", "name", "value", "label", "check", "checked", "disabled", "text", "rows", "select", "selected", "width", "style", "className",
+	"labelWidth", "labelHeight", "labelLeft", "labelTop", "inputWidth", "inputHeight", "inputLeft", "inputTop", "position", "size"
+];
+
+dhtmlXForm.prototype.loadStructHTML = function(el){
+	var el = typeof el === "string" ? document.getElementById(el) : el;
+	this.loadStruct(this._ulToObject(el, a))
+}
 dhtmlXForm.prototype._autoload = function() {
-	var a = [
-		"ftype", "name", "value", "label", "check", "checked", "disabled", "text", "rows", "select", "selected", "width", "style", "className",
-		"labelWidth", "labelHeight", "labelLeft", "labelTop", "inputWidth", "inputHeight", "inputLeft", "inputTop", "position", "size"
-	];
 	var k = document.getElementsByTagName("UL");
 	var u = [];
 	for (var q=0; q<k.length; q++) {
@@ -3379,6 +3424,9 @@ if (typeof(window.addEventListener) == "function") {
 	window.attachEvent("onload", dhtmlXForm.prototype._autoload);
 };
 
+})();
+
+
 if (typeof(window.dhtmlXCellObject) != "undefined") {
 	
 	dhtmlXCellObject.prototype.attachForm = function(data) {
@@ -3395,9 +3443,7 @@ if (typeof(window.dhtmlXCellObject) != "undefined") {
 		this._attachObject(obj);
 		
 		this.dataType = "form";
-		this.dataObj = new dhtmlXForm(obj, data);
-		this.dataObj.setSkin(this.conf.skin);
-		
+		this.dataObj = new dhtmlXForm(obj, data, this.conf.skin);
 		obj = null;
 		
 		this.callEvent("_onContentAttach",[]);

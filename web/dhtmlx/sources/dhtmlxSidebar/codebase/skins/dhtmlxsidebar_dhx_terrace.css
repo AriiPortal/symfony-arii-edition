@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_terrace.less */
+/*
+	skin detected: dhx_terrace
+	include extra file: skins/dhx_terrace.less
+*/
 
 .dhxsidebar_base_dhx_terrace {
 	position: relative;
@@ -396,10 +399,21 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 .dhxsidebar_base_dhx_terrace div.dhxsidebar_cont.dhxsidebar_autohide {
 	overflow: hidden;
 }
-.dhxsidebar_base_dhx_terrace div.dhxsidebar_cont.dhxsidebar_autohide div.dhxsidebar_side,
-.dhxsidebar_base_dhx_terrace div.dhxsidebar_cont.dhxsidebar_autohide div.dhxsidebar_arrows {
+.dhxsidebar_base_dhx_terrace div.dhxsidebar_cont.dhxsidebar_autohide div.dhxsidebar_side {
+	-webkit-transition: left 0.2s;
+	-moz-transition: left 0.2s;
+	-ms-transition: left 0.2s;
+	-o-transition: left 0.2s;
 	transition: left 0.2s;
 	box-shadow: 0px 2px 8px rgba(127,127,127,0.4);
+}
+.dhxsidebar_base_dhx_terrace div.dhxsidebar_cont.dhxsidebar_autohide div.dhxsidebar_arrows {
+	-webkit-transition: left 0.2s;
+	-moz-transition: left 0.2s;
+	-ms-transition: left 0.2s;
+	-o-transition: left 0.2s;
+	transition: left 0.2s;
+	box-shadow: 0px 4px 6px rgba(127,127,127,0.4);
 }
 .dhxsidebar_base_dhx_terrace div.dhxsidebar_cont div.dhxsidebar_side_cover {
 	position: absolute;

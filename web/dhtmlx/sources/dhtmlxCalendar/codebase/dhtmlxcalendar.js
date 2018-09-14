@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -37,9 +37,11 @@ function dhtmlXCalendarObject(inps, skin) {
 	}
 	
 	this.conf = {
-		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhtmlxcalendar")||"dhx_skyblue"),
+		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhtmlxcalendar")||"material"),
 		zi: window.dhx4.newId(),
 		touch: !window.dhx4.isIE,
+		time: true,
+		today: false,
 		ws_first: true // false => start year from 52/53 wekk number (if 1st jan belongs to 1st week)
 	}
 	
@@ -102,6 +104,9 @@ function dhtmlXCalendarObject(inps, skin) {
 				}
 			}
 		}
+		// today/clear
+		this.contTime.childNodes[0].childNodes[0].childNodes[5].innerHTML = this.langData[this.lang].today;
+		this.contTime.childNodes[0].childNodes[0].childNodes[4].innerHTML = this.langData[this.lang].clear;
 	}
 	
 	// build month and year header
@@ -252,9 +257,8 @@ function dhtmlXCalendarObject(inps, skin) {
 			if (refreshView) that._drawMonth(that._activeDate);
 			
 			// update date in input if any
-			if (that._activeInp && that.i[that._activeInp] && that.i[that._activeInp].input != null) {
-				that.i[that._activeInp].input.value = that._dateToStr(new Date(that._activeDate.getTime()));
-			}
+			that._updateInp();
+
 			// hide
 			if (!that._hasParent) {
 				if (e.type == "touchstart") {
@@ -265,7 +269,7 @@ function dhtmlXCalendarObject(inps, skin) {
 			}
 			//
 			that._evOnClick([new Date(that._activeDate.getTime())]);
-			
+			that._doOnSelectorChange(true);
 		}
 	}
 	
@@ -320,17 +324,51 @@ function dhtmlXCalendarObject(inps, skin) {
 	// timepicker
 	this.contTime = document.createElement("DIV");
 	this.contTime.className = "dhtmlxcalendar_time_cont";
+	this.contTime.style.display = "none";
 	this.base.firstChild.appendChild(this.contTime);
 	
 	this.showTime = function() {
-		this.contTime.style.display = "";
-		this._ifrSize();
+		if (this.conf.time != true) {
+			this.conf.time = true;
+			this._adjustTimeCont();
+		}
 	}
 	
 	this.hideTime = function() {
-		this.contTime.style.display = "none";
+		if (this.conf.time == true) {
+			this.conf.time = false;
+			this._adjustTimeCont();
+		}
+	}
+	
+	this.showToday = function() {
+		if (this.conf.today != true) {
+			this.conf.today = true;
+			this._adjustTimeCont();
+		}
+	}
+	
+	this.hideToday = function() {
+		if (this.conf.today == true) {
+			this.conf.today = false;
+			this._adjustTimeCont();
+		}
+	}
+	
+	this._adjustTimeCont = function() {
+		var css = "";
+		if (this.conf.time == true) css += "_time";
+		if (this.conf.today == true) css += "_today";
+		if (css == "") {
+			this.contTime.style.display = "none";
+		} else {
+			this.contTime.className = "dhtmlxcalendar_time_cont dhtmlxcalendar_mode"+css;
+			this.contTime.style.display = "";
+		}
 		this._ifrSize();
 	}
+	
+	this._adjustTimeCont();
 	
 	var ul = document.createElement("UL");
 	ul.className = "dhtmlxcalendar_line";
@@ -339,7 +377,8 @@ function dhtmlXCalendarObject(inps, skin) {
 	var li = document.createElement("LI");
 	li.className = "dhtmlxcalendar_cell dhtmlxcalendar_time_hdr";
 	li.innerHTML = "<div class='dhtmlxcalendar_time_img'></div>"+
-			"<span class='dhtmlxcalendar_label_hours'></span><span class='dhtmlxcalendar_label_colon'> : </span><span class='dhtmlxcalendar_label_minutes'></span>";
+			"<span class='dhtmlxcalendar_label_hours'></span><span class='dhtmlxcalendar_label_colon'>:</span><span class='dhtmlxcalendar_label_minutes'></span>"+
+			"<span class='dhtmlxcalendar_label_clear'>"+this.langData[this.lang].clear+"</span><span class='dhtmlxcalendar_label_today'>"+this.langData[this.lang].today+"</span>"; // added in 4.6
 	ul.appendChild(li);
 	
 	li.onclick = function(e) {
@@ -372,6 +411,20 @@ function dhtmlXCalendarObject(inps, skin) {
 		}
 		// hide selector if it visible
 		that._hideSelector();
+		// today/clear buttons, added in 4.6
+		if (t.className && t.className == "dhtmlxcalendar_label_today") {
+			var d = new Date();
+			d = new Date(d.getFullYear(), d.getMonth(), d.getDate(), that._activeDate.getHours(), that._activeDate.getMinutes(), that._activeDate.getSeconds(), that._activeDate.getMilliseconds());
+			that.setDate(d);
+			that._updateInp();
+			that.callEvent("onButtonClick", [d]);
+		}
+		if (t.className && t.className == "dhtmlxcalendar_label_clear") {
+			that._nullDate = true;
+			that._drawMonth(new Date());
+			that._updateInp();
+			that.callEvent("onButtonClick", [null]);
+		}
 	}
 	if (this.conf.touch == true) {
 		li.ontouchstart = li.onclick;
@@ -444,7 +497,10 @@ function dhtmlXCalendarObject(inps, skin) {
 					if (wn >= 52 && this.conf.ws_first == true && this._activeMonth.getMonth() == 0) {
 						var wn2 = this.getWeekNumber(new Date(first.getFullYear(), first.getMonth(), first.getDate()+i+7, 0, 0, 0, 0));
 						if (wn2 < wn && wn2 > 1) wn = 1;
-					}
+					} else if (wn > 52 && this._activeMonth.getMonth() == 11) {
+						var wn2 = this.getWeekNumber(new Date(first.getFullYear()+1, 0, 1));
+						if (wn2 == 1) wn = 1;
+					} 
 					this.contDates.childNodes[q].childNodes[w].innerHTML = "<div class='dhtmlxcalendar_label'>"+wn+"</div>";
 				} else {
 					
@@ -882,7 +938,7 @@ function dhtmlXCalendarObject(inps, skin) {
 		
 		// show selector
 		this._sel._t = type;
-		this._sel.className = "dhtmlxcalendar_selector_obj dhtmlxcalendar_"+css;
+		this._sel.className = "dhtmlxcalendar_selector_obj dhtmlxcalendar_"+css+(type=="hours"&&this.conf.today==true?"2":"");
 		
 		// left/right table arrows
 		this._sel.childNodes[0].firstChild.firstChild.childNodes[0].style.display = this._sel.childNodes[0].firstChild.firstChild.childNodes[2].style.display = (type=="year"?"":"none");
@@ -1195,9 +1251,7 @@ function dhtmlXCalendarObject(inps, skin) {
 		if (this.checkEvent("onBeforeChange")) {
 			if (!this.callEvent("onBeforeChange",[new Date(r.getFullYear(),r.getMonth(),r.getDate(),r.getHours(),r.getMinutes(),r.getSeconds())])) {
 				// revert value
-				if (this.i != null && this._activeInp != null && this.i[this._activeInp] != null && this.i[this._activeInp].input != null) {
-					this.i[this._activeInp].input.value = this.getFormatedDate();
-				}
+				this._updateInp();
 				return;
 			}
 		}
@@ -1235,59 +1289,20 @@ function dhtmlXCalendarObject(inps, skin) {
 	}
 	
 	/* week numbers */
-	this.getWeekNumber = function(dateX) {
+	this.getWeekNumber = function(date) {
+		if (typeof(date) == "string") date = this._strToDate(date);
+		if (!(date instanceof Date)) return "Invalid Date";
 		
-		if (typeof(dateX) == "string") dateX = this._strToDate(dateX);
-		if (!(dateX instanceof Date)) return "Invalid Date";
-		
-		if (typeof(this._ftDay) == "undefined") this._ftDay = 4;
-		
-		var ws = this._wStart; // 1..7 = Mo-Su
-		var we = ws+7;
-		
-		var ft = 4; // first thursday
-		
-		
-		var x1_date = new Date(dateX.getFullYear(), 0, 1, 0, 0, 0, 0);// day-of-week, jan first
-		var x1 = x1_date.getDay();
-		if (x1 == 0) x1 = 7;
-		
-		// offset
-		if (ft < ws) {
-			ft += 7;
-			x1 += 7;
-		}
-		
-		// detect date of 1st week
-		
-		var i = 0; // week offset
-		if (x1 >= ws && x1 <= ft) {
-			// x1 belong 1st week
-		} else {
-			// x1 belong 2nd week
-			i = 1;
-		}
-		var k = x1-ws;
-		var w1 = new Date(dateX.getFullYear(), 0, 1-k+i*7, 0, 0, 0, 0);// 1st week start date
-		
-		// console.log("1st week of "+x.getFullYear()+" year starts from "+this.getFormatedDate("%M %d, %Y",w1));
-		
-		var d7 = 604800000; // 7 days in ms, 60*60*24*7*1000
-		var x2 = new Date(dateX.getFullYear(), dateX.getMonth(), dateX.getDate()+1, 0, 0, 0, 0); // 2nd day to get interval
-		
-		var wn = Math.ceil((x2.getTime()-w1.getTime())/d7);
-		
-		// if 1st jan coincide with 52/53'd week of prev year, get week number of 1st day of current week
-		if (wn == 0) {
-			var curDate = new Date(dateX.getFullYear(), dateX.getMonth(), dateX.getDate(), 0, 0, 0, 0);
-			var firstDay = curDate.getDay()-this._wStart;
-			if (firstDay < 0) firstDay = firstDay+7;
-			curDate.setDate(curDate.getDate()-firstDay);
-			wn = this.getWeekNumber(curDate);
-		}
-		
-		return wn;
-		
+		var nday = date.getDay();
+		if (nday === 0)
+			nday = 7;
+
+		var first_thursday = new Date(date.valueOf());
+		first_thursday.setDate(date.getDate() + (4 - nday));
+
+		var year_number = first_thursday.getFullYear();
+		var ordinal_date = Math.round( (first_thursday.getTime() - new Date(year_number, 0, 1).getTime()) / 86400000); 
+		return 1 + Math.floor( ordinal_date / 7);
 	}
 	
 	this.showWeekNumbers = function() {
@@ -1308,6 +1323,16 @@ function dhtmlXCalendarObject(inps, skin) {
 			this._show();
 			return;
 		}
+		
+		// show by real input id, added in 5.0
+		if (typeof(id) == "string") {
+			var i = document.getElementById(id);
+			if (i != null && typeof(i._dhtmlxcalendar_uid) != "undefined" && this.i[i._dhtmlxcalendar_uid] != null) {
+				this._show(i._dhtmlxcalendar_uid);
+				return;
+			}
+		}
+		
 		// if input id not specified show near first found
 		// if nothing found - do not show
 		if (typeof(id) == "object" && typeof(id._dhtmlxcalendar_uid) != "undefined" && this.i[id._dhtmlxcalendar_uid] == id) {
@@ -1359,7 +1384,7 @@ function dhtmlXCalendarObject(inps, skin) {
 		this.base.style.visibility = "hidden";
 		this.base.style.display = "";
 		if (!inpId) {
-			if (this._px && this._py) {
+			if (this._px != null && this._py != null) {
 				this.base.style.left = this._px+"px";
 				this.base.style.top = this._py+"px";
 			} else {
@@ -1774,9 +1799,7 @@ function dhtmlXCalendarObject(inps, skin) {
 			if (this.checkEvent("onBeforeChange")) {
 				if (!this.callEvent("onBeforeChange",[null])) {
 					// revert value
-					if (this.i != null && this._activeInp != null && this.i[this._activeInp] != null && this.i[this._activeInp].input != null) {
-						this.i[this._activeInp].input.value = this.getFormatedDate();
-					}
+					this._updateInp();
 					return;
 				}
 			}
@@ -1941,6 +1964,11 @@ function dhtmlXCalendarObject(inps, skin) {
 				this.i[a].input.detachEvent("onclick", that._doOnInpClick);
 				this.i[a].input.detachEvent("onkeyup", that._doOnInpKeyUp);
 			}
+		}
+	}
+	this._updateInp = function() {
+		if (this.i != null && this._activeInp != null && this.i[this._activeInp] != null && this.i[this._activeInp].input != null) {
+			this.i[this._activeInp].input.value = this.getFormatedDate();
 		}
 	}
 	
@@ -2280,7 +2308,9 @@ dhtmlXCalendarObject.prototype.langData = {
 		daysFNames: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
 		daysSNames: ["Su","Mo","Tu","We","Th","Fr","Sa"],
 		weekstart: 1,
-		weekname: "w"
+		weekname: "w",
+		today: "Today",
+		clear: "Clear"
 	}
 };
 

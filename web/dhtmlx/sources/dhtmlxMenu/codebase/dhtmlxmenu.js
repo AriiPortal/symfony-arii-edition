@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -12,7 +12,7 @@ function dhtmlXMenuObject(base, skin) {
 	
 	// iframe
 	this.conf = {
-		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxmenu")||"dhx_skyblue"),
+		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxmenu")||"material"),
 		mode: "web",
 		align: "left",
 		is_touched: false,
@@ -21,6 +21,7 @@ function dhtmlXMenuObject(base, skin) {
 		fixed_pos: false, // should be used for frameset in IE
 		rtl: false,
 		icons_path: "",
+		icons_css: false, // use css for icons or direct img links, added in 5.0
 		arrow_ff_fix: (navigator.userAgent.indexOf("MSIE") >= 0 && document.compatMode=="BackCompat"), // border fixer for FF for arrows polygons
 		live_id: window.dhx4.newId(),
 		tags: {
@@ -52,8 +53,8 @@ function dhtmlXMenuObject(base, skin) {
 		of_dtm: null,
 		of_dtime: 20,
 		of_dstep: 3,
-		of_ah: {dhx_skyblue: 24, dhx_web: 25, dhx_terrace: 27}, // arrow height+oplygon top/bottom padding
-		of_ih: {dhx_skyblue: 24, dhx_web: 24, dhx_terrace: 24}, // item height
+		of_ah: {dhx_skyblue: 24, dhx_web: 25, dhx_terrace: 27, material: 25}, // arrow height+oplygon top/bottom padding
+		of_ih: {dhx_skyblue: 24, dhx_web: 24, dhx_terrace: 24, material: 30}, // item height
 		// hide
 		tm_sec: 400,
 		tm_handler: null,
@@ -95,7 +96,7 @@ function dhtmlXMenuObject(base, skin) {
 			};
 		}
 			
-		for (var a in {json:1,xml:1,items:1,top_text:1,align:1,open_mode:1,overflow:1,dynamic:1,dynamic_icon:1,context:1,onload:1,onclick:1,oncheckboxclick:1,onradioclick:1}) {
+		for (var a in {json:1,xml:1,items:1,top_text:1,align:1,open_mode:1,overflow:1,dynamic:1,dynamic_icon:1,context:1,onload:1,onclick:1,oncheckboxclick:1,onradioclick:1,iconset:1}) {
 			if (base[a] != null) this.conf.autoload[a] = base[a];
 		}
 		
@@ -114,7 +115,7 @@ function dhtmlXMenuObject(base, skin) {
 			 // preserv default oncontextmenu for future restorin in case of context menu
 			if (this.base.oncontextmenu) this.base._oldContextMenuHandler = this.base.oncontextmenu;
 			//
-			this.conf.ctx_baseid = this.base.id;
+			this.conf.ctx_baseid = this.base;
 			this.base.onselectstart = function(e) { e = e || event; if (e.preventDefault) e.preventDefault(); else e.returnValue = false; return false; }
 			this.base.oncontextmenu = function(e) { e = e || event; if (e.preventDefault) e.preventDefault(); else e.returnValue = false; return false; }
 		} else {
@@ -141,6 +142,7 @@ function dhtmlXMenuObject(base, skin) {
 				this.conf.tl_ofsleft = 1;
 				break;
 			case "dhx_terrace":
+			case "material":
 				this.conf.tl_botmarg = 0;
 				this.conf.tl_rmarg = 0;
 				this.conf.tl_ofsleft = 0;
@@ -631,6 +633,7 @@ function dhtmlXMenuObject(base, skin) {
 		document.body.attachEvent("onclick", this._bodyClick);
 		document.body.attachEvent("oncontextmenu", this._bodyContext);
 	}
+	dhx4.attachEvent("_onGridClick", this._bodyClick);
 	
 	this.unload = function() {
 		
@@ -687,6 +690,10 @@ function dhtmlXMenuObject(base, skin) {
 	// autoload
 	if (window.dhx4.s2b(this.conf.autoload.context) == true) this.renderAsContextMenu();
 	
+	if (this.conf.autoload.iconset == "awesome") {
+		this.conf.icons_css = true;
+	}
+
 	if (this.conf.autoload.dynamic != null) {
 		this.enableDynamicLoading(this.conf.autoload.dynamic, window.dhx4.s2b(this.conf.autoload.dynamic_icon));
 	} else if (this.conf.autoload.items != null) {
@@ -711,6 +718,7 @@ function dhtmlXMenuObject(base, skin) {
 	if (this.conf.autoload.align != null) this.setAlign(this.conf.autoload.align);
 	if (this.conf.autoload.open_mode != null) this.setOpenMode(this.conf.autoload.open_mode);
 	if (this.conf.autoload.overflow != null) this.setOverflowHeight(this.conf.autoload.overflow);
+	
 	//
 	for (var a in this.conf.autoload) {
 		this.conf.autoload[a] = null;
@@ -824,7 +832,6 @@ dhtmlXMenuObject.prototype.setIconsPath = function(path) {
 /* real-time update icon in menu */
 dhtmlXMenuObject.prototype._updateItemImage = function(id, levelType) {
 	// search existsing image
-	
 	id = this.idPrefix+id;
 	
 	var tp = this.itemPull[id]["type"];
@@ -836,46 +843,64 @@ dhtmlXMenuObject.prototype._updateItemImage = function(id, levelType) {
 	var imgObj = null;
 	if (isTopLevel) {
 		for (var q=0; q<this.idPull[id].childNodes.length; q++) {
-			try { if (this.idPull[id].childNodes[q].className == "dhtmlxMenu_TopLevel_Item_Icon") imgObj = this.idPull[id].childNodes[q]; } catch(e) {}
+			if (imgObj == null && (this.idPull[id].childNodes[q].className || "") == "dhtmlxMenu_TopLevel_Item_Icon" || (this.idPull[id].childNodes[q].tagName||"").toLowerCase() == "i") {
+				imgObj = this.idPull[id].childNodes[q];
+			}
 		}
 	} else {
 		try { var imgObj = this.idPull[id].childNodes[this.conf.rtl?2:0].childNodes[0]; } catch(e) { }
-		if (!(imgObj != null && typeof(imgObj.className) != "undefined" && imgObj.className == "sub_icon")) imgObj = null;
+		if (!(imgObj != null && typeof(imgObj.className) != "undefined" && (imgObj.className == "sub_icon" || imgObj.tagName.toLowerCase() == "i"))) imgObj = null;
 	}
 	
 	var imgSrc = this.itemPull[id][(this.itemPull[id]["state"]=="enabled"?"imgen":"imgdis")];
 	
 	if (imgSrc.length > 0) {
 		if (imgObj != null) {
-			imgObj.src = this.conf.icons_path+imgSrc;
+			if (this.conf.icons_css == true) {
+				imgObj.className = this.conf.icons_path+imgSrc;
+			} else {
+				imgObj.src = this.conf.icons_path+imgSrc;
+			}
 		} else {
 			if (isTopLevel) {
-				var imgObj = document.createElement("IMG");
-				imgObj.className = "dhtmlxMenu_TopLevel_Item_Icon";
-				imgObj.src = this.conf.icons_path+imgSrc;
-				imgObj.border = "0";
-				imgObj.id = "image_"+id;
-				if (!this.conf.rtl && this.idPull[id].childNodes.length > 0) this.idPull[id].insertBefore(imgObj,this.idPull[id].childNodes[0]); else this.idPull[id].appendChild(imgObj);
-				
+				if (this.conf.icons_css == true) {
+					var imgObj = document.createElement("i");
+					imgObj.className = this.conf.icons_path+imgSrc;
+				} else {
+					var imgObj = document.createElement("IMG");
+					imgObj.className = "dhtmlxMenu_TopLevel_Item_Icon";
+					imgObj.src = this.conf.icons_path+imgSrc;
+					imgObj.border = "0";
+					imgObj.id = "image_"+id;
+				}
+				if (!this.conf.rtl && this.idPull[id].childNodes.length > 0) this.idPull[id].insertBefore(imgObj,this.idPull[id].childNodes[0]); else this.idPull[id].appendChild(imgObj);				
 			} else {
-				
-				var imgObj = document.createElement("IMG");
-				imgObj.className = "sub_icon";
-				imgObj.src = this.conf.icons_path+imgSrc;
-				imgObj.border = "0";
-				imgObj.id = "image_"+id;
-				var item = this.idPull[id].childNodes[this.conf.rtl?2:0];
-				while (item.childNodes.length > 0) item.removeChild(item.childNodes[0]);
-				item.appendChild(imgObj);
-				
+				if (this.conf.icons_css == true) {
+					var item = this.idPull[id].childNodes[this.conf.rtl?2:0];
+					item.innerHTML = "<i class='"+this.conf.icons_path+imgSrc+"'></i>";
+				} else {
+					var imgObj = document.createElement("IMG");
+					imgObj.className = "sub_icon";
+					imgObj.src = this.conf.icons_path+imgSrc;
+					imgObj.border = "0";
+					imgObj.id = "image_"+id;
+					var item = this.idPull[id].childNodes[this.conf.rtl?2:0];
+					while (item.childNodes.length > 0) item.removeChild(item.childNodes[0]);
+					item.appendChild(imgObj);
+				}
 			}
 		}
 	} else {
 		if (imgObj != null) {
-			var p = imgObj.parentNode;
-			p.removeChild(imgObj);
-			p.innerHTML = "&nbsp;";
-			p = imgObj = null;
+			if (isTopLevel) {
+				imgObj.parentNode.removeChild(imgObj);
+				imgObj = null;
+			} else {
+				var p = imgObj.parentNode;
+				p.removeChild(imgObj);
+				p.innerHTML = "&nbsp;";
+				p = imgObj = null;
+			}
 		}
 	}
 };
@@ -957,6 +982,10 @@ dhtmlXMenuObject.prototype.clearAll = function() {
 if (typeof(dhtmlXMenuObject.prototype.liveInst) == "undefined") {
 	dhtmlXMenuObject.prototype.liveInst = {};
 };
+
+dhtmlXMenuObject.prototype.setIconset = function(name) {
+	this.conf.icons_css = (name == "awesome");
+};
 // redistrib selection in case of top node in real-time mode
 dhtmlXMenuObject.prototype._redistribTopLevelSelection = function(id, parent) {
 	// kick polygons and decelect before selected menues
@@ -1018,12 +1047,18 @@ dhtmlXMenuObject.prototype._renderToplevelItem = function(id, pos) {
 	if ((this.itemPull[id]["imgen"]!="")||(this.itemPull[id]["imgdis"]!="")) {
 		var imgTop=this.itemPull[id][(this.itemPull[id]["state"]=="enabled")?"imgen":"imgdis"];
 		if (imgTop) {
-			var img = document.createElement("IMG");
-			img.border = "0";
-			img.id = "image_"+id;
-			img.src= this.conf.icons_path+imgTop;
-			img.className = "dhtmlxMenu_TopLevel_Item_Icon";
-			if (m.childNodes.length > 0 && !this.conf.rtl) m.insertBefore(img, m.childNodes[0]); else m.appendChild(img);
+			if (this.conf.icons_css == true) {
+				var i = document.createElement("i");
+				i.className = this.conf.icons_path+imgTop;
+				if (m.childNodes.length > 0 && !this.conf.rtl) m.insertBefore(i, m.childNodes[0]); else m.appendChild(i);
+			} else {
+				var img = document.createElement("IMG");
+				img.border = "0";
+				img.id = "image_"+id;
+				img.src = this.conf.icons_path+imgTop;
+				img.className = "dhtmlxMenu_TopLevel_Item_Icon";
+				if (m.childNodes.length > 0 && !this.conf.rtl) m.insertBefore(img, m.childNodes[0]); else m.appendChild(img);
+			}
 		}
 	}
 	m.onselectstart = function(e) { e = e || event; if (e.preventDefault) e.preventDefault(); else e.returnValue = false; return false; }
@@ -1205,9 +1240,9 @@ dhtmlXMenuObject.prototype._renderSublevelItem = function(id, pos) {
 	// icon
 	var t1 = document.createElement("TD");
 	t1.className = "sub_item_icon";
+	var tp = this.itemPull[id]["type"];
 	var icon = this.itemPull[id][(this.itemPull[id]["state"]=="enabled"?"imgen":"imgdis")];
 	if (icon != "") {
-		var tp = this.itemPull[id]["type"];
 		if (tp=="checkbox"||tp=="radio") {
 			var img = document.createElement("DIV");
 			img.id = "image_"+this.itemPull[id]["id"];
@@ -1215,11 +1250,15 @@ dhtmlXMenuObject.prototype._renderSublevelItem = function(id, pos) {
 			t1.appendChild(img);
 		}
 		if (!(tp=="checkbox"||tp=="radio")) {
-			var img = document.createElement("IMG");
-			img.id = "image_"+this.itemPull[id]["id"];
-			img.className = "sub_icon";
-			img.src = this.conf.icons_path+icon;
-			t1.appendChild(img);
+			if (this.conf.icons_css == true) {
+				t1.innerHTML = "<i class='"+this.conf.icons_path+icon+"'></i>";
+			} else {
+				var img = document.createElement("IMG");
+				img.id = "image_"+this.itemPull[id]["id"];
+				img.className = "sub_icon";
+				img.src = this.conf.icons_path+icon;
+				t1.appendChild(img);
+			}
 		}
 	} else {
 		t1.innerHTML = "&nbsp;";
@@ -1883,11 +1922,19 @@ dhtmlXMenuObject.prototype._doOnContextBeforeCall = function(e, cZone) {
 	this._hideContextMenu();
 	
 	// scroll settings
-	var p = (e.srcElement||e.target);
-	var px = (window.dhx4.isIE||window.dhx4.isOpera||window.dhx4.isKHTML||window.dhx4.isEdge?e.offsetX:e.layerX);
-	var py = (window.dhx4.isIE||window.dhx4.isOpera||window.dhx4.isKHTML||window.dhx4.isEdge?e.offsetY:e.layerY);
-	var mx = window.dhx4.absLeft(p)+px;
-	var my = window.dhx4.absTop(p)+py;
+	if (window.dhx4.isChrome == true || window.dhx4.isEdge == true || window.dhx4.isOpera == true || window.dhx4.isIE11 == true) {
+		var mx = window.dhx4.absLeft(e.target)+e.offsetX;
+		var my = window.dhx4.absTop(e.target)+e.offsetY;
+	} else if (window.dhx4.isIE6 == true || window.dhx4.isIE7 == true || window.dhx4.isIE == true) { // old IE or emulation
+		var mx = window.dhx4.absLeft(e.srcElement)+e.x||0;
+		var my = window.dhx4.absTop(e.srcElement)+e.y||0;
+	} else { // the rest
+		var p = (e.srcElement||e.target);
+		var px = (window.dhx4.isIE||window.dhx4.isKHTML?e.offsetX:e.layerX);
+		var py = (window.dhx4.isIE||window.dhx4.isKHTML?e.offsetY:e.layerY);
+		var mx = window.dhx4.absLeft(p)+px;
+		var my = window.dhx4.absTop(p)+py;
+	}
 	
 	if (this.checkEvent("onBeforeContextMenu")) {
 		if (this.callEvent("onBeforeContextMenu", [cZone.id,e])) {
@@ -2028,8 +2075,9 @@ if (typeof(window.dhtmlXCellObject) != "undefined") {
 	
 	dhtmlXCellObject.prototype.detachMenu = function() {
 		
-		if (!this.dataNodes.menu) return;
-		this.dataNodes.menu.unload();
+		if (this.dataNodes.menu == null) return;
+		
+		if (typeof(this.dataNodes.menu.unload) == "function") this.dataNodes.menu.unload();
 		this.dataNodes.menu = null;
 		delete this.dataNodes.menu;
 		

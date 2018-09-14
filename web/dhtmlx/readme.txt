@@ -1,3 +1,3 @@
-dhtmlxSuite v.4.5 Standard edition
+dhtmlxSuite v.5.1.0 Standard edition
 
 (c) Dinamenta, UAB.

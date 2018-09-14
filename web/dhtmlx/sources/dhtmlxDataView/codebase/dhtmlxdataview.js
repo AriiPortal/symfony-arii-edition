@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -1682,10 +1682,10 @@ dhtmlXDataView = function(container){
 };
 dhtmlXDataView.prototype={
 	bind:function(){
-		dhx.BaseBind.legacyBind.apply(this, arguments);
+		dhtmlx.BaseBind.legacyBind.apply(this, arguments);
 	},
 	sync:function(){
-		dhx.BaseBind.legacySync.apply(this, arguments);
+		dhtmlx.BaseBind.legacySync.apply(this, arguments);
 	},
 	/*
 		Called each time when dragIn or dragOut situation occurs
@@ -1740,7 +1740,7 @@ dhtmlXDataView.prototype={
 			if (this.stopEdit(false,id)){
 				if (this._settings.select){
 					if (this._settings.select=="multiselect")
-						this.select(id, e.ctrlKey, e.shiftKey); 	//multiselection
+						this.select(id, e.ctrlKey||e.metaKey, e.shiftKey); 	//multiselection
 					else
 						this.select(id);
 				}

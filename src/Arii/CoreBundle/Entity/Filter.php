@@ -78,6 +78,13 @@ class Filter
     /**
      * @var string
      *
+     * @ORM\Column(name="folder", type="string", length=255, nullable=true)
+     */
+    private $folder;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="job_group", type="string", length=255, nullable=true)
      */
     private $job_group;
@@ -249,6 +256,29 @@ class Filter
     public function getJobName()
     {
         return $this->job_name;
+    }
+
+    /**
+     * Set folder
+     *
+     * @param string $folder
+     * @return Filter
+     */
+    public function setFolder($folder)
+    {
+        $this->folder = $folder;
+
+        return $this;
+    }
+
+    /**
+     * Get folder
+     *
+     * @return string 
+     */
+    public function getFolder()
+    {
+        return $this->folder;
     }
 
     /**

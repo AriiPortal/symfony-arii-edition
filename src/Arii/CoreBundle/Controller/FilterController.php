@@ -72,6 +72,7 @@ class FilterController extends Controller
         $filter->setDescription($request->get('description'));
         $filter->setSpooler($request->get('spooler'));
         $filter->setJobName($request->get('job'));
+        $filter->setFolder($request->get('folder'));
         $filter->setJobChain($request->get('job_chain'));
         $filter->setTrigger($request->get('order_id'));
         $filter->setStatus($request->get('status'));
@@ -120,9 +121,21 @@ class FilterController extends Controller
         
         $portal = $this->container->get('arii_core.portal');
         $Filter = $portal->getFilterById($id);
+        if ($Filter['title']=='') $Filter['title']=$Filter['name'];
         
-        $dhtmlx = $this->container->get('arii_core.render'); 
-        return $dhtmlx->form($Filter,'name,title,description,env,spooler,job_name,job_chain,trigger,status,type,owner');
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        $list = '<?xml version="1.0" encoding="UTF-8"?>';
+        $list .= "<data>\n";
+        foreach (array_keys($Filter) as $k) {
+            $v = $Filter[$k];
+            if ($v=='')
+                $v='*';
+            $list .= '<'.$k.'><![CDATA['.$v.']]></'.$k.'>';
+        }
+        $list .= "</data>\n";
+        $response->setContent( $list );
+        return $response;        
     }
 
 }

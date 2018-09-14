@@ -14,7 +14,8 @@ class LiveStatusController extends Controller
         else 
             $log = file_get_contents('../workspace/ACK/Input/Nagios/downtimes.txt');
         // Nettoyage 
-        $this->csv2array($log);
+        $Infos = $this->csv2array($log);
+        print_r($Infos);
         exit();
     }
 

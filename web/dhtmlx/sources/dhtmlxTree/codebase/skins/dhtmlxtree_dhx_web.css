@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_web.less */
+/*
+	skin detected: dhx_web
+	include extra file: skins/dhx_web.less
+*/
 
 .defaultTreeTable {
 	margin: 0px;
@@ -171,6 +174,10 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 }
 .dhxtree_dhx_web span.selectedTreeRow_lor,
 .dhxtree_dhx_web span.selectedTreeRow {
+	background-color: #85d3ff;
+	color: #000000;
+}
+.dhxtree_dhx_web .selectedTreeRowFull .dhxTextCell {
 	background-color: #85d3ff;
 	color: #000000;
 }

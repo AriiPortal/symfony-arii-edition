@@ -32,7 +32,10 @@ class AriiFilter
             'second' => $date->format('s'),
             'limit' => 10,
             'category' => '*',
-            'monthday' => $date->format('m').$date->format('d')  // code jour
+            'monthday' => $date->format('m').$date->format('d'),  // code jour
+            'max_result' => 1000,     // limitation 
+            'only_warning' => 0,  // alertes
+            'sort' => 'last'          // tri par défaut         
         ];
         
         $request = Request::createFromGlobals();
@@ -97,6 +100,12 @@ class AriiFilter
         
         $Filters['appl']=$Filters['app'];
         unset($Filters['app']);
+        
+        // Contexte
+        foreach ([ 'max_result', 'only_warning', 'sort'] as $f)  {
+            if ($request->query->get($f)!='')
+                $Filters[$f] = $request->query->get($f);
+        }
         
         // Complement
         foreach ([ 'id', 'job_id', 'job_name'] as $f)  {

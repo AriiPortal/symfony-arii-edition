@@ -9,16 +9,16 @@ use Symfony\Component\Yaml\Parser;
 
 class TemplatesController extends Controller
 {
-    public function indexAction()
+    public function indexAction($db)
     {        
-        return $this->render('AriiATSBundle:Templates:index.html.twig');            
+        return $this->render('AriiATSBundle:Templates:index.html.twig', [ 'db' => $db ] );            
     }
 
     public function toolbarAction()
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
-        return $this->render('AriiATSBundle:Templates:toolbar.xml.twig',array(), $response );
+        return $this->render('AriiATSBundle:Templates:toolbar.xml.twig',array(), $response);
     }
 
     public function templateAction()
@@ -204,7 +204,7 @@ class TemplatesController extends Controller
         exit();
     }
 
-    public function diffAction()
+    public function diffAction($db)
     {   
         $request = Request::createFromGlobals();
         $arg = $request->query->get( 'file' );
@@ -214,7 +214,9 @@ class TemplatesController extends Controller
         $ats = $this->container->get('arii_ats.exec');
         $job = basename($arg);
         $job = substr($job,0,strlen($job)-4);
-        $current = $ats->Exec('autorep -J '.$job.' -q');
+        
+        $em = $this->getDoctrine()->getManager($db);
+        $current = $ats->Exec($em,'autorep -J '.$job.' -q');
 
         $ref = str_replace('.jil','.dump',$arg);
         $reffile = "$path/$ref";
@@ -265,9 +267,8 @@ class TemplatesController extends Controller
     }     
 
     private function getBaseDir() {
-        $lang = $this->getRequest()->getLocale();
-        $session = $this->container->get('arii_core.session');
-        return $session->get('workspace').'/Autosys/Templates';        
+        $portal = $this->container->get('arii_core.portal');
+        return $portal->getWorkspace().'/ATS/Templates';
     }
 
 }

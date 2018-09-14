@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -59,7 +59,7 @@ if(!window.dhtmlx)
 		if (!t.area){
 			t.area = document.createElement("DIV");
 			t.area.className = "dhtmlx_message_area";
-			t.area.style[t.position]="5px";
+			t.area.style[t.position]="15px";
 			document.body.appendChild(t.area);
 		}
 
@@ -180,7 +180,7 @@ if(!window.dhtmlx)
 		return text;
 	}
 	function params(text, type, expire, id){
-		if (typeof text != "object")
+		if (typeof text != "object" || !text)
 			text = {text:text, type:type, expire:expire, id:id};
 		text.id = text.id||t.uid();
 		text.expire = text.expire||t.expire;

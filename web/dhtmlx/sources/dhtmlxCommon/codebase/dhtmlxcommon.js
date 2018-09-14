@@ -1,30 +1,32 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
 /* dhtmlx.com */
 
-if (typeof(window.dhx4) == "undefined") {
+if (typeof(window.dhx) == "undefined") {
 	
-	window.dhx4 = {
+	window.dhx = window.dhx4 = {
 		
-		version: "4.5",
+		version: "5.1.0",
 		
 		skin: null, // allow to be set by user
 		
 		skinDetect: function(comp) {
-			return {10:"dhx_skyblue",20:"dhx_web",30:"dhx_terrace"}[this.readFromCss(comp+"_skin_detect")]||null;
+			var i = Math.floor(dhx4.readFromCss(comp+"_skin_detect")/10)*10;
+			return {10:"dhx_skyblue",20:"dhx_web",30:"dhx_terrace",40:"material"}[i]||null;
 		},
 		
 		// read value from css
-		readFromCss: function(className, property) {
+		readFromCss: function(className, property, innerHTML) {
 			var t = document.createElement("DIV");
 			t.className = className;
 			if (document.body.firstChild != null) document.body.insertBefore(t, document.body.firstChild); else document.body.appendChild(t);
+			if (typeof(innerHTML) == "string") t.innerHTML = innerHTML;
 			var w = t[property||"offsetWidth"];
 			t.parentNode.removeChild(t);
 			t = null;
@@ -430,8 +432,8 @@ if (typeof(window.dhx4.dateLang) == "undefined") {
 	
 	window.dhx4.date2str = function(val, format, strings) {
 		
-		if (format == null || typeof(format) == "undefnied") format = window.dhx4.dateFormat[window.dhx4.dateLang];
-		if (strings == null || typeof(strings) == "undefnied") strings = window.dhx4.dateStrings[window.dhx4.dateLang];
+		if (format == null || typeof(format) == "undefined") format = window.dhx4.dateFormat[window.dhx4.dateLang];
+		if (strings == null || typeof(strings) == "undefined") strings = window.dhx4.dateStrings[window.dhx4.dateLang];
 		
 		if (val instanceof Date) {
 			var z = function(t) {
@@ -477,8 +479,8 @@ if (typeof(window.dhx4.dateLang) == "undefined") {
 	
 	window.dhx4.str2date = function(val, format, strings) {
 		
-		if (format == null || typeof(format) == "undefnied") format = window.dhx4.dateFormat[window.dhx4.dateLang];
-		if (strings == null || typeof(strings) == "undefnied") strings = window.dhx4.dateStrings[window.dhx4.dateLang];
+		if (format == null || typeof(format) == "undefined") format = window.dhx4.dateFormat[window.dhx4.dateLang];
+		if (strings == null || typeof(strings) == "undefined") strings = window.dhx4.dateStrings[window.dhx4.dateLang];
 		
 		// escape custom chars
 		format = format.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\\:|]/g, "\\$&");
@@ -647,7 +649,7 @@ if (typeof(window.dhx4.ajax) == "undefined") {
 			}
 		},
 		query: function(config) {
-			dhx4.ajax._call(
+			return dhx4.ajax._call(
 				(config.method || "GET"),
 				config.url,
 				config.data || "",
@@ -695,19 +697,34 @@ if (typeof(window.dhx4.ajax) == "undefined") {
 			this._call("POST", url, postData, true, onLoad, {url:url, postData:postData});
 		},
 		_call: function(method, url, postData, async, onLoad, longParams, headers) {
-			
+			//postData can be a hash of values
+			if (typeof postData === "object"){
+				var _postData = [];
+				for (var a in postData)
+					_postData.push(a+"="+encodeURIComponent(postData[a]));
+				postData = _postData.join("&");
+			}
+
+			var def = dhx.promise.defer();
 			var t = (window.XMLHttpRequest && !dhx4.isIE ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"));
 			var isQt = (navigator.userAgent.match(/AppleWebKit/) != null && navigator.userAgent.match(/Qt/) != null && navigator.userAgent.match(/Safari/) != null);
 			
 			if (async == true) {
 				t.onreadystatechange = function() {
 					if ((t.readyState == 4) || (isQt == true && t.readyState == 3)) { // what for long response and status 404?
-						if (t.status != 200 || t.responseText == "")
+						if (t.status != 200 || t.responseText == ""){
+							def.reject(t);
 							if (!dhx4.callEvent("onAjaxError", [{xmlDoc:t, filePath:url, async:async}])) return;
+						}
 
 						window.setTimeout(function(){
 							if (typeof(onLoad) == "function") {
-								onLoad.apply(window, [{xmlDoc:t, filePath:url, async:async}]); // dhtmlx-compat, response.xmlDoc.responseXML/responseText
+								try {
+									onLoad.apply(window, [{xmlDoc:t, filePath:url, async:async}]); // dhtmlx-compat, response.xmlDoc.responseXML/responseText
+								} catch(e){
+									def.reject(e);
+								}
+								def.resolve(t.responseText);
 							}
 							if (longParams != null) {
 								if (typeof(longParams.postData) != "undefined") {
@@ -723,8 +740,8 @@ if (typeof(window.dhx4.ajax) == "undefined") {
 				}
 			}
 			
-			if (method == "GET" && this.cache != true) {
-				url += (url.indexOf("?")>=0?"&":"?")+"dhxr"+new Date().getTime()+"=1";
+			if (method == "GET") {
+				url += this._dhxr(url);
 			}
 			
 			t.open(method, url, async);
@@ -741,8 +758,27 @@ if (typeof(window.dhx4.ajax) == "undefined") {
 			
 			t.send(postData);
 			
-			return {xmlDoc:t, filePath:url, async:async}; // dhtmlx-compat, response.xmlDoc.responseXML/responseText
+			if (async != true) {
+				if ((t.readyState == 4) || (isQt == true && t.readyState == 3)) {
+					if (t.status != 200 || t.responseText == "") dhx4.callEvent("onAjaxError", [{xmlDoc:t, filePath:url, async:async}]);
+				}
+			}
 			
+
+			def.xmlDoc=t;
+			def.filePath=url;
+			def.async=async;
+			
+			return def;
+		},
+		
+		_dhxr: function(sign, value) {
+			if (this.cache != true) {
+				if (sign.match(/^[\?\&]$/) == null) sign = (sign.indexOf("?")>=0?"&":"?");
+				if (typeof(value) == "undefined") value = true;
+				return sign+"dhxr"+new Date().getTime()+(value==true?"=1":"");
+			}
+			return "";
 		}
 	};
 	
@@ -791,12 +827,14 @@ if (typeof(window.dhx4._enableDataLoading) == "undefined") {
 			// deprecated from 4.0, compatability with version (url, type[json|xml], onLoad)
 			if (arguments.length == 3) onLoad = arguments[2];
 			
+			this.callEvent("onXLS",[]);
+
 			if (typeof(data) == "string") {
 				
 				var k = data.replace(/^\s{1,}/,"").replace(/\s{1,}$/,"");
 				
 				var tag = new RegExp("^<"+this._dhxdataload.xmlRootTag);
-				
+
 				// xml
 				if (tag.test(k.replace(/^<\?xml[^\?]*\?>\s*/, ""))) { // remove leading <?xml ...?> if any, \n can be also present
 					obj = dhx4.ajax.parse(data);
@@ -809,7 +847,7 @@ if (typeof(window.dhx4._enableDataLoading) == "undefined") {
 				
 				if (obj == null) {
 					
-					this.callEvent("onXLS",[]);
+					
 					
 					var params = [];
 					
@@ -854,9 +892,9 @@ if (typeof(window.dhx4._enableDataLoading) == "undefined") {
 					params = params.join("&")+(typeof(loadParams)=="string"?"&"+loadParams:"");
 					
 					if (dhx4.ajax.method == "post") {
-						dhx4.ajax.post(data, params, callBack);
+						return dhx4.ajax.post(data, params, callBack);
 					} else if (dhx4.ajax.method == "get") {
-						dhx4.ajax.get(data+(params.length>0?(data.indexOf("?")>0?"&":"?")+params:""), callBack);
+						return dhx4.ajax.get(data+(params.length>0?(data.indexOf("?")>0?"&":"?")+params:""), callBack);
 					}
 					
 					return;
@@ -868,12 +906,12 @@ if (typeof(window.dhx4._enableDataLoading) == "undefined") {
 				} else { // json
 					obj = window.dhx4._copyObj(data);
 				}
-				
 			}
 			
 			// init
 			if (obj != null) this[this._dhxdataload.initObj].apply(this,[obj]);
-			
+
+			this.callEvent("onXLE",[]);
 			if (onLoad != null) {
 				if (typeof(onLoad) == "function") {
 					onLoad.apply(this, []);
@@ -997,7 +1035,7 @@ if (!window.dhtmlxValidation) {
 			return !!value.toString().match(/^(0|1|true|false)$/);
 		},
 		isValidEmail: function(value) {
-			return !!value.toString().match(/(^[a-z0-9]([0-9a-z\-_\.]*)@([0-9a-z_\-\.]*)([.][a-z]{3})$)|(^[a-z]([0-9a-z_\.\-]*)@([0-9a-z_\-\.]*)(\.[a-z]{2,4})$)/i);
+			return !!value.toString().match(/(^[a-z0-9]([0-9a-z\-_\.]*)@([0-9a-z_\-\.]*)([.][a-z]{3})$)|(^[a-z]([0-9a-z_\.\-]*)@([0-9a-z_\-\.]*)(\.[a-z]{2,5})$)/i);
 		},
 		isValidInteger: function(value) {
 			return !!value.toString().match(/(^-?\d+$)/);
@@ -1447,3 +1485,329 @@ if (typeof(dhtmlxEvent.initTouch) == "undefined") {
 		dhtmlxEvent.initTouch = function(){};
 	};
 };
+/**
+
+Bazed on Promiz - A fast Promises/A+ library 
+https://github.com/Zolmeister/promiz
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Zolmeister
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
+/* jshint ignore:start */
+(function (self) {
+  var now = typeof setImmediate !== 'undefined' ? setImmediate : function(cb) {
+    setTimeout(cb, 0)
+  }
+  
+  /**
+   * @constructor
+   */
+  function promise(fn, er) {
+    var self = this
+
+    self.promise = self
+    self.state = 'pending'
+    self.val = null
+    self.fn = fn || null
+    self.er = er || null
+    self.next = [];
+  }
+
+  promise.prototype.resolve = function (v) {
+    var self = this
+    if (self.state === 'pending') {
+      self.val = v
+      self.state = 'resolving'
+
+      now(function () {
+        self.fire()
+      })
+    }
+  }
+
+  promise.prototype.reject = function (v) {
+    var self = this
+    if (self.state === 'pending') {
+      self.val = v
+      self.state = 'rejecting'
+
+      now(function () {
+        self.fire()
+      })
+    }
+  }
+
+  promise.prototype.then = function (fn, er) {
+    var self = this
+    var p = new promise(fn, er)
+    self.next.push(p)
+    if (self.state === 'resolved') {
+      p.resolve(self.val)
+    }
+    if (self.state === 'rejected') {
+      p.reject(self.val)
+    }
+    return p
+  }
+  promise.prototype.fail = function (er) {
+    return this.then(null, er)
+  }
+  promise.prototype.finish = function (type) {
+    var self = this
+    self.state = type
+
+    if (self.state === 'resolved') {
+      for (var i = 0; i < self.next.length; i++)
+        self.next[i].resolve(self.val);
+    }
+
+    if (self.state === 'rejected') {
+      for (var i = 0; i < self.next.length; i++)
+        self.next[i].reject(self.val);
+
+      if (!self.next.length)
+        throw(self.val);
+    }
+  }
+
+  // ref : reference to 'then' function
+  // cb, ec, cn : successCallback, failureCallback, notThennableCallback
+  promise.prototype.thennable = function (ref, cb, ec, cn, val) {
+    var self = this
+    val = val || self.val
+    if (typeof val === 'object' && typeof ref === 'function') {
+      try {
+        // cnt protects against abuse calls from spec checker
+        var cnt = 0
+        ref.call(val, function(v) {
+          if (cnt++ !== 0) return
+          cb(v)
+        }, function (v) {
+          if (cnt++ !== 0) return
+          ec(v)
+        })
+      } catch (e) {
+        ec(e)
+      }
+    } else {
+      cn(val)
+    }
+  }
+
+  promise.prototype.fire = function () {
+    var self = this
+    // check if it's a thenable
+    var ref;
+    try {
+      ref = self.val && self.val.then
+    } catch (e) {
+      self.val = e
+      self.state = 'rejecting'
+      return self.fire()
+    }
+
+    self.thennable(ref, function (v) {
+      self.val = v
+      self.state = 'resolving'
+      self.fire()
+    }, function (v) {
+      self.val = v
+      self.state = 'rejecting'
+      self.fire()
+    }, function (v) {
+      self.val = v
+      
+      if (self.state === 'resolving' && typeof self.fn === 'function') {
+        try {
+          self.val = self.fn.call(undefined, self.val)
+        } catch (e) {
+          self.val = e
+          return self.finish('rejected')
+        }
+      }
+
+      if (self.state === 'rejecting' && typeof self.er === 'function') {
+        try {
+          self.val = self.er.call(undefined, self.val)
+          self.state = 'resolving'
+        } catch (e) {
+          self.val = e
+          return self.finish('rejected')
+        }
+      }
+
+      if (self.val === self) {
+        self.val = TypeError()
+        return self.finish('rejected')
+      }
+
+      self.thennable(ref, function (v) {
+        self.val = v
+        self.finish('resolved')
+      }, function (v) {
+        self.val = v
+        self.finish('rejected')
+      }, function (v) {
+        self.val = v
+        self.state === 'resolving' ? self.finish('resolved') : self.finish('rejected')
+      })
+
+    })
+  }
+
+  promise.prototype.done = function () {
+    if (this.state = 'rejected' && !this.next) {
+      throw this.val
+    }
+    return null
+  }
+
+  promise.prototype.nodeify = function (cb) {
+    if (typeof cb === 'function') return this.then(function (val) {
+        try {
+          cb(null, val)
+        } catch (e) {
+          setImmediate(function () {
+            throw e
+          })
+        }
+
+        return val
+      }, function (val) {
+        try {
+          cb(val)
+        } catch (e) {
+          setImmediate(function () {
+            throw e
+          })
+        }
+
+        return val
+      })
+
+    return this
+  }
+
+  promise.prototype.spread = function (fn, er) {
+    return this.all().then(function (list) {
+      return typeof fn === 'function' && fn.apply(null, list)
+    }, er)
+  }
+  
+  promise.prototype.all = function() {
+    var self = this
+    return this.then(function(list){
+      var p = new promise()
+      if(!(list instanceof Array)) {
+        p.reject(TypeError)
+        return p
+      }
+      
+      var cnt = 0
+      var target = list.length
+      
+      function done() {
+        if (++cnt === target) p.resolve(list)
+      }
+      
+      for(var i=0, l=list.length; i<l; i++) {
+        var value = list[i]
+        var ref;
+        
+        try {
+          ref = value && value.then
+        } catch (e) {
+          p.reject(e)
+          break
+        }
+        
+        (function(i){
+          self.thennable(ref, function(val){
+            list[i] = val
+            done()
+          }, function(val){
+            p.reject(val);
+          }, function(){
+            done()
+          }, value)
+        })(i)
+      }
+
+      return p
+    })
+  }
+
+  // self object gets globalalized/exported
+  var promiz = {
+
+    all:function(list){
+      var p = new promise(null, null);
+      p.resolve(list);
+      return p.all();
+    },
+    // promise factory
+    defer: function () {
+      return new promise(null, null)
+    },
+
+    // calls a function and resolved as a promise
+    fcall: function() {
+      var def = new promise()
+      var args = Array.apply([], arguments)
+      var fn = args.shift()
+      try {
+        var val = fn.apply(null, args)
+        def.resolve(val)
+      } catch(e) {
+        def.reject(e)
+      }
+
+      return def
+    },
+
+    // calls a node-style function (eg. expects callback as function(err, callback))
+    nfcall: function() {
+      var def = new promise()
+      var args = Array.apply([], arguments)
+      var fn = args.shift()
+      try {
+
+        // Add our custom promise callback to the end of the arguments
+        args.push(function(err, val){
+          if(err) {
+            return def.reject(err)
+          }
+          return def.resolve(val)
+        })
+        fn.apply(null, args)
+      } catch (e) {
+        def.reject(e)
+      }
+
+      return def
+    }
+  }
+  
+  self.promise = promiz
+})(dhx);
+/* jshint ignore:end */

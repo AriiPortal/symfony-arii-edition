@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -24,7 +24,7 @@ function dhtmlXLayoutObject(base, pattern, skin) {
 	
 	this.cdata = {};
 	this.conf = {
-		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxlayout")||"dhx_skyblue"),
+		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxlayout")||"material"),
 		css: "dhxlayout", // css prefix for topcell mtb
 		hh: 20, // header height collapsed, add auto-detect?
 		autosize: "b", // cell which will sized when parent size changed
@@ -32,6 +32,10 @@ function dhtmlXLayoutObject(base, pattern, skin) {
 		inited: false,
 		b_size: {w:-1,h:-1} // base size for onResize
 	};
+	
+	if (this.conf.skin == "material") {
+		this.conf.hh = window.dhx4.readFromCss("dhxlayout_base_material dhxlayout_collapsed_height");
+	}
 	
 	// attach layout
 	if (typeof(base) == "object" && base._isCell == true) {
@@ -119,6 +123,7 @@ function dhtmlXLayoutObject(base, pattern, skin) {
 				if (t.cells[a].layout != null) {
 					this.cdata[a].dataNested = true;
 					this.cdata[a]._layoutMainInst = this;
+					this.cdata[a].cell.className += " dhx_cell_nested_layout";
 					this.cdata[a].attachLayout({pattern:t.cells[a].layout});
 					this.cdata[a]._layoutMainInst = null;
 				}
@@ -1030,7 +1035,7 @@ dhtmlXLayoutObject.prototype.setSeparatorSize = function(index, size) {
 };
 
 window.dhtmlXLayoutCell = function(id, layout) {
-	
+
 	dhtmlXCellObject.apply(this, [id, "_layout"]);
 	
 	var that = this;
@@ -1041,12 +1046,18 @@ window.dhtmlXLayoutCell = function(id, layout) {
 	this.conf.collapsed = false;
 	this.conf.fixed = {w: false, h: false}; // fix size
 	this.conf.docked = true;
-	this.conf.min_width = 26;
-	this.conf.min_height = 26;
+	
+	if (this.conf.skin == "material") {
+		this.conf.min_width = 42;
+		this.conf.min_height = 26;
+	} else {
+		this.conf.min_width = 26;
+		this.conf.min_height = 26;
+	}
 	
 	this.attachEvent("_onCellUnload", function(){
 		this.cell.childNodes[this.conf.idx.hdr].ondblclick = null; // header dblclick
-		if (this.conf.mode != "c") this.cell.childNodes[this.conf.idx.hdr].lastChild.ondblclick = null; // arrow onclick
+		if (this.conf.mode != "c") this.cell.childNodes[this.conf.idx.hdr].lastChild.onclick = null; // arrow onclick
 		this._unloadDocking();
 		this.layout = null;
 		that = null;
@@ -1070,6 +1081,7 @@ window.dhtmlXLayoutCell = function(id, layout) {
 	// init expand/collapse
 	if (this.conf.mode != "c") {
 		var t = document.createElement("DIV");
+		t.title = this.i18n.expand;
 		t.className = "dhxlayout_arrow dhxlayout_arrow_"+this.conf.mode+this._idd;
 		this.cell.childNodes[this.conf.idx.hdr].appendChild(t);
 		t.onclick = function(e) {
@@ -1082,7 +1094,7 @@ window.dhtmlXLayoutCell = function(id, layout) {
 		if (dataType == "tabbar" || dataType == "layout" || dataType == "acc") {
 			this._hideBorders();
 		}
-		if (dataType == "sidebar" && this.conf.skin != "dhx_skyblue") {
+		if (dataType == "sidebar" && this.conf.skin != "dhx_skyblue" && this.conf.skin != "dhx_terrace") {
 			this._hideBorders();
 			this.showHeader();
 		}
@@ -1095,6 +1107,7 @@ window.dhtmlXLayoutCell = function(id, layout) {
 };
 
 dhtmlXLayoutCell.prototype = new dhtmlXCellObject();
+dhtmlXLayoutCell.prototype.i18n = { expand : "Expand / Collapse" };
 
 dhtmlXLayoutCell.prototype.getId = function() {
 	return this.conf.name;
@@ -1341,16 +1354,19 @@ dhtmlXLayoutCell.prototype._getHdrHeight = function(incColl) {
 };
 
 dhtmlXLayoutCell.prototype._fitHdr = function() {
-	if (this.conf.collapsed) {
+	var h = this.cell.childNodes[this.conf.idx.hdr];
+	if (this.conf.collapsed == true) {
 		if (typeof(dhtmlXLayoutObject.prototype._confGlob.hdrColH) == "undefined") {
-			this.cell.childNodes[this.conf.idx.hdr].style.height = this.cell.offsetHeight+"px";
-			dhtmlXLayoutObject.prototype._confGlob.hdrColH = parseInt(this.cell.childNodes[this.conf.idx.hdr].style.height)-this._getHdrHeight(true);
+			h.style.height = this.cell.offsetHeight+"px";
+			dhtmlXLayoutObject.prototype._confGlob.hdrColH = parseInt(h.style.height)-this._getHdrHeight(true);
 		}
-		this.cell.childNodes[this.conf.idx.hdr].style.height = this.cell.offsetHeight+dhtmlXLayoutObject.prototype._confGlob.hdrColH+"px";
+		var size = this.cell.offsetHeight+dhtmlXLayoutObject.prototype._confGlob.hdrColH;
+		h.style.height = size+"px";
+		h.firstChild.style.width = size-39+"px";
 	} else {
-		this.cell.childNodes[this.conf.idx.hdr].style.height = null;
-		
+		h.firstChild.style.width = h.style.height = null;
 	}
+	h = null;
 };
 
 
@@ -1390,6 +1406,12 @@ dhtmlXLayoutCell.prototype.expand = function(autoExpand) {
 	if (this.conf.docked == false) {
 		this.dock();
 		return;
+	}
+	
+	// hide header if it was temporary restored while cell collapsed
+	if (this.conf.hdr.visible == false) {
+		this.cell.childNodes[this.conf.idx.hdr].className = "dhx_cell_hdr dhx_cell_hdr_hidden";
+		this._hdrUpdBorder();
 	}
 	
 	this.cell.className = String(this.cell.className).replace(/\s{0,}dhxlayout_collapsed_[hv]/gi, "");
@@ -1434,6 +1456,11 @@ dhtmlXLayoutCell.prototype.collapse = function() {
 	} else {
 		this.conf.size.h_saved = this.conf.size.h;
 		this.conf.size.h_avl = this._getMinHeight(this._idd)+this._getHdrHeight(); // save min height
+	}
+	
+	// restore header temporary while cell collapsed
+	if (this.conf.hdr.visible == false) {
+		this.cell.childNodes[this.conf.idx.hdr].className = "dhx_cell_hdr";
 	}
 	
 	this.cell.className += " dhxlayout_collapsed_"+this.conf.mode;
@@ -1738,19 +1765,27 @@ dhtmlXCellObject.prototype.attachLayout = function(conf) {
 		obj._layoutMainInst = this._layoutMainInst;
 	}
 	
-	if (typeof(window.dhtmlXLayoutCell) != "undefined" && this instanceof dhtmlXLayoutCell) {
+	if (typeof(window.dhtmlXLayoutCell) == "function" && this instanceof window.dhtmlXLayoutCell) {
 		obj._isParentCell = true;
+		if (this.conf.skin == "material" && String(this.cell.className).match(/dhx_cell_nested_layout/) == null) {
+			this.cell.className += " dhx_cell_nested_layout";
+		}
 	}
 	
-	if (typeof(window.dhtmlXAccordionCell) != "undefined" && (this instanceof window.dhtmlXAccordionCell)) {
-		obj._ofs = {t:-1,r:-1,l:-1,b:-1};
+	if (typeof(window.dhtmlXAccordionCell) == "function" && this instanceof window.dhtmlXAccordionCell) {
+		if (this.conf.skin == "material") {
+			obj._ofs = {t:14,r:14,b:14,l:14};
+		} else {
+			obj._ofs = {t:-1,r:-1,l:-1,b:-1};
+		}
 	}
 	
-	if (typeof(window.dhtmlXTabBarCell) != "undefined" && (this instanceof window.dhtmlXTabBarCell)) {
+	if (typeof(window.dhtmlXTabBarCell) == "function" && this instanceof window.dhtmlXTabBarCell) {
 		if (this.conf.skin == "dhx_skyblue") obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+		if (this.conf.skin == "material") obj._ofs = {t:8,r:8,b:8,l:8};
 	}
 	
-	if (typeof(window.dhtmlXSideBarCell) != "undefined" && (this instanceof window.dhtmlXSideBarCell)) {
+	if (typeof(window.dhtmlXSideBarCell) == "function" && this instanceof window.dhtmlXSideBarCell) {
 		if (this.conf.skin == "dhx_web") {
 			obj._ofs = {l:8};
 			if (this.sidebar.conf.autohide == true) obj._ofs.l = 0;
@@ -1764,8 +1799,12 @@ dhtmlXCellObject.prototype.attachLayout = function(conf) {
 		}
 	}
 	
-	if (typeof(window.dhtmlXCarouselCell) != "undefined" && (this instanceof window.dhtmlXCarouselCell)) {
+	if (typeof(window.dhtmlXCarouselCell) == "function" && this instanceof window.dhtmlXCarouselCell) {
 		this._hideBorders();
+	}
+	
+	if (typeof(window.dhtmlXWindowsCell) == "function" && this instanceof window.dhtmlXWindowsCell) {
+		if (this.conf.skin == "material") obj._ofs = {t:14,r:14,b:14,l:14};
 	}
 	
 	if (typeof(conf) == "string") conf = {pattern: conf};
@@ -1775,7 +1814,7 @@ dhtmlXCellObject.prototype.attachLayout = function(conf) {
 	this.dataType = "layout";
 	this.dataObj = new dhtmlXLayoutObject(conf);
 	
-	if (this instanceof dhtmlXLayoutCell) {
+	if (this instanceof window.dhtmlXLayoutCell) {
 		this.dataObj.parentLayout = this.layout;
 	}
 	

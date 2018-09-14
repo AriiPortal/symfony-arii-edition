@@ -1,19 +1,14 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/*
-This software is allowed to use under GPL or you need to obtain Commercial or Enterise License
-to use it in non-GPL project. Please contact sales@dhtmlx.com for details
-*/
-/*DHX:Depend core/dhx.js*/
-/*DHX:Depend core/assert.js*/
-if (!window.dhx) 
-	dhx={};
+(function(){
+
+var dhx = {};
 
 //check some rule, show message as error if rule is not correct
 dhx.assert = function(test, message){
@@ -870,9 +865,6 @@ dhx.Template = function(str){
 		switch(str[0]){
 			case "html": 	//load from some container on the page
 				str = dhx.html.getValue(str[1]);
-				break;
-			case "http": 	//load from external file
-				str = new dhx.ajax().sync().get(str[1],{uid:dhx.uid()}).responseText;
 				break;
 			default:
 				//do nothing, will use template as is
@@ -2512,7 +2504,7 @@ dhx.BindSource = {
 				this.update(id, data);
 			}
 		}
-		this.callEvent("onBindUpdate", [data, key]);		
+		this.callEvent("onBindUpdate", [data, key, id]);
 		if (this.save)
 			this.save();
 		
@@ -2727,6 +2719,9 @@ if (!dhx.ui.views){
 		return dhx.ui.views[id];
 	};
 }
+
+if (window.dhtmlx)
+	dhtmlx.BaseBind = dhx.BaseBind;
 
 dhtmlXDataStore = function(config){
 	var obj = new dhx.DataCollection(config);
@@ -2951,7 +2946,7 @@ if (window.scheduler){
 					insync.call(this);
 				}),
 				source.data.attachEvent("onIdChange", function(oldid, newid){
-					combo.changeOptionId(oldid, newid);
+					scheduler.changeEventId(oldid, newid);
 				})
 			];
 			this.attachEvent("onEventChanged", function(id){
@@ -2981,10 +2976,10 @@ if (window.dhtmlXCombo){
 	dhtmlXCombo.prototype.bind = function(){
 		dhx.BaseBind.bind.apply(this, arguments);
 	};
-	dhtmlXCombo.unbind = function(target){
+	dhtmlXCombo.prototype.unbind = function(target){
 		dhx.BaseBind._unbind.call(this,target);
 	}
-	dhtmlXCombo.unsync = function(target){
+	dhtmlXCombo.prototype.unsync = function(target){
 		dhx.BaseBind._unbind.call(this,target);
 	}
 
@@ -3090,6 +3085,42 @@ if (window.dhtmlXGridObject){
 		var locator = "_locator";
 		var parser_func = "_process_store_row";
 		var locator_func = "_get_store_data";
+
+		if (rule && rule.filter){
+			grid.attachEvent("onFilterStart", function(cols, values){
+				var name = "_con_f_used";
+				if (grid[name] && grid[name].length)
+					return false;
+
+				source.data.silent(function(){
+					source.filter();
+					for (var i=0; i<cols.length; i++){
+						if (values[i] == "") continue;
+						var id = grid.getColumnId(cols[i]);
+						source.filter("#"+id+"#", values[i], i!=0);
+					}
+				});
+
+				source.refresh();
+				return false;
+			});
+			grid.collectValues = function(index){
+				var id = this.getColumnId(index);
+				return (function(id){
+					var values = [];
+					var checks = {};
+					this.data.each(function(obj){
+						var value = obj[id];
+						if (!checks[value]){
+							checks[value] = true;
+							values.push(value);
+						}
+					});
+					values.sort();
+					return values;
+				}).call(source, id);
+			};
+		}
 
 		this.save = function(id){
 			if (!id) id = this.getCursor();
@@ -3202,42 +3233,6 @@ if (window.dhtmlXGridObject){
 				return false;
 			});
 
-		if (rule && rule.filter){
-			grid.attachEvent("onFilterStart", function(cols, values){
-				var name = "_con_f_used";
-				if (grid[name] && grid[name].length)
-					return false;
-
-				source.data.silent(function(){
-					source.filter();
-					for (var i=0; i<cols.length; i++){
-						if (values[i] == "") continue;
-						var id = grid.getColumnId(cols[i]);
-						source.filter("#"+id+"#", values[i], i!=0);
-					}
-				});
-
-				source.refresh();
-				return false;
-			});
-			grid.collectValues = function(index){
-				var id = this.getColumnId(index);
-				return (function(id){
-					var values = [];
-					var checks = {};
-					this.data.each(function(obj){
-						var value = obj[id];
-						if (!checks[value]){
-							checks[value] = true;
-							values.push(value);
-						}
-					});
-					values.sort();
-					return values;
-				}).call(source, id);
-			};
-		}
-
 		if (rule && rule.select)
 			grid.attachEvent("onRowSelect", function(id){
 				source.setCursor(id);
@@ -3314,7 +3309,7 @@ if (window.dhtmlXGridObject){
 		var attrs = this.getRowById(id)[name];
 		for (var key in data)
 			attrs[key] = data[key];
-		this.callEvent("onBindUpdate",[id]);
+		this.callEvent("onBindUpdate",[data, null, id]);
 	};
 
 	dhtmlXGridObject.prototype.add = function(id,data,index){
@@ -3471,3 +3466,4 @@ if (window.dhtmlXTreeObject){
 /*jsl:end*/
 
 
+})();

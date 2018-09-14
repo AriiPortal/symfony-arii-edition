@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -16,7 +16,7 @@ dhtmlXForm.prototype.items.image = {
 		item._enabled = true;
 		
 		item._fr_name = "dhxform_image_"+window.dhx4.newId();
-		item._url = data.url;
+		item._url = (typeof(data.url)=="undefined"||data.url==null?"":data.url);
 		
 		if (data.inputWidth == "auto") data.inputWidth = 120;
 		if (data.inputHeight == "auto") data.inputHeight = data.inputWidth;
@@ -51,6 +51,7 @@ dhtmlXForm.prototype.items.image = {
 			item._is_uploading = true;
 			this.parentNode.submit();
 			this.parentNode.parentNode.className = "dhxform_image_wrap dhxform_image_in_progress";
+			this.value = ""; // prevent update on cancel click in chrome
 		}
 		
 		// iframe updates
@@ -97,7 +98,7 @@ dhtmlXForm.prototype.items.image = {
 			(item._url.indexOf("?")>=0?"&":"?")+"action=loadImage"+
 			"&itemId="+encodeURIComponent(item._idd)+
 			"&itemValue="+encodeURIComponent(item._value)+
-			(window.dhx4.ajax.cache!=true?"&dhxr"+new Date().getTime()+"=1":"")
+			window.dhx4.ajax._dhxr("&")
 		
 		var currentImg = item.childNodes[item._ll?1:0].childNodes[0].firstChild;
 		
@@ -137,7 +138,7 @@ dhtmlXForm.prototype.items.image = {
 			
 			if (typeof(r) == "object" && r != null && r.state == true && r.itemId == item._idd) {
 				this.setValue(item, r.itemValue, true);
-				item.getForm().callEvent("onImageUploadSuccess", [r.itemId, r.itemVaule, r.extra])
+				item.getForm().callEvent("onImageUploadSuccess", [r.itemId, r.itemValue, r.extra])
 			} else {
 				// show empty field, r can be null
 				item.getForm().callEvent("onImageUploadFail", [item._idd, (r?r.extra:null)]);

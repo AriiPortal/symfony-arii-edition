@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -53,6 +53,12 @@ function dataProcessor(serverProcessorURL){
     }
 
 dataProcessor.prototype={
+	url:function(str){
+		if (str.indexOf("?") != -1)
+			return "&";
+		else
+			return "?";
+	},
 	setTransactionMode:function(mode,total){
 		if (typeof mode == "object"){
 			this._tMode = mode.mode || this._tMode;
@@ -66,6 +72,12 @@ dataProcessor.prototype={
 		if (this._tMode == "REST"){
 			this._tSend = false;
 			this._endnm = true;
+		}
+		if (this._tMode == "JSON"){
+			this._tSend = false;
+			this._endnm = true;
+			this._headers = this._headers || {};
+			this._headers["Content-type"] = "application/json";
 		}
     },
     escape:function(data){
@@ -137,6 +149,8 @@ dataProcessor.prototype={
 	*	@type: public
 	*/
 	setUpdated:function(rowId,state,mode){
+		this._log("item "+rowId+" "+(state?"marked":"unmarked")+" ["+(mode||"updated")+"]");
+
 		if (this._silent_mode) return;
 		var ind=this.findRow(rowId);
 		
@@ -209,6 +223,9 @@ dataProcessor.prototype={
 	*	@type: public
 	*/
 	sendData:function(rowId){
+		if (rowId)
+			this._log("Sending: "+rowId);
+
 		if (this._waitMode && (this.obj.mytype=="tree" || this.obj._h2)) return;
 		if (this.obj.editStop) this.obj.editStop();
 	
@@ -240,7 +257,7 @@ dataProcessor.prototype={
     				keys.push(key);
 				}
     		stack.push("ids="+this.escape(keys.join(",")));
-    		if (dhtmlx.security_key)
+    		if (window.dhtmlx && dhtmlx.security_key)
 				stack.push("dhx_security="+dhtmlx.security_key);
     		return stack.join("&");
     	}
@@ -256,7 +273,17 @@ dataProcessor.prototype={
     		}
 		return stack.join("&");
     },
+    _applyPayload:function(url){
+    	if (this._payload)
+      		for (var key in this._payload)
+       			url = url + (url.indexOf("?") === -1 ? "?" : "&" ) + this.escape(key) + "=" + this.escape(this._payload[key]);
+       	return url;
+    },
     _sendData:function(a1,rowId){
+    
+    	this._log("url: "+this.serverProcessor);
+    	this._log(a1)
+
     	if (!a1) return; //nothing to send
 		if (!this.callEvent("onBeforeDataSending",rowId?[rowId,this.getState(rowId),a1]:[null, null, a1])) return false;				
 		
@@ -275,12 +302,46 @@ dataProcessor.prototype={
 			return that.afterUpdate(that,xml,ids);
 		};
 		
-		var a3 = this.serverProcessor+(this._user?(dhtmlx.url(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+this.obj.getUserData(0,"version")].join("&")):"");
+		var a3 = this.serverProcessor+(this._user?(this.url(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+this.obj.getUserData(0,"version")].join("&")):"");
+        var a4 = this._applyPayload(a3);
 
-		if (this._tMode=="GET")
-        	dhx4.ajax.get(a3+((a3.indexOf("?")!=-1)?"&":"?")+this.serialize(a1,rowId), back);
-		else if (this._tMode == "POST")
-        	dhx4.ajax.post(a3,this.serialize(a1,rowId), back);
+		if (this._tMode=="GET"){
+	     	dhx4.ajax.query({
+        		url:a4+((a4.indexOf("?")!=-1)?"&":"?")+this.serialize(a1,rowId),
+        		method:"GET",
+        		headers:this._headers,
+        		callback:back
+        	});
+		}
+		else if (this._tMode == "POST"){
+			dhx4.ajax.query({
+        		url:a4,
+        		method:"POST",
+        		headers:this._headers,
+        		callback:back,
+        		data:this.serialize(a1,rowId)
+        	});
+		}
+		else if (this._tMode == "JSON"){
+			var action = a1[this.action_param];
+			var data = {};
+			for (var key in a1) data[key] = a1[key];
+			delete data[this.action_param];
+			delete data.id;
+			delete data.gr_id;
+
+			dhx4.ajax.query({
+        		url:a4,
+        		method:"POST",
+        		headers:this._headers,
+        		callback:back,
+        		data:JSON.stringify({
+        			id: rowId,
+        			action: action,
+        			data: data
+        		})
+        	});		
+		}
         else if (this._tMode == "REST"){
         	var state = this.getState(rowId);
         	var url = a3.replace(/(\&|\?)editing\=true/,"");
@@ -302,10 +363,7 @@ dataProcessor.prototype={
         		url = parts[0]+rowId+(parts[1]||"");
         	}
 
-        	if (this._payload)
-        		for (var key in this._payload)
-        			url = url + (url.indexOf("?") === -1 ? "?" : "&" ) + this.escape(key) + "=" + this.escape(this._payload[key]);
-
+        	this._applyPayload(url);
         	dhx4.ajax.query({
         		url:url,
         		method:method,
@@ -318,6 +376,7 @@ dataProcessor.prototype={
 		this._waitMode++;
     },
 	sendAllData:function(){
+		this._log("Sending all updated items");
 		if (!this.updatedRows.length) return;			
 
 		this.messages=[]; var valid=true;
@@ -422,6 +481,7 @@ dataProcessor.prototype={
 *     @topic: 0
 */
 	afterUpdateCallback:function(sid, tid, action, btag) {
+		this._log("Action: "+action+" SID:"+sid+" TID:"+tid, btag);
 		var marker = sid;
 		var correct=(action!="error" && action!="invalid");
 		if (!correct) this.set_invalid(sid,action);
@@ -460,13 +520,20 @@ dataProcessor.prototype={
 	    
 	    this.callEvent("onAfterUpdate", [soid, action, tid, btag]);
 	},
-
+	enableDebug:function(){
+		this._debug = true;
+	},
+	_log:function(){
+		if (this._debug && window.console && window.console.info)
+			window.console.info.apply(window.console, arguments);
+	},
 	/**
 	* 	@desc: response from server
 	*	@param: xml - XMLLoader object with response XML
 	*	@type: private
 	*/
 	afterUpdate:function(that,xml,id){
+		this._log("Server response received");
 		//try to use json first
 		if (window.JSON){
 			try{
@@ -531,8 +598,6 @@ dataProcessor.prototype={
 	
 	setOnAfterUpdate:function(ev){
 		this.attachEvent("onAfterUpdate",ev);
-	},
-	enableDebug:function(mode){
 	},
 	setOnBeforeUpdateHandler:function(func){  
 		this.attachEvent("onBeforeDataSending",func);
@@ -631,7 +696,7 @@ dataProcessor.prototype={
 	loadUpdate: function(){
 		var self = this;
 		var version = this.obj.getUserData(0,"version");
-		var url = this.serverProcessor+dhtmlx.url(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+version].join("&");
+		var url = this.serverProcessor+this.url(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+version].join("&");
 		url = url.replace("editing=true&","");
 		this.getUpdates(url, function(r){
 			var top = dhx4.ajax.xmltop("updates", r.xmlDoc);

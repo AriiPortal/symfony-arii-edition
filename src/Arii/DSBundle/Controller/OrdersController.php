@@ -19,76 +19,36 @@ class OrdersController extends Controller
             'UNKNOWN' => '#FF0000'
         );
     
-    public function __construct( )
+    public function __construct()
     {
           $request = Request::createFromGlobals();
           $this->images = $request->getUriForPath('/../arii/images/wa');
     }
 
-    public function indexAction()
-    {
-        $portal = $this->container->get('arii_core.portal');
-        $User = $portal->getUserInterface(); 
-        
-        $spooler       = $User['spooler'];       
-        $ref_date      = $User['ref_date'];
-        $ref_past      = $User['ref_past'];
-        $ref_future    = $User['ref_future'];
-        $ref_timestamp = $User['ref_timestamp'];
-        $refresh       = $User['refresh'];
-        
-        $past      = $User['past'];
-        $future    = $User['future'];
-        
-        // Une date peut etre passe en get
-        $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )!='')
-            $ref_date   = new \DateTime( $request->query->get( 'ref_date' ) );
-        $Timeline['ref_date'] = $ref_date;
-        
-        $portal->setUserInterface($User);
+    public function indexAction($db)
+    {     
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
+        $Timeline['ref_date'] = $Filters['ref_date'];
         // On prend 24 fuseaux entre maintenant et le passe
         // on trouve le step en minute
-        $step = ($future-$past)*2.5; // heure * 60 minutes / 24 fuseaux
+        $diff  	= date_diff( $Filters['date_future'], $Filters['date_past'] );
+        $step = ($diff->h)*2.5; // heure * 60 minutes / 24 fuseaux
         if ($step == 0) $step = 1;
         $Timeline['step'] = 60;
     
         // on recalcule la date courante moins la plage de passé 
-        $year  = $ref_date->format('Y');
-        $month = $ref_date->format('m');
-        $day   = $ref_date->format('d');
+        $year  = $Filters['date']->format('Y');
+        $month = $Filters['date']->format('m');
+        $day   = $Filters['date']->format('d');
         
-        $start = substr( $past,11,2);
-        $Timeline['start'] = (60/$step)*$start;
-        $Timeline['js_date'] = $year.','.($month - 1).','.$day;
-        
+        $Timeline['js_date'] = $year.','.($month - 1).','.$day;        
         $Timeline['start'] = 0;
-        
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('data');
-        
-        $sql = $this->container->get('arii_core.sql');
-        $sql->setDriver($dhtmlx->getDriver());
-        
-        $Fields = array (
-            '{spooler}'    => 'SPOOLER_ID',
-            '{start_time}' => 'START_TIME' );
 
-        $qry = $sql->Select(array('SPOOLER_ID'),'distinct') 
-               .$sql->From(array('SCHEDULER_ORDER_HISTORY'))
-               .$sql->Where($Fields)
-               .$sql->OrderBy(array( 'SPOOLER_ID' ));
-
-        $SPOOLERS = array();
-        if ($data) {
-            $res = $data->sql->query( $qry );
-            while ($line = $data->sql->get_next($res)) {
-                array_push( $SPOOLERS,$line['SPOOLER_ID'] ); 
-            }
-        }
-        $Timeline['spoolers'] = $SPOOLERS;
-       return $this->render('AriiDSBundle:Orders:index.html.twig', array('refresh' => $refresh, 'Timeline' => $Timeline ) );
+        // Liste des spoolers
+        $em = $this->getDoctrine()->getManager($db);        
+        $Timeline['spoolers'] = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->listSpoolers($Filters['date_past']);
+        return $this->render('AriiDSBundle:Orders:index.html.twig', array('refresh' => $Filters['refresh'], 'Timeline' => $Timeline ) );
     }
 
     public function icalAction()

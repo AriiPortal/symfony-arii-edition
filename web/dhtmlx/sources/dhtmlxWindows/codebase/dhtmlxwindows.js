@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -23,7 +23,7 @@ function dhtmlXWindows(params) {
 	params = null;
 	
 	this.conf = {
-		skin: window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxwins")||"dhx_skyblue",
+		skin: window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxwins")||"material",
 		// viewport conf
 		vp_pos_ofs: 20, // windows-veieport overlay (left, right, bottom) and 0 for top
 		vp_custom: false,
@@ -229,7 +229,7 @@ function dhtmlXWindows(params) {
 		var data = {press_type: e.type};
 		
 		if (e.type == "MSPointerDown" || e.type == "pointerdown") {
-			that.conf.ev_skip = true;
+			return;
 		} else if (that.conf.ev_skip == true) {
 			that.conf.ev_skip = false;
 			t = null;
@@ -740,8 +740,7 @@ dhtmlXWindows.prototype._winMinmax = function(id, mode) {
 	} else {
 		this._callMainEvent("onMinimize", id);
 	}
-	
-	
+	this._callMainEvent("onResizeFinish", id);	
 	w = null;
 };
 
@@ -1093,10 +1092,17 @@ dhtmlXWindows.prototype._winAdjustCell = function(id) {
 	
 	var w = this.w[id];
 	
-	var x = 1;
-	var y = (w.conf.header?w.hdr.offsetHeight:1);
-	var width = w.win.clientWidth-2;
-	var height = w.win.clientHeight-y-1;
+	if (this.conf.skin == "material") {
+		var x = 0;
+		var y = (w.conf.header?w.hdr.offsetHeight:1);
+		var width = w.win.clientWidth;
+		var height = w.win.clientHeight-y;
+	} else {
+		var x = 1;
+		var y = (w.conf.header?w.hdr.offsetHeight:1);
+		var width = w.win.clientWidth-2;
+		var height = w.win.clientHeight-y-1;
+	}
 	
 	w.brd.style.left = x+"px";
 	w.brd.style.top = y+"px";
@@ -1111,7 +1117,8 @@ dhtmlXWindows.prototype._winAdjustCell = function(id) {
 	w.brd.style.width = width+w.conf.brd.w+"px";
 	w.brd.style.height = height+w.conf.brd.h+"px";
 	
-	var p = 5;
+	var p = 5; // cell_cont position
+	if (this.conf.skin == "material") p = 1;
 	
 	var x2 = 1+p;
 	var y2 = (w.conf.header?y:y+p);
@@ -1131,8 +1138,9 @@ dhtmlXWindows.prototype._winAdjustTitle = function(id) {
 	var icon = this.w[id].hdr.childNodes[0];
 	var text = this.w[id].hdr.childNodes[1];
 	var btns = this.w[id].hdr.childNodes[2];
-	text.style.paddingLeft = icon.offsetWidth+12+"px";
-	text.style.paddingRight = btns.offsetWidth+10+"px";
+	var x = (this.conf.skin=="material"?7:0);
+	text.style.paddingLeft = icon.offsetWidth+12+x+"px";
+	text.style.paddingRight = btns.offsetWidth+10+x+"px";
 	text = btns = icon = null;
 };
 dhtmlXWindows.prototype._callMainEvent = function(name, id) {

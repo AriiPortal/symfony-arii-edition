@@ -48,26 +48,12 @@
 label { display: block; width: 200px; }
 </style>
 <script language="javascript">
-dhtmlxEvent(window,"load",function(){ 
-var size=400;     
+function Init() {
+    myLayout = globalLayout.cells("b").attachLayout("1C");
+    
+    myLayout.cells("a").hideHeader(); 
 
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
-    globalLayout.cells("a").setWidth(400); 
-    globalLayout.cells("b").hideHeader(); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Home_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    {% include "AriiCoreBundle:Default:menu.js.twig" %}        
-
-    dhxTabbar = globalLayout.cells("b").attachTabbar();
+    dhxTabbar = myLayout.cells("a").attachTabbar();
     // dhxTabbar.setImagePath("{{ asset("arii/dhtmlx/dhtmlxTabbar/codebase/imgs/") }}");
     dhxTabbar.addTab("a1", "{{ "Profile" | trans }}", 120, null, true);
     dhxTabbar.addTab("a2", "{{ "Notifications" | trans }}", 120);
@@ -194,45 +180,45 @@ var size=400;
     
     myForm = dhxTabbar.cells("a1").attachForm(formData);  
     myForm.attachEvent("onButtonClick", function(name3){
-        globalLayout.cells("a").progressOn();
+        myLayout.cells("a").progressOn();
         myForm.send("{{ url('arii_my_account_save') }}", "POST", function (xml) {
             dhtmlx.message({
                             type: "Notice",
                             expire: 5000,
                             width: "500px",
                             text: xml.xmlDoc.responseText });
-            globalLayout.cells("a").progressOff();
+            myLayout.cells("a").progressOff();
         });
     });
 
     var myForm2 = dhxTabbar.cells("a2").attachForm(formData2);                                                        
     myForm2.attachEvent("onButtonClick", function(name){
-        globalLayout.cells("a").progressOn();
+        myLayout.cells("a").progressOn();
         myForm2.send("{{ url('arii_my_account_notifications') }}", "POST", function (xml) {
             dhtmlx.message({
                             type: "Notice",
                             expire: 5000,
                             width: "500px",
                             text: xml.xmlDoc.responseText });
-            globalLayout.cells("a").progressOff();
+            myLayout.cells("a").progressOff();
         });
     });
 
     var myForm3 = dhxTabbar.cells("a3").attachForm(formData3);                                                        
     myForm3.attachEvent("onButtonClick", function(name){
-        globalLayout.cells("a").progressOn();
+        myLayout.cells("a").progressOn();
         myForm2.send("{{ url('arii_my_account_password') }}", "POST", function (xml) {
             dhtmlx.message({
                             type: "Notice",
                             expire: 5000,
                             width: "500px",
                             text: xml.xmlDoc.responseText });
-            globalLayout.cells("a").progressOff();
+            myLayout.cells("a").progressOff();
         });
     });
 
-    globalLayout.cells("a").hideHeader(); 
-});
+    myLayout.cells("a").hideHeader(); 
+}
 
 function GlobalRefresh() { };
 </script>

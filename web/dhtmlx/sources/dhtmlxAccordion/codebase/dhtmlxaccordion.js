@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -12,9 +12,10 @@ function dhtmlXAccordion(base, skin) {
 	var transData = window.dhx4.transDetect();
 	
 	this.conf = {
-		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxacc")||"dhx_skyblue"),
+		skin: (skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxacc")||"material"),
 		css: "dhxacc", // css prefix for topcell mtb
 		icons_path: "",
+		icons_css: false,
 		multi_mode: false,
 		last_opened: null, // single_mode only
 		on_active_id: null, // id for onActive in single_mode, inner
@@ -73,6 +74,9 @@ function dhtmlXAccordion(base, skin) {
 				m: { between: 3 }
 			},
 			dhx_terrace: {
+				m: { between: 12, left: 0, right: 0 }
+			},
+			material: {
 				m: { between: 12, left: 0, right: 0 }
 			}
 		}
@@ -332,8 +336,8 @@ function dhtmlXAccordion(base, skin) {
 			if (this._openCache == null) {
 				var dynData = this._getDynData();
 				for (var a in dynData) {
-					this.t[a].cell.conf.size.h = dynData[a];
-					this.t[a].cell.cell.style.height = dynData[a]+"px";
+					this.t[a].cell.conf.size.h = Math.max(dynData[a],0);
+					this.t[a].cell.cell.style.height = Math.max(dynData[a],0)+"px";
 				}
 			} else {
 				var inProgress = false;
@@ -573,6 +577,9 @@ function dhtmlXAccordion(base, skin) {
 		if (data.icon_path != null) { // back compat
 			this.setIconsPath(data.icon_path);
 		}
+		if (data.iconset != null) {
+			this.conf.icons_css = (data.iconset == "awesome");
+		}
 		if (data.items != null) {
 			for (var q=0; q<data.items.length; q++) {
 				this.addItem(data.items[q].id, data.items[q].text, data.items[q].open, data.items[q].height, data.items[q].icon||data.items[q].img);
@@ -642,7 +649,9 @@ function dhtmlXAccordion(base, skin) {
 // top-level extensions
 dhtmlXAccordion.prototype = new dhtmlXCellTop();
 
-
+dhtmlXAccordion.prototype.setIconset = function(name) {
+	this.conf.icons_css = (name=="awesome");
+};
 /* cell extensions */
 function dhtmlXAccordionCell(id, acc) {
 	
@@ -700,12 +709,16 @@ function dhtmlXAccordionCell(id, acc) {
 	
 	this.acc.attachEvent("onDrop", function(id){
 		if (this.t[id].cell.dataObj != null && this.t[id].cell.dataType == "editor") {
-			this.t[id].cell.dataObj._prepareContent(true)
+			this.t[id].cell.dataObj._prepareContent(true);
 			if (this.conf.editor_data != null && this.conf.editor_data[id] != null) {
 				this.t[id].cell.dataObj.setContent(this.conf.editor_data[id]);
 				this.conf.editor_data[id] = null;
 			}
 		}
+		for (var a in this.t) this.t[a].cell._hideCellCover();
+	});
+	
+	this.acc.attachEvent("_onDropCancel", function(id){
 		for (var a in this.t) this.t[a].cell._hideCellCover();
 	});
 	
@@ -788,7 +801,10 @@ dhtmlXAccordionCell.prototype._initHeader = function() {
 };
 
 dhtmlXAccordionCell.prototype._getHdrHeight = function() {
-	return this.cell.childNodes[this.conf.idx.hdr].offsetHeight;
+	var t = this.cell.childNodes[this.conf.idx.hdr];
+	var h = t.offsetHeight||t.offsetHeight; // fix for ie8 - sometimes on 1st check it gives 0
+	t = null;
+	return h;
 };
 
 /* hdr visibility, added in 4.2.1 */
@@ -825,20 +841,30 @@ dhtmlXAccordionCell.prototype.getText = function() {
 /* header icon */
 dhtmlXAccordionCell.prototype.setIcon = function(icon) {
 	var t = this.cell.childNodes[this.conf.idx.hdr];
-	if (t.firstChild.className != "dhx_cell_hdr_icon") {
-		t.firstChild.className += " dhx_cell_hdr_icon";
-		var k = document.createElement("IMG");
-		k.className = "dhx_cell_hdr_icon";
-		t.insertBefore(k, t.firstChild);
-		k = null;
+	if (this.acc.conf.icons_css == true) {
+		if ((t.firstChild.tagName||"").toLowerCase() != "i") {
+			t.firstChild.className += " dhx_cell_hdr_icon";
+			var i = document.createElement("I");
+			t.insertBefore(i, t.firstChild);
+			i = null;
+		}
+		t.firstChild.className = icon;
+	} else {
+		if (t.firstChild.className != "dhx_cell_hdr_icon") {
+			t.firstChild.className += " dhx_cell_hdr_icon";
+			var k = document.createElement("IMG");
+			k.className = "dhx_cell_hdr_icon";
+			t.insertBefore(k, t.firstChild);
+			k = null;
+		}
+		t.firstChild.src = this.acc.conf.icons_path+icon;
 	}
-	t.firstChild.src = this.acc.conf.icons_path+icon;
 	t = null;
 };
 
 dhtmlXAccordionCell.prototype.clearIcon = function() {
 	var t = this.cell.childNodes[this.conf.idx.hdr];
-	if (t.firstChild.className == "dhx_cell_hdr_icon") {
+	if (t.firstChild.className == "dhx_cell_hdr_icon" || (t.firstChild.tagName||"").toLowerCase() == "i") {
 		t.removeChild(t.firstChild);
 		t.firstChild.className = String(t.firstChild.className).replace(/\s{1,}dhx_cell_hdr_icon/gi,"");
 	}
@@ -1178,18 +1204,22 @@ dhtmlXCellObject.prototype.attachAccordion = function(conf) {
 	if (typeof(conf.skin) == "undefined") conf.skin = this.conf.skin;
 	conf.parent = obj;
 	
-	if (typeof(window.dhtmlXAccordionCell) != "undefined" && (this instanceof window.dhtmlXAccordionCell)) {
-		obj._ofs = {
-			s:{first:-1},
-			m:{first:4}
+	if (typeof(window.dhtmlXAccordionCell) == "function" && this instanceof window.dhtmlXAccordionCell) {
+		if (this.conf.skin == "material") {
+			obj._ofs = {t:-1,r:-1,b:-1,l:-1}; // attach acc to acc
+		} else {
+			obj._ofs = {
+				s:{first:-1},
+				m:{first:4}
+			}
 		}
 	}
 	
-	if (typeof(window.dhtmlXTabBarCell) != "undefined" && (this instanceof window.dhtmlXTabBarCell)) {
-		if (this.conf.skin == "dhx_skyblue") obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+	if (typeof(window.dhtmlXTabBarCell) == "function" && this instanceof window.dhtmlXTabBarCell) {
+		if (this.conf.skin == "dhx_skyblue" || this.conf.skin == "material") obj._ofs = {t:-1,r:-1,b:-1,l:-1};
 	}
 	
-	if (typeof(window.dhtmlXSideBarCell) != "undefined" && (this instanceof window.dhtmlXSideBarCell)) {
+	if (typeof(window.dhtmlXSideBarCell) == "function" && this instanceof window.dhtmlXSideBarCell) {
 		if (this.conf.skin == "dhx_web") {
 			obj._ofs = {};
 			if (this.sidebar.conf.autohide != true) obj._ofs.l = 2;
@@ -1203,7 +1233,7 @@ dhtmlXCellObject.prototype.attachAccordion = function(conf) {
 		}
 	}
 	
-	if (typeof(window.dhtmlXCarouselCell) != "undefined" && (this instanceof window.dhtmlXCarouselCell)) {
+	if (typeof(window.dhtmlXCarouselCell) == "function" && this instanceof window.dhtmlXCarouselCell) {
 		this._hideBorders();
 	}
 	

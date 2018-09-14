@@ -76,6 +76,46 @@ xml_ATS_nodes_grid:
 arii_ATS_index:
     path:  /{db}
     defaults: { _controller: AriiATSBundle:Default:index, db: ats_db }
+
+#--------------------------------------------------------------------
+# Templates
+#--------------------------------------------------------------------
+arii_ATS_templates:
+    path:  /db/{db}/templates
+    defaults: { _controller: AriiATSBundle:Templates:index, db: ats_db }
+
+arii_ATS_template_diff:
+    path:  /db/{db}/template/diff
+    defaults: { _controller: AriiATSBundle:Templates:diff, db: ats_db }
+
+xml_ATS_templates_tree:
+    path:  /templates/tree.xml
+    defaults: { _controller: AriiATSBundle:Templates:tree }
+
+xml_ATS_templates_files:
+    path:  /templates/files.xml
+    defaults: { _controller: AriiATSBundle:Templates:files }
+
+html_ATS_template_recalc:
+    path:  /template/recalc.xml
+    defaults: { _controller: AriiATSBundle:Templates:recalc }
+
+arii_ATS_template:
+    path:  /template
+    defaults: { _controller: AriiATSBundle:Templates:template }
+
+arii_ATS_template_read:
+    path:  /template/read
+    defaults: { _controller: AriiATSBundle:Templates:read }
+
+arii_ATS_template_mep:
+    path:  /template/mep
+    defaults: { _controller: AriiATSBundle:Templates:mep }
+
+xml_ATS_templates_mep_toolbar:
+    path:  template/mep/toolbar.xml
+    defaults: { _controller: AriiATSBundle:Templates:toolbar }
+
     
 # --------------------------------------------------------------------------
 # Config
@@ -477,45 +517,6 @@ arii_ATS_requests_result:
 arii_ATS_requests_summary:
     path:  /requests/summary.html
     defaults: { _controller: AriiATSBundle:Requests:summary }
-
-#--------------------------------------------------------------------
-# Templates
-#--------------------------------------------------------------------
-arii_ATS_templates:
-    path:  /templates
-    defaults: { _controller: AriiATSBundle:Templates:index }
-
-xml_ATS_templates_tree:
-    path:  /templates/tree.xml
-    defaults: { _controller: AriiATSBundle:Templates:tree }
-
-xml_ATS_templates_files:
-    path:  /templates/files.xml
-    defaults: { _controller: AriiATSBundle:Templates:files }
-
-html_ATS_template_recalc:
-    path:  /template/recalc.xml
-    defaults: { _controller: AriiATSBundle:Templates:recalc }
-
-arii_ATS_template:
-    path:  /template
-    defaults: { _controller: AriiATSBundle:Templates:template }
-
-arii_ATS_template_read:
-    path:  /template/read
-    defaults: { _controller: AriiATSBundle:Templates:read }
-
-arii_ATS_template_diff:
-    path:  /template/diff
-    defaults: { _controller: AriiATSBundle:Templates:diff }
-
-arii_ATS_template_mep:
-    path:  /template/mep
-    defaults: { _controller: AriiATSBundle:Templates:mep }
-
-xml_ATS_templates_mep_toolbar:
-    path:  template/mep/toolbar.xml
-    defaults: { _controller: AriiATSBundle:Templates:toolbar }
 
 # --------------------------------------------------------------------------
 # Dashboard

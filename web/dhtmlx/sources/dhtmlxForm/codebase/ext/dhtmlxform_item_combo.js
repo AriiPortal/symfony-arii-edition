@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -14,6 +14,11 @@ dhtmlXForm.prototype.items.combo = {
 		item._enabled = true;
 		item._value = null;
 		item._newValue = null;
+		
+		var skin = item.getForm().skin;
+		if (typeof(data.inputWidth) != "undefined" && skin == "material" && String(data.inputWidth).match(/^\d*$/) != null) {
+			data.inputWidth = parseInt(data.inputWidth)+2;
+		}
 		
 		this.doAddLabel(item, data);
 		this.doAddInput(item, data, "SELECT", null, true, true, "dhxform_select");
@@ -30,9 +35,11 @@ dhtmlXForm.prototype.items.combo = {
 		if (data.comboDefaultImageDis) item.childNodes[item._ll?1:0].childNodes[0].setAttribute("defaultImageDis", data.comboDefaultImageDis);
 		
 		item._combo = new dhtmlXComboFromSelect(item.childNodes[item._ll?1:0].childNodes[0]);
-		item._combo.setSkin(item.getForm().skin);
+		item._combo.setSkin(skin);
 		item._combo._currentComboValue = item._combo.getSelectedValue();
 		item._combo.getInput().id = data.uid;
+		
+		if (skin == "material") item._combo.list.className += " dhxform_obj_"+skin;
 		
 		var k = this;
 		item._combo.attachEvent("onChange", function(){
@@ -48,13 +55,14 @@ dhtmlXForm.prototype.items.combo = {
 		}
 		
 		if (data.readonly == true) this.setReadonly(item, true);
+		if (data.hidden == true) this.hide(item);
 		
 		if (data.style) item._combo.DOMelem_input.style.cssText += data.style;
 		
 		item._combo.attachEvent("onFocus", function(){
 			var item = this.cont.parentNode.parentNode;
 			var f = item.getForm();
-			if (f.skin == "dhx_terrace" && this.cont.className.search(/combo_in_focus/) < 0) this.cont.className += " combo_in_focus";
+			if ((f.skin == "dhx_terrace" || f.skin == "material") && this.cont.className.search(/combo_in_focus/) < 0) this.cont.className += " combo_in_focus";
 			f.callEvent("onFocus", [item._idd]);
 			f = item = null;
 		});
@@ -62,7 +70,7 @@ dhtmlXForm.prototype.items.combo = {
 		item._combo.attachEvent("onBlur", function(){
 			var item = this.cont.parentNode.parentNode;
 			var f = item.getForm();
-			if (f.skin == "dhx_terrace" && this.cont.className.search(/combo_in_focus/) >= 0) this.cont.className = this.cont.className.replace(/\s{0,}combo_in_focus/gi,"");
+			if ((f.skin == "dhx_terrace" || f.skin == "material") && this.cont.className.search(/combo_in_focus/) >= 0) this.cont.className = this.cont.className.replace(/\s{0,}combo_in_focus/gi,"");
 			f.callEvent("onBlur", [item._idd]);
 			f = item = null;
 		});
@@ -116,7 +124,7 @@ dhtmlXForm.prototype.items.combo = {
 			combo._currentComboValue = combo._newComboValue;
 			item.callEvent("onChange", [item._idd, combo._currentComboValue]);
 		}
-		item._autoCheck(item._enabled);
+		item._autoCheck();
 	},
 	
 	doLoadOptsConnector: function(item, url) {

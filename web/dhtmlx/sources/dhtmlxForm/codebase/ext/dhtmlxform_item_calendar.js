@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -64,6 +64,7 @@ dhtmlXForm.prototype.items.calendar = {
 		item._c.enableListener(item.childNodes[item._ll?1:0].childNodes[0]);
 		if (item._f != null) item._c.setDateFormat(item._f);
 		if (!window.dhx4.s2b(data.enableTime)) item._c.hideTime();
+		if (window.dhx4.s2b(data.enableTodayButton)) item._c.showToday();
 		if (window.dhx4.s2b(data.showWeekNumbers)) item._c.showWeekNumbers();
 		if (!isNaN(data.weekStart)) item._c.setWeekStartDay(data.weekStart);
 		if (typeof(data.calendarPosition) != "undefined") item._c.setPosition(data.calendarPosition);

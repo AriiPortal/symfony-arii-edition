@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -36,18 +36,22 @@ dhtmlXTabBar.prototype.setContentHTML = function(id, value) {
 dhtmlXTabBar.prototype.setHrefMode = function(mode) {
 	// sets the mode that allows loading of external content
 	// will replaced by container functionality
-        this._hrfmode = mode;
+        if (mode == "iframes-on-demand" || mode == "ajax-html") this.conf.url_demand = true;
+        this.conf.href_mode = mode;
 };
 
 dhtmlXTabBar.prototype.setContentHref = function(id, href) {
 	// sets the content as the href to an external file
 	// will replaced by container functionality
-	if (!this._hrfmode) this._hrfmode = "iframe";
-	switch (this._hrfmode) {
+	if (this.conf.href_mode == null) this.conf.href_mode = "iframe";
+	switch (this.conf.href_mode) {
 		case "iframes":
 		case "iframe":
-		case "iframes-on-demand":
 			this.cells(id).attachURL(href);
+			break;
+		case "iframes-on-demand":
+			this.conf.urls[id] = {href: href, ajax: false};
+			this._loadURLOnDemand(this.conf.lastActive);
 			break;
 		case "ajax":
 		case "ajax-html":

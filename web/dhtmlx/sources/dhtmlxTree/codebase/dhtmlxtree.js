@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -160,8 +160,13 @@ function dhtmlXTreeObject(htmlObject, width, height, rootId){
 	this.setImagesPath=this.setImagePath;
 	this.setIconsPath=this.setIconPath;
 
-	if (dhtmlx.image_path) this.setImagePath(dhtmlx.image_path);
-	this.setSkin(window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxtree")||"dhx_skyblue");
+	this.setSkin(window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxtree")||"material");
+	if (dhtmlx.image_path) {
+		var path = dhtmlx.image_path;
+		var sk = this.parentObject.className.match(/dhxtree_dhx_([a-z_]*)/i);
+		if (sk != null && sk[1] != null) path += "dhxtree_"+sk[1]+"/";
+		this.setImagePath(path);
+	}
 
    return this;
 };
@@ -678,7 +683,7 @@ dhtmlXTreeObject.prototype.preParse=function(itemId){
       this.XMLLoader=this._parseXMLTree;
 
       var self = this;
-      dhx4.ajax.get(file, function(data){
+      return dhx4.ajax.get(file, function(data){
         self.XMLLoader(data.xmlDoc, afterCall);
         self = null;
       });
@@ -1471,6 +1476,7 @@ dhtmlXTreeObject.prototype._correctPlus=function(itemObject){
 *     @topic: 6
 */      
    dhtmlXTreeObject.prototype._HideShow=function(itemObject,mode){
+      if (this._locker && !this.skipLock && this._locker[itemObject.id]) return;
       if ((this.XMLsource)&&(!itemObject.XMLload)) {
             if (mode==1) return; //close for not loaded node - ignore it
             itemObject.XMLload=1;
@@ -1641,7 +1647,8 @@ SELECTION
     }
     dhtmlXTreeObject.prototype._markItem=function(node){
               if (node.scolor)  node.span.style.color=node.scolor;
-              node.span.className="selectedTreeRow";
+              node.span.className = "selectedTreeRow";
+              node.span.parentNode.parentNode.className = "selectedTreeRowFull";
              node.i_sel=true;
              this._selected[this._selected.length]=node;
     }
@@ -1680,6 +1687,7 @@ SELECTION
             {
 
           node.span.className="standartTreeRow";
+          node.span.parentNode.parentNode.className = "";
           if (node.acolor)  node.span.style.color=node.acolor;
             node.i_sel=false;
             for (var i=0; i<this._selected.length; i++)
@@ -1701,6 +1709,7 @@ SELECTION
       for (var i=0; i<this._selected.length; i++){
             var node=this._selected[i];
          node.span.className="standartTreeRow";
+         node.span.parentNode.parentNode.className = "";
           if (node.acolor)  node.span.style.color=node.acolor;
          node.i_sel=false;
          }
@@ -1867,7 +1876,7 @@ dhtmlXTreeObject.prototype._createItem=function(acheck,itemObject,mode){
         
         
         var td2=document.createElement('td');
-        td2.className="standartTreeRow";
+        td2.className="dhxTextCell standartTreeRow";
         
         itemObject.span=document.createElement('span');
         itemObject.span.className="standartTreeRow";
@@ -2308,7 +2317,7 @@ dhtmlXTreeObject.prototype._createItem=function(acheck,itemObject,mode){
       if (!temp) return 0;
          else {
          if (temp.i_sel)
-            {  if (selectedColor) temp.span.style.color=selectedColor; }
+            {  if (selectedColor || defaultColor) temp.span.style.color=selectedColor || defaultColor; }
          else
             {  if (defaultColor) temp.span.style.color=defaultColor;  }
 
@@ -2452,8 +2461,13 @@ dhtmlXTreeObject.prototype._createItem=function(acheck,itemObject,mode){
   				 	z = z.tr.nextSibling.nodem;
 				}
            		else{
-            	   z=this._getNextNode(z);
-				   if ((z==-1)) z=this.htmlNode; 
+					if(this._getOpenState(z)<1)
+						z=this.htmlNode;
+					else{
+						z=this._getNextNode(z);
+						if ((z==-1)) z=this.htmlNode;
+					}
+
 				}
 				
                 var nodeB=z;
@@ -2761,6 +2775,7 @@ dhtmlXTreeObject.prototype._recreateBranch=function(itemObject,targetObject,befo
 		 if (this._aimgs) this.dragger.addDraggableItem(td1.nextSibling,this);
 		 		 
          td3.childNodes[0].className="standartTreeRow";
+         td3.parentNode.className = "";
          td3.onclick=this.onRowSelect; td3.ondblclick=this.onRowClick2;
          td1.previousSibling.onclick=this.onRowClick;
 
@@ -2918,7 +2933,7 @@ dhtmlXTreeObject.prototype._recreateBranch=function(itemObject,targetObject,befo
 *     @topic: 4
 */ 
    dhtmlXTreeObject.prototype.openItem=function(itemId){
-	   this.skipLock = true;
+     this.skipLock = true;
 	   var temp=this._globalIdStorageFind(itemId);
 	   if (!temp) return 0;
 	   else return this._openItem(temp);
@@ -2932,7 +2947,7 @@ dhtmlXTreeObject.prototype._recreateBranch=function(itemObject,targetObject,befo
 *     @editing: pro
 *     @topic: 4  
 */ 
-   dhtmlXTreeObject.prototype._openItem=function(item){ 
+   dhtmlXTreeObject.prototype._openItem=function(item){
    		   var state=this._getOpenState(item);
 		   if ((state<0)||(((this.XMLsource)&&(!item.XMLload)))){
 	           if    (!this.callEvent("onOpenStart",[item.id,state])) return 0;
@@ -3760,7 +3775,7 @@ dhtmlXTreeObject.prototype._deleteItem=function(itemId,selectParent,skip){
          }
       else{
  	  	 this._clearMove();
-         this.selectionBar.style.top=(a1-a2+((parseInt(htmlNode.parentObject.span.parentNode.previousSibling.childNodes[0].style.height)||18)-1)+this.dadmodefix)+"px";
+         this.selectionBar.style.top=(a1-a2+((parseInt(htmlNode.parentObject.span.parentNode.parentNode.offsetHeight)||18)-1)+this.dadmodefix)+"px";
          this.selectionBar.style.left="5px";
            if (this.allTree.offsetWidth>20)
                 this.selectionBar.style.width=(this.allTree.offsetWidth-(_isFF?30:25))+"px";
@@ -4704,8 +4719,8 @@ dhtmlXTreeObject.prototype.setIconSize=function(newWidth,newHeight,itemId)
         	}
          }
       else{
-         this.def_img_x=newWidth;
-         this.def_img_y=newHeight;
+         this.def_img_x=newWidth+"px";
+         this.def_img_y=newHeight+"px";
       }
 }
 
@@ -5180,10 +5195,12 @@ dhtmlXTreeObject.prototype.enableImageDrag=function(mode){
 
 dhtmlXTreeObject.prototype.setSkin=function(name){
 	var tmp = this.parentObject.className.replace(/dhxtree_[^ ]*/gi,"");
-	this.parentObject.className= tmp+" dhxtree_"+name;
-  if (name == "dhx_terrace" || name == "dhx_web")
+  this.parentObject.className= tmp+" dhxtree_"+name;
+  if (name == "dhx_terrace" || name == "dhx_web" || name == "material"){
     this.enableTreeLines(false);
-
+  }
+  if (name == "material")
+    this.setIconSize("25", "25");
 };
 
 //tree

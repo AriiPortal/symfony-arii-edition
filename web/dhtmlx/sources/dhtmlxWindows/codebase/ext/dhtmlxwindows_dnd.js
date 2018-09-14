@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -173,8 +173,9 @@ dhtmlXWindows.prototype._dndInitModule = function() {
 	this._dndOnMouseUp = function(e) {
 		
 		e = e||event;
+		that._dndUnloadEvents();
 		
-		if (that.conf.dnd != null) {
+		if (that.conf.dnd != null && that.conf.dnd.id != null) {
 			
 			var dnd = that.conf.dnd;
 			var w = that.w[dnd.id];
@@ -196,8 +197,6 @@ dhtmlXWindows.prototype._dndInitModule = function() {
 			if (dnd.css_vp == true) {
 				that.vp.className = String(that.vp.className).replace(/\s{0,}dhxwins_vp_dnd/gi,"");
 			}
-			
-			that._dndUnloadEvents();
 			
 			if (dnd.moved == true) {
 				that._callMainEvent("onMoveFinish", dnd.id);

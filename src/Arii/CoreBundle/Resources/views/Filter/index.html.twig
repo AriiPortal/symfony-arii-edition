@@ -1,28 +1,12 @@
 {# src/Arii/CoreBundle/Resources/views/index.html.twig #}
 {% extends "AriiCoreBundle::layout.html.twig" %}
 {% block body %}
-<script>
-dhtmlxEvent(window,"load",function(){ 
-var size=400;
-
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");
-    globalLayout.cells("a").setWidth(size);
-    globalLayout.cells("b").hideHeader();
-    globalLayout.cells("c").setHeight(220);    
-    globalLayout.cells("c").hideHeader();
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Home_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon ); 
-
-    {% include "AriiCoreBundle:Default:menu.js.twig" %}   
-    globalLayout.cells("a").hideHeader();
+<script language="javascript">
+function Init() {
+    
+    myLayout = globalLayout.cells("b").attachLayout("2E");
+    myLayout.cells("a").setText("{{ "Filters" | trans }}");
+    myLayout.cells("b").setText("{{ "Detail" | trans }}");
     
     formData = [
        { type: "settings", position: "label-left", labelWidth: 100, inputWidth: 240, labelAlign: "right", readonly: 1, position: "label-left" },
@@ -37,10 +21,10 @@ var size=400;
             {type:"input", name: 'status', label:'{{ 'Status' | trans }}', value: '*'},
         ];
     
-    myForm = globalLayout.cells("c").attachForm(formData);
+    myForm = myLayout.cells("b").attachForm(formData);
     myForm.enableLiveValidation(true);
     
-    myFormToolbar = globalLayout.cells("c").attachToolbar();
+    myFormToolbar = myLayout.cells("b").attachToolbar();
     myFormToolbar.setIconsPath("{{ asset('/images/') }}");
     myFormToolbar.loadStruct("{{ url('xml_filter_toolbar') }}");
 
@@ -49,7 +33,7 @@ var size=400;
     myGridMenu.renderAsContextMenu();
     myGridMenu.loadStruct("{{ url('xml_filter_menu') }}");
 
-    myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("a").attachGrid();
     myGrid.selMultiRows = true;
     myGrid.setImagePath( "{{ asset('/images/') }}");
     myGrid.setHeader("{{ "Filter" | trans }},{{ "Description" | trans }},{{ "Spooler" | trans }},{{ "Job" | trans }},{{ "Chain" | trans }},{{ "Trigger" | trans }},{{ "Status" | trans }}");
@@ -66,7 +50,7 @@ var size=400;
     });
     
     myForm.attachEvent("onButtonClick", function(id){
-        globalLayout.cells("a").progressOn();
+        myLayout.cells("a").progressOn();
         if(!this.validate())
         {
             dhtmlx.message({
@@ -97,7 +81,7 @@ var size=400;
                 text: response
              });
            }
-            globalLayout.cells("a").progressOff();
+            myLayout.cells("a").progressOff();
         });
     });
 
@@ -127,7 +111,7 @@ var size=400;
                 DeleteFilter(filter);
                 break;
             case 'save_filter':
-                globalLayout.progressOn();
+                myLayout.progressOn();
                 if(!myForm.validate())
                 {
                     dhtmlx.message({
@@ -166,8 +150,7 @@ var size=400;
                 alert(id);
             }
     });
-
-});
+}
 
 function NewFilter() {
     myForm.clear();
@@ -175,18 +158,16 @@ function NewFilter() {
 }
 
 function EditFilter(id) {
-    globalLayout.cells("b").progressOn();
+    myLayout.cells("a").progressOn();
     myForm.clear();
-        alert("{{ url('xml_filter_form') }}?id="+id);
-
     myForm.load("{{ url('xml_filter_form') }}?id="+id, function () {
-        globalLayout.cells("b").progressOff();
+        myLayout.cells("a").progressOff();
     });
 }
 
 function DeleteFilter(id) {
     // On edite pour sauvegarder
-    globalLayout.cells("b").progressOn();
+    myLayout.cells("a").progressOn();
     EditFilter(id);
     dhtmlx.confirm({
      title: "{{ "Delete filter" | trans }}",
@@ -213,13 +194,13 @@ function DeleteFilter(id) {
                  });
                }
                     myGrid.deleteRow(id);
-                    globalLayout.cells("b").progressOff();
+                    myLayout.cells("a").progressOff();
                 })
         }
     },
      cancel: "{{ "No" | trans }}",
      ok: "{{ "Yes" | trans }}" });
- }
+}
  
 function GlobalRefresh() {
 }

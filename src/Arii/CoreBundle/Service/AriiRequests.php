@@ -26,7 +26,7 @@ class AriiRequests
     }
 
     public function readStatus($bundle='Core') {
-        
+
         // On récupère les statuts en cours
         $em = $this->doctrine->getManager();        
         $Checks = $em->getRepository("AriiCoreBundle:Request")->findBy( [ 'bundle' => $bundle ] );
@@ -72,7 +72,7 @@ class AriiRequests
         $em->flush();
 
     }
-    
+
     public function Summary($dir,$bundle='Core',$output='html') {
 
         $yaml = new Parser();

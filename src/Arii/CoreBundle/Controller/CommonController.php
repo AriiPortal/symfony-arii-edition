@@ -9,13 +9,16 @@ use Symfony\Component\Translation\Translator;
 
 class CommonController extends Controller
 {
-    public function ribbonAction($bundle='Home')
+    public function ribbonAction($bundle='Core')
     {
         $request = $this->container->get('request');
         if ($request->get('bundle')!='') 
             $bundle = $request->get('bundle');
 
-        $route = 'arii_'.$request->get('bundle').'_index';
+        // Les cellules à activer
+        $activated = $request->get('activated');
+        
+        $route = 'arii_'.$bundle.'_index';
         $here = $url = $this->generateUrl($route);
                 
         $locale =  $this->get('request')->getLocale();
@@ -79,14 +82,37 @@ class CommonController extends Controller
                 $tz[$continent][$country]=str_replace('_',' ',$country);            
         }
  */
+        // Informations utilisateur
+        $userInfos = $portal->getUserInfo();
+        $userInterface = $portal->getUserInterface();
+        $userFilters = $portal->getUserFilters();
+
+        // Informations en cours        
+        $Activated = [
+            'filters' => 0,
+            'filters_ojs' => 0,
+            'filters_ats' => 0,
+            'history' => 0,            
+            'refresh' => 0,
+            'messaging' => 0
+        ];
+        foreach (explode(',',$activated) as $act) {
+            $Activated[$act] = 1;
+        }
+
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');   
         return $this->render('AriiCoreBundle:Common:ribbon.json.twig',
-            [
+            [                
                 'MENU' => $liste, 
                 'LANG' => $lang, 
                 'BUNDLE' => $current, 
-                'TZ' => $tz ],
+                'TZ' => $tz,
+                'USER' => $userInfos,
+                'ACTIVATED' => $Activated,
+                'INTERFACE' => $userInterface,
+                'FILTERS' => $userFilters
+            ],
             $response 
         );
     }

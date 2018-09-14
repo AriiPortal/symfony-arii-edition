@@ -3,7 +3,7 @@
    [
         {   
             type:       "block", 
-            text:       "{{ BUNDLE.module }}", 
+/*            text:       "{{ BUNDLE.module }}",  */
             text_pos:   "top", 
             list:
                 [
@@ -24,91 +24,219 @@
                         type:   "buttonSelect", 
                         id:     "browsing",
                         text:   "", 
-                        img:    "add.png",
+                        img:    "go.png",
                         items:
                         [
 {% for menu in MENU %}
                             { id:"BUNDLE_{{ menu.mod }}", text: "{{ menu.title | trans }}", img: "{{ menu.mod }}.png" },
 {% endfor %}
                         ]
-                    },
-                    {   
-                        type:   "buttonSelect", 
-                        id:     "lang",
-                        text:   "", 
-                        img:    "flags/{{ app.request.locale }}.png",
-                        items:
-                        [
-{% for lang,info in LANG %}
-                            { id:"LANG_{{ lang }}", text: "{{ info.string }}", img: "{{ lang }}.png" },
-{% endfor %}
-                        ]
-                    }
+                    }                    
                 ]
-        },
+        }
+{% if ACTIVATED.filters_ojs %}
+    ,
      {   "type":"block", 
           "id": "current_filter",
-          {% if (app.session.get('user_filter')|length) >0 %}
-          {% set filter = app.session.get('user_filter') %}
-          text:"{{ filter.name }}",
-          {% else %}
           text:"{{ "Filter" | trans }}", 
-          {% endif %}
-          "text_pos": "bottom", 
+          text_pos:   "top",           
           "list":
           [
-             {   "type": "buttonSelect", 
+                {   type: 'group', 
+                    list:[
+                        {                        "type":"button", "img": "spooler.png"},
+                        {   id: "filter_spooler", "type":"input",  width: 120, "tooltip": "{{"Spooler" | trans }}"  }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {                        "type":"button", "img": "folder.png"},
+                        {   id: "filter_folder", "type":"input",  width: 120, "tooltip": "{{"Folder" | trans }}"  }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {                           "type":"button", "img": "job_chain.png"},
+                        {   id: "filter_job_chain", "type":"input",  width: 120, "tooltip": "{{"Chain" | trans }}"  }
+                    ]
+                },
+                {type : "newLevel"},
+                {   type: 'group', 
+                    list:[
+                        {                         "type":"button", "img": "order.png"},
+                        {   id: "filter_trigger", "type":"input",  width: 120, "tooltip": "{{"Order" | trans }}"   }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {                         "type":"button", "img": "job.png"},
+                        {   id: "filter_job_name",     "type":"input",  width: 120, "tooltip": "{{"Job" | trans }}"   }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {   id: "filter_status_running", "type":"buttonTwoState", "img": "running.png"},
+                        {   id: "filter_status_success", "type":"buttonTwoState", "img": "success.png"},
+                        {   id: "filter_status_failure", "type":"buttonTwoState", "img": "failure.png"},
+                        {   id: "filter_status_error", "type":"buttonTwoState", "img": "error.png"},
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        { id:"filter_group",   "type":"buttonTwoState",text:"","img":"group.png","tooltip": "{{ "Public" | trans }}", state: false },
+                        { id:"filter_user",   "type":"buttonTwoState",text:"*","img":"user.png","tooltip": "{{ "Mine" | trans }}", state: true },
+                    ]
+                },
+             {   "type": "buttonCombo", 
+                 width: 140,
+                 mode: 'cols',
                  text:"",
                  "id": "Filters",
-                 "isbig": true, 
-                 "img": "48/search.png", 
+                 "img": "search.png", 
+                 comboDefaultImage: 'search.png',
+                 comboType: 'image',
                  items:
                  [ 
-     {% if (app.session.get('UserFilters')|length) >0 %}
-    {% set filter = app.session.get('user_filter') %}     
-       {% set filters = app.session.get('UserFilters') %}     
-        {% for k,filter in filters %}
-            { id:"filter_{{ filter.id }}", text: "{{ filter.name }}" },
+        {% for k,filter in FILTERS %}
+            { value:"{{ filter.id }}", text: "{{ filter.name }}" },
         {% endfor %}
-    {% endif %}
                   ]
               },
-              {id:"filter_edit","type":"button",text:"","img":"edit.png","tooltip": "{{ "Edit filter" | trans }}" },
-              {id:"filter_all","type":"button",text:"","img":"zoom_out.png"},
+                {   type: 'group', 
+                    list:[
+                        { id:"filter_save",   "type":"button",text:"","img":"save.png","tooltip": "{{ "Save" | trans }}" },
+                        { id:"filter_edit",   "type":"button",text:"","img":"edit.png","tooltip": "{{ "Edit" | trans }}" },
+                        { id:"filter_delete", "type":"button",text:"","img":"delete.png","tooltip": "{{ "Delete" | trans }}" }
+                    ]
+                },
+              
           ]
-      },
+      }
+{% endif %}
+{% if ACTIVATED.history %}
+    ,
+    {
+        "type":"block", 
+        "id": "run_window",
+        "text": "{{ "History" | trans }}",
+        "text_pos": "top", 
+        "list":
+            [
+                {   type: 'group', 
+                    position: "right",
+                    list:[
+                        {   id: "date_now",    "type":"button", "img":"clock.png", "text":"&nbsp{{ INTERFACE.day_past }}" },
+                        {   id: "date_days",   "type":"slider", size: 110, max: 31, value: {{ INTERFACE.day_past*-1 }}  }
+                    ]
+                },
+                {   type: 'group', 
+                    position: "right",
+                    list:[
+                        {   id: "date_start_change", "type":"button", "img":"clock_play.png", disable: true },
+                        {   id: "date_start",        "type":"input",  value: "{{ INTERFACE.past | date('Y-m-d H:i:s') }}", width: 130  }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {   id: "date_end_change",   "type":"button", "img":"clock_stop.png", disable: true },
+                        {   id: "date_end",          "type":"input",  value: "{{ INTERFACE.ref_date | date('Y-m-d H:i:s') }}", width: 130  }
+                    ]
+                }
+            ]
+    }
+{% endif %}
+{% if ACTIVATED.refresh %}
+    ,
+     {   "type":"block", 
+          "id": "refresh",
+          "text_pos": "top",
+          "text": "{{ "Refresh" | trans }}",
+          "list":
+          [
+                { id: "refresh_pause", "type": "buttonTwoState", "text":"{{ INTERFACE.refresh }}", "img":"control_play.png", state: {% if INTERFACE.refresh_pause==1 %}true{% else %}false{% endif %} },
+                { id: "refresh_update","type": "buttonSelect", text: "{% if INTERFACE.refresh==5 %}5s{% endif %}{% if INTERFACE.refresh==30 %}30s{% endif %}{% if INTERFACE.refresh==60 %}1min{% endif %}{% if INTERFACE.refresh==300 %}5min{% endif %}{% if INTERFACE.refresh==900 %}15min{% endif %}{% if INTERFACE.refresh==1800 %}30min{% endif %}{% if INTERFACE.refresh==3600 %}1h{% endif %}", "img": "timeline.png",
+                "items": 
+                [ 
+                   { id: "refresh_seconds_5", text: "5 {{ "seconds" | trans }}" },
+                   { id: "refresh_seconds_30", text: "30 {{ "seconds" | trans }}" },
+                   { id: "refresh_seconds_60", text: "1 {{ "minute" | trans }}" },
+                   { id: "refresh_seconds_300", text: "5 {{ "minutes" | trans }}" },
+                   { id: "refresh_seconds_900", text: "15 {{ "minutes" | trans }}" },
+                   { id: "refresh_seconds_1800", text: "30 {{ "minutes" | trans }}" },
+                   { id: "refresh_seconds_3600", text: "1 {{ "hour" | trans }}" }
+                ]
+            },
+            { id: "refresh_next", "type": "text", "text": "00:00:00" }
+          ]
+      }
+{% endif %}
+        ,
         {   
             type:       "block", 
-            text:       "{{ "My account" | trans }}", 
+            text:       "{{ app.user.username }}", 
+            text_pos:   "top", 
+            list:
+                [
+                    {   
+                         type:   "button", 
+                         id:     "USER_role",
+                         text:   "{{ USER.roles }}", 
+                         img:    "role_admin.png"
+                    },
+                    {
+                         type:   "button", 
+                         id:     "USER_group",
+                         text:   "{{ "Group" | trans }}", 
+                         img:    "group.png"
+                    },
+                    {   type: 'group', 
+                        list:[
+                            {   
+                                type:   "buttonSelect", 
+                                id:     "lang",
+                                text:   "", 
+                                img:    "flags/{{ app.request.locale }}.png",
+                                items:
+                                [
+        {% for lang,info in LANG %}
+                                { id:"LANG_{{ lang }}", text: "{{ info.string }}", img: "{{ lang }}.png" },
+        {% endfor %}
+                                ]
+                            },
+                            {
+                                 type:   "button", 
+                                 id:     "USER_logout",
+                                 text:   "", 
+                                 img:    "logout.png"
+                            }
+                        ]
+                    },
+                    
+                ]
+        }
+{% if ACTIVATED.messaging %}
+        ,
+        {   
+            type:       "block", 
+            text:       "{{ "Messaging" | trans }}", 
             text_pos:   "bottom", 
             list:
                 [
-                   { 
-                        type:   "button", 
-                        id:     "my_account",
-                        text:   "", 
-                        isbig:  true, 
-                        img:    "48/me.png"
-                    },
-                    {   
+                    {
                          type:   "button", 
                          id:     "USER_message",
                          text:   "{{ "Messages" | trans }}", 
                          img:    "email.png"
-                    },
-                    {
-                         type:   "button", 
-                         id:     "USER_logout",
-                         text:   "{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}", 
-                         img:    "logout.png"
                     }
                 ]
         }
+    
+{% endif %}        
 /*        ,
         {   
             type:       "block", 
             text:       "{{ "Help" | trans }}", 
-            text_pos:   "bottom", 
+            text_pos:   "top", 
             list:
                 [
                     {   

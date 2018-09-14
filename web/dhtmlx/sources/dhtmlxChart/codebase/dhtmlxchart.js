@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -1568,7 +1568,13 @@ dhtmlx.chart.barH = {
 			if(!(i==start&&this._settings.origin=="auto") &&axis.lines.call(this,i))
 				this._drawLine(ctx,xi,y0,xi,point0.y,this._settings.xAxis.lineColor.call(this,i),1);
 			if(i == this._settings.origin) yAxisStart = xi+1;
-			this.canvases["x"].renderTextAt(false, true,xi,y0+2,axis.template(i.toString()),"dhx_axis_item_x");
+			var label = i;
+			if(step<1){
+				var power = Math.min(this._log10(step),(start<=0?0:this._log10(start)));
+				var corr = Math.pow(10,-power);
+				label = Math.round(i*corr)/corr;
+			}
+			this.canvases["x"].renderTextAt(false, true,xi,y0+2,axis.template(label.toString()),"dhx_axis_item_x");
 			c++;
 		}
 		this.canvases["x"].renderTextAt(true, false, x0,point1.y+this._settings.padding.bottom-3,
@@ -1814,162 +1820,184 @@ dhtmlx.chart.stackedBar = {
 	*   @param: sIndex - index of drawing chart
 	*/
 	pvt_render_stackedBar:function(ctx, data, point0, point1, sIndex, map){
-	     var maxValue,minValue;
+		var maxValue,minValue, xAxisY, x0, y0;
 		/*necessary if maxValue - minValue < 0*/
 		var valueFactor;
 		/*maxValue - minValue*/
 		var relValue;
-		
+		var config = this._settings;
 		var total_height = point1.y-point0.y;
-		
-		var yax = !!this._settings.yAxis;
-		var xax = !!this._settings.xAxis;
-		
+
+		var yax = !!config.yAxis;
+		var xax = !!config.xAxis;
+
 		var limits = this._getStackedLimits(data);
+
+		var origin = (config.origin === 0);
+
 		maxValue = limits.max;
 		minValue = limits.min;
-		
+		if(!data.length)
+			return;
 		/*an available width for one bar*/
-		var cellWidth = Math.floor((point1.x-point0.x)/data.length);
-		
+		var cellWidth = (point1.x-point0.x)/data.length;
+
 		/*draws x and y scales*/
-		if(!sIndex)
-			this._drawScales(data,point0, point1,minValue,maxValue,cellWidth);
-		
+		if(!sIndex){
+			xAxisY = this._drawScales(data,point0, point1,minValue,maxValue,cellWidth);
+		}
+
 		/*necessary for automatic scale*/
 		if(yax){
-		    maxValue = parseFloat(this._settings.yAxis.end);
-			minValue = parseFloat(this._settings.yAxis.start);      
+			maxValue = parseFloat(config.yAxis.end);
+			minValue = parseFloat(config.yAxis.start);
 		}
-		
+
 		/*unit calculation (bar_height = value*unit)*/
 		var relativeValues = this._getRelativeValue(minValue,maxValue);
 		relValue = relativeValues[0];
 		valueFactor = relativeValues[1];
-		
+
 		var unit = (relValue?total_height/relValue:10);
-		
+
 		/*a real bar width */
-		var barWidth = parseInt(this._settings.width,10);
+		var barWidth = parseInt(config.width,10);
 		if(barWidth+4 > cellWidth) barWidth = cellWidth-4;
 		/*the half of distance between bars*/
 		var barOffset = Math.floor((cellWidth - barWidth)/2);
-		
-		
-		var inner_gradient = (this._settings.gradient?this._settings.gradient:false);
-		
+
+
+		var inner_gradient = (config.gradient?config.gradient:false);
+
 		/*draws a black line if the horizontal scale isn't defined*/
 		if(!xax){
 			//scaleY = y-bottomPadding;
 			this._drawLine(ctx,point0.x,point1.y+0.5,point1.x,point1.y+0.5,"#000000",1); //hardcoded color!
 		}
-		
-		for(var i=0; i < data.length;i ++){
-			var value =  parseFloat(this._settings.value(data[i]||0));
 
-			if(!value){
-				if(!sIndex||!data[i].$startY)
-					data[i].$startY = point1.y;
-				continue;
+		for(var i=0; i < data.length;i ++){
+			var value =  parseFloat(config.value(data[i]||0));
+
+			if(this._logScaleCalc)
+				value = this._log10(value);
+
+			/*start point (bottom left)*/
+			x0 = point0.x + barOffset + i*cellWidth;
+			
+			var negValue = origin&&value<0;
+			if(!sIndex){
+				y0 = xAxisY-1;
+				data[i].$startY = y0;
+				if(origin){
+					if(negValue)
+						y0 = xAxisY+1;
+					data[i].$startYN = xAxisY+1;
+				}
 			}
+			else{
+				y0 = negValue?data[i].$startYN:data[i].$startY;
+			}
+
+			if(!value)
+				continue;
+
 			/*adjusts the first tab to the scale*/
-			if(!sIndex)
+			if(!sIndex && !origin)
 				value -= minValue;
 
 			value *= valueFactor;
-			
-			/*start point (bottom left)*/
-			var x0 = point0.x + barOffset + i*cellWidth;
-			var y0 = point1.y;
-			if(!sIndex)
-                data[i].$startY = y0;
-			else
-			    y0 = data[i].$startY;
 
 			/*the max height limit*/
 			if(y0 < (point0.y+1)) continue;
-			
-			if(value<0||(this._settings.yAxis&&value===0)){
+
+			if(config.yAxis&&value===0){
 				this.canvases["y"].renderTextAt(true, true, x0+Math.floor(barWidth/2),y0,this._settings.label(data[i]));
 				continue;
 			}
-			
+
 			var color = this._settings.color.call(this,data[i]);
-			
-			
-			
+			var firstSector =  Math.abs(y0-(origin?(point1.y+minValue*unit):point1.y))<3;
+
 			/*drawing bar body*/
-			ctx.globalAlpha = this._settings.alpha.call(this,data[i]);
-			ctx.fillStyle = this._settings.color.call(this,data[i]);
+			ctx.globalAlpha = config.alpha.call(this,data[i]);
+			ctx.fillStyle = ctx.strokeStyle = config.color.call(this,data[i]);
 			ctx.beginPath();
-			var points = this._setStakedBarPoints(ctx,x0-(this._settings.border?0.5:0),y0,barWidth+(this._settings.border?0.5:0),unit,value,0,point0.y);
-   			ctx.fill();
-			
+
+			var y1 = y0 - unit*value + (firstSector?(negValue?-1:1):0);
+
+			var points = this._setStakedBarPoints(ctx,x0-(config.border?0.5:0),y0,barWidth+(config.border?0.5:0),y1, 0,point0.y);
+			ctx.fill();
+			ctx.stroke();
+
 			/*gradient*/
 			if (inner_gradient){
-			  	ctx.save();
+				ctx.save();
 				var gradParam = this._setBarGradient(ctx,x0,y0,x0+barWidth,points[1],inner_gradient,color,"y");
 				ctx.fillStyle = gradParam.gradient;
 				ctx.beginPath();
-				points = this._setStakedBarPoints(ctx,x0+gradParam.offset,y0,barWidth-gradParam.offset*2,unit,value,(this._settings.border?1:0),point0.y);
+				points = this._setStakedBarPoints(ctx,x0+gradParam.offset,y0,barWidth-gradParam.offset*2,y1,(config.border?1:0),point0.y);
 				ctx.fill();
-				ctx.restore()
+				ctx.restore();
 			}
 			/*drawing the gradient border of a bar*/
-			if(this._settings.border){
+			if(config.border){
 				ctx.save();
-				this._setBorderStyles(ctx,color);
+				if(typeof config.border == "string")
+					ctx.strokeStyle = config.border;
+				else
+					this._setBorderStyles(ctx,color);
 				ctx.beginPath();
-				
-				this._setStakedBarPoints(ctx,x0-0.5,y0,barWidth+1,unit,value,0,point0.y,1);
+
+				this._setStakedBarPoints(ctx,x0-0.5,parseInt(y0,10)+0.5,barWidth+1,parseInt(y1,10)+0.5,0,point0.y, firstSector);
 				ctx.stroke();
 				ctx.restore();
 			}
 			ctx.globalAlpha = 1;
-			
+
 			/*sets a bar label*/
 			this.canvases[sIndex].renderTextAt(false, true, x0+Math.floor(barWidth/2),(points[1]+(y0-points[1])/2)-7,this._settings.label(data[i]));
 			/*defines a map area for a bar*/
-			map.addRect(data[i].id,[x0-point0.x,points[1]-point0.y,points[0]-point0.x,(data[i].$startY||y0)-point0.y],sIndex);
-			
+			map.addRect(data[i].id,[x0-point0.x,points[1]-point0.y,points[0]-point0.x,data[i][negValue?"$startYN":"$startY"]-point0.y],sIndex);
+
 			/*the start position for the next series*/
-			data[i].$startY = (this._settings.border?(points[1]+1):points[1]);
+
+			data[i][negValue?"$startYN":"$startY"] = points[1];
+
 		}
 	},
 	/**
-	*   sets points for bar and returns the position of the bottom right point
-	*   @param: ctx - canvas object
-	*   @param: x0 - the x position of start point
-	*   @param: y0 - the y position of start point
-	*   @param: barWidth - bar width 
-	*   @param: radius - the rounding radius of the top
-	*   @param: unit - the value defines the correspondence between item value and bar height
-	*   @param: value - item value
-	*   @param: offset - the offset from expected bar edge (necessary for drawing border)
-	*   @param: minY - the minimum y position for the bars ()
-	*/
-	_setStakedBarPoints:function(ctx,x0,y0,barWidth,unit,value,offset,minY,skipBottom){
+	 *   sets points for bar and returns the position of the bottom right point
+	 *   @param: ctx - canvas object
+	 *   @param: x0 - the x position of start point
+	 *   @param: y0 - the y position of start point
+	 *   @param: barWidth - bar width
+	 *   @param: radius - the rounding radius of the top
+	 *   @param: unit - the value defines the correspondence between item value and bar height
+	 *   @param: value - item value
+	 *   @param: offset - the offset from expected bar edge (necessary for drawing border)
+	 *   @param: minY - the minimum y position for the bars ()
+	 */
+	_setStakedBarPoints:function(ctx,x0,y0,barWidth,y1,offset,minY,skipBottom){
 		/*start*/
 		ctx.moveTo(x0,y0);
-		/*start of left rounding*/
-		var y1 = y0 - unit*value+offset;
+
 		/*maximum height limit*/
-		if(y1<minY) 
+		if(y1<minY)
 			y1 = minY;
 		ctx.lineTo(x0,y1);
-   		var x3 = x0 + barWidth;
-		var y3 = y1; 
+		var x3 = x0 + barWidth;
+		var y3 = y1;
 		ctx.lineTo(x3,y3);
 		/*right rounding*/
-   		/*bottom right point*/
+		/*bottom right point*/
 		var x5 = x0 + barWidth;
-        ctx.lineTo(x5,y0);
+		ctx.lineTo(x5,y0);
 		/*line to the start point*/
 		if(!skipBottom){
-   			ctx.lineTo(x0,y0);
-   		}
+			ctx.lineTo(x0,y0);
+		}
 		//	ctx.lineTo(x0,0); //IE fix!
-		return [x5,y3-2*offset];
+		return [x5,y3];
 	}
 };
 
@@ -3120,8 +3148,8 @@ dhtmlx.ui.Canvas.prototype = {
 	}, 
 	getCanvas:function(context){
 		var ctx = (this._canvas||this._prepareCanvas()).getContext(context||"2d");
-		if(!this._webixDevicePixelRatio){
-			this._webixDevicePixelRatio = true;
+		if(!this._dhtmlxDevicePixelRatio){
+			this._dhtmlxDevicePixelRatio = true;
 			ctx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
 		}
 		return ctx;
@@ -3134,7 +3162,7 @@ dhtmlx.ui.Canvas.prototype = {
 			this._canvas.setAttribute("height", h*(window.devicePixelRatio||1));
 			this._canvas.style.width = w+"px";
 			this._canvas.style.height = h+"px";
-			this._webixDevicePixelRatio = false;
+			this._dhtmlxDevicePixelRatio = false;
 		}
 	},
 	renderText:function(x,y,text,css,w){
@@ -3194,8 +3222,8 @@ dhtmlx.ui.Canvas.prototype = {
 			}
 
 		}
-		//FF breaks, when we are using clear canvas and call clearRect without parameters		
-		this.getCanvas().clearRect(0,0,this._obj.offsetWidth*(window.devicePixelRatio||1), this._obj.offsetHeight*(window.devicePixelRatio||1));
+		//FF breaks, when we are using clear canvas and call clearRect without parameters	
+		this.getCanvas().clearRect(0,0,this._canvas.width, this._canvas.height);
 	},
 	toggleCanvas:function(){
 		this._toggleCanvas(this._canvas.style.display=="none")
@@ -3289,7 +3317,8 @@ dhtmlXChart = function(container){
 	
 	dhtmlx.extend(this, dhtmlx.EventSystem);
 	dhtmlx.extend(this, dhtmlx.MouseEvents);
-	dhtmlx.extend(this, dhtmlx.Destruction);
+	dhtmlx.destructors.push(this);
+	//dhtmlx.extend(this, dhtmlx.Destruction);
 	//dhtmlx.extend(this, dhtmlx.Canvas);
 	dhtmlx.extend(this, dhtmlx.Group);
 	dhtmlx.extend(this, dhtmlx.AutoTooltip);
@@ -3335,11 +3364,29 @@ dhtmlXChart.prototype={
 	},
 	on_mouse_move:{
 	},
+	destructor: function(){
+		dhtmlx.Destruction.destructor.apply(this, arguments);
+		if(this.canvases){
+			for(var i in this.canvases){
+				this.canvases[i]._obj = null;
+				this.canvases[i] = null;
+			}
+			this.canvases = null;
+		}
+		if(this.legendObj){
+			this.legendObj.innerHTML = "";
+			this.legendObj = null;
+		}
+		if (this.config.tooltip) {
+			this.config.tooltip._obj = null;
+			this.config.tooltip._dataobj = null;
+		}
+	},
 	bind:function(){
-		dhx.BaseBind.legacyBind.apply(this, arguments);
+		dhtmlx.BaseBind.legacyBind.apply(this, arguments);
 	},
 	sync:function(){
-		dhx.BaseBind.legacySync.apply(this, arguments);
+		dhtmlx.BaseBind.legacySync.apply(this, arguments);
 	},
 	resize:function(){
 		for(var c in this.canvases){
@@ -3643,6 +3690,7 @@ dhtmlXChart.prototype={
 		return config;
 	},
     yAxis_setter:function( config){
+		if(!config) return false;
 	    this._mergeSettings(config,{
 			title:"",
 			color:"#000000",
@@ -3681,10 +3729,9 @@ dhtmlXChart.prototype={
 		var x1 = point1.x;
 		var unitPos;
 		var center = true;
-		
+		var labelY = (this._settings.origin ===0 && this._settings.view=="stackedBar")?point1.y+0.5:y0;
 
-
-		for(var i=0; i < data.length;i ++){
+		for(var i=0; i < data.length; i++){
 
 			if(this._settings.offset === true)
 				unitPos = x0+cellWidth/2+i*cellWidth;
@@ -3695,7 +3742,7 @@ dhtmlXChart.prototype={
 			unitPos = Math.ceil(unitPos)-0.5;
 			/*scale labels*/
 			var top = ((this._settings.origin!="auto")&&(this._settings.view=="bar")&&(parseFloat(this._settings.value(data[i]))<this._settings.origin));
-			this._drawXAxisLabel(unitPos,y0,data[i],center,top);
+			this._drawXAxisLabel(unitPos,labelY,data[i],center,top);
 			/*draws a vertical line for the horizontal scale*/
 
 			if((this._settings.offset||i)&&this._settings.xAxis.lines.call(this,data[i]))

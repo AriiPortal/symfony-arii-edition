@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -86,6 +86,7 @@ function dhtmlXGridObject(id){
 	
 	var self = this;
 	
+	this._RaSeCol=[];
 	this._wcorr=0;
 	this.fontWidth = 7;
 	this.cell=null;
@@ -242,11 +243,13 @@ function dhtmlXGridObject(id){
 		//#}
 		switch (name){
 		case "dhx_terrace":
+		case "material":
 			this._srdh=33;
 			this.forceDivInHeader=true;
 			break;
 			
 		case "dhx_web":
+		case "material":
 			this.forceDivInHeader=true;
 			this._srdh = 31;
 			break;
@@ -289,6 +292,12 @@ function dhtmlXGridObject(id){
 	*   @topic: 7
 	*/
 	this.doOnScroll=function(e, mode){
+		var box = this.hdrBox;
+		box._try_header_sync = true;
+		setTimeout(function(){
+			box._try_header_sync = false;
+		},2000);
+
 		this.hdrBox.scrollLeft=this.objBox.scrollLeft;
 		if (this.ftr)
 			this.ftr.parentNode.scrollLeft=this.objBox.scrollLeft;
@@ -337,7 +346,7 @@ function dhtmlXGridObject(id){
 			return;
 		
 		if (!this.skin_name)
-			this.setSkin(window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxgrid")||"dhx_skyblue");
+			this.setSkin(window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxgrid")||"material");
 		
 		this.editStop()
 		/*TEMPORARY STATES*/
@@ -545,6 +554,7 @@ function dhtmlXGridObject(id){
 				var splitOuterBorder=(this.globalBox.offsetWidth-ow)/2;		
 				if (this._delta_x && !this._realfake){
 					this.globalBox.style.width=this._delta_x;
+					this.globalBox.style.boxSizing = "border-box";
 					var owu = this.globalBox.clientWidth;
 					this.entBox.style.width=Math.max(0,(owu+(quirks?splitOuterBorder*2:0))-this._fake.entBox.clientWidth)+"px";
 					if (owu != this._lastTimeSplitWidth){
@@ -582,8 +592,8 @@ function dhtmlXGridObject(id){
 			return;
 		}		
 		
-		var border_x = ((!this._wthB) && ((this.entBox.cmp||this._delta_x) && (this.skin_name||"").indexOf("dhx")==0 && !quirks)?2:0);
-		var border_y = ((!this._wthB) && ((this.entBox.cmp||this._delta_y) && (this.skin_name||"").indexOf("dhx")==0 && !quirks)?2:0);
+		var border_x = ((!this._wthB) && ((this.entBox.cmp||this._delta_x) && ((this.skin_name||"").indexOf("dhx")==0 || this.skin_name == "material") && !quirks)?2:0);
+		var border_y = ((!this._wthB) && ((this.entBox.cmp||this._delta_y) && ((this.skin_name||"").indexOf("dhx")==0 || this.skin_name == "material") && !quirks)?2:0);
 		
 		if (this._sizeFix){
 			border_x -= this._sizeFix;
@@ -724,7 +734,10 @@ function dhtmlXGridObject(id){
 						if (self._fake)
 							self._fake._correctSplit();
 				}, 100);
-		})
+		});
+
+		//prevent multiple initializations
+		this._setAutoResize = function(){};
 	}
 	
 	
@@ -950,6 +963,8 @@ function dhtmlXGridObject(id){
 		
 		if (!dhx4.s2b(state)){
 			this.sortImg.style.display="none";
+			if (this.r_fldSorted)
+				this.r_fldSorted.className = "";
 			this.fldSorted=this.r_fldSorted = null;
 			return;
 		}
@@ -984,6 +999,9 @@ function dhtmlXGridObject(id){
 	*/
 	this.setSortImgPos=function(ind, mode, hRowInd, el){
 		if (this._hrrar && this._hrrar[this.r_fldSorted?this.r_fldSorted._cellIndex:ind]) return;
+		if (this.ar_fldSorted)
+			this.ar_fldSorted.className = "";
+
 		if (!el){
 			if (!ind)
 				var el = this.r_fldSorted;
@@ -994,6 +1012,9 @@ function dhtmlXGridObject(id){
 		if (el != null){
 			var pos = this.getPosition(el, this.hdrBox)
 			var wdth = el.offsetWidth;
+			this.ar_fldSorted = el;
+			el.className = this.sortImg.className+"_col";
+
 			this.sortImg.style.left=Number(pos[0]+wdth-13)+"px"; //Number(pos[0]+5)+"px";
 			this.sortImg.defLeft=parseInt(this.sortImg.style.left)
 			this.sortImg.style.top=Number(pos[1]+5)+"px";
@@ -1165,7 +1186,7 @@ function dhtmlXGridObject(id){
 			selMethod=0;
 		
 		if (this.cell != null)
-			this.cell.className=this.cell.className.replace(/cellselected/g, "");
+			this.cell.className=this.cell.className.replace(/[ \t]*cellselected/g, "");
 		
 		if (el.tagName == "TD"){
 			if (this.checkEvent("onSelectStateChanged"))
@@ -1203,7 +1224,7 @@ function dhtmlXGridObject(id){
 				}
 			} else if (selMethod == 2){
 				if (el.parentNode.className.indexOf("rowselected") != -1){
-					el.parentNode.className=el.parentNode.className.replace(/rowselected/g, "");
+					el.parentNode.className=el.parentNode.className.replace(/[ \t]*rowselected/g, "");
 					this.selectedRows._dhx_removeAt(this.selectedRows._dhx_find(el.parentNode))
 					var skipRowSelection = true;
 					show = false;
@@ -1238,7 +1259,7 @@ function dhtmlXGridObject(id){
 			}
 			
 			if (this.cell && this.cell.parentNode.className.indexOf("rowselected") != -1)
-				this.cell.className=this.cell.className.replace(/cellselected/g, "")+" cellselected";
+				this.cell.className=this.cell.className.replace(/[ \t]*cellselected/g, "")+" cellselected";
 			
 			if (selMethod != 1)
 				if (!this.row)
@@ -1428,8 +1449,8 @@ function dhtmlXGridObject(id){
 				this.cell._cellIndex
 			]) != false&&this.editor.edit){
 			this._Opera_stop=(new Date).valueOf();
+			c.className += " editable";
 			this.editor.edit();
-			c.className+=" editable";
 			this.callEvent("onEditCell", [
 					1,
 					this.row.idd,
@@ -1615,8 +1636,7 @@ function dhtmlXGridObject(id){
 		
 		if ((ev.target||ev.srcElement).value !== window.undefined){
 			var zx = (ev.target||ev.srcElement);
-			
-			if (zx.className!="dhxcombo_input"&&((!zx.parentNode)||(zx.parentNode.className.indexOf("editable") == -1)))
+			if (zx.className!="dhxcombo_input"&&zx.className!="dhx_tab_ignore"&&((!zx.parentNode)||(zx.parentNode.className.indexOf("editable") == -1)))
 				return true;
 		}
 		
@@ -1955,10 +1975,10 @@ function dhtmlXGridObject(id){
 	*   @type: public
 	*   @topic: 3
 	*/
-	this.getColumnLabel=function(cin, ind, hdr){
+	this.getColumnLabel=function(cin, ind, hdr, raw){
 		var z = (hdr||this.hdr).rows[(ind||0)+1];
 		for (var i=0; i<z.cells.length; i++)
-			if (z.cells[i]._cellIndexS==cin) return (_isIE ? z.cells[i].innerText : z.cells[i].textContent);
+			if (z.cells[i]._cellIndexS==cin) return raw ? z.cells[i].firstChild.innerHTML : (_isIE ? z.cells[i].innerText : z.cells[i].textContent);
 		return "";
 	};
 	this.getColLabel = this.getColumnLabel;
@@ -1969,9 +1989,9 @@ function dhtmlXGridObject(id){
 	*   @type: public
 	*   @topic: 3
 	*/
-	this.getFooterLabel=function(cin, ind){
-		return this.getColumnLabel(cin,ind,this.ftr);
-	}	
+	this.getFooterLabel=function(cin, ind, raw){
+		return this.getColumnLabel(cin,ind,this.ftr, raw);
+	}
 	
 	
 	/**
@@ -2226,7 +2246,7 @@ function dhtmlXGridObject(id){
 			var r = this.rowsAr[this.selectedRows[i].idd];
 			
 			if (r)
-				r.className=r.className.replace(/rowselected/g, "");
+				r.className=r.className.replace(/[ \t]*rowselected/g, "");
 		}
 		
 		//..
@@ -2234,7 +2254,7 @@ function dhtmlXGridObject(id){
 		this.row=null;
 		
 		if (this.cell != null){
-			this.cell.className=this.cell.className.replace(/cellselected/g, "");
+			this.cell.className=this.cell.className.replace(/[ \t]*cellselected/g, "");
 			this.cell=null;
 		}
 		
@@ -2296,7 +2316,7 @@ function dhtmlXGridObject(id){
 			hdrHTML+="</div>";
 			z.cells[col].innerHTML=hdrHTML;
 			
-			if (this._hstyles[col])
+			if (this._hstyles[c])
 				z.cells[col].style.cssText=this._hstyles[c];
 		} else { //if images in header header
 			z.cells[col].style.textAlign="left";
@@ -2469,7 +2489,9 @@ function dhtmlXGridObject(id){
 		//.
 		this.sortRows(el._cellIndex, this.fldSort[el._cellIndex], sortType)
 		this.fldSorted=el;
-		this.r_fldSorted=r_el;
+		if (r_el && r_el.tagName.toLowerCase() != "th")
+			this.r_fldSorted=r_el;
+
 		var c = this.hdr.rows[1];
 		var c = r_el.parentNode;
 		var real_el = c._childIndexes ? c._childIndexes[el._cellIndex] : el._cellIndex;
@@ -2798,12 +2820,14 @@ function dhtmlXGridObject(id){
 	*     @edition: Professional
 	*     @topic: 7
 	*/
-	this.clearChangedState=function(){
+	this.clearChangedState=function(clear_added){
 		for (var i = 0; i < this.rowsCol.length; i++){
 			var row = this.rowsCol[i];
 			if (row && row.childNodes){
 				var cols = row.childNodes.length;
 				for (var j = 0; j < cols; j++)row.childNodes[j].wasChanged=false;
+				if (clear_added)
+					row._added = false;
 			}
 		}
 	};
@@ -2946,9 +2970,11 @@ function dhtmlXGridObject(id){
 		if (this._sUDa&&this.UserData[r.idd]){
 			keysAr=this.UserData[r.idd].getKeys()
 			
-			for (var ii = 0;
-				ii < keysAr.length;
-				ii++)out.push("<userdata name='"+keysAr[ii]+"'>"+(this._asCDATA?"<![CDATA[":"")+this.UserData[r.idd].get(keysAr[ii])+(this._asCDATA?"]]>":"")+"</userdata>");
+			for (var ii = 0; ii < keysAr.length; ii++){
+				var subkey = keysAr[ii];
+				if (subkey.indexOf("__") !== 0)
+					out.push("<userdata name='"+subkey+"'>"+(this._asCDATA?"<![CDATA[":"")+this.UserData[r.idd].get(subkey)+(this._asCDATA?"]]>":"")+"</userdata>");
+			}
 		}
 		
 		
@@ -3181,7 +3207,7 @@ function dhtmlXGridObject(id){
 			return !this.grid._ctmndx;
 		};
 	}
-    	
+		
 	//#}		
 	this.obj.ondblclick=function(e){
 		if (!this.grid.wasDblClicked(e||window.event)) 
@@ -3478,6 +3504,10 @@ dhtmlXGridObject.prototype={
 					this.cellWidthPX[ind]=parseInt(zrow._oldWidth);
 			}
 		}
+
+		if (!state && this._realfake)
+			this.setColumnSizes(this.entBox.clientWidth);
+
 		this.setSizes();
 		
 		if ((!_isIE)&&(!_isFF)){
@@ -3618,7 +3648,7 @@ dhtmlXGridObject.prototype={
 		if (c && c.parentNode!=this.grid._lahRw) {
 			this.grid._unsetRowHover(0, c);
 			c=c.parentNode;
-	  		if (!c.idd || c.idd=="__filler__") return;
+			if (!c.idd || c.idd=="__filler__") return;
 			for (var i = 0; i < c.childNodes.length; i++)c.childNodes[i].className+=" "+this.grid._hvrCss;
 			this.grid._lahRw=c;
 		}
@@ -4362,15 +4392,28 @@ dhtmlXGridObject.prototype={
 		var l = this.obj.rows.length;
 		var z = 0;
 		var tree = this.cellType._dhx_find("tree");
-		
+
+		var d = document.createElement("DIV");
+		d.className = "dhx_grid_adjust";
+		d.style.cssText = "width:auto;height:auto;visibility:hidden; position:absolute; top:0px; left:0px; overflow:hidden; white-space:nowrap;";
+		document.body.appendChild(d);
+
 		for (var i = 1; i < l; i++){
 			var row = this.obj.rows[i];
+			var col = cInd;
 			if (!this.rowsAr[row.idd]) continue;
 			
-			if (row._childIndexes&&row._childIndexes[cInd] != cInd || !row.childNodes[cInd])
+			if (row._childIndexes){
+				if (row._childIndexes[cInd] == row._childIndexes[cInd+1] )
+					continue;
+				col = row._childIndexes[cInd];
+			}
+
+			if (!row.childNodes[col] || row.childNodes[col]._cellIndex != cInd)
 				continue;
-			
-			z= ( row.childNodes[cInd].innerText || row.childNodes[cInd].textContent || "" ).length*this.fontWidth;
+
+			d.innerHTML = ( row.childNodes[col].innerText || row.childNodes[col].textContent || "" );
+			z = d.offsetWidth;
 			if (this._h2 && cInd == tree)
 				z += this._h2.get[row.idd].level * 22;
 			
@@ -4379,6 +4422,9 @@ dhtmlXGridObject.prototype={
 			if (z > m)
 				m=z;
 		}
+
+		document.body.removeChild(d);
+
 		m+=20+(complex||0);
 		
 		this._setColumnSizeR(cInd, m);
@@ -4583,6 +4629,11 @@ dhtmlXGridObject.prototype={
 	*/
 	setCellExcellType:function(rowId, cellIndex, type){
 		this.changeCellType(this.getRowById(rowId), cellIndex, type);
+	},
+	getCellExcellType:function(rowId, cellIndex) {
+	    var row = this.getRowById(rowId);
+	    var z = this.cells3(row, cellIndex);
+	    return z.cell._cellType || this.cellType[cellIndex];
 	},
 	/**
 	*	@desc: 
@@ -5217,7 +5268,7 @@ dhtmlXGridObject.prototype={
 			type=call;
 			call=null;
 		}
-		type=type||"xml";
+		this._last_load_type = type = type||this._last_load_type||"xml";
 		
 		if (!this.xmlFileUrl)
 			this.xmlFileUrl=url;
@@ -5230,26 +5281,26 @@ dhtmlXGridObject.prototype={
 			if (!that.callEvent) return;
 			that["_process_"+type](xml.xmlDoc);
 			if (!that._contextCallTimer)
-				that.callEvent("onXLE", [that,0,0,xml.xmlDoc]);
+				that.callEvent("onXLE", [that,0,0,xml.xmlDoc,type]);
 			
 			if (call){
 				call();
 				call=null;
 			}
-		};
+		};		
 		return dhx4.ajax.get(url, this.xmlLoader);
 	},
 	//#__pro_feature:21092006{		
 	loadXMLString:function(str, afterCall){
 		if (window.console && window.console.info)
-          window.console.info("loadXMLString was deprecated", "http://docs.dhtmlx.com/migration__index.html#migrationfrom43to44");
+		  window.console.info("loadXMLString was deprecated", "http://docs.dhtmlx.com/migration__index.html#migrationfrom43to44");
 
 		this.parse( { responseXML: dhx4.ajax.parse(str) }, afterCall, "xml")
 	},
 	//#}
 	loadXML:function(url, afterCall){
 		if (window.console && window.console.info)
-        	window.console.info("loadXML was deprecated", "http://docs.dhtmlx.com/migration__index.html#migrationfrom43to44");
+			window.console.info("loadXML was deprecated", "http://docs.dhtmlx.com/migration__index.html#migrationfrom43to44");
 
 		this.load(url, afterCall, "xml")
 	},
@@ -5264,7 +5315,7 @@ dhtmlXGridObject.prototype={
 			type=call;
 			call=null;
 		}
-		type=type||"xml";
+		this._last_load_type = type = type||this._last_load_type||"xml";
 		this._data_type=type;
 		
 		if (type == "xml" && typeof data == "string")
@@ -5272,7 +5323,7 @@ dhtmlXGridObject.prototype={
 		
 		this["_process_"+type](data);
 		if (!this._contextCallTimer)
-			this.callEvent("onXLE", [this,0,0,data]);
+			this.callEvent("onXLE", [this,0,0,data,type]);
 		if (call)
 			call();
 	},
@@ -5397,13 +5448,13 @@ dhtmlXGridObject.prototype={
 		data=data.replace(/\r/g,"");
 		data=data.split(this.csv.row);
 		if (this._csvHdr){
-   			this.clearAll();
-   			var thead=data.splice(0,1)[0].split(this.csv.cell);
-   			if (!this._csvAID) thead.splice(0,1);
-	   		this.setHeader(thead.join(this.delim));
-	   		this.init();
-   		}
-   		
+			this.clearAll();
+			var thead=data.splice(0,1)[0].split(this.csv.cell);
+			if (!this._csvAID) thead.splice(0,1);
+			this.setHeader(thead.join(this.delim));
+			this.init();
+		}
+		
 		for (var i = 0; i < data.length; i++){
 			if (!data[i] && i==data.length-1) continue; //skip new line at end of text
 			if (this._csvAID){
@@ -5549,8 +5600,9 @@ dhtmlXGridObject.prototype={
 			this._fillers = [];
 			if (this._fake && !this._realfake) this._fake._fillers = [];
 			
+			var block_size = Math.round(990000/this._srdh);
 			while (add_count > 0){
-				var add_step = (_isIE || window._FFrv)?Math.min(add_count, 35000):add_count;
+				var add_step = (_isIE || window._FFrv)?Math.min(add_count, block_size):add_count;
 				var new_filler = this._add_filler(max, add_step);
 				if (new_filler)
 					this._fillers.push(new_filler);
@@ -5628,7 +5680,10 @@ dhtmlXGridObject.prototype={
 			
 			if (atype == "dhxCalendar"||atype == "dhxCalendarA")
 				amet="getDate";
-			
+				
+			if (atype == "co"||atype == "coro")
+				amet="getText";
+				
 			for (var i = 0;
 				i < this.rowsBuffer.length;
 				i++)arrTS[this.rowsBuffer[i].idd]=this._get_cell_value(this.rowsBuffer[i], col, amet);
@@ -6142,6 +6197,9 @@ dhtmlXGridObject.prototype={
 		if (!this._ui_seed) this._ui_seed=(new Date()).valueOf();
 		return this._ui_seed++;
 	},
+	setIconset:function(name){
+		this.iconset = name;
+	},
 	/**
 	*   @desc: clears existing grid state and load new XML
 	*   @type:  public
@@ -6172,9 +6230,30 @@ dhtmlXGridObject.prototype={
 			var start = (this.currentPage-1)*this.rowsBufferOutSize;
 			return [this.currentPage, start, Math.min(start+this.rowsBufferOutSize,this.rowsBuffer.length), this.rowsBuffer.length ];
 		}
- 		return [
- 			Math.floor(this.objBox.scrollTop/this._srdh),
-			Math.ceil(parseInt(this.objBox.offsetHeight)/this._srdh),
+
+		var min=Math.floor(this.objBox.scrollTop/this._srdh);
+		var max=Math.ceil(parseInt(this.objBox.offsetHeight)/this._srdh);
+
+		if (this.multiLine){
+			var pxHeight = this.objBox.scrollTop;
+			min = 0;
+			while(pxHeight >= 0) {
+				pxHeight-=this.rowsCol[min]?this.rowsCol[min].offsetHeight:this._srdh;
+				min++;
+			}
+			min--;
+
+			pxHeight += this.objBox.offsetHeight;
+			max = 0;
+			while (pxHeight >=0 ){
+				pxHeight-=this.rowsCol[min+max]?this.rowsCol[min+max].offsetHeight:this._srdh;
+				max++;
+			}
+		}
+
+		return [
+			min,
+			max,
 			this.rowsBuffer.length
 		];
 	}
@@ -6400,10 +6479,8 @@ dhtmlXGridObject.prototype._dp_init=function(dp){
 			dp.setUpdated(rowId,true,"deleted");
 			return false;
 	});
-	this.attachEvent("onBindUpdate", function(id){
-			if (typeof id == "object")
-				id = id.id;
-			dp.setUpdated(id,true);
+	this.attachEvent("onBindUpdate", function(data, key, id){
+		dp.setUpdated(id, true);
 	});
 	this.attachEvent("onRowAdded",function(rowId){
 			if (this.dragContext && dp.dnd) return true;
@@ -6411,7 +6488,7 @@ dhtmlXGridObject.prototype._dp_init=function(dp){
 			return true;
 	});
 	dp._getRowData=function(rowId,pref){
-		var data = [];
+		var data = {};
 		
 		data["gr_id"]=rowId;
 		if (this.obj.isTreeGrid())
@@ -6420,9 +6497,9 @@ dhtmlXGridObject.prototype._dp_init=function(dp){
 		var r=this.obj.getRowById(rowId);
 		for (var i=0; i<this.obj._cCount; i++){
 			if (this.obj._c_order)
-		   		var i_c=this.obj._c_order[i];
-		   	else
-			   	var i_c=i;
+				var i_c=this.obj._c_order[i];
+			else
+				var i_c=i;
 			
 			var c=this.obj.cells(r.idd,i);
 			if (this._changed && !c.wasChanged()) continue;
@@ -6478,6 +6555,9 @@ dhx4.attachEvent("onGridCreated", function(grid){
 		grid._con_f_used = [].concat(grid._con_f_used);
 		dhtmlXGridObject.prototype._con_f_used=[];
 		
+		if (grid._was_created_once) return;
+		grid._was_created_once = true;
+
 		var clear_url=function(url){
 			url=url.replace(/(\?|\&)connector[^\f]*/g,"");
 			return url+(url.indexOf("?")!=-1?"&":"?")+"connector=true"+(this.hdr.rows.length > 0 ? "&dhx_no_header=1":"");
@@ -6605,6 +6685,28 @@ if (!dhtmlXGridObject.prototype.load_connector){
 	};
 	
 }	
+
+dhtmlXGridObject.prototype.getRowData = function( /*string*/ rowId) {
+	var result = {};
+	var colsNum = this.getColumnsNum();
+	for (var index = 0; index < colsNum; index++) {
+		var colId = this.getColumnId(index);
+		if (colId) {
+			result[colId] = this.cells(rowId, index).getValue();
+		}
+	}
+	return result;
+};
+
+dhtmlXGridObject.prototype.setRowData = function( /*string*/ rowId, /*json*/ rowJson) {
+	var colsNum = this.getColumnsNum();
+	for (var index = 0; index < colsNum; index++) {
+		var colId = this.getColumnId(index);
+		if (colId && rowJson.hasOwnProperty(colId)) {
+			this.cells(rowId, index).setValue(rowJson[colId]);
+		}
+	}
+};
 
 //(c)dhtmlx ltd. www.dhtmlx.com
 
@@ -7006,7 +7108,8 @@ function eXcell_ed(cell){
 		this.val=this.getValue();
 		this.obj=document.createElement(this.cell.atag);
 		this.obj.setAttribute("autocomplete", "off");
-		this.obj.style.height=(this.cell.offsetHeight-(_isIE ? 4 : 4))+"px";
+		this.obj.style.height=(this.cell.offsetHeight-(this.grid.multiLine ? 9 : 4))+"px";
+		
 		this.obj.className="dhx_combo_edit";
 		this.obj.wrap="soft";
 		this.obj.style.textAlign=this.cell.style.textAlign;
@@ -7226,6 +7329,7 @@ eXcell_ch.prototype.setValue=function(val){
 		this.cell.chstate="0"
 	}
 	var obj = this;
+	this.cell.setAttribute("excell", "ch");
 	this.setCValue("<img src='"+this.grid.imgURL+"item_chk"+val
 		+".gif' onclick='new eXcell_ch(this.parentNode).changeState(true); (arguments[0]||event).cancelBubble=true; '>",
 		this.cell.chstate);
@@ -7309,17 +7413,20 @@ eXcell_ra.prototype.setValue=function(val){
 			this.grid._RaSeCol=[];
 
 		if (this.grid._RaSeCol[this.cell._cellIndex]){
-			var z = this.grid.cells4(this.grid._RaSeCol[this.cell._cellIndex]);
-			z.setValue("0")
-			if (this.grid.rowsAr[z.cell.parentNode.idd])
-			this.grid.callEvent("onEditCell", [
-				1,
-				z.cell.parentNode.idd,
-				z.cell._cellIndex
-			]);
+			var id = this.grid._RaSeCol[this.cell._cellIndex];
+			if (this.grid.rowsAr[id]){
+				var z = this.grid.cells(id, this.cell._cellIndex);
+				z.setValue("0")
+				if (this.grid.rowsAr[z.cell.parentNode.idd])
+				this.grid.callEvent("onEditCell", [
+					1,
+					z.cell.parentNode.idd,
+					z.cell._cellIndex
+				]);
+			}
 		}
 
-		this.grid._RaSeCol[this.cell._cellIndex]=this.cell;
+		this.grid._RaSeCol[this.cell._cellIndex]=this.cell.parentNode.idd;
 
 		val="1";
 		this.cell.chstate="1";
@@ -7327,6 +7434,7 @@ eXcell_ra.prototype.setValue=function(val){
 		val="0";
 		this.cell.chstate="0"
 	}
+	this.cell.setAttribute("excell", "ra");
 	this.setCValue("<img src='"+this.grid.imgURL+"radio_chk"+val+".gif' onclick='new eXcell_ra(this.parentNode).changeState(false);'>",
 		this.cell.chstate);
 }
@@ -7513,7 +7621,7 @@ function eXcell_co(cell){
 		this.obj=document.createElement("TEXTAREA");
 		this.obj.className="dhx_combo_edit";
 
-		this.obj.style.height=(this.cell.offsetHeight-(_isIE ? 4 : 4))+"px";
+		this.obj.style.height=(this.cell.offsetHeight-(this.grid.multiLine ? 9 : 4))+"px";
 
 		this.obj.wrap="soft";
 		this.obj.style.textAlign=this.cell.style.textAlign;
@@ -7586,8 +7694,8 @@ function eXcell_co(cell){
 			this.cell.innerHTML="";
 		}
 		else {
-			this.obj.style.width="1px";
-			this.obj.style.height="1px";
+			this.obj.style.width="0px";
+			this.obj.style.height="0px";
 		}
 		this.cell.appendChild(this.obj);
 		this.list.options[selOptId].selected=true;
@@ -7600,6 +7708,7 @@ function eXcell_co(cell){
 
 		if (!this.editable){
 			this.obj.style.visibility="hidden";
+			this.obj.style.position="absolute";
 			this.list.focus();
 			this.list.onkeydown=function(e){
 				e=e||window.event;
@@ -7901,6 +8010,27 @@ eXcell_img.prototype.setValue=function(val){
 	}
 	this.cell._brval=title;
 }
+function eXcell_icon(cell){
+	this.base=eXcell_ed;
+	this.base(cell)
+	try{
+		this.cell=cell;
+		this.grid=this.cell.parentNode.grid;
+	}
+	catch (er){}
+
+	this.setValue=function(val){
+		this.cell._raw_value = val;
+		this.setCValue('<div class="dhx_grid_icon"><i class="fa fa-'+val.toString()._dhx_trim()+'"></i></div>');
+	}
+	this.getValue=function(){
+		return this.cell._raw_value;
+	}
+	this.isDisabled=function(){
+		return true;
+	}
+}
+eXcell_icon.prototype=new eXcell_ed;
 //#}
 
 //#price_excell:04062008{
@@ -7944,29 +8074,42 @@ function eXcell_dyn(cell){
 	this.base=eXcell_ed;
 	this.base(cell)
 	this.getValue=function(){
-		return this.cell.firstChild.childNodes[1].innerHTML.toString()._dhx_trim()
+		if (!this.cell.firstChild.childNodes[1]) return "";
+		var value = this.cell.firstChild.childNodes[1].innerHTML.toString()._dhx_trim()
+		var k = this.grid._aplNFb(value, this.cell._cellIndex);
+		if (isNaN(Number(k))) {
+			return value;
+		}
+		return k;
 	}
 }
 
 eXcell_dyn.prototype=new eXcell_ed;
+eXcell_dyn.prototype.getValue=function(){
+	var value = eXcell_ed.prototype.getValue.call(this);
+	return 
+	
+}
 eXcell_dyn.prototype.setValue=function(val){
 	if (!val||isNaN(Number(val))){
 		if (val!=="")
 			val=0;
+	} else {
+		if (val > 0){
+			var color = "green";
+			var img = "dyn_up.gif";
+		} else if (val == 0){
+			var color = "black";
+			var img = "dyn_.gif";
+		} else {
+			var color = "red";
+			var img = "dyn_down.gif";
+		}
+		val = this.grid._aplNF(val, this.cell._cellIndex);
 	}
 
-	if (val > 0){
-		var color = "green";
-		var img = "dyn_up.gif";
-	} else if (val == 0){
-		var color = "black";
-		var img = "dyn_.gif";
-	} else {
-		var color = "red";
-		var img = "dyn_down.gif";
-	}
-	this.setCValue("<div style='position:relative;padding-right:2px; width:100%;overflow:hidden; white-space:nowrap;'><img src='"+this.grid.imgURL+""+img
-		+"' height='15' style='position:absolute;top:0px;left:0px;'><span style=' padding-left:20px; width:100%;color:"+color+";'>"+val
+	this.setCValue("<div class='grid_cell_dyn'><img src='"+this.grid.imgURL+""+img
+		+"'><span style='color:"+color+";'>"+val
 		+"</span></div>",
 		val);
 }
@@ -8208,7 +8351,7 @@ Hashtable.prototype=new dhtmlXGridComboObject;
 //(c)dhtmlx ltd. www.dhtmlx.com
 if (typeof(window.dhtmlXCellObject) != "undefined") {
 	
-	dhtmlXCellObject.prototype.attachGrid = function() {
+	dhtmlXCellObject.prototype.attachGrid = function(config) {
 		
 		this.callEvent("_onBeforeContentAttach",["grid"]);
 		
@@ -8220,16 +8363,26 @@ if (typeof(window.dhtmlXCellObject) != "undefined") {
 		this._attachObject(obj);
 		
 		this.dataType = "grid";
+		if (config && typeof config === "object" && !config.tagName){
+			config.parent = obj;
+			obj = config;
+		}
 		this.dataObj = new dhtmlXGridObject(obj);
 		this.dataObj.setSkin(this.conf.skin);
 		
 		// fix for grid atatched to tabbar for safari on ios 5.1.7
-		if (typeof(window.dhtmlXTabBarCell) != "undefined" && this instanceof window.dhtmlXTabBarCell && navigator.userAgent.match(/7[\.\d]* mobile/gi) != null && navigator.userAgent.match(/AppleWebKit/gi) != null) {
+		if (typeof(window.dhtmlXTabBarCell) == "function" && this instanceof window.dhtmlXTabBarCell && navigator.userAgent.match(/7[\.\d]* mobile/gi) != null && navigator.userAgent.match(/AppleWebKit/gi) != null) {
 			this.dataObj.objBox.style.webkitOverflowScrolling = "auto";
 		}
 		
+		// fix layout cell for material
+		if (this.conf.skin == "material" && typeof(window.dhtmlXLayoutCell) == "function" && this instanceof window.dhtmlXLayoutCell) {
+			this.cell.childNodes[this.conf.idx.cont].style.overflow = "hidden";
+		}
+		
+		
 		// keep border for window and remove for other
-		if (this.conf.skin == "dhx_skyblue" && typeof(window.dhtmlXWindowsCell) != "undefined" && this instanceof window.dhtmlXWindowsCell) {
+		if (this.conf.skin == "dhx_skyblue" && typeof(window.dhtmlXWindowsCell) == "function" && this instanceof window.dhtmlXWindowsCell) {
 			this.dataObj.entBox.style.border = "1px solid #a4bed4";
 			this.dataObj._sizeFix = 0;
 		} else {

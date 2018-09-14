@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_skyblue.less */
+/*
+	skin detected: dhx_skyblue
+	include extra file: skins/dhx_skyblue.less
+*/
 
 .dhtmlxcalendar_ifr {
 	position: absolute;
@@ -109,6 +112,23 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	position: relative;
 	font-weight: bold;
 	color: #34404b;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_today,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_clear {
+	display: none;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_today {
+	float: right;
+	margin-right: 8px;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_clear {
+	float: right;
+	margin-right: 74px;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_today,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_clear {
+	float: right;
+	margin-right: 8px;
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_days_cont {
 	position: relative;
@@ -354,15 +374,39 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	line-height: 24px;
 	color: #34404b;
 }
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr {
+	text-align: left;
+}
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li div.dhtmlxcalendar_time_img {
 	position: absolute;
-	left: 66px;
+	left: 8px;
 	top: 6px;
 	width: 13px;
 	height: 13px;
 	background-image: url("../imgs/dhxcalendar_skyblue/dhxcalendar_clock.gif");
 	background-position: center center;
 	background-repeat: no-repeat;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_hours {
+	margin-left: 26px;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time ul.dhtmlxcalendar_line li div.dhtmlxcalendar_time_img {
+	left: 70px;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr {
+	text-align: center;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_time ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_hours {
+	margin-left: 0px;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr div.dhtmlxcalendar_time_img,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_hours,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_minutes,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_time_cont.dhtmlxcalendar_mode_today ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_colon {
+	display: none;
+}
+.dhtmlxcalendar_dhx_skyblue span.dhtmlxcalendar_label_colon {
+	padding: 0px 4px;
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_cover {
 	position: absolute;
@@ -385,6 +429,15 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	background-image: url("../imgs/dhxcalendar_skyblue/dhxcalendar_selector_top.gif");
 	background-position: top center;
 	background-repeat: no-repeat;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours div.dhtmlxcalendar_selector_obj_arrow {
+	background-position: -15px top;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 div.dhtmlxcalendar_selector_obj_arrow {
+	background-position: -57px top;
+}
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_selector_obj_arrow {
+	background-position: -53px top;
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table {
 	border: 1px solid #a4bed4;
@@ -487,18 +540,21 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 	line-height: 19px;
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours div.dhtmlxcalendar_selector_obj_arrow,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 div.dhtmlxcalendar_selector_obj_arrow,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_selector_obj_arrow {
 	top: auto;
 	bottom: 0px;
 	background-image: url("../imgs/dhxcalendar_skyblue/dhxcalendar_selector_bottom.gif");
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line {
 	height: 19px;
 	border-top: none;
 	border-bottom: 1px solid white;
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell {
 	width: 21px;
 	height: 17px;
@@ -506,12 +562,15 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right {
 	display: none;
 	width: 0px;
 }
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 table.dhtmlxcalendar_selector_table,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table {
 	margin-top: 0px;
 	margin-bottom: 9px;
@@ -521,6 +580,7 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_month,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_year,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_hours,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_hours2,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_minutes,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_minutes4,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_minutes5 {
@@ -529,6 +589,7 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_month div.dhtmlxcalendar_area_selector_month,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_year div.dhtmlxcalendar_area_selector_year,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours div.dhtmlxcalendar_area_selector_hours,
+.dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours2 div.dhtmlxcalendar_area_selector_hours,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_area_selector_minutes,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_area_selector_minutes4,
 .dhtmlxcalendar_dhx_skyblue div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_area_selector_minutes5 {

@@ -7,14 +7,13 @@ $compiler = "java -jar yui.jar";
 
 $copyright = @file_get_contents("conf/copyright")."\n\n";
 
-$skins = array("skyblue", "web", "terrace");
+$skins = array("skyblue", "web", "terrace", "material");
 if (!file_exists("../../skins")) mkdir("../../skins");
 if (!file_exists("../../codebase")) mkdir("../../codebase");
 
 $fname = trim(file_get_contents("conf/compressed_filename"));
 
-$debug = (preg_match("/--debug=true/", @$argv[1]) > 0);
-
+$debug = (preg_match("/--debug=true/", @$argv[1]) > 0) || (@$_REQUEST["debug"] == "y");
 
 // js
 print_r("\ncompress js\n".str_repeat("-",80)."\n");
@@ -201,9 +200,9 @@ function copy_dir($from, $to, $skin_found=false) {
 	}
 }
 
-// copy skyblue skin to codebase
-if (file_exists("../../skins/skyblue")) {
-	copy_dir("../../skins/skyblue", "../../codebase", true);
+// copy web skin to codebase (default skin)
+if (file_exists("../../skins/material")) {
+	copy_dir("../../skins/material", "../../codebase", true);
 }
 
 print_r("\n\n");

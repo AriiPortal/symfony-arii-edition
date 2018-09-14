@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -72,7 +72,7 @@ function dhtmlXSlider(data) {
 		}
 	}
 	
-	var skin = this.conf.skin || window.dhx4.skin || (typeof(dhtmlx) != "undefined"? dhtmlx.skin : null) || window.dhx4.skinDetect("dhxslider") || "dhx_skyblue";
+	var skin = this.conf.skin || window.dhx4.skin || (typeof(dhtmlx) != "undefined"? dhtmlx.skin : null) || window.dhx4.skinDetect("dhxslider") || "material";
 	
 	this.setSkin(skin);
 	
@@ -132,8 +132,6 @@ function dhtmlXSlider(data) {
 		
 		that._r_actv.className = "dhxsl_runner dhxsl_runner_actv";
 		
-		var type = (e.type=="mousedown"?"client":"page")+(that.conf.vertical?"Y":"X");
-		
 		that._movingInitialValues = {};
 		if (that.conf.range == true) {
 			that._movingInitialValues.index = (that._r_actv==that._nodes.runner?0:1);
@@ -141,7 +139,7 @@ function dhtmlXSlider(data) {
 		} else {
 			that._movingInitialValues.value = that.conf.value;
 		}
-		that._movingInitialValues.coord = (typeof(e[type]) != "undefined" && e[type] != 0 ? e[type] : (e.touches != null && e.touches[0] != null ? e.touches[0][type]||0:0));
+		that._movingInitialValues.coord = that._getTouchCoord(e);
 		
 		if (that.conf.disabled == false) {
 			if (typeof(window.addEventListener) == "function") {
@@ -164,11 +162,10 @@ function dhtmlXSlider(data) {
 		
 		e = e || event;
 		if (typeof(e.preventDefault) == "function") e.preventDefault();
-		var type = (e.type=="mousemove"?"client":"page")+(that.conf.vertical?"Y":"X");
 		
 		var runner = (that.conf.vertical) ? that._r_actv.offsetHeight : that._r_actv.offsetWidth;
 		var range = that.conf.max - that.conf.min;
-		var n_cord = (typeof(e[type]) != "undefined" && e[type] != 0 ? e[type] : (e.touches != null && e.touches[0] != null ? e.touches[0][type]||0:0));
+		var n_cord = that._getTouchCoord(e);
 		var new_value = that._movingInitialValues.value + (n_cord - that._movingInitialValues.coord)*range/(that.conf.size - runner)*(that.conf.inverse?-1:1);
 		
 		if (that.conf.range == true) {
@@ -215,7 +212,11 @@ function dhtmlXSlider(data) {
 		var t = e.target||e.srcElement;
 		if (t.className.match(/dhxsl_track_bg/) != null) ofs = parseInt(t.style[that.conf.vertical?"top":"left"]);
 		
-		var n_coord = (that.conf.vertical ? (e.offsetY || e.layerY) : (e.offsetX || e.layerX)) + ofs;
+		if (e.type.match(/touch/) != null) {
+			var n_coord = that._getTouchCoord(e) + ofs;
+		} else {
+			var n_coord = (that.conf.vertical ? (e.offsetY || e.layerY) : (e.offsetX || e.layerX)) + ofs;
+		}
 		var runner = (that.conf.vertical ? that._nodes.runner.offsetHeight : that._nodes.runner.offsetWidth) + ofs;
 		var range = that.conf.max - that.conf.min;
 		
@@ -328,6 +329,12 @@ dhtmlXSlider.prototype._setOrient = function(vertical) {
 	}
 };
 
+dhtmlXSlider.prototype._getTouchCoord = function(e) {
+	var type = (e.type.match(/mouse/) != null ? "client":"page") + (this.conf.vertical == true ? "Y":"X");
+	var coord = (typeof(e[type]) != "undefined" && e[type] != 0 ? e[type] : (e.touches != null && e.touches[0] != null ? e.touches[0][type]||0:0));
+	return coord;
+};
+
 dhtmlXSlider.prototype._attachEvents = function(nodes) {
 	if (typeof(window.addEventListener) == "function") {
 		nodes.runner.addEventListener("mousedown", this._initMover, false);
@@ -390,6 +397,9 @@ dhtmlXSlider.prototype._mergeConfig = function(data) {
 				break;
 			case "parent":
 				continue;
+				break;
+			case "skin":
+				this.conf[key] = (this._skinCollection[data[key]] == true ? data[key] : null); // reset not supported 3.6 skins to default
 				break;
 			default:
 				this.conf[key] = data[key];
@@ -474,7 +484,8 @@ dhtmlXSlider.prototype._renderArgumets = function(arg) {
 dhtmlXSlider.prototype._skinCollection = {
 	dhx_skyblue: true,
 	dhx_web: true,
-	dhx_terrace: true
+	dhx_terrace: true,
+	material: true
 };
 
 dhtmlXSlider.prototype._indexOf = function(arr, el) {
@@ -690,7 +701,7 @@ dhtmlXSlider.prototype.setSkin = function (skin) {
 		for (skinName in this._skinCollection) {
 			if (_int == -1) {
 				_int = this._indexOf(classes, className + "_" + skinName);
-			} else {
+			} else {           
 				break;
 			}
 		}

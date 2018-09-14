@@ -22,6 +22,7 @@ dhtmlxTree/codebase/ext/dhtmlxtree_dragin.js
 dhtmlxTree/codebase/ext/dhtmlxtree_ed.js
 dhtmlxTree/codebase/ext/dhtmlxtree_json.js
 dhtmlxTree/codebase/ext/dhtmlxtree_start.js
+dhtmlxTreeView/codebase/dhtmlxtreeview.js
 dhtmlxGrid/codebase/dhtmlxgrid.js
 dhtmlxGrid/codebase/ext/dhtmlxgrid_drag.js
 dhtmlxGrid/codebase/ext/dhtmlxgrid_export.js
@@ -37,6 +38,7 @@ dhtmlxGrid/codebase/excells/dhtmlxgrid_excell_dhxcalendar.js
 dhtmlxGrid/codebase/excells/dhtmlxgrid_excell_cntr.js
 dhtmlxGrid/codebase/excells/dhtmlxgrid_excell_acheck.js
 dhtmlxGrid/codebase/excells/dhtmlxgrid_excell_context.js
+dhtmlxGrid/codebase/ext/dhtmlxgrid_json.js
 dhtmlxGrid/codebase/ext/dhtmlxgrid_start.js
 dhtmlxForm/codebase/dhtmlxform.js
 dhtmlxForm/codebase/ext/dhtmlxform_item_combo.js

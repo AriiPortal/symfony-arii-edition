@@ -7,32 +7,18 @@
 {% endblock dhtmlx_plus %}
 {% block onload %}
 <script language="javascript">
-var bundle='ATS';
+var size=180;
 var db="{{ db }}";
 var max_history = 0; // pas d'historique
 var chained = 0; // que des chaines normales
 var only_warning = 0;
-var update = 30;
-var autorefresh;
 var status;
 var sort="last";
-var update=5;
 
-dhtmlxEvent(window,"load",function(){   
-    var size=180;
-    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
-    globalLayout.cells("a").setHeight(120); 
-    globalLayout.cells("b").setWidth(size); 
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("c").hideHeader();
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    mySidebar = globalLayout.cells("b").attachSidebar({
+dhtmlxEvent(window,"load",function(){       
+    AriiLayout('ATS','history,refresh',size);
+    
+    mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
         width: size,
@@ -41,6 +27,8 @@ dhtmlxEvent(window,"load",function(){
             { id:"alarms", text: "{{ "Alarms" | trans }}", icon: "error.png" },
             { id:"boxes", text: "{{ "Boxes" | trans }}", icon: "box.png" },
             { id:"audit", text: "{{ "Audit" | trans }}", icon: "audit.png" },
+            { type: "separator" },
+            { id:"templates", text: "{{ "Templates" | trans }}", icon: "wand.png" },
         ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){
@@ -53,11 +41,7 @@ dhtmlxEvent(window,"load",function(){
         document.location.href = "{{ url('arii_ATS_index') }}/db/"+db+"/"+id;
         return true;
     });
-
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}");     
     Init();
-    GlobalRefresh();
-    autorefresh = setInterval( "GlobalRefresh()",update*1000);
 });
 </script>
 {% endblock onload %}

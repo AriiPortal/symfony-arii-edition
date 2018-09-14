@@ -12,17 +12,37 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrderHistoryRepository extends EntityRepository
 {
+    // Liste des spoolers
+    public function listSpoolers($start) {        
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.spoolerId')
+        ->where('e.startTime >= :start')
+        ->distinct('e.spoolerId')
+        ->setParameter('start', $start)
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     // Pour la synchronisation des historique
-    public function findStates($start,$end) { 
+    public function findStates($start,$end,$max_result,$sort='last',$only_warning=true) { 
         $q = $this->createQueryBuilder('e')
         ->where('e.startTime >= :start')
         ->andWhere('e.endTime <= :end')
         ->orderBy('e.startTime')
         ->setParameter('start', $start)
-        ->setParameter('end', $end)
-        ->setMaxResults(1000)
-        ->getQuery();
-        return $q->getResult();
+        ->setParameter('end', $end);
+        
+        if ($only_warning)
+            $q->andWhere("e.state like '!%'");
+        
+        switch ($sort) {
+            case 'last':
+                $q->orderBy('e.endTime');
+        }
+        return $q->setMaxResults($max_result)
+                ->getQuery()
+                ->getResult();
     }
     
     // Pour la synchronisation des acquittements

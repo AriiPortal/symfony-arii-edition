@@ -2,16 +2,26 @@
 {% block body %}
 <script language="javascript">
 function Init() {
-    globalLayout.cells("c").setText("{{ "Orders" | trans }}");
-    
-    myLayout = globalLayout.cells("c").attachLayout("1C");
+    myLayout = globalLayout.cells("b").attachLayout("1C");
     myLayout.cells("a").hideHeader();
 
-
+    myGrid = myLayout.cells("a").attachGrid();
+    myGrid.setImagePath( "{{ asset('/images/') }}");
+    myGrid.setHeader("{{ "Spooler" | trans }},{{ "Folder" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "Begin" | trans }},{{ "End" | trans }},{{ "Next" | trans }},{{ "Information" | trans }}");
+    myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#select_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myGrid.setInitWidths("200,*,*,*,100,0,0,160,0,0");
+    myGrid.setColAlign("left,left,left,left,left,center,right,right,right,left");
+    myGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myGrid.setColSorting("str,str,str,str,str,str,date,date,date,str");
+    myGrid.enableAlterCss("","");
+    myGrid.init();
 }
 
+function PageRefresh(detail) {
+    myGrid.load("{{ url('xml_JID_orders_grid') }}?time=&max_result=500&chained="+chained+"&only_warning=1"+"&sort="+sort, function(){
+    });    
+}
 
-function PageRefresh() {}
 
 </script>
 {% endblock %}

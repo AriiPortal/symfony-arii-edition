@@ -45,9 +45,9 @@ class AriiJID
     public function getOrderHistory( $spooler, $job_chain, $order_id, $db='', $output='xml') {
         $em = $this->doctrine->getManager($db);        
         $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findBy( [
-                'spooler'  => $spooler,
+                'spoolerId'  => $spooler,
                 'jobChain' => $job_chain,
-                '$orderId' => $order_id 
+                'orderId' => $order_id 
             ] );
         
         if (!$OrderHistory)
@@ -61,6 +61,11 @@ class AriiJID
             'END_TIME' => $OrderHistory->getEndTime(),
             'STATE' => $OrderHistory->getState()
         ];
+    }
+
+    // Requetes sans jointure pour accélerer l'affichage
+    public function getOrderParameters($em,$id) {
+      
     }
     
     public function getTaskLog($history_id, $db='', $output='html') {

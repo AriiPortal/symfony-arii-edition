@@ -8,27 +8,11 @@
 {% endblock dhtmlx_plus %}
 {% block onload %}
 <script language="javascript">
-var bundle='Core';
-var update=5;
+var size=180;
 dhtmlxEvent(window,"load",function(){   
-    var size=180;
-    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
-    globalLayout.cells("a").setHeight(40); 
-    globalLayout.cells("b").setWidth(size); 
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
+    AriiLayout('Core','',size);
 
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-/*
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{ { asset('/images/') }}" );
-    myRibbon.loadStruct("{ { url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-*/
-    mySidebar = globalLayout.cells("b").attachSidebar({
+    mySidebar = globalLayout.cells("a").attachSidebar({
         template: "tiles",
         icons_path: "{{ asset('/images/32/') }}",
         width: size,
@@ -87,8 +71,7 @@ dhtmlxEvent(window,"load",function(){
     });
 
     Init();    
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("c").hideHeader();
+    globalLayout.cells("b").hideHeader();
     GlobalRefresh();
     autorefresh = setInterval( "GlobalRefresh()",update*1000);
 });

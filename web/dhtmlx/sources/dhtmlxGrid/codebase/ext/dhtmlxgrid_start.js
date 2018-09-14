@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -36,14 +36,14 @@ function dhtmlXGridFromTable(obj,init){
         	if (init) init(windowf);
 
             var hrow=mr.rows[0];
-            var za="";
+            var za=[];
             var zb="";
             var zc="";
             var zd="";
             var ze="";
 
             for (var i=0; i<hrow.cells.length; i++){
-                za+=(za?",":"")+hrow.cells[i].innerHTML;
+                za.push(hrow.cells[i].innerHTML);
                 var width=hrow.cells[i].getAttribute("width")||hrow.cells[i].offsetWidth||(window.getComputedStyle?window.getComputedStyle(hrow.cells[i],null)["width"]:(hrow.cells[i].currentStyle?hrow.cells[i].currentStyle["width"]:0));
                 zb+=(zb?",":"")+(width=="*"?width:parseInt(width));
                 zc+=(zc?",":"")+(hrow.cells[i].getAttribute("align")||"left");
@@ -79,12 +79,15 @@ function dhtmlXGridFromTable(obj,init){
             windowf.init();
             if (obj.getAttribute("split")) windowf.splitAt(obj.getAttribute("split"));
 
+            windowf.callEvent("onXLS", []);
             //adding rows
             windowf._process_inner_html(mr,1);
             
 			if (acs2) eval(acs2);            
 			if (obj.parentNode && obj.parentNode.removeChild)
 				obj.parentNode.removeChild(obj);
+
+            windowf.callEvent("onXLE", []);
      return windowf;
 
             }

@@ -1,12 +1,15 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
-/* skin detected, extra file: skins/dhx_skyblue.less */
+/*
+	skin detected: dhx_skyblue
+	include extra file: skins/dhx_skyblue.less
+*/
 
 .dhxform_obj_dhx_skyblue {
 	font-family: Tahoma, Helvetica;
@@ -824,14 +827,12 @@ Copyright UAB Dinamenta http://www.dhtmlx.com
 }
 div.dhx_form_skin_detect {
 	position: absolute;
-	display: block;
-	visibility: hidden;
-	left: -100px;
-	top: 0px;
+	left: 0px;
+	top: -100px;
+	margin: 0;
+	padding: 0;
+	border: 0px solid white;
 	width: 10px;
 	height: 10px;
-	margin: 0px;
-	padding: 0px;
-	border: none;
 	overflow: hidden;
 }

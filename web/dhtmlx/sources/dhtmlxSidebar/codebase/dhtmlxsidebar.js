@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -11,7 +11,7 @@ function dhtmlXSideBar(conf) {
 	var that = this;
 	
 	this.conf = {
-		skin: (conf.skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxsidebar")||"dhx_skyblue"),
+		skin: (conf.skin||window.dhx4.skin||(typeof(dhtmlx)!="undefined"?dhtmlx.skin:null)||window.dhx4.skinDetect("dhxsidebar")||"material"),
 		css: "dhxsidebar",
 		width: conf.width||200,
 		scroll_size: 12,
@@ -37,16 +37,9 @@ function dhtmlXSideBar(conf) {
 	
 	// common event system
 	window.dhx4._eventable(this);
-	
-	if (window.navigator.msPointerEnabled == true) {
-		this.conf.touch_ms = true;
-		this.conf.touch_start = "MSPointerDown",
-		this.conf.touch_end = "MSPointerUp"
-	} else {
-		this.conf.touch_ms = false;
-		this.conf.touch_start = "touchstart",
-		this.conf.touch_end = "touchend"
-	}
+	this.conf.touch_ms = false;
+	this.conf.touch_start = "touchstart",
+	this.conf.touch_end = "touchend"
 	
 	// init bars area
 	this.side = document.createElement("DIV");
@@ -104,11 +97,13 @@ function dhtmlXSideBar(conf) {
 	
 	
 	this._doOnArwClick = function(e) {
+		
 		e = e||event;
 		
 		if (e.type != "click" && e.preventDefault) {
 			e.preventDefault(); // this will prevent touchmove and click events
 		}
+		e.cancelBubble = true;
 		
 		var t = e.target||e.srcElement;
 		if (t.className.match(/dhxsidebar_arrow_image/) != null) t = t.parentNode;
@@ -1089,22 +1084,27 @@ dhtmlXCellObject.prototype.attachSidebar = function(conf) {
 	obj.style.overflow = "hidden";
 	
 	// all but window borderless
-	if (typeof(window.dhtmlXWindowsCell) != "undefined" && (this instanceof window.dhtmlXWindowsCell)) {
+	if (typeof(window.dhtmlXWindowsCell) == "function" && this instanceof window.dhtmlXWindowsCell) {
 		
 	} else {
 		// acc, layout, tabbar, sidebar
 		if (this.conf.skin == "dhx_skyblue") obj._ofs = {t:-1,r:-1,b:-1,l:-1};
 		if (this.conf.skin == "dhx_web") {
-			if (typeof(window.dhtmlXSideBarCell) != "undefined" && (this instanceof window.dhtmlXSideBarCell)) obj._ofs = {l: 8};
-			if (typeof(window.dhtmlXLayoutCell) != "undefined" && (this instanceof window.dhtmlXLayoutCell)) obj._ofs = {t: 2};
-			if (typeof(window.dhtmlXTabBarCell) != "undefined" && (this instanceof window.dhtmlXTabBarCell)) obj._ofs = {t: 8};
-			if (typeof(window.dhtmlXAccordionCell) != "undefined" && (this instanceof window.dhtmlXAccordionCell)) obj._ofs = {t: 2};
+			if (typeof(window.dhtmlXSideBarCell) == "function" && this instanceof window.dhtmlXSideBarCell) obj._ofs = {l: 8};
+			if (typeof(window.dhtmlXLayoutCell) == "function" && this instanceof window.dhtmlXLayoutCell) obj._ofs = {t: 2};
+			if (typeof(window.dhtmlXTabBarCell) == "function" && this instanceof window.dhtmlXTabBarCell) obj._ofs = {t: 8};
+			if (typeof(window.dhtmlXAccordionCell) == "function" && this instanceof window.dhtmlXAccordionCell) obj._ofs = {t: 2};
 		}
 		if (this.conf.skin == "dhx_terrace") {
-			if (typeof(window.dhtmlXSideBarCell) != "undefined" && (this instanceof window.dhtmlXSideBarCell)) obj._ofs = {l:-1};
-			if (typeof(window.dhtmlXLayoutCell) != "undefined" && (this instanceof window.dhtmlXLayoutCell)) obj._ofs = {t:-1};
-			if (typeof(window.dhtmlXTabBarCell) != "undefined" && (this instanceof window.dhtmlXTabBarCell)) obj._ofs = {t:-1};
-			if (typeof(window.dhtmlXAccordionCell) != "undefined" && (this instanceof window.dhtmlXAccordionCell)) obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+			if (typeof(window.dhtmlXSideBarCell) == "function" && this instanceof window.dhtmlXSideBarCell) obj._ofs = {l:-1};
+			if (typeof(window.dhtmlXLayoutCell) == "function" && this instanceof window.dhtmlXLayoutCell) obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+			if (typeof(window.dhtmlXTabBarCell) == "function" && this instanceof window.dhtmlXTabBarCell) obj._ofs = {t:-1};
+			if (typeof(window.dhtmlXAccordionCell) == "function" && this instanceof window.dhtmlXAccordionCell) obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+		}
+		if (this.conf.skin == "material") {
+			if (typeof(window.dhtmlXAccordionCell) == "function" && this instanceof window.dhtmlXAccordionCell) obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+			if (typeof(window.dhtmlXTabBarCell) == "function" && this instanceof window.dhtmlXTabBarCell) obj._ofs = {t:-1,r:-1,b:-1,l:-1};
+			if (typeof(window.dhtmlXSideBarCell) == "function" && this instanceof window.dhtmlXSideBarCell) obj._ofs = {l:-1};
 		}
 	}
 	

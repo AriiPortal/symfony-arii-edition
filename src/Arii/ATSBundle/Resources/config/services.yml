@@ -16,7 +16,7 @@ services:
 
     arii_ats.exec:
         class: Arii\ATSBundle\Service\AriiExec
-        arguments: [ "@arii_core.portal" ]
+        arguments: [ "@arii_core.exec" ]
 
     arii_ats.twig_string_loader:
         class:        "Twig_Loader_String"

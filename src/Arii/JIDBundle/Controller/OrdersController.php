@@ -12,12 +12,15 @@ class OrdersController extends Controller
     
     public function __construct( )
     {
-          $request = Request::createFromGlobals();
-          $this->images = $request->getUriForPath('/../bundles/ariicore/images/wa');  
+        $request = Request::createFromGlobals();
+        $this->images = $request->getUriForPath('/../bundles/ariicore/images/wa');
     }
 
     public function indexAction($db)
     {
+        $portal = $this->container->get('arii_core.portal');
+        $portal->getUserInterface();
+        
         return $this->render('AriiJIDBundle:Orders:index.html.twig', [ 'db' => $db ]);
     }
 
@@ -66,9 +69,10 @@ class OrdersController extends Controller
     public function gridAction($db,$history_max=0,$nested=false,$only_warning=false,$sort='last')
     {
         $Filters = $this->container->get('arii.filter')->getRequestFilter();
+
         $em = $this->getDoctrine()->getManager($db);        
         $history = $this->container->get('arii_jid.history2');        
-        $Orders = $history->Orders($em,$Filters['start'],$Filters['end'],$history_max=999,$nested=false,$only_warning);
+        $Orders = $history->Orders($em,$Filters['start'],$Filters['end'],$Filters['max_result'],$Filters['sort'],$Filters['only_warning']);
         
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');

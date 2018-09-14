@@ -1,75 +1,28 @@
 <?php
+/*
+ * Service d'execution Autosys
+ */
 namespace Arii\ATSBundle\Service;
 
 class AriiExec {
     
-    protected $session;
+    protected $exec;
     
     public function __construct(
-            \Arii\CoreBundle\Service\AriiSession $session
+            \Arii\CoreBundle\Service\AriiExec   $exec
     ) {
-        $this->portal = $portal;
+        $this->exec = $exec;
     }
     
-    public function Exec($command,$stdin='') {
-        $database = $this->session->getDatabase();
-        $name = $database['name'];
+    // Une execution autosys est toujours sur le serveur
+    public function Exec($em,$command,$stdin='') {
+        // on retrouve la machine ?
+        $Alamode = $em->getRepository("AriiATSBundle:UjoAlamode")->findOneBy(['type' => 'event_demon']);
+        $event_demon = $Alamode->getStrVal();
         
-        $engine = $this->session->getSpoolerByName($name,'waae');
-        
-        if (!isset($engine[0]['shell'])) {
-            $portal->ErrorLog("Unknown DB", 1,  __FILE__, __LINE__);
-            exit();
-        }
-
-        set_include_path('../vendor/phpseclib' . PATH_SEPARATOR . get_include_path());
-        include('Net/SSH2.php');
-        include('Crypt/RSA.php');
-
-        $shell = $engine[0]['shell'];
-        $host = $shell['host'];
-        $user = $shell['user'];
-        $ssh = new \Net_SSH2($host);
-        
-        if (isset($shell['key'])) {
-            $key = new \Crypt_RSA();
-            $ret = $key->loadKey($shell['key']);
-            if (!$ret) {
-                echo "loadKey failed\n";
-                print "<pre>".$ssh->getLog().'</pre>';
-                exit;
-            }
-        }
-        elseif (isset($shell['password'])) {
-            $key = $shell['password'];
-        }
-        else {
-            $key = ''; // ?! possible ?
-        }
-               
-        if (!$ssh->login('autosys', $key)) {
-            print 'Login Failed';
-            print "<pre>".$ssh->getLog().'</pre>';
-            exit();
-        }
-
-        if ($stdin=='')
-            return $ssh->exec(". ~/.bash_profile;$command");
-
-        // Test STDIN
-        $ssh->enablePTY();
-        print "profile".$ssh->exec(". ~/.bash_profile");
-        print "sort".$exec = $ssh->exec('sort');
-        $ssh->write(<<<EOF
-echo "update_job: SE.ERIC.JOB.JobType_UNIX"
-echo "description: 'ok!!'
-EOF
-);
-        $ssh->reset(true);
-$ssh->setTimeout(2);
-print $ssh->read();
-return ;
-return  $ssh->read();  // outputs the echo above
+        // On execute la commande sur le node
+        list($exit,$out) = $this->exec->ExecNodeName($event_demon,$command);
+        return $out;
     }
 }
 ?>

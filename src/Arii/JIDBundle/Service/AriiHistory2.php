@@ -21,115 +21,32 @@ class AriiHistory2
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
+    public function Spoolers() {
 
-   //ajout de la variable bool pour dissocier les jobs avec ou sans chaines
-   public function Jobs($history_max=0,$ordered = 0,$only_warning= 1,$next=1, $name="", $spooler="") {
+        $data = $this->db->Connector('data');
+        $sql = $this->sql;
+        $Spoolers = array();
+          
+        $Fields = array (
+            '{spooler}'    => 'SPOOLER_ID',
+            '{start_time}' => 'START_TIME',
+            '{end_time}'   => 'END_TIME' );
 
-     $data = $this->db->Connector('data');
+        $qry = $sql->Select(array('SPOOLER_ID','ERROR','END_TIME','count(ID) as NB'))
+        .$sql->From(array('SCHEDULER_HISTORY'))
+        .$sql->Where($Fields)
+        .$sql->GroupBy(array('SPOOLER_ID','ERROR','END_TIME'))
+        .$sql->OrderBy(array('SPOOLER_ID'));
 
-     $sql = $this->sql;
-     $date = $this->date;
-
-     $Fields = array (
-     '{spooler}'    => 'SPOOLER_ID',
-     '{job_name}'   => 'PATH' );
-
-     $qry = $sql->Select(array('SPOOLER_ID','PATH','STOPPED','NEXT_START_TIME'))
-     .$sql->From(array('SCHEDULER_JOBS'))
-     .$sql->Where($Fields)
-     .$sql->OrderBy(array('SPOOLER_ID','PATH'));
-
-     $res = $data->sql->query( $qry );
-     while ($line = $data->sql->get_next($res)) {
-       $jn = $line['SPOOLER_ID'].'/'.$line['PATH'];
-       if ($line['STOPPED']=='1' ) {
-         $Stopped[$jn] = true;
-       }
-       if ($line['NEXT_START_TIME']!='' ) {
-         $Next_start[$jn] = $line['NEXT_START_TIME'];
-       }
-     }
-
-     /* On prend l'historique */
-     $Fields = array (
-         '{spooler}'    => 'SPOOLER_ID',
-         '{job_name}'   => 'JOB_NAME',
-         '{error}'      => 'ERROR',
-         '{next_start_time}' => 'START_TIME',
-         '{!(spooler)}' => 'JOB_NAME' );
-
-    if( $name != "")
-      $Fields['JOB_NAME'] = $name;
-
-    if (!$ordered)
-      $Fields['{standalone}'] = 'CAUSE';
-
-    $qry = $sql->Select(array('ID','SPOOLER_ID','JOB_NAME','START_TIME','END_TIME','ERROR','ERROR_TEXT','EXIT_CODE','CAUSE','PID'))
-          .$sql->From(array('SCHEDULER_HISTORY'))
-          .$sql->Where($Fields);
-
-    if($spooler != "")
-      $qry .= ' and SPOOLER_ID = \''.$spooler.'\' ';
-
-    $qry .= $sql->OrderBy(array('SPOOLER_ID','JOB_NAME','START_TIME desc'));
-    $res = $data->sql->query( $qry );
-
-    //Traitement
-    $Jobs = array();
-    while ($line = $data->sql->get_next($res)) {
-
-        $id = $line['ID'];
-
-        if (isset($Stopped[$id]) and ($Stopped[$id]==1)) {
-          if ($line['END_TIME']=='')
-          $status = 'STOPPING';
-          else
-          $status = 'STOPPED';
+        $res = $data->sql->query( $qry );
+        while ($line = $data->sql->get_next($res)) {
+            $spooler = $line['SPOOLER_ID'];
+            $Spoolers[$spooler] = $line;        
         }
-        elseif ($line['END_TIME']=='') {
-          $status = 'RUNNING';
-        } // cas des historique
-        elseif ($line['ERROR']>0) {
-          $status = 'FAILURE';
-        }
-        else {
-          $status = 'SUCCESS';
-        }
-
-        if (($only_warning) and ($status == 'SUCCESS')) continue;
-
-        $Jobs[$id]['id'] = $line['ID'];
-        $Jobs[$id]['spooler'] = $line['SPOOLER_ID'];
-        $Jobs[$id]['folder']  = dirname($line['JOB_NAME']);
-        $Jobs[$id]['name']    = basename($line['JOB_NAME']);
-        $Jobs[$id]['dbid'] = $line['ID'];
-        $Jobs[$id]['status'] = $status;
-        $Jobs[$id]['exit'] = $line['EXIT_CODE'];
-        $Jobs[$id]['pid'] = $line['PID'];
-        $Jobs[$id]['cause'] = $line['CAUSE'];
-        $Jobs[$id]['error'] = $line['ERROR'];
-        $Jobs[$id]['error_text'] = $line['ERROR_TEXT'];
         
-        if (isset($Stopped[$id]))
-        $Jobs[$id]['stopped'] = true;
-        if (isset($Next_start[$id]))
-        $Jobs[$id]['next_start'] = $Next_start[$id];
-
-        if ($status=='RUNNING') {
-          list($start,$end,$next,$duration) = $date->getLocaltimes( $line['START_TIME'],gmdate("Y-M-d H:i:s"),'', $line['SPOOLER_ID'], false  );
-          $Jobs[$id]['end'] = '';
-        }
-        else {
-          list($start,$end,$next,$duration) = $date->getLocaltimes( $line['START_TIME'],$line['END_TIME'],'', $line['SPOOLER_ID'], false  );
-          $Jobs[$id]['end'] = $end;
-        }
-        $Jobs[$id]['start'] = $start;
-        $Jobs[$id]['next'] = $next;
-        $Jobs[$id]['duration'] = $duration;
+        return $Spoolers;
     }
-    return $Jobs;
-  }
-
+    
     // Requetes sans jointure pour accélerer l'affichage
     public function Orders($em,$start,$end,$history=0,$nested=false,$only_warning=false,$sort='last') {
       
@@ -159,7 +76,7 @@ class AriiHistory2
            if ($JobChainNode->getAction() == 'stop') $StopNode[$sn]=1;
        }
        
-       $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findStates($start,$end);
+       $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findStates($start,$end,$only_warning);
        foreach($OrderHistory as $Order) {
            if (!$nested) {
                // if (substr($Order->getOrderId(),0,1)=='.') continue;
@@ -298,33 +215,114 @@ class AriiHistory2
        }
        return $New;
     }
-  
-    public function Spoolers() {
 
-        $data = $this->db->Connector('data');
-        $sql = $this->sql;
-        $Spoolers = array();
-          
-        $Fields = array (
-            '{spooler}'    => 'SPOOLER_ID',
-            '{start_time}' => 'START_TIME',
-            '{end_time}'   => 'END_TIME' );
+   //ajout de la variable bool pour dissocier les jobs avec ou sans chaines
+   public function Jobs($history_max=0,$ordered = 0,$only_warning= 1,$next=1, $name="", $spooler="") {
 
-        $qry = $sql->Select(array('SPOOLER_ID','ERROR','END_TIME','count(ID) as NB'))
-        .$sql->From(array('SCHEDULER_HISTORY'))
-        .$sql->Where($Fields)
-        .$sql->GroupBy(array('SPOOLER_ID','ERROR','END_TIME'))
-        .$sql->OrderBy(array('SPOOLER_ID'));
+     $data = $this->db->Connector('data');
 
-        $res = $data->sql->query( $qry );
-        while ($line = $data->sql->get_next($res)) {
-            $spooler = $line['SPOOLER_ID'];
-            $Spoolers[$spooler] = $line;        
+     $sql = $this->sql;
+     $date = $this->date;
+
+     $Fields = array (
+     '{spooler}'    => 'SPOOLER_ID',
+     '{job_name}'   => 'PATH' );
+
+     $qry = $sql->Select(array('SPOOLER_ID','PATH','STOPPED','NEXT_START_TIME'))
+     .$sql->From(array('SCHEDULER_JOBS'))
+     .$sql->Where($Fields)
+     .$sql->OrderBy(array('SPOOLER_ID','PATH'));
+
+     $res = $data->sql->query( $qry );
+     while ($line = $data->sql->get_next($res)) {
+       $jn = $line['SPOOLER_ID'].'/'.$line['PATH'];
+       if ($line['STOPPED']=='1' ) {
+         $Stopped[$jn] = true;
+       }
+       if ($line['NEXT_START_TIME']!='' ) {
+         $Next_start[$jn] = $line['NEXT_START_TIME'];
+       }
+     }
+
+     /* On prend l'historique */
+     $Fields = array (
+         '{spooler}'    => 'SPOOLER_ID',
+         '{job_name}'   => 'JOB_NAME',
+         '{error}'      => 'ERROR',
+         '{next_start_time}' => 'START_TIME',
+         '{!(spooler)}' => 'JOB_NAME' );
+
+    if( $name != "")
+      $Fields['JOB_NAME'] = $name;
+
+    if (!$ordered)
+      $Fields['{standalone}'] = 'CAUSE';
+
+    $qry = $sql->Select(array('ID','SPOOLER_ID','JOB_NAME','START_TIME','END_TIME','ERROR','ERROR_TEXT','EXIT_CODE','CAUSE','PID'))
+          .$sql->From(array('SCHEDULER_HISTORY'))
+          .$sql->Where($Fields);
+
+    if($spooler != "")
+      $qry .= ' and SPOOLER_ID = \''.$spooler.'\' ';
+
+    $qry .= $sql->OrderBy(array('SPOOLER_ID','JOB_NAME','START_TIME desc'));
+    $res = $data->sql->query( $qry );
+
+    //Traitement
+    $Jobs = array();
+    while ($line = $data->sql->get_next($res)) {
+
+        $id = $line['ID'];
+
+        if (isset($Stopped[$id]) and ($Stopped[$id]==1)) {
+          if ($line['END_TIME']=='')
+          $status = 'STOPPING';
+          else
+          $status = 'STOPPED';
         }
-        
-        return $Spoolers;
-    }
+        elseif ($line['END_TIME']=='') {
+          $status = 'RUNNING';
+        } // cas des historique
+        elseif ($line['ERROR']>0) {
+          $status = 'FAILURE';
+        }
+        else {
+          $status = 'SUCCESS';
+        }
 
+        if (($only_warning) and ($status == 'SUCCESS')) continue;
+
+        $Jobs[$id]['id'] = $line['ID'];
+        $Jobs[$id]['spooler'] = $line['SPOOLER_ID'];
+        $Jobs[$id]['folder']  = dirname($line['JOB_NAME']);
+        $Jobs[$id]['name']    = basename($line['JOB_NAME']);
+        $Jobs[$id]['dbid'] = $line['ID'];
+        $Jobs[$id]['status'] = $status;
+        $Jobs[$id]['exit'] = $line['EXIT_CODE'];
+        $Jobs[$id]['pid'] = $line['PID'];
+        $Jobs[$id]['cause'] = $line['CAUSE'];
+        $Jobs[$id]['error'] = $line['ERROR'];
+        $Jobs[$id]['error_text'] = $line['ERROR_TEXT'];
+        
+        if (isset($Stopped[$id]))
+        $Jobs[$id]['stopped'] = true;
+        if (isset($Next_start[$id]))
+        $Jobs[$id]['next_start'] = $Next_start[$id];
+
+        if ($status=='RUNNING') {
+          list($start,$end,$next,$duration) = $date->getLocaltimes( $line['START_TIME'],gmdate("Y-M-d H:i:s"),'', $line['SPOOLER_ID'], false  );
+          $Jobs[$id]['end'] = '';
+        }
+        else {
+          list($start,$end,$next,$duration) = $date->getLocaltimes( $line['START_TIME'],$line['END_TIME'],'', $line['SPOOLER_ID'], false  );
+          $Jobs[$id]['end'] = $end;
+        }
+        $Jobs[$id]['start'] = $start;
+        $Jobs[$id]['next'] = $next;
+        $Jobs[$id]['duration'] = $duration;
+    }
+    return $Jobs;
+  }
     public function Parameters($id) {
 
         $data = $this->db->Connector('data');

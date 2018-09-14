@@ -1,8 +1,8 @@
 /*
 Product Name: dhtmlxSuite 
-Version: 4.5 
+Version: 5.1.0 
 Edition: Standard 
-License: content of this file is covered by GPL. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
+License: content of this file is covered by DHTMLX Commercial or enterpri. Usage outside GPL terms is prohibited. To obtain Commercial or Enterprise license contact sales@dhtmlx.com
 Copyright UAB Dinamenta http://www.dhtmlx.com
 */
 
@@ -19,12 +19,14 @@ dhtmlXEditor.prototype.attachToolbar = function(iconsPath) {
 	});
 	this.setSizes();
 	
+	var ext = (this.conf.skin=="material"?"png":"gif");
+	
 	this._availFonts = new Array("Arial", "Arial Narrow", "Comic Sans MS", "Courier", "Georgia", "Impact", "Tahoma", "Times New Roman", "Verdana");
 	this._initFont = this._availFonts[0];
 	this._xmlFonts = "";
 	for (var q=0; q<this._availFonts.length; q++) {
 		var fnt = String(this._availFonts[q]).replace(/\s/g,"_");
-		this._xmlFonts += '<item type="button" id="applyFontFamily:'+fnt+'"><itemText><![CDATA[<img src="'+this.tb.imagePath+'font_'+String(fnt).toLowerCase()+'.gif" border="0" style="/*margin-top:1px;margin-bottom:1px;*/width:110px;height:16px;">]]></itemText></item>';
+		this._xmlFonts += '<item type="button" id="applyFontFamily:'+fnt+'"><itemText><![CDATA[<img src="'+this.tb.imagePath+'font_'+String(fnt).toLowerCase()+'.'+ext+'" border="0" style="/*margin-top:1px;margin-bottom:1px;*/width:110px;height:16px;">]]></itemText></item>';
 	}
 	//
 	this._availSizes = {"1":"8pt", "2":"10pt", "3":"12pt", "4":"14pt", "5":"18pt", "6":"24pt", "7":"36pt"};
@@ -34,36 +36,36 @@ dhtmlXEditor.prototype.attachToolbar = function(iconsPath) {
 	}
 	this.tbXML = '<toolbar>'+
 				// h1-h4
-				'<item id="applyH1" type="buttonTwoState" img="h1.gif" imgdis="h4_dis.gif" title="H1"/>'+
-				'<item id="applyH2" type="buttonTwoState" img="h2.gif" imgdis="h4_dis.gif" title="H2"/>'+
-				'<item id="applyH3" type="buttonTwoState" img="h3.gif" imgdis="h4_dis.gif" title="H3"/>'+
-				'<item id="applyH4" type="buttonTwoState" img="h4.gif" imgdis="h4_dis.gif" title="H4"/>'+
+				'<item id="applyH1" type="buttonTwoState" img="h1.'+ext+'" imgdis="h4_dis.'+ext+'" title="H1"/>'+
+				'<item id="applyH2" type="buttonTwoState" img="h2.'+ext+'" imgdis="h4_dis.'+ext+'" title="H2"/>'+
+				'<item id="applyH3" type="buttonTwoState" img="h3.'+ext+'" imgdis="h4_dis.'+ext+'" title="H3"/>'+
+				'<item id="applyH4" type="buttonTwoState" img="h4.'+ext+'" imgdis="h4_dis.'+ext+'" title="H4"/>'+
 				'<item id="separ01" type="separator"/>'+
 				// text
-				'<item id="applyBold" type="buttonTwoState" img="bold.gif" imgdis="bold_dis.gif" title="Bold Text"/>'+
-				'<item id="applyItalic" type="buttonTwoState" img="italic.gif" imgdis="italic_dis.gif" title="Italic Text"/>'+
-				'<item id="applyUnderscore" type="buttonTwoState" img="underline.gif" imgdis="underline_dis.gif" title="Underscore Text"/>'+
-				'<item id="applyStrikethrough" type="buttonTwoState" img="strike.gif" imgdis="strike_dis.gif" title="Strikethrough Text"/>'+
+				'<item id="applyBold" type="buttonTwoState" img="bold.'+ext+'" imgdis="bold_dis.'+ext+'" title="Bold Text"/>'+
+				'<item id="applyItalic" type="buttonTwoState" img="italic.'+ext+'" imgdis="italic_dis.'+ext+'" title="Italic Text"/>'+
+				'<item id="applyUnderscore" type="buttonTwoState" img="underline.'+ext+'" imgdis="underline_dis.'+ext+'" title="Underscore Text"/>'+
+				'<item id="applyStrikethrough" type="buttonTwoState" img="strike.'+ext+'" imgdis="strike_dis.'+ext+'" title="Strikethrough Text"/>'+
 				'<item id="separ02" type="separator"/>'+
 				// align
-				'<item id="alignLeft" type="buttonTwoState" img="align_left.gif" imgdis="align_left_dis.gif" title="Left Alignment"/>'+
-				'<item id="alignCenter" type="buttonTwoState" img="align_center.gif" imgdis="align_center_dis.gif" title="Center Alignment"/>'+
-				'<item id="alignRight" type="buttonTwoState" img="align_right.gif" imgdis="align_right_dis.gif" title="Right Alignment"/>'+
-				'<item id="alignJustify" type="buttonTwoState" img="align_justify.gif" title="Justified Alignment"/>'+
+				'<item id="alignLeft" type="buttonTwoState" img="align_left.'+ext+'" imgdis="align_left_dis.'+ext+'" title="Left Alignment"/>'+
+				'<item id="alignCenter" type="buttonTwoState" img="align_center.'+ext+'" imgdis="align_center_dis.'+ext+'" title="Center Alignment"/>'+
+				'<item id="alignRight" type="buttonTwoState" img="align_right.'+ext+'" imgdis="align_right_dis.'+ext+'" title="Right Alignment"/>'+
+				'<item id="alignJustify" type="buttonTwoState" img="align_justify.'+ext+'" title="Justified Alignment"/>'+
 				'<item id="separ03" type="separator"/>'+
 				// sub/super script
-				'<item id="applySub" type="buttonTwoState" img="script_sub.gif" imgdis="script_sub.gif" title="Subscript"/>'+
-				'<item id="applySuper" type="buttonTwoState" img="script_super.gif" imgdis="script_super_dis.gif" title="Superscript"/>'+
+				'<item id="applySub" type="buttonTwoState" img="script_sub.'+ext+'" imgdis="script_sub.'+ext+'" title="Subscript"/>'+
+				'<item id="applySuper" type="buttonTwoState" img="script_super.'+ext+'" imgdis="script_super_dis.'+ext+'" title="Superscript"/>'+
 				'<item id="separ04" type="separator"/>'+
 				// etc
-				'<item id="createNumList" type="button" img="list_number.gif" imgdis="list_number_dis.gif" title="Number List"/>'+
-				'<item id="createBulList" type="button" img="list_bullet.gif" imgdis="list_bullet_dis.gif" title="Bullet List"/>'+
+				'<item id="createNumList" type="button" img="list_number.'+ext+'" imgdis="list_number_dis.'+ext+'" title="Number List"/>'+
+				'<item id="createBulList" type="button" img="list_bullet.'+ext+'" imgdis="list_bullet_dis.'+ext+'" title="Bullet List"/>'+
 				'<item id="separ05" type="separator"/>'+
 				//
-				'<item id="increaseIndent" type="button" img="indent_inc.gif" imgdis="indent_inc_dis.gif" title="Increase Indent"/>'+
-				'<item id="decreaseIndent" type="button" img="indent_dec.gif" imgdis="indent_dec_dis.gif" title="Decrease Indent"/>'+
+				'<item id="increaseIndent" type="button" img="indent_inc.'+ext+'" imgdis="indent_inc_dis.'+ext+'" title="Increase Indent"/>'+
+				'<item id="decreaseIndent" type="button" img="indent_dec.'+ext+'" imgdis="indent_dec_dis.'+ext+'" title="Decrease Indent"/>'+
 				'<item id="separ06" type="separator"/>'+
-				'<item id="clearFormatting" type="button" img="clear.gif" title="Clear Formatting"/>'+
+				'<item id="clearFormatting" type="button" img="clear.'+ext+'" title="Clear Formatting"/>'+
 			'</toolbar>';
 	
 	this.tb.loadStruct(this.tbXML);

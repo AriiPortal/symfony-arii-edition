@@ -16,8 +16,24 @@ class AriiExec {
         set_include_path('../vendor/phpseclib' . PATH_SEPARATOR . get_include_path());
         include('Net/SSH2.php');
         define('NET_SSH2_LOGGING', NET_SSH2_LOG_COMPLEX);
-        include('Crypt/RSA.php');
-        
+        include('Crypt/RSA.php');        
+    }
+    
+    public function ExecNodeName($name,$command,$stdin='') {
+        $conn = $this->portal->getConnectionByName($name);
+        if (!$conn)
+            if (($p=strpos($name,'.'))>0)
+                $conn = $this->portal->getConnectionByName(substr($name,0,$p));
+        if (!$conn) {
+            $this->portal->ErrorLog("!Unknown node '$name'".$url, 0, __FILE__, __LINE__, "ERROR at: ".__FILE__." function: ".__FUNCTION__." line: ".__LINE__.": !ERROR: Connection failed! Please make sure the node exists!");
+            return;
+        }
+        // compatibilité ascendante
+        $Compat = array( 'user' => 'login', 'key' => 'private_key');
+        foreach ( $Compat as $o=>$n) {
+            $conn[$o] = $conn[$n];
+        }
+        return $this->Exec($conn,$command,$stdin='');
     }
     
     public function ExecNodeId($id,$command,$stdin='') {
@@ -59,28 +75,30 @@ class AriiExec {
         
         $host = $shell['host'];
         $user = $shell['user'];
-
+        $shell['key'] = 'AAAAFCLwTNonZi6Q+Ejc4RbWi5WtJm6L';
         $ssh = new \Net_SSH2($host);
-        if (isset($shell['key'])) {
-            $key = new \Crypt_RSA();
-            $ret = $key->loadKey($shell['key']);
-            if (!$ret) {
-                $this->status = '!KEY';
-                throw new \Exception($ssh->getLog());
-            }
+        switch($shell['auth_method']) {
+            case 'key':
+                $key = new \Crypt_RSA();
+                $ret = $key->loadKey($shell['key']);
+                if (!$ret) {
+                    $this->status = '!KEY';
+                    // throw new \Exception('!KEY '.$shell['key']);
+                    throw new \Exception($ssh->getLog());
+                }
+                break;
+            case 'password':
+                $key = $shell['password'];
+                break;
+            default:
+                $key = ''; // ?! possible ?
+                break;
         }
-        elseif (isset($shell['password'])) {
-            $key = $shell['password'];
-        }
-        else {
-            $key = ''; // ?! possible ?
-        }
-
-        if (!@$ssh->login($shell['user'], $key)) {
+        if (!$ssh->login($shell['user'], $key)) {
             $this->status = '!LOGIN';
-            throw new \Exception($ssh->getLog());
+            throw new \Exception('!LOGIN '.$shell['user']);
+            //throw new \Exception($ssh->getLog());
         }
-
         $this->status = 'RUNNING';
         if ($stdin=='')
             return [0, $ssh->exec("$command")];

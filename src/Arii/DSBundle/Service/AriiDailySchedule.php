@@ -27,11 +27,9 @@ class AriiDailySchedule
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
-   public function DailySchedule( $cyclic = 0, $only_warning=1, $standalone=1) {   
-        $data = $this->db->Connector('data');
-        $sql = $this->sql;
-        $date = $this->date;
-        
+   public function DailySchedule($em, $cyclic = 0, $only_warning=1, $standalone=1) { 
+
+         
         $Fields = array (
         '{spooler}'    => 'SCHEDULER_ID',
         '{job_name}'   => 'JOB',
@@ -46,6 +44,8 @@ class AriiDailySchedule
         else {
             $Fields['JOB'] ='(null)';            
         } 
+        $DaysSchedule = $em->getRepository("AriiJIDBundle:DaysSchedule")->findDailySchedule();
+        
         $qry = $sql->Select(array('ID','SCHEDULER_ID','SCHEDULER_HISTORY_ID','SCHEDULER_ORDER_HISTORY_ID','JOB','JOB_CHAIN','ORDER_ID','day(SCHEDULE_PLANNED) as SCHEDULE_PLANNED','day(SCHEDULE_EXECUTED) as SCHEDULE_EXECUTED','PERIOD_BEGIN','PERIOD_END','IS_REPEAT','START_START','STATUS','RESULT','CREATED','MODIFIED')) 
                 .$sql->From(array('DAYS_SCHEDULE'))
                 .$sql->Where($Fields)
@@ -86,6 +86,8 @@ class AriiDailySchedule
             $Jobs[$id]['STATUS'] = $status;
         }  
         return $Jobs;
+        print_r($Jobs);
+        exit();
    }
 
 }

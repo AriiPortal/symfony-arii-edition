@@ -55,6 +55,10 @@ class SessionController extends Controller
         if ($request->query->get( 'refresh' ))
             $portal->setRefresh( $request->query->get( 'refresh' ) );
 
+        // Attention 0 est un false
+        if ($request->query->get( 'refresh_pause' )<>'')
+            $portal->setRefreshPause( $request->query->get( 'refresh_pause' ) );
+
         if ($request->query->get( 'env' )) 
             $portal->setEnv( $request->query->get( 'env' ) );
 

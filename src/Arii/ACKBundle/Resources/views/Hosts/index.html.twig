@@ -4,32 +4,32 @@
 var State = {"OK": 0, "WARNING": 1, "CRITICAL": 1}
 
 function Init() {
-    mySidebar.items('services').setActive();
+    mySidebar.items('hosts').setActive();
 
     myLayout = globalLayout.cells("b").attachLayout('2U');
-    myLayout.cells("a").setText("{{ "Services" | trans }}");
+    myLayout.cells("a").setText("{{ "Hosts" | trans }}");
 
     myToolbar = myLayout.cells("a").attachToolbar();
     myToolbar.setIconsPath("{{ asset('/images/') }}");
-    myToolbar.loadStruct("{{ url('xml_ACK_services_toolbar') }}");
+    myToolbar.loadStruct("{{ url('xml_ACK_hosts_toolbar') }}");
     myToolbar.attachEvent("onStateChange", function (id,state) {
         State[id] = state;
-        PageRefresh();        
+        PageRefresh();
     });
             
     myGrid = myLayout.cells("a").attachGrid();
     myGrid.setImagePath( "{{ asset('/images/') }}");
-    myGrid.setHeader("{{ "Host" | trans }},{{ "Name" | trans }},{{ "Description" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
-    myGrid.setInitWidths("100,150,*,100,160");
-    myGrid.setColAlign("left,left,left,center,right");
-    myGrid.setColTypes("ro,ro,ro,ro,ro");
-    myGrid.setColSorting("str,str,str,str,date");
+    myGrid.setHeader("{{ "Name" | trans }},{{ "Description" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
+    myGrid.attachHeader("#text_filter,#text_filter,#select_filter,#text_filter");
+    myGrid.setInitWidths("150,*,100,160");
+    myGrid.setColAlign("left,left,center,right");
+    myGrid.setColTypes("ro,ro,ro,ro");
+    myGrid.setColSorting("str,str,str,date");
     myGrid.enableAlterCss("even_row","odd_row");   
     myGrid.enableDragAndDrop(true);    
     myGrid.init();
     myGrid.attachEvent("onRowDblClicked", function (rid) {
-        EditService(rid);
+        EditHost(rid);
     });
     myGrid.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
         changeState(sId,sObj,tObj);
@@ -45,6 +45,8 @@ function Init() {
                 {type: "input", name: 'title', label:'{{ 'Title' | trans }}' },
                 {type: "input", name: 'description', label:'{{ 'Description' | trans }}', rows: 4 },
                 {type: "input", name: 'host_name', label:'{{ 'Host' | trans }}' },
+                {type: "input", name: 'ip_address', label:'{{ 'Ip adress' | trans }}' },
+                {type: "input", name: 'port', label:'{{ 'Port' | trans }}' },
                 {type: "input", name: 'state', label:'{{ 'Statut' | trans }}' },
                 {type: "input", name: 'state_time', label:'{{ 'State time' | trans }}' },
                 {type: "input", name: 'state_information', label:'{{ 'Information' | trans }}', rows: 2 },
@@ -73,15 +75,15 @@ function PageRefresh() {
     for (var i in State) {
        s += State[i] + "|";
     }
-    myGrid.load( "{{ url('xml_ACK_services_grid') }}?state="+s, function() {
+    myGrid.load( "{{ url('xml_ACK_hosts_grid') }}?state="+s, function() {
         myGrid.refreshFilters();
         myGrid.filterByAll();
     });
 }
 
-function EditService (id) {
+function EditHost (id) {
     myLayout.cells('b').progressOn();
-    myForm.load("{{ url('xml_ACK_service_form') }}?id="+id,function(){
+    myForm.load("{{ url('xml_ACK_host_form') }}?id="+id,function(){
         myLayout.cells('b').progressOff();
     });
 }

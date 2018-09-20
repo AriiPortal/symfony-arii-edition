@@ -10,22 +10,11 @@
 {% endblock dhtmlx_plus %}
 {% block onload %}
 <script language="javascript">
-var bundle='Admin';
-var update=5;
 dhtmlxEvent(window,"load",function(){   
     var size=200;
-    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
-    globalLayout.cells("a").setHeight(120); 
-    globalLayout.cells("b").setWidth(size); 
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    mySidebar = globalLayout.cells("b").attachSidebar({
+    AriiLayout('Admin','',size);
+    
+    mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         width: size,
         items:
@@ -68,18 +57,9 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });
     Init();
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("c").hideHeader();
-    GlobalRefresh();
-    autorefresh = setInterval( "GlobalRefresh()",update*1000);
 });
 </script>
 {% endblock onload %}
-
 {% block script %}
-<script language="javascript">      
-function GlobalRefresh() {
-}
-</script>
 {% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}

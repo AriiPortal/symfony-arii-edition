@@ -26,7 +26,7 @@ class AlertsController extends Controller{
         
         $Errors = $this->getDoctrine()->getRepository('AriiACKBundle:Alert')->listState($state);
         $render = $this->container->get('arii_core.render');     
-        return $render->grid($Errors,'event_type,name,title,status,state,end_time','state');
+        return $render->grid($Errors,'name,title,status');
     }
     
     public function formAction()

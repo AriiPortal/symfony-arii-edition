@@ -1,0 +1,78 @@
+{% extends "AriiACKBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+var bundle='Graphviz';    
+var toolbar;
+var rankdir = 'TB';
+var splines = 'polyline';
+var graph_path= 'live';
+var graph_file= '.*';
+var graph_paths = '';
+var show_params = 'n';
+var show_events = 'n';
+var show_jobs = 'n';
+var show_chains = 'n';
+var show_config = 'n';
+var path= 'live';
+var folder = '';
+var graph;
+    
+function Init() {
+    mySidebar.items('graphs').setActive();
+
+    myLayout = globalLayout.cells("b").attachLayout('2U');
+    myLayout.cells("a").hideHeader();
+    myLayout.cells("b").hideHeader();
+    myLayout.cells("a").setWidth(400);
+    myLayout.attachEvent("onContentLoaded", function(win){
+        myLayout.cells("b").progressOff();
+    });
+
+    myGrid = myLayout.cells("a").attachGrid();
+    myGrid.setImagePath( "{{ asset('/images/') }}");
+    myGrid.setHeader("{{ "Name" | trans }},{{ "Title" | trans }}");
+    myGrid.attachHeader("#text_filter,#text_filter");
+    myGrid.setInitWidths("80,*");
+    myGrid.setColAlign("right,right");
+    myGrid.setColTypes("ro,ro");
+    myGrid.setColSorting("str,str");
+    myGrid.enableAlterCss("even_row","odd_row");   
+    myGrid.enableDragAndDrop(true);    
+    myGrid.init();
+//    myGrid.enableContextMenu(myGridMenu);
+    myGrid.load("{{  url('xml_ACK_graph_grid') }}");
+    myGrid.attachEvent("onRowDblClicked", function (rid) {
+        graph = rid;
+        DrawView();    
+    });
+    
+    // Partie graphique
+    myLayout.cells("b").attachURL('{{ asset('/images/arii.jpg') }}'); 
+}
+
+function PageRefresh() {
+    DrawView();        
+}
+
+function DrawView() {
+    url = GetUrl();
+    myLayout.cells("b").progressOn();
+    myLayout.cells("b").attachURL(url);
+}
+
+
+function GetUrl() {
+    var url = "{{ url('svg_ACK_graph') }}";
+    url += "?view="+graph;
+    url += "&splines="+encodeURIComponent(splines);
+    url += "&paths="+encodeURIComponent(graph_paths);
+    url += "&show_params="+encodeURIComponent(show_params);
+    url += "&show_events="+encodeURIComponent(show_events);
+    url += "&show_chains="+encodeURIComponent(show_chains);
+    url += "&show_jobs="+encodeURIComponent(show_jobs);
+    url += "&show_config="+encodeURIComponent(show_config);
+return url;
+}
+
+</script>
+{% endblock %}

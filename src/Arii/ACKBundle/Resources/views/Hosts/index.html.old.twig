@@ -2,23 +2,19 @@
 {% block body %}
 <script language="javascript">
 function Init() {
-    mySidebar.items('network').setActive();
+    mySidebar.items('hosts').setActive();
 
-    myToolbar.loadStruct('{{ url('xml_ARII_toolbar') }}?refresh=1', function() {
-        ToolbarTime();
-    });
-
-    myLayout = globalLayout.cells("c").attachLayout('3J');
+    myLayout = globalLayout.cells("b").attachLayout('3J');
     myLayout.cells("a").setText("{{ "Hosts" | trans }}");
 
     myGrid = myLayout.cells("a").attachGrid();
     myGrid.setImagePath( "{{ asset('/images/') }}");
-    myGrid.setHeader("{{ "Type" | trans }},{{ "Name" | trans }},{{ "Title" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
-    myGrid.setInitWidths("100,100,*,100,160");
-    myGrid.setColAlign("right,left,left,center,right");
-    myGrid.setColTypes("ro,ro,ro,ro,ro");
-    myGrid.setColSorting("str,str,str,str,date");
+    myGrid.setHeader("{{ "Name" | trans }},{{ "Title" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
+    myGrid.attachHeader("#text_filter,#text_filter,#select_filter,#text_filter");
+    myGrid.setInitWidths("100,*,100,160");
+    myGrid.setColAlign("left,left,center,right");
+    myGrid.setColTypes("ro,ro,ro,ro");
+    myGrid.setColSorting("str,str,str,date");
     myGrid.enableAlterCss("even_row","odd_row");   
     myGrid.enableDragAndDrop(true);    
     myGrid.init();
@@ -28,7 +24,7 @@ function Init() {
     myGrid.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
         changeState(sId,sObj,tObj);
     });
-    
+
     myTabbar = myLayout.cells("c").attachTabbar();
     myTabbar.addTab("ack","{{ "Escalated" | trans }}","150px", null, true);
     myTabbar.addTab("close","{{ "Closed" | trans }}","150px");
@@ -86,16 +82,6 @@ function Init() {
    ];
     myForm = myTabbar2.cells("detail").attachForm(formData);
     
-    myToolbar.attachEvent("onClick", function(id){
-        switch (id) {
-            case 'refresh':
-                myGrid.updateFromXML("{{ url('xml_ACK_network_grid') }}");
-                break;
-            default:
-                alert(id);
-            }
-    });
-        
     myActions = myTabbar2.cells("actions").attachGrid();
     myActions.setImagePath( "{{ asset('/images/') }}");
     myActions.setHeader("{{ "Title" | trans }},{{ "Time" | trans }},{{ "Name" | trans }}");
@@ -120,7 +106,7 @@ function Init() {
     myGridEsc.enableAlterCss("even_row","odd_row"); 
     myGridEsc.enableDragAndDrop(true);    
     myGridEsc.init();
-    myGridEsc.load( "{{ url('xml_ACK_network_grid') }}?state=ESC." );
+    myGridEsc.load( "{{ url('xml_ACK_hosts_grid') }}?state=ESC." );
     myGridEsc.attachEvent("onRowDblClicked", function (rid) {
         EditEvent(rid);
     });
@@ -139,7 +125,7 @@ function Init() {
     myGridClose.enableAlterCss("even_row","odd_row");    
     myGridClose.enableDragAndDrop(true);    
     myGridClose.init();
-    myGridClose.load( "{{ url('xml_ACK_network_grid') }}?state=CLOSE" );
+    myGridClose.load( "{{ url('xml_ACK_hosts_grid') }}?state=CLOSE" );
     myGridClose.attachEvent("onRowDblClicked", function (rid) {
         EditEvent(rid);
     });
@@ -150,7 +136,7 @@ function Init() {
 }
 
 function PageRefresh() {
-    myGrid.load( "{{ url('xml_ACK_network_grid') }}?state=OPEN" );
+    myGrid.load( "{{ url('xml_ACK_hosts_grid') }}?state=OPEN" );
 }
 
 function changeState(rowId,sgrid,tgrid) {
@@ -175,7 +161,7 @@ function changeState(rowId,sgrid,tgrid) {
     layout.progressOn();
     dhx4.ajax.get( "{{ url('txt_ACK_event_state') }}?id="+rowId+'&state='+state, function(loader,response) {  
         // On verifie que c'est bien en base de données
-        tgrid.load( "{{ url('xml_ACK_network_grid') }}?state="+state, function() {
+        tgrid.load( "{{ url('xml_ACK_hosts_grid') }}?state="+state, function() {
             // Si oui , on supprime l'ancien
             sgrid.deleteRow(rowId);
             layout.progressOff();
@@ -191,27 +177,6 @@ function EditEvent (id) {
             myLayout.cells('b').progressOff();
         });
     });
-}
-
-function ClickToolbar (itemid,state) {
-    var id = itemid.split('_');    
-    switch (id[0]) {
-        case 'refresh':
-            myGrid.updateFromXML("{{ url('xml_ACK_notifications_grid') }}");
-            break;
-        case 'EXPORT':
-            switch (id[1]) {
-                case 'xls':
-                    alert("{{ url('xls_ACK_notifications') }}");
-                    window.location.href= "{{ url('xls_ACK_notifications') }}";                
-                    break;
-                default:
-                    alert(id);
-            }
-            break;
-        default:
-            alert(id);
-        }
 }
 </script>
 {% endblock %}

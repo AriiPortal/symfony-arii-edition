@@ -4,11 +4,7 @@
 function Init() {
     mySidebar.items('alarms').setActive();
 
-    myToolbar.loadStruct('{{ url('xml_ARII_toolbar') }}?refresh=1', function() {
-        ToolbarTime();
-    });
-
-    myLayout = globalLayout.cells("c").attachLayout('3J');
+    myLayout = globalLayout.cells("b").attachLayout('3J');
     myLayout.cells("a").hideHeader();
 
  /*
@@ -99,16 +95,6 @@ Remplacé par drag&drop
     myFormToolbar = myTabbar2.cells("detail").attachToolbar();
     myFormToolbar.setIconsPath("{{ asset('/images/') }}");
     myFormToolbar.loadStruct("{{ url('xml_ACK_event_toolbar') }}");
-    
-    myToolbar.attachEvent("onClick", function(id){
-        switch (id) {
-            case 'refresh':
-                myGrid.updateFromXML("{{ url('xml_ACK_alarms_grid') }}");
-                break;
-            default:
-                alert(id);
-            }
-    });
     
     myFormToolbar.attachEvent("onClick", function(id){
         switch (id) {
@@ -297,27 +283,6 @@ function EditEvent (id) {
             myLayout.cells('b').progressOff();
         });
     });
-}
-
-function ClickToolbar (itemid,state) {
-    var id = itemid.split('_');    
-    switch (id[0]) {
-        case 'refresh':
-            myGrid.updateFromXML("{{ url('xml_ACK_notifications_grid') }}");
-            break;
-        case 'EXPORT':
-            switch (id[1]) {
-                case 'xls':
-                    alert("{{ url('xls_ACK_notifications') }}");
-                    window.location.href= "{{ url('xls_ACK_notifications') }}";                
-                    break;
-                default:
-                    alert(id);
-            }
-            break;
-        default:
-            alert(id);
-        }
 }
 </script>
 {% endblock %}

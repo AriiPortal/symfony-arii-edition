@@ -5,14 +5,14 @@ namespace Arii\ACKBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Network
+ * Service
  * Etat de l'infrastructure
  * 
- * @ORM\Table(name="ARII_NETWORK")
- * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\NetworkRepository")
+ * @ORM\Table(name="ARII_SERVICE")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\ServiceRepository")
  * 
  */
-class Network
+class Service
 {
     public function __construct()
     {
@@ -48,27 +48,6 @@ class Network
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     private $description;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="host", type="string", length=64, nullable=true)
-     */
-    private $host;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ip_address", type="string", length=16, nullable=true)
-     */
-    private $ip_address;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="port", type="integer", nullable=true)
-     */
-    private $port;
 
      /**
      * @var string
@@ -189,14 +168,22 @@ class Network
      */        
     private $event_type;
 
+
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="host_name", type="string", length=255, nullable=true )
+     */        
+    private $host_name;
+    
     /**
-    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Alarm")
+    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Host",cascade={"persist"})
     * @ORM\JoinColumn(nullable=true)
     */
-    private $alarm;
-
+    private $host;
+    
     /**
-    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Object")
+    * @ORM\OneToOne(targetEntity="Arii\ACKBundle\Entity\Object")
     * @ORM\JoinColumn(nullable=true)
     */
     private $object;
@@ -215,7 +202,7 @@ class Network
      * Set name
      *
      * @param string $name
-     * @return Network
+     * @return Service
      */
     public function setName($name)
     {
@@ -238,7 +225,7 @@ class Network
      * Set title
      *
      * @param string $title
-     * @return Network
+     * @return Service
      */
     public function setTitle($title)
     {
@@ -261,7 +248,7 @@ class Network
      * Set description
      *
      * @param string $description
-     * @return Network
+     * @return Service
      */
     public function setDescription($description)
     {
@@ -281,79 +268,10 @@ class Network
     }
 
     /**
-     * Set host
-     *
-     * @param string $host
-     * @return Network
-     */
-    public function setHost($host)
-    {
-        $this->host = $host;
-
-        return $this;
-    }
-
-    /**
-     * Get host
-     *
-     * @return string 
-     */
-    public function getHost()
-    {
-        return $this->host;
-    }
-
-    /**
-     * Set ip_address
-     *
-     * @param string $ipAddress
-     * @return Network
-     */
-    public function setIpAddress($ipAddress)
-    {
-        $this->ip_address = $ipAddress;
-
-        return $this;
-    }
-
-    /**
-     * Get ip_address
-     *
-     * @return string 
-     */
-    public function getIpAddress()
-    {
-        return $this->ip_address;
-    }
-
-    /**
-     * Set port
-     *
-     * @param integer $port
-     * @return Network
-     */
-    public function setPort($port)
-    {
-        $this->port = $port;
-
-        return $this;
-    }
-
-    /**
-     * Get port
-     *
-     * @return integer 
-     */
-    public function getPort()
-    {
-        return $this->port;
-    }
-
-    /**
      * Set status
      *
      * @param string $status
-     * @return Network
+     * @return Service
      */
     public function setStatus($status)
     {
@@ -376,7 +294,7 @@ class Network
      * Set status_time
      *
      * @param \DateTime $statusTime
-     * @return Network
+     * @return Service
      */
     public function setStatusTime($statusTime)
     {
@@ -399,7 +317,7 @@ class Network
      * Set state
      *
      * @param string $state
-     * @return Network
+     * @return Service
      */
     public function setState($state)
     {
@@ -422,7 +340,7 @@ class Network
      * Set state_time
      *
      * @param \DateTime $stateTime
-     * @return Network
+     * @return Service
      */
     public function setStateTime($stateTime)
     {
@@ -445,7 +363,7 @@ class Network
      * Set state_information
      *
      * @param string $stateInformation
-     * @return Network
+     * @return Service
      */
     public function setStateInformation($stateInformation)
     {
@@ -468,7 +386,7 @@ class Network
      * Set acknowledgement_type
      *
      * @param string $acknowledgementType
-     * @return Network
+     * @return Service
      */
     public function setAcknowledgementType($acknowledgementType)
     {
@@ -491,7 +409,7 @@ class Network
      * Set acknowledged
      *
      * @param boolean $acknowledged
-     * @return Network
+     * @return Service
      */
     public function setAcknowledged($acknowledged)
     {
@@ -514,7 +432,7 @@ class Network
      * Set downtimes
      *
      * @param string $downtimes
-     * @return Network
+     * @return Service
      */
     public function setDowntimes($downtimes)
     {
@@ -537,7 +455,7 @@ class Network
      * Set downtimes_info
      *
      * @param string $downtimesInfo
-     * @return Network
+     * @return Service
      */
     public function setDowntimesInfo($downtimesInfo)
     {
@@ -560,7 +478,7 @@ class Network
      * Set downtimes_user
      *
      * @param string $downtimesUser
-     * @return Network
+     * @return Service
      */
     public function setDowntimesUser($downtimesUser)
     {
@@ -583,7 +501,7 @@ class Network
      * Set last_state_change
      *
      * @param \DateTime $lastStateChange
-     * @return Network
+     * @return Service
      */
     public function setLastStateChange($lastStateChange)
     {
@@ -606,7 +524,7 @@ class Network
      * Set last_time_down
      *
      * @param \DateTime $lastTimeDown
-     * @return Network
+     * @return Service
      */
     public function setLastTimeDown($lastTimeDown)
     {
@@ -629,7 +547,7 @@ class Network
      * Set last_time_unreachable
      *
      * @param \DateTime $lastTimeUnreachable
-     * @return Network
+     * @return Service
      */
     public function setLastTimeUnreachable($lastTimeUnreachable)
     {
@@ -652,7 +570,7 @@ class Network
      * Set last_time_up
      *
      * @param \DateTime $lastTimeUp
-     * @return Network
+     * @return Service
      */
     public function setLastTimeUp($lastTimeUp)
     {
@@ -675,7 +593,7 @@ class Network
      * Set latency
      *
      * @param float $latency
-     * @return Network
+     * @return Service
      */
     public function setLatency($latency)
     {
@@ -694,12 +612,11 @@ class Network
         return $this->latency;
     }
 
-
     /**
      * Set event_source
      *
      * @param string $eventSource
-     * @return Network
+     * @return Service
      */
     public function setEventSource($eventSource)
     {
@@ -722,7 +639,7 @@ class Network
      * Set event_type
      *
      * @param string $eventType
-     * @return Network
+     * @return Service
      */
     public function setEventType($eventType)
     {
@@ -742,33 +659,56 @@ class Network
     }
 
     /**
-     * Set alarm
+     * Set host_name
      *
-     * @param \Arii\ACKBundle\Entity\Alarm $alarm
-     * @return Network
+     * @param string $hostName
+     * @return Service
      */
-    public function setAlarm(\Arii\ACKBundle\Entity\Alarm $alarm = null)
+    public function setHostName($hostName)
     {
-        $this->alarm = $alarm;
+        $this->host_name = $hostName;
 
         return $this;
     }
 
     /**
-     * Get alarm
+     * Get host_name
      *
-     * @return \Arii\ACKBundle\Entity\Alarm 
+     * @return string 
      */
-    public function getAlarm()
+    public function getHostName()
     {
-        return $this->alarm;
+        return $this->host_name;
+    }
+
+    /**
+     * Set host
+     *
+     * @param \Arii\ACKBundle\Entity\Host $host
+     * @return Service
+     */
+    public function setHost(\Arii\ACKBundle\Entity\Host $host = null)
+    {
+        $this->host = $host;
+
+        return $this;
+    }
+
+    /**
+     * Get host
+     *
+     * @return \Arii\ACKBundle\Entity\Host 
+     */
+    public function getHost()
+    {
+        return $this->host;
     }
 
     /**
      * Set object
      *
      * @param \Arii\ACKBundle\Entity\Object $object
-     * @return Network
+     * @return Service
      */
     public function setObject(\Arii\ACKBundle\Entity\Object $object = null)
     {

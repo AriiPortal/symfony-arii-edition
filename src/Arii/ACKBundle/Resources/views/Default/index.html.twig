@@ -3,7 +3,7 @@
 <script language="javascript">
 function Init() {
 //    myLayout = globalLayout.cells("a").attachLayout('2U');        
-    myJobs =  globalLayout.cells("c").attachChart({
+    myJobs =  globalLayout.cells("b").attachChart({
             view:"donut",
             value:"#NB#",
             label:"",
@@ -19,7 +19,7 @@ function Init() {
                 align:"left"
             } 
     });
-    myJobs.load( "{{ url('xml_ACK_network_pie') }}" );
+    myJobs.load( "{{ url('xml_ACK_host_pie') }}" );
 }
 
 function PageRefresh() {};

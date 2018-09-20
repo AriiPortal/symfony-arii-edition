@@ -31,6 +31,14 @@ arii_ACK_alarms_add:
     defaults: { _controller: AriiACKBundle:Alarms:add }
 
 #============================================================
+# Containers
+#------------------------------------------------------------
+arii_ACK_containers:
+    path:  /containers
+    defaults: { _controller: AriiACKBundle:Containers:index }    
+
+
+#============================================================
 # Notifications
 #------------------------------------------------------------
 arii_ACK_notifications:
@@ -129,6 +137,21 @@ xml_ACK_event_toolbar:
 txt_ACK_event_state:
     path:  /event/state.txt
     defaults: { _controller: AriiACKBundle:Events:state}
+
+#============================================================
+# Graphs
+#------------------------------------------------------------
+arii_ACK_graphs:
+    path:  /graphs
+    defaults: { _controller: AriiACKBundle:Graphs:index }
+
+svg_ACK_graph:
+    path:  /graph.svg
+    defaults: { _controller: AriiACKBundle:Graphs:generate }
+
+xml_ACK_graph_grid:
+    path:  /graphs/grid.xlm
+    defaults: { _controller: AriiACKBundle:Graphs:grid }
 
 #============================================================
 # Alarms
@@ -292,6 +315,17 @@ xml_ACK_objects_grid:
 xml_ACK_objects_grid_menu:
     path:  /objects/grid_menu.xml
     defaults: { _controller: AriiACKBundle:Objects:grid_menu}
+
+#============================================================
+# Links
+#------------------------------------------------------------
+xml_ACK_contains_grid:
+    path:  /contains/grid.xml
+    defaults: { _controller: AriiACKBundle:Links:containsGrid }
+
+xml_ACK_depends_grid:
+    path:  /depends/grid.xml
+    defaults: { _controller: AriiACKBundle:Links:dependsGrid }
     
 #============================================================
 # Object
@@ -330,34 +364,38 @@ xml_ACK_actions_grid:
 
 
 #============================================================
-# Network
+# Hosts
 #--------------------------------------------------------------------
-arii_ACK_network:
-    path:  /network
-    defaults: { _controller: AriiACKBundle:Network:index }
+arii_ACK_hosts:
+    path:  /hosts
+    defaults: { _controller: AriiACKBundle:Hosts:index }
 
-xml_ACK_network_grid:
-    path:  /network/grid.xml
-    defaults: { _controller: AriiACKBundle:Network:grid }
+xml_ACK_hosts_grid:
+    path:  /hosts/grid.xml
+    defaults: { _controller: AriiACKBundle:Hosts:grid }
 
-xml_ACK_network_pie:
-    path:  /network/pie.xml
-    defaults: { _controller: AriiACKBundle:Network:pie }
+xml_ACK_hosts_toolbar:
+    path:  /hosts/toolbar.xml
+    defaults: { _controller: AriiACKBundle:Hosts:toolbar }
 
-html_ACK_network_info:
-    path:  /network/info.html
-    defaults: { _controller: AriiACKBundle:Network:info }
+xml_ACK_hosts_pie:
+    path:  /hosts/pie.xml
+    defaults: { _controller: AriiACKBundle:Hosts:pie }
 
-json_ACK_network_count:
-    path:  /network/count.json
-    defaults: { _controller: AriiACKBundle:Network:count }
+html_ACK_hosts_info:
+    path:  /hosts/info.html
+    defaults: { _controller: AriiACKBundle:Hosts:info }
+
+json_ACK_hosts_count:
+    path:  /hosts/count.json
+    defaults: { _controller: AriiACKBundle:Hosts:count }
     
 #============================================================
 # Host
 #--------------------------------------------------------------------
 xml_ACK_host_form:
     path:  /host/form.xml
-    defaults: { _controller: AriiACKBundle:Network:form}
+    defaults: { _controller: AriiACKBundle:Hosts:form}
     
 #============================================================
 # Services
@@ -370,9 +408,18 @@ xml_ACK_services_grid:
     path:  /services/grid.xml
     defaults: { _controller: AriiACKBundle:Services:grid }
 
+xml_ACK_services_toolbar:
+    path:  /services/toolbar.xml
+    defaults: { _controller: AriiACKBundle:Services:toolbar }
+
 xml_ACK_services_grid_menu:
     path:  /services/grid_menu.xml
     defaults: { _controller: AriiACKBundle:Services:grid_menu}
+
+json_ACK_services_count:
+    path:  /services/count.json
+    defaults: { _controller: AriiACKBundle:Services:count }
+    
     
 #============================================================
 # Service

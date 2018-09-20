@@ -7,26 +7,34 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class NetworkController extends Controller
+class HostsController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('AriiACKBundle:Network:index.html.twig');
+        return $this->render('AriiACKBundle:Hosts:index.html.twig');
     }
 
     public function gridAction()
     {
         $request = Request::createFromGlobals();
-        $state = $request->get('state');
-        
-        $Errors = $this->getDoctrine()->getRepository('AriiACKBundle:Network')->listState($state);
+        list($ok,$warning,$critical) = explode('|',$request->get('state'));
+
+        $Services = $this->getDoctrine()->getRepository('AriiACKBundle:Host')->listStates($ok,$warning,$critical);
         $render = $this->container->get('arii_core.render');     
-        return $render->grid($Errors,'event_type,name,description,status,status_time','state');
+        return $render->grid($Services,'title,description,state,state_time','state');
     }
 
+
+    public function toolbarAction()
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        return $this->render('AriiACKBundle:Hosts:toolbar.xml.twig', array(), $response);
+    }
+    
     public function countAction()
     {
-        return new Response( '{ count: "'.$this->getDoctrine()->getRepository('AriiACKBundle:Network')->getNb().'" }' );
+        return new Response( '{ count: "'.$this->getDoctrine()->getRepository('AriiACKBundle:Host')->getNb().'" }' );
     }
     
     public function pieAction()
@@ -38,7 +46,7 @@ class NetworkController extends Controller
             'UNKNOWN' => 0
         ];
 
-        $Chart = $this->getDoctrine()->getRepository('AriiACKBundle:Network')->pieNotOk();
+        $Chart = $this->getDoctrine()->getRepository('AriiACKBundle:Host')->pieNotOk();
         foreach($Chart as $c) {
             $k = $c['STATUS'];
             if (!isset($Pie[$k]))
@@ -54,10 +62,10 @@ class NetworkController extends Controller
         $request = Request::createFromGlobals();
         $id = $request->get('id');
         
-        $object = $this->getDoctrine()->getRepository("AriiACKBundle:Network")->find($id);
+        $object = $this->getDoctrine()->getRepository("AriiACKBundle:Host")->find($id);
         $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
                 
-        return $this->render('AriiACKBundle:Network:bootstrap.html.twig', $serializer->toArray($object) );
+        return $this->render('AriiACKBundle:Hosts:bootstrap.html.twig', $serializer->toArray($object) );
     }
 
     public function formAction()
@@ -65,7 +73,7 @@ class NetworkController extends Controller
         $request = Request::createFromGlobals();
         $id = $request->get('id');
         
-        list($Event) = $this->getDoctrine()->getRepository("AriiACKBundle:Network")->Network($id);     
+        list($Event) = $this->getDoctrine()->getRepository("AriiACKBundle:Host")->Host($id);     
 
         $dhtmlx = $this->container->get('arii_core.render'); 
         return $dhtmlx->form($Event);        

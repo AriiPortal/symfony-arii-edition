@@ -8,18 +8,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * Link
+ * Graph
  *
- * @ORM\Table(name="ARII_LINK")
- * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\LinkRepository")
+ * @ORM\Table(name="ARII_GRAPH")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\GraphRepository")
  * 
  */
-class Link
+class Graph
 {
     public function __construct()
     {
-        $this->alarmTime = new \DateTime();
-        $this->stateTime = new \DateTime();
     }
     
     /**
@@ -59,30 +57,7 @@ class Link
      * 
      * @Serializer\Groups({"detail"})
      */
-    private $description;
-
-    /**
-     * @var string
-     * 
-     * Source DEPENDS  Target
-     * Source CONTAINS Target
-     * 
-     * @ORM\Column(name="link_type", type="string", length=64)
-     * 
-     */
-    private $link_type;
-
-    /**
-    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Object")
-    * @ORM\JoinColumn()
-    */
-    private $obj_from;
-    
-    /**
-    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Object")
-    * @ORM\JoinColumn(nullable=true)
-    */
-    private $obj_to;
+    private $description;    
 
     /**
      * Get id
@@ -98,7 +73,7 @@ class Link
      * Set name
      *
      * @param string $name
-     * @return Link
+     * @return Object
      */
     public function setName($name)
     {
@@ -121,7 +96,7 @@ class Link
      * Set title
      *
      * @param string $title
-     * @return Link
+     * @return Object
      */
     public function setTitle($title)
     {
@@ -144,7 +119,7 @@ class Link
      * Set description
      *
      * @param string $description
-     * @return Link
+     * @return Object
      */
     public function setDescription($description)
     {
@@ -162,73 +137,5 @@ class Link
     {
         return $this->description;
     }
-
-    /**
-     * Set link_type
-     *
-     * @param string $linkType
-     * @return Link
-     */
-    public function setLinkType($linkType)
-    {
-        $this->link_type = $linkType;
-
-        return $this;
-    }
-
-    /**
-     * Get link_type
-     *
-     * @return string 
-     */
-    public function getLinkType()
-    {
-        return $this->link_type;
-    }
-
-    /**
-     * Set obj_from
-     *
-     * @param \Arii\ACKBundle\Entity\Object $objFrom
-     * @return Link
-     */
-    public function setObjFrom(\Arii\ACKBundle\Entity\Object $objFrom = null)
-    {
-        $this->obj_from = $objFrom;
-
-        return $this;
-    }
-
-    /**
-     * Get obj_from
-     *
-     * @return \Arii\ACKBundle\Entity\Object 
-     */
-    public function getObjFrom()
-    {
-        return $this->obj_from;
-    }
-
-    /**
-     * Set obj_to
-     *
-     * @param \Arii\ACKBundle\Entity\Object $objTo
-     * @return Link
-     */
-    public function setObjTo(\Arii\ACKBundle\Entity\Object $objTo = null)
-    {
-        $this->obj_to = $objTo;
-
-        return $this;
-    }
-
-    /**
-     * Get obj_to
-     *
-     * @return \Arii\ACKBundle\Entity\Object 
-     */
-    public function getObjTo()
-    {
-        return $this->obj_to;
-    }
+    
 }

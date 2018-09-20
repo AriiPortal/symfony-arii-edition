@@ -12,6 +12,21 @@ use Doctrine\ORM\EntityRepository;
  */
 class ServiceRepository extends EntityRepository
 {
+
+    public function listStates($ok,$warning,$critical) {        
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.id,e.host_name,e.title,e.description,e.state,e.state_time')
+        ->orderBy('e.state_time','DESC');
+        if ($ok)
+            $q->orWhere("e.state = 'OK'");
+        if ($warning)
+            $q->orWhere("e.state = 'WARNING'");
+        if ($critical)
+            $q->orWhere("e.state = 'CRITICAL'");
+        return $q->getQuery()->getResult();
+    }
+    
     public function listAll() {        
         $q = $this
         ->createQueryBuilder('e')
@@ -33,5 +48,28 @@ class ServiceRepository extends EntityRepository
         ->getQuery();
         return $q->getResult();
     }
+
+    public function Service($id) {
+        
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select("e.id","e.name","e.title","e.description","e.host_name","e.status","e.state_time","e.state_information",
+                "e.acknowledged","e.downtimes","e.downtimes_info","e.downtimes_user","e.status_time",
+                "e.last_state_change","e.last_time_up","e.last_time_down","e.last_time_unreachable","e.latency")
+        ->where('e.id = :id')
+        ->setParameter('id', $id)
+        ->getQuery();
+
+        return $q->getResult();
+    }    
+
+    public function getNb() {
+        return $this->createQueryBuilder('e')
+            ->select('COUNT(e)')
+            ->where("e.state = 'CRITICAL'")
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     
 }

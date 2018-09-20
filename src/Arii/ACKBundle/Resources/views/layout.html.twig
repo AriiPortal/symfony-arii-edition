@@ -7,37 +7,29 @@
 {% endblock dhtmlx_plus %}
 {% block onload %}
 <script language="javascript">
-var bundle='ACK';
-var update=5;
-dhtmlxEvent(window,"load",function(){   
-    var size=180;
-    globalLayout = new dhtmlXLayoutObject(document.body,"3T");  
-    globalLayout.cells("a").setHeight(120); 
-    globalLayout.cells("b").setWidth(size); 
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}"); 
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    mySidebar = globalLayout.cells("b").attachSidebar({
+var menurefresh;
+dhtmlxEvent(window,"load",function(){
+    AriiLayout('ACK','history,refresh',180);    
+    globalLayout.cells("a").setText("{{ "Menu" | trans }}");
+    globalLayout.cells("a").showHeader();
+    
+    mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
-        width: size,
         items:
         [
-            { id:"alarms", text: "{{ "Alarms" | trans }}", icon: "alarm.png" },
-            { id:"sep1", type: "separator" },
-            { id:"events", text: "{{ "Events" | trans }}", icon: "stopped.png" },
-            { id:"jobs", text: "{{ "Jobs" | trans }}", icon: "job.png" },    
-            { id:"services", text: "{{ "Services" | trans }}", icon: "server_connect.png" },
-            { id:"network", text: "{{ "Network" | trans }}", icon: "server.png" },
-            { id:"sep2", type: "separator" },
-            { id:"objects", text: "{{ "Objects" | trans }}", icon: "object.png" },
-            { id:"links", text: "{{ "Impact" | trans }}", icon: "impact.png" },
-            { id:"alerts", text: "{{ "Alerts" | trans }}", icon: "alert.png" }
+            { id:"alarms",    text: "{{ "Alarms" | trans }}",     icon: "alarm.png" },
+            { id:"graphs",    text: "{{ "Graphs" | trans }}",     icon: "chart_organisation.png" },
+            { id:"sep1",      type: "separator" },
+            { id:"events",    text: "{{ "Events" | trans }}",     icon: "stopped.png" },
+            { id:"sep3",      type: "separator" },
+            { id:"objects",   text: "{{ "Objects" | trans }}",    icon: "object.png" },
+//            { id:"links",     text: "{{ "Impact" | trans }}",     icon: "impact.png" },
+            { id:"alerts",    text: "{{ "Alerts" | trans }}",     icon: "alert.png" },
+            { id:"sep4",      type: "separator" },
+            { id:"jobs",      text: "{{ "Jobs" | trans }}",       icon: "job.png" },    
+            { id:"services",  text: "{{ "Services" | trans }}",   icon: "server_connect.png" },
+            { id:"hosts",   text: "{{ "Hosts" | trans }}",    icon: "server.png" }
         ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){
@@ -50,21 +42,17 @@ dhtmlxEvent(window,"load",function(){
         document.location.href = "{{ url('arii_ACK_index') }}"+id;
         return true;
     });
-
-    myToolbar = globalLayout.cells("c").attachToolbar();
-    myToolbar.setIconsPath( "{{ asset('/images/') }}" );
-    Init();    
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("c").hideHeader();
-    GlobalRefresh();
-    autorefresh = setInterval( "GlobalRefresh()",update*1000);
+    mySidebar.setSizes();
+    
+    menurefresh = setInterval( "MenuRefresh()",update*1000);    
+    Init();
 });
 </script>
 {% endblock onload %}
 {% block body %}{% endblock%}
 {% block script %}
 <script language="javascript">      
-function GlobalRefresh() {
+function MenuRefresh() {
     var t;
     dhx4.ajax.get( "{{ url('json_ACK_events_count') }}",function(r1) {  
         t = dhx4.s2j(r1.xmlDoc.responseText);
@@ -78,31 +66,22 @@ function GlobalRefresh() {
                 mySidebar.cells("jobs").setBubble(t['count']);
             else
                 mySidebar.cells("jobs").clearBubble();        
-            dhx4.ajax.get( "{{ url('json_ACK_network_count') }}",function(r3) {  
+            dhx4.ajax.get( "{{ url('json_ACK_hosts_count') }}",function(r3) {  
                 t = dhx4.s2j(r3.xmlDoc.responseText);
                 if (t['count']>0)
-                    mySidebar.cells("network").setBubble(t['count']);
+                    mySidebar.cells("hosts").setBubble(t['count']);
                 else
-                    mySidebar.cells("network").clearBubble();        
+                    mySidebar.cells("hosts").clearBubble();        
+                dhx4.ajax.get( "{{ url('json_ACK_services_count') }}",function(r3) {  
+                    t = dhx4.s2j(r3.xmlDoc.responseText);
+                    if (t['count']>0)
+                        mySidebar.cells("services").setBubble(t['count']);
+                    else
+                        mySidebar.cells("services").clearBubble();        
+                });
             });
         });
     });
-    // En parallèle ?
-    PageRefresh();
-}
-
-function ToolbarTime() {
-    var currentTime = new Date();
-    var hours = currentTime.getHours();
-    var minutes = currentTime.getMinutes();
-    var seconds = currentTime.getSeconds();
-    if (minutes < 10){
-    minutes = "0" + minutes;
-    }
-    if (seconds < 10){
-    seconds = "0" + seconds;
-    }
-    myToolbar.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );
 }
 </script>
 {% include "AriiCoreBundle:Common:ribbon.js.twig" %}

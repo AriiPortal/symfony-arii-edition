@@ -1,13 +1,23 @@
 <script language="javascript"> 
+{% if app.session.get('UserInterface').refresh is defined %}
 var update        = {{ app.session.get('UserInterface').refresh }};
 var refresh_pause = {{ app.session.get('UserInterface').refresh_pause }};
 var day_past      = {{ app.session.get('UserInterface').day_past }};
-var autorefresh;
-var refresh_next;
-var nextTime = new Date();
 // Dates de reference
 var startTime = new Date ("{{ app.session.get('UserInterface').past   | date('Y-m-d H:i:s') }}");
 var endTime =   new Date ("{{ app.session.get('UserInterface').ref_date | date('Y-m-d H:i:s') }}");
+{% else %}
+var update        = 30;
+var refresh_pause = 0;
+var day_past      = -1;
+// Dates de reference
+var startTime = new Date ();
+var endTime =   new Date ();
+{% endif %}
+
+var autorefresh;
+var refresh_next;
+var nextTime = new Date();
 
 function AriiLayout(bundle,activated,size) {
     globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
@@ -237,9 +247,10 @@ function WaitRefresh() {
 function GlobalRefresh() {
     if (refresh_pause==1)
         return true; 
-    
-    refresh_pause=0;
-    PageRefresh();
+    refresh_pause=0;    
+    if (typeof PageRefresh === "function") { 
+        PageRefresh();
+    }    
     NextRefresh(update);
 }
 

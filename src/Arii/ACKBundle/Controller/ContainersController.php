@@ -5,64 +5,58 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class ObjectsController extends Controller{
+class ContainersController extends Controller{
 
     public function indexAction()
     {
-        return $this->render('AriiACKBundle:Objects:index.html.twig');
+        return $this->render('AriiACKBundle:Containers:index.html.twig');
     }
 
     public function toolbarAction()
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
-        return $this->render("AriiACKBundle:Objects:toolbar.xml.twig", array(), $response);
+        return $this->render("AriiACKBundle:Links:toolbar.xml.twig", array(), $response);
     }
 
     public function grid_menuAction()
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
-        return $this->render('AriiACKBundle:Objects:grid_menu.xml.twig',array(), $response );
+        return $this->render('AriiACKBundle:Links:grid_menu.xml.twig',array(), $response );
     }
     
     public function gridAction()
     {
         $request = Request::createFromGlobals();
-        $type = $request->get('type');
-
-        $Objects = $this->getDoctrine()->getRepository('AriiACKBundle:Object')->findBy(array('obj_type' => $type), array('name' => 'ASC'), 2000);
-        $Grid = [];
-        foreach($Objects as $Obj) {
-            array_push($Grid, [
-                'id'          => $Obj->getId(),
-                'name'        => $Obj->getName(),
-                'description' => $Obj->getDescription(),
-                'type'        => $Obj->getObjType()
-            ]);
-        }
-        $render = $this->container->get('arii_core.render');
-        return $render->grid($Grid,'name,description,type');
+        $state = $request->get('state');
+        
+        $Errors = $this->getDoctrine()->getRepository('AriiACKBundle:Link')->listState($state);
+        $render = $this->container->get('arii_core.render');     
+        return $render->grid($Errors,'event_type,name,title,status,state','state');
     }
     
     public function formAction()
     {   
         $request = Request::createFromGlobals();
         $id = $request->get('id');
-
-        $Object = $this->getDoctrine()->getRepository("AriiACKBundle:Object")->find($id);
         
-        $Obj['name']        = $Object->getName();        
-        $Obj['title']       = $Object->getTitle();        
-        $Obj['description'] = $Object->getDescription();        
-        $Obj['obj_type']    = $Object->getObjType();        
-        $Obj['state']       = $Object->getState();        
-        $Obj['state_time']  = $Object->getStateTime();        
-        $Obj['source']      = $Object->getSource();
-        $Obj['updated']     = $Object->getUpdated();        
+/* DHTMLX
+        $sql = $this->container->get('arii_core.sql');        
+        $qry = $sql->Select(array("ID","NAME","TITLE","DESCRIPTION","EVENT","START_TIME","END_TIME"))
+                .$sql->From(array("ARII_EVENT"))
+                .$sql->Where(array("ID"=>$id));
+        
+        $db = $this->container->get('arii_core.db');
+        $data = $db->Connector('form');
+        $data->render_sql($qry,"ID","ID,NAME,TITLE,DESCRIPTION,EVENT,START_TIME,END_TIME");
+*/
+        list($Alarm) = $this->getDoctrine()->getRepository("AriiACKBundle:Link")->Alarm($id);      
+        $Alarm['start_time'] = $Alarm['start_time']->format('Y-m-d H:i:s');
+        $Alarm['end_time'] = $Alarm['end_time']->format('Y-m-d H:i:s');
 
         $dhtmlx = $this->container->get('arii_core.render'); 
-        return $dhtmlx->form($Obj);        
+        return $dhtmlx->form($Alarm);        
     }
 
     public function deleteAction()
@@ -70,7 +64,7 @@ class ObjectsController extends Controller{
         $request = Request::createFromGlobals();
         $id = $request->get('id');
         
-        $alert = $this->getDoctrine()->getRepository("AriiACKBundle:Object")->find($id);      
+        $alert = $this->getDoctrine()->getRepository("AriiACKBundle:Link")->find($id);      
         if ($alert) {
             $em = $this->getDoctrine()->getManager();       
             $em->remove($alert);
@@ -88,7 +82,7 @@ class ObjectsController extends Controller{
 
         $alert = new \Arii\ACKBundle\Entity\Alarm();
         if( $id!="" )
-            $alert = $this->getDoctrine()->getRepository("AriiACKBundle:Object")->find($id);      
+            $alert = $this->getDoctrine()->getRepository("AriiACKBundle:Alarm")->find($id);      
   
         $alert->setName($request->get('name'));
         $alert->setTitle($request->get('title'));
@@ -123,7 +117,7 @@ class ObjectsController extends Controller{
         $state = $request->get('state');
 
         $event = new \Arii\ACKBundle\Entity\Alarm();
-        $event = $this->getDoctrine()->getRepository("AriiACKBundle:Object")->find($id);      
+        $event = $this->getDoctrine()->getRepository("AriiACKBundle:Alarm")->find($id);      
         if( !$event )
             return new Response("$id ?");
         
@@ -136,7 +130,7 @@ class ObjectsController extends Controller{
 
         return new Response("success");
     }
-
+    
 }
 
 ?>

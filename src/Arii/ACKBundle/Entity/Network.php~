@@ -1,0 +1,189 @@
+<?php
+
+namespace Arii\ACKBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Network
+ * Etat de l'infrastructure
+ * 
+ * @ORM\Table(name="ARII_NETWORK")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\NetworkRepository")
+ * 
+ */
+class Network
+{
+    public function __construct()
+    {
+        $this->stateTime = new \DateTime();
+    }
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+   
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=64)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=64)
+     */
+    private $title;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="host", type="string", length=64, nullable=true)
+     */
+    private $host;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ip_address", type="string", length=16, nullable=true)
+     */
+    private $ip_address;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="port", type="integer", nullable=true)
+     */
+    private $port;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="state", type="string", length=32, nullable=true)
+     */        
+    private $state;    
+    
+     /**
+     * @var datetime
+     *
+     * @ORM\Column(name="state_time", type="datetime", nullable=true)
+     */        
+    private $state_time;    
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="state_information", type="string", length=255, nullable=true)
+     */
+    private $state_information;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="acknowledgement_type", type="string", length=16, nullable=true)
+     */
+    private $acknowledgement_type;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="acknowledged", type="boolean")
+     */
+    private $acknowledged=0;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="downtimes", type="string", length=255, nullable=true)
+     */
+    private $downtimes;
+        
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="downtime_info", type="string", length=255, nullable=true)
+     */
+    private $downtimes_info;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="downtime_user", type="string", length=32, nullable=true)
+     */
+    private $downtimes_user;
+    
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="last_state_change", type="datetime", nullable=true)
+     */
+    private $last_state_change;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="last_time_down", type="datetime", nullable=true)
+     */
+    private $last_time_down;
+    
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="last_time_unreachable", type="datetime", nullable=true)
+     */
+    private $last_time_unreachable;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="last_time_up", type="datetime", nullable=true)
+     */
+    private $last_time_up;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="latency", type="float", nullable=true)
+     */
+    private $latency;
+
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="event_source", type="string", length=255, nullable=true )
+     */        
+    private $event_source;
+
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="event_type", type="string", nullable=true )
+     */        
+    private $event_type;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Alarm")
+    * @ORM\JoinColumn(nullable=true)
+    */
+    private $alarm;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Object")
+    * @ORM\JoinColumn(nullable=true)
+    */
+    private $object;
+}

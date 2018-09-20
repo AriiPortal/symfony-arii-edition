@@ -5,14 +5,14 @@ namespace Arii\ACKBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Service
+ * Host
  * Etat de l'infrastructure
  * 
- * @ORM\Table(name="ARII_SERVICE")
- * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\ServiceRepository")
+ * @ORM\Table(name="ARII_HOST")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\HostRepository")
  * 
  */
-class Service
+class Host
 {
     public function __construct()
     {
@@ -49,19 +49,26 @@ class Service
      */
     private $description;
 
-     /**
+    /**
      * @var string
      *
-     * @ORM\Column(name="status", type="string", length=32, nullable=true)
-     */        
-    private $status;    
+     * @ORM\Column(name="host", type="string", length=64, nullable=true)
+     */
+    private $host;
 
-     /**
-     * @var datetime
+    /**
+     * @var string
      *
-     * @ORM\Column(name="status_time", type="datetime", length=32, nullable=true)
-     */        
-    private $status_time;    
+     * @ORM\Column(name="ip_address", type="string", length=16, nullable=true)
+     */
+    private $ip_address;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="port", type="integer", nullable=true)
+     */
+    private $port;
     
     /**
      * @var string
@@ -73,7 +80,7 @@ class Service
      /**
      * @var datetime
      *
-     * @ORM\Column(name="state_time", type="datetime", length=32, nullable=true)
+     * @ORM\Column(name="state_time", type="datetime", nullable=true)
      */        
     private $state_time;    
     
@@ -168,22 +175,14 @@ class Service
      */        
     private $event_type;
 
-
-     /**
-     * @var string
-     *
-     * @ORM\Column(name="host_name", type="string", length=255, nullable=true )
-     */        
-    private $host_name;
-    
     /**
-    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Host",cascade={"persist"})
+    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Alarm")
     * @ORM\JoinColumn(nullable=true)
     */
-    private $host;
-    
+    private $alarm;
+
     /**
-    * @ORM\OneToOne(targetEntity="Arii\ACKBundle\Entity\Object")
+    * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Object")
     * @ORM\JoinColumn(nullable=true)
     */
     private $object;
@@ -202,7 +201,7 @@ class Service
      * Set name
      *
      * @param string $name
-     * @return Service
+     * @return Host
      */
     public function setName($name)
     {
@@ -225,7 +224,7 @@ class Service
      * Set title
      *
      * @param string $title
-     * @return Service
+     * @return Host
      */
     public function setTitle($title)
     {
@@ -248,7 +247,7 @@ class Service
      * Set description
      *
      * @param string $description
-     * @return Service
+     * @return Host
      */
     public function setDescription($description)
     {
@@ -268,56 +267,79 @@ class Service
     }
 
     /**
-     * Set status
+     * Set host
      *
-     * @param string $status
-     * @return Service
+     * @param string $host
+     * @return Host
      */
-    public function setStatus($status)
+    public function setHost($host)
     {
-        $this->status = $status;
+        $this->host = $host;
 
         return $this;
     }
 
     /**
-     * Get status
+     * Get host
      *
      * @return string 
      */
-    public function getStatus()
+    public function getHost()
     {
-        return $this->status;
+        return $this->host;
     }
 
     /**
-     * Set status_time
+     * Set ip_address
      *
-     * @param \DateTime $statusTime
-     * @return Service
+     * @param string $ipAddress
+     * @return Host
      */
-    public function setStatusTime($statusTime)
+    public function setIpAddress($ipAddress)
     {
-        $this->status_time = $statusTime;
+        $this->ip_address = $ipAddress;
 
         return $this;
     }
 
     /**
-     * Get status_time
+     * Get ip_address
      *
-     * @return \DateTime 
+     * @return string 
      */
-    public function getStatusTime()
+    public function getIpAddress()
     {
-        return $this->status_time;
+        return $this->ip_address;
+    }
+
+    /**
+     * Set port
+     *
+     * @param integer $port
+     * @return Host
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+
+        return $this;
+    }
+
+    /**
+     * Get port
+     *
+     * @return integer 
+     */
+    public function getPort()
+    {
+        return $this->port;
     }
 
     /**
      * Set state
      *
      * @param string $state
-     * @return Service
+     * @return Host
      */
     public function setState($state)
     {
@@ -340,7 +362,7 @@ class Service
      * Set state_time
      *
      * @param \DateTime $stateTime
-     * @return Service
+     * @return Host
      */
     public function setStateTime($stateTime)
     {
@@ -363,7 +385,7 @@ class Service
      * Set state_information
      *
      * @param string $stateInformation
-     * @return Service
+     * @return Host
      */
     public function setStateInformation($stateInformation)
     {
@@ -386,7 +408,7 @@ class Service
      * Set acknowledgement_type
      *
      * @param string $acknowledgementType
-     * @return Service
+     * @return Host
      */
     public function setAcknowledgementType($acknowledgementType)
     {
@@ -409,7 +431,7 @@ class Service
      * Set acknowledged
      *
      * @param boolean $acknowledged
-     * @return Service
+     * @return Host
      */
     public function setAcknowledged($acknowledged)
     {
@@ -432,7 +454,7 @@ class Service
      * Set downtimes
      *
      * @param string $downtimes
-     * @return Service
+     * @return Host
      */
     public function setDowntimes($downtimes)
     {
@@ -455,7 +477,7 @@ class Service
      * Set downtimes_info
      *
      * @param string $downtimesInfo
-     * @return Service
+     * @return Host
      */
     public function setDowntimesInfo($downtimesInfo)
     {
@@ -478,7 +500,7 @@ class Service
      * Set downtimes_user
      *
      * @param string $downtimesUser
-     * @return Service
+     * @return Host
      */
     public function setDowntimesUser($downtimesUser)
     {
@@ -501,7 +523,7 @@ class Service
      * Set last_state_change
      *
      * @param \DateTime $lastStateChange
-     * @return Service
+     * @return Host
      */
     public function setLastStateChange($lastStateChange)
     {
@@ -524,7 +546,7 @@ class Service
      * Set last_time_down
      *
      * @param \DateTime $lastTimeDown
-     * @return Service
+     * @return Host
      */
     public function setLastTimeDown($lastTimeDown)
     {
@@ -547,7 +569,7 @@ class Service
      * Set last_time_unreachable
      *
      * @param \DateTime $lastTimeUnreachable
-     * @return Service
+     * @return Host
      */
     public function setLastTimeUnreachable($lastTimeUnreachable)
     {
@@ -570,7 +592,7 @@ class Service
      * Set last_time_up
      *
      * @param \DateTime $lastTimeUp
-     * @return Service
+     * @return Host
      */
     public function setLastTimeUp($lastTimeUp)
     {
@@ -593,7 +615,7 @@ class Service
      * Set latency
      *
      * @param float $latency
-     * @return Service
+     * @return Host
      */
     public function setLatency($latency)
     {
@@ -616,7 +638,7 @@ class Service
      * Set event_source
      *
      * @param string $eventSource
-     * @return Service
+     * @return Host
      */
     public function setEventSource($eventSource)
     {
@@ -639,7 +661,7 @@ class Service
      * Set event_type
      *
      * @param string $eventType
-     * @return Service
+     * @return Host
      */
     public function setEventType($eventType)
     {
@@ -659,56 +681,33 @@ class Service
     }
 
     /**
-     * Set host_name
+     * Set alarm
      *
-     * @param string $hostName
-     * @return Service
+     * @param \Arii\ACKBundle\Entity\Alarm $alarm
+     * @return Host
      */
-    public function setHostName($hostName)
+    public function setAlarm(\Arii\ACKBundle\Entity\Alarm $alarm = null)
     {
-        $this->host_name = $hostName;
+        $this->alarm = $alarm;
 
         return $this;
     }
 
     /**
-     * Get host_name
+     * Get alarm
      *
-     * @return string 
+     * @return \Arii\ACKBundle\Entity\Alarm 
      */
-    public function getHostName()
+    public function getAlarm()
     {
-        return $this->host_name;
-    }
-
-    /**
-     * Set host
-     *
-     * @param \Arii\ACKBundle\Entity\Host $host
-     * @return Service
-     */
-    public function setHost(\Arii\ACKBundle\Entity\Host $host = null)
-    {
-        $this->host = $host;
-
-        return $this;
-    }
-
-    /**
-     * Get host
-     *
-     * @return \Arii\ACKBundle\Entity\Host 
-     */
-    public function getHost()
-    {
-        return $this->host;
+        return $this->alarm;
     }
 
     /**
      * Set object
      *
      * @param \Arii\ACKBundle\Entity\Object $object
-     * @return Service
+     * @return Host
      */
     public function setObject(\Arii\ACKBundle\Entity\Object $object = null)
     {

@@ -416,6 +416,8 @@ Gris    #f2f2f2
     public function getDefaultColors() 
     {
         $Default = array(
+        // SURVEILLANCE
+            'OK'  => '#ccebc5',
         // TRANSFERTS
             'TRANSFERT_ABORTED' =>   '#ff66cc',
         // JOBS

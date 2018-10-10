@@ -9,7 +9,7 @@
 <script language="javascript">
 var menurefresh;
 dhtmlxEvent(window,"load",function(){
-    AriiLayout('ACK','history,refresh',180);    
+    AriiLayout('ACK','history,refresh',200);    
     globalLayout.cells("a").setText("{{ "Menu" | trans }}");
     globalLayout.cells("a").showHeader();
     
@@ -46,6 +46,7 @@ dhtmlxEvent(window,"load",function(){
     
     menurefresh = setInterval( "MenuRefresh()",update*1000);    
     Init();
+    MenuRefresh();
 });
 </script>
 {% endblock onload %}

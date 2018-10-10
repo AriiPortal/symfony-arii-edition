@@ -76,9 +76,9 @@ class Object
     private $source;
     
     /**
-     * @var string
+     * @var boolean
      *
-     * @ORM\Column(name="state", type="string", length=12)
+     * @ORM\Column(name="state", type="string", length=24)
      * 
      */
     private $state;
@@ -86,10 +86,10 @@ class Object
     /**
      * @var string
      *
-     * @ORM\Column(name="status", type="string", length=12)
+     * @ORM\Column(name="state_comment", type="string", length=255)
      * 
      */
-    private $status;
+    private $state_comment;
 
     /**
      * @var datetime
@@ -100,13 +100,141 @@ class Object
     private $state_time;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="state_user", type="string", length=64)
+     * 
+     */
+    private $state_user;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="state_end", type="datetime")
+     * 
+     */
+    private $state_end;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status", type="string", length=12)
+     * 
+     */
+    private $status;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status_comment", type="string", length=255)
+     * 
+     */
+    private $status_comment;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="status_time", type="datetime")
+     * 
+     */
+    private $status_time;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status_user", type="string", length=64)
+     * 
+     */
+    private $status_user;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="ack", type="boolean")
+     * 
+     */
+    private $ack;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ack_comment", type="boolean")
+     * 
+     */
+    private $ack_comment;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="ack_time", type="datetime" )
+     * 
+     */
+    private $ack_time;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ack_user", type="string", length=64)
+     * 
+     */
+    private $ack_user;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="ack_end", type="datetime" )
+     * 
+     */
+    private $ack_end;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="downtime", type="boolean")
+     * 
+     */
+    private $downtime;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="downtime_comment", type="string", length=255)
+     * 
+     */
+    private $downtime_comment;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="downtime_time", type="datetime")
+     * 
+     */
+    private $downtime_time;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="downtime_user", type="string", length=64)
+     * 
+     */
+    private $downtime_user;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="downtime_end", type="datetime")
+     * 
+     */
+    private $downtime_end;
+    
+    /**
      * @var datetime
      *
      * @ORM\Column(name="updated", type="datetime")
      * 
      */
     private $updated;
-    
+
     /**
      * Get id
      *
@@ -210,6 +338,29 @@ class Object
     }
 
     /**
+     * Set source
+     *
+     * @param string $source
+     * @return Object
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /**
+     * Get source
+     *
+     * @return string 
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
      * Set state
      *
      * @param string $state
@@ -230,6 +381,29 @@ class Object
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * Set state_comment
+     *
+     * @param string $stateComment
+     * @return Object
+     */
+    public function setStateComment($stateComment)
+    {
+        $this->state_comment = $stateComment;
+
+        return $this;
+    }
+
+    /**
+     * Get state_comment
+     *
+     * @return string 
+     */
+    public function getStateComment()
+    {
+        return $this->state_comment;
     }
 
     /**
@@ -256,49 +430,49 @@ class Object
     }
 
     /**
-     * Set source
+     * Set state_user
      *
-     * @param string $source
+     * @param string $stateUser
      * @return Object
      */
-    public function setSource($source)
+    public function setStateUser($stateUser)
     {
-        $this->source = $source;
+        $this->state_user = $stateUser;
 
         return $this;
     }
 
     /**
-     * Get source
+     * Get state_user
      *
      * @return string 
      */
-    public function getSource()
+    public function getStateUser()
     {
-        return $this->source;
+        return $this->state_user;
     }
 
     /**
-     * Set updated
+     * Set state_end
      *
-     * @param \DateTime $updated
+     * @param \DateTime $stateEnd
      * @return Object
      */
-    public function setUpdated($updated)
+    public function setStateEnd($stateEnd)
     {
-        $this->updated = $updated;
+        $this->state_end = $stateEnd;
 
         return $this;
     }
 
     /**
-     * Get updated
+     * Get state_end
      *
      * @return \DateTime 
      */
-    public function getUpdated()
+    public function getStateEnd()
     {
-        return $this->updated;
+        return $this->state_end;
     }
 
     /**
@@ -322,5 +496,327 @@ class Object
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set status_comment
+     *
+     * @param string $statusComment
+     * @return Object
+     */
+    public function setStatusComment($statusComment)
+    {
+        $this->status_comment = $statusComment;
+
+        return $this;
+    }
+
+    /**
+     * Get status_comment
+     *
+     * @return string 
+     */
+    public function getStatusComment()
+    {
+        return $this->status_comment;
+    }
+
+    /**
+     * Set status_time
+     *
+     * @param \DateTime $statusTime
+     * @return Object
+     */
+    public function setStatusTime($statusTime)
+    {
+        $this->status_time = $statusTime;
+
+        return $this;
+    }
+
+    /**
+     * Get status_time
+     *
+     * @return \DateTime 
+     */
+    public function getStatusTime()
+    {
+        return $this->status_time;
+    }
+
+    /**
+     * Set status_user
+     *
+     * @param string $statusUser
+     * @return Object
+     */
+    public function setStatusUser($statusUser)
+    {
+        $this->status_user = $statusUser;
+
+        return $this;
+    }
+
+    /**
+     * Get status_user
+     *
+     * @return string 
+     */
+    public function getStatusUser()
+    {
+        return $this->status_user;
+    }
+
+    /**
+     * Set ack
+     *
+     * @param boolean $ack
+     * @return Object
+     */
+    public function setAck($ack)
+    {
+        $this->ack = $ack;
+
+        return $this;
+    }
+
+    /**
+     * Get ack
+     *
+     * @return boolean 
+     */
+    public function getAck()
+    {
+        return $this->ack;
+    }
+
+    /**
+     * Set ack_comment
+     *
+     * @param string $ackComment
+     * @return Object
+     */
+    public function setAckComment($ackComment)
+    {
+        $this->ack_comment = $ackComment;
+
+        return $this;
+    }
+
+    /**
+     * Get ack_comment
+     *
+     * @return string 
+     */
+    public function getAckComment()
+    {
+        return $this->ack_comment;
+    }
+
+    /**
+     * Set ack_time
+     *
+     * @param \DateTime $ackTime
+     * @return Object
+     */
+    public function setAckTime($ackTime)
+    {
+        $this->ack_time = $ackTime;
+
+        return $this;
+    }
+
+    /**
+     * Get ack_time
+     *
+     * @return \DateTime 
+     */
+    public function getAckTime()
+    {
+        return $this->ack_time;
+    }
+
+    /**
+     * Set ack_user
+     *
+     * @param string $ackUser
+     * @return Object
+     */
+    public function setAckUser($ackUser)
+    {
+        $this->ack_user = $ackUser;
+
+        return $this;
+    }
+
+    /**
+     * Get ack_user
+     *
+     * @return string 
+     */
+    public function getAckUser()
+    {
+        return $this->ack_user;
+    }
+
+    /**
+     * Set ack_end
+     *
+     * @param \DateTime $ackEnd
+     * @return Object
+     */
+    public function setAckEnd($ackEnd)
+    {
+        $this->ack_end = $ackEnd;
+
+        return $this;
+    }
+
+    /**
+     * Get ack_end
+     *
+     * @return \DateTime 
+     */
+    public function getAckEnd()
+    {
+        return $this->ack_end;
+    }
+
+    /**
+     * Set downtime
+     *
+     * @param string $downtime
+     * @return Object
+     */
+    public function setActive($downtime)
+    {
+        $this->downtime = $downtime;
+
+        return $this;
+    }
+
+    /**
+     * Get downtime
+     *
+     * @return string 
+     */
+    public function getActive()
+    {
+        return $this->downtime;
+    }
+
+    /**
+     * Set downtime_comment
+     *
+     * @param string $downtimeComment
+     * @return Object
+     */
+    public function setActiveComment($downtimeComment)
+    {
+        $this->downtime_comment = $downtimeComment;
+
+        return $this;
+    }
+
+    /**
+     * Get downtime_comment
+     *
+     * @return string 
+     */
+    public function getActiveComment()
+    {
+        return $this->downtime_comment;
+    }
+
+    /**
+     * Set downtime_time
+     *
+     * @param \DateTime $downtimeTime
+     * @return Object
+     */
+    public function setActiveTime($downtimeTime)
+    {
+        $this->downtime_time = $downtimeTime;
+
+        return $this;
+    }
+
+    /**
+     * Get downtime_time
+     *
+     * @return \DateTime 
+     */
+    public function getActiveTime()
+    {
+        return $this->downtime_time;
+    }
+
+    /**
+     * Set downtime_user
+     *
+     * @param string $downtimeUser
+     * @return Object
+     */
+    public function setActiveUser($downtimeUser)
+    {
+        $this->downtime_user = $downtimeUser;
+
+        return $this;
+    }
+
+    /**
+     * Get downtime_user
+     *
+     * @return string 
+     */
+    public function getActiveUser()
+    {
+        return $this->downtime_user;
+    }
+
+    /**
+     * Set downtime_end
+     *
+     * @param \DateTime $downtimeEnd
+     * @return Object
+     */
+    public function setActiveEnd($downtimeEnd)
+    {
+        $this->downtime_end = $downtimeEnd;
+
+        return $this;
+    }
+
+    /**
+     * Get downtime_end
+     *
+     * @return \DateTime 
+     */
+    public function getActiveEnd()
+    {
+        return $this->downtime_end;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Object
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
     }
 }

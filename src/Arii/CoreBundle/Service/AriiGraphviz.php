@@ -29,9 +29,10 @@ class AriiGraphviz
         
         // Localisation des images 
         $root = $this->container->get('kernel')->getRootDir();
-        $images_path = str_replace('/',DIRECTORY_SEPARATOR,$root.'/../web'.$images);       
-        $images_url = $this->container->get('templating.helper.assets')->getUrl($images);        
+        $images_path = str_replace('/',DIRECTORY_SEPARATOR,$root.'/../web'.$images.'/');       
+        $images_url = $this->container->get('templating.helper.assets')->getUrl($images).'/';        
 
+        
         if ($add_digraph) {
             $digraph = "digraph $name {
 fontname=arial 
@@ -70,7 +71,9 @@ bgcolor=white
 <script xlink:href="'.$this->container->get('templating.helper.assets')->getUrl("bundles/ariicore/js/SVGPan.js").'"/>
 <g id="viewport"';
             $xml .= substr($out,$head+14);
-            return $response->setContent( str_replace('xlink:href="'.$images_path,'xlink:href="'.$images_url,$xml) );
+            $xml = str_replace('xlink:href="'.$images_path,'xlink:href="'.$images_url,$xml);            
+            $xml = str_replace('"url(#mypath'.$images_path,'"url(#mypath'.$images_url,$xml);            
+            return $response->setContent( $xml );
         }
         elseif ($output == 'pdf') {
             $response->headers->set('Content-Type', 'application/pdf');

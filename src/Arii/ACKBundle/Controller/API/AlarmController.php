@@ -130,7 +130,7 @@ class AlarmController extends FOSRestController
      *     @SWG\Parameter(
      *         name="body",
      *         in="body",
-     *         description="Alarm object that needs to be added to the repository.",
+     *         description="Alarm Probe that needs to be added to the repository.",
      *         required=true,
      *         @SWG\Schema(
      *              @SWG\Property(

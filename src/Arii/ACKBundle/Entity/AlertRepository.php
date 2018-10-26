@@ -16,6 +16,7 @@ class AlertRepository extends EntityRepository
         $q = $this
         ->createQueryBuilder('e')
         ->select('e.id,e.name,e.title,e.status')
+        ->where('e.status = :state')
         ->setParameter('state',$state)
         ->getQuery();
         return $q->getResult();

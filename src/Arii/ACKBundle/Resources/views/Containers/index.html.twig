@@ -19,7 +19,7 @@ function Init() {
     myGrid.enableAlterCss("even_row","odd_row");   
     myGrid.enableDragAndDrop(true);    
     myGrid.init();
-    myGrid.load( "{{ url('xml_ACK_objects_grid') }}?state=OPEN" );
+    myGrid.load( "{{ url('xml_ACK_Probes_grid') }}?state=OPEN" );
     myGrid.attachEvent("onRowDblClicked", function (rid) {
         EditEvent(rid);
     });

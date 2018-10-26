@@ -1,19 +1,11 @@
 {% extends "AriiACKBundle::layout.html.twig" %}
 {% block body %}
 <script language="javascript">
+// Module ?
 var bundle='Graphviz';    
 var toolbar;
 var rankdir = 'TB';
 var splines = 'polyline';
-var graph_path= 'live';
-var graph_file= '.*';
-var graph_paths = '';
-var show_params = 'n';
-var show_events = 'n';
-var show_jobs = 'n';
-var show_chains = 'n';
-var show_config = 'n';
-var path= 'live';
 var folder = '';
 var graph;
     
@@ -60,17 +52,10 @@ function DrawView() {
     myLayout.cells("b").attachURL(url);
 }
 
-
 function GetUrl() {
     var url = "{{ url('svg_ACK_graph') }}";
     url += "?view="+graph;
     url += "&splines="+encodeURIComponent(splines);
-    url += "&paths="+encodeURIComponent(graph_paths);
-    url += "&show_params="+encodeURIComponent(show_params);
-    url += "&show_events="+encodeURIComponent(show_events);
-    url += "&show_chains="+encodeURIComponent(show_chains);
-    url += "&show_jobs="+encodeURIComponent(show_jobs);
-    url += "&show_config="+encodeURIComponent(show_config);
 return url;
 }
 

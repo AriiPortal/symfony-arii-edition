@@ -240,27 +240,4 @@ class Link
     {
         return $this->obj_to;
     }
-
-    /**
-     * Set link_strength
-     *
-     * @param integer $linkStrength
-     * @return Link
-     */
-    public function setLinkStrength($linkStrength)
-    {
-        $this->link_strength = $linkStrength;
-
-        return $this;
-    }
-
-    /**
-     * Get link_strength
-     *
-     * @return integer 
-     */
-    public function getLinkStrength()
-    {
-        return $this->link_strength;
-    }
 }

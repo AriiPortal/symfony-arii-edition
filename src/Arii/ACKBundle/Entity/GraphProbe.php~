@@ -10,11 +10,11 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * Probe
  *
- * @ORM\Table(name="ARII_CONTAINER")
- * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\ContainerRepository")
+ * @ORM\Table(name="ARII_GRAPH__PROBE")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\GraphProbeRepository")
  * 
  */
-class Container
+class GraphProbe
 {
     public function __construct()
     {
@@ -30,15 +30,6 @@ class Container
      * @Serializer\Groups({"list","detail"})
      */
     private $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=64)
-     * @Assert\NotBlank(groups={"Create"})
-     * 
-     */
-    private $name;
 
     /**
      * @var string
@@ -60,6 +51,18 @@ class Container
     private $description;    
 
     /**
+     * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Graph")
+     * @ORM\JoinColumn(nullable=true)
+     **/
+    private $graph;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Probe")
+     * @ORM\JoinColumn(nullable=true)
+     **/
+    private $Probe;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -70,33 +73,10 @@ class Container
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return Probe
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * Set title
      *
      * @param string $title
-     * @return Probe
+     * @return GraphProbe
      */
     public function setTitle($title)
     {
@@ -119,7 +99,7 @@ class Container
      * Set description
      *
      * @param string $description
-     * @return Probe
+     * @return GraphProbe
      */
     public function setDescription($description)
     {
@@ -137,5 +117,50 @@ class Container
     {
         return $this->description;
     }
-    
+
+    /**
+     * Set graph
+     *
+     * @param \Arii\ACKBundle\Entity\Graph $graph
+     * @return GraphProbe
+     */
+    public function setGraph(\Arii\ACKBundle\Entity\Graph $graph = null)
+    {
+        $this->graph = $graph;
+
+        return $this;
+    }
+
+    /**
+     * Get graph
+     *
+     * @return \Arii\ACKBundle\Entity\Graph 
+     */
+    public function getGraph()
+    {
+        return $this->graph;
+    }
+
+    /**
+     * Set Probe
+     *
+     * @param \Arii\ACKBundle\Entity\Probe $Probe
+     * @return GraphProbe
+     */
+    public function setProbe(\Arii\ACKBundle\Entity\Probe $Probe = null)
+    {
+        $this->Probe = $Probe;
+
+        return $this;
+    }
+
+    /**
+     * Get Probe
+     *
+     * @return \Arii\ACKBundle\Entity\Probe 
+     */
+    public function getProbe()
+    {
+        return $this->Probe;
+    }
 }

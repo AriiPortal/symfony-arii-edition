@@ -11,7 +11,7 @@ class GraphsController extends Controller{
     private $ColorStatus;
     private $Icons = array(            
             'APP'           => 'application',
-            'BOX_NAME'      => 'box',
+            'BOX'           => 'box',
             'COMMAND'       => 'shell',
             'DB'            => 'database_connect',
             'HOST'          => 'server',
@@ -21,14 +21,14 @@ class GraphsController extends Controller{
         // Couleur en fonction du status
     private $Color = array(
             'OK'      => '#ccebc5',
-            'WARN'    => '#fed9a6',
+            'WARNING' => '#fed9a6',
             'ERROR'   => '#fbb4ae',
             'UNKNOWN' => '#bbbbbb'
         );
     // Plus doux pour les clusters
     private $CColor = array(
             'OK'      => '#cddcc6',
-            'WARN'    => '#ffdaa7',
+            'WARNING' => '#ffdaa7',
             'ERROR'   => '#fbb4ae',
             'UNKNOWN' => '#dddddd'
         );
@@ -53,6 +53,114 @@ class GraphsController extends Controller{
         return $render->grid($Grid,'title,description');
     }
     
+    // Dessin d'un neoud
+    public function linksAction() {
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+
+        $portal = $this->container->get('arii_core.portal');
+        $this->ColorStatus = $portal->getColors();
+                
+        $output = "svg";
+        if ($request->query->get( 'output' ))
+            $output = $request->query->get( 'output' );
+
+        // Localisation des images 
+        $root = $this->get('kernel')->getRootDir();
+        $images = '/images';
+        $images_path =  str_replace('/',DIRECTORY_SEPARATOR,$root.'/../web'.$images);
+        $this->images_path = $images_path;
+        
+        $images_url = $this->container->get('templating.helper.assets')->getUrl($images);        
+
+        // Design
+        $out = 'digraph ACK {
+fontname=arial 
+fontsize=10
+node [shape=plaintext,fontname=arial,fontsize=10]
+edge [fontname=arial,fontsize=8,decorate=true,compound=true]
+bgcolor=white
+';
+        $em = $this->getDoctrine()->getManager();
+        $Probe = $this->getDoctrine()->getRepository('AriiACKBundle:Probe')->find($id);
+
+        // On récupère les neouds du graph
+        $Links = $this->getDoctrine()->getRepository('AriiACKBundle:Link')->listNodes($id);
+        
+        $Obj = [];
+        foreach($Links as $Link) {
+            $from = $Link->getObjFrom();
+            $to = $Link->getObjTo();
+            
+            $type = $Link->getLinkType();
+            $id = $from->getId();
+            
+            if (!isset($Obj[$id]))
+                $Obj[$id] = $this->extractInfo($from,$id);
+            
+            if ($type==1) {
+                // on peut traiter sans autre
+                $out .= $id.' -> '.$to->getId()." [color=green]\n";
+                // mais on conserve l'infos
+                if (isset($Obj[$id]['depends']))
+                    $Obj[$id]['depends'] .= ','.$to->getId();
+                else 
+                    $Obj[$id]['depends'] = $to->getId();
+            }
+            elseif ($type==2) {
+                $inside = $to->getId();                    
+                $out .= $id.' -> '.$inside." [style=dotted,color=transparent]\n";
+                // on conserve les infos
+                $Obj[$inside]['parentId'] = $id;
+            }
+        }            
+          
+        // On complete
+        foreach ($Obj as $id => $Info) {            
+            if (isset($Obj[$id]['id'])) 
+                continue;
+            
+            $Probe = $this->getDoctrine()->getRepository('AriiACKBundle:Probe')->find($id);
+            if (!$Probe)
+                throw new \Exception("'$id' ?");
+
+            $Obj[$id] = $this->extractInfo($Probe,$id,$Obj[$id]);
+            
+        }
+
+        // Couleur des clusters
+        foreach ($Obj as $id => $Info) {
+            if (!isset($Obj[$id]['color'])) {
+                $status = $Obj[$id]['status'];
+                $Obj[$id]['color'] = '"'.$this->CColor[$status].'"';
+            }
+        }
+        
+        foreach ($Obj as $id => $Info) {
+            // Dessin des noeuds
+            $out .= $this->Node( $id, $Info);
+        }
+        
+        sort($Obj);
+        $Tree = $this->buildTree($Obj);
+//        print_r($Tree);
+//        exit();
+        $out .= $this->Cluster($Tree);
+        
+
+        $out .=" }\n";
+
+        $graphviz = $this->container->get('arii_core.graphviz');
+        $Options = array(
+            'digraph' => false,
+            'output' => $output,
+            'output' => 'svg',
+            'images' => $images
+        );
+
+        return $graphviz->dot($out,$Options);
+    }
+    
     public function generateAction()
     {
         $request = Request::createFromGlobals();
@@ -72,14 +180,7 @@ class GraphsController extends Controller{
         $this->images_path = $images_path;
         
         $images_url = $this->container->get('templating.helper.assets')->getUrl($images);        
-/*
- * print $images_path;
- 
-print "<br/>";
-print $images_url;
-exit();
- * 
- */
+
         // Design
         $out = 'digraph ACK {
 fontname=arial 
@@ -93,40 +194,40 @@ bgcolor=white
         $Graph = $this->getDoctrine()->getRepository('AriiACKBundle:Graph')->find($view);
         
         // On récupère les neouds du graph
-        $GraphObjects = $this->getDoctrine()->getRepository('AriiACKBundle:GraphObject')->findBy([
+        $GraphProbes = $this->getDoctrine()->getRepository('AriiACKBundle:GraphProbe')->findBy([
             "graph" => $Graph
         ]);
         
         $Obj = [];
-        foreach($GraphObjects as $GraphObject) {
-            $Object = $GraphObject->getObject();            
-            $id = $Object->getId();
+        foreach($GraphProbes as $GraphProbe) {
+            $Probe = $GraphProbe->getProbe();            
+            $id = $Probe->getId();
             
             // Init
             if (!isset($Obj[$id]))
-                $Obj[$id] = $this->extractInfo($Object,$id);
+                $Obj[$id] = $this->extractInfo($Probe,$id);
             
             // on ajoute les liens            
             $Links = $this->getDoctrine()->getRepository('AriiACKBundle:Link')->findBy([
-                "obj_from" => $Object
+                "obj_from" => $Probe
             ]);
             foreach($Links as $Link) {
                 $from = $Link->getObjFrom();
                 $to = $Link->getObjTo();
                 
                 $type = $Link->getLinkType();
-                if ($type=='DEPENDS') {
+                if ($type==1) {
                     // on peut traiter sans autre
-                    $out .= $id.' -> '.$to->getId()." [color=green]\n";
+                    $out .= $to->getId().' -> '.$id." [color=green]\n";
                     // mais on conserve l'infos
                     if (isset($Obj[$id]['depends']))
                         $Obj[$id]['depends'] .= ','.$to->getId();
                     else 
                         $Obj[$id]['depends'] = $to->getId();
                 }
-                elseif ($type=='CONTAINS') {
+                elseif ($type==2) {
                     $inside = $to->getId();                    
-                    $out .= $id.' -> '.$inside." [style=dotted,color=green]\n";
+                    $out .= $id.' -> '.$inside." [style=dotted,color=transparent]\n";
                     // on conserve les infos
                     $Obj[$inside]['parentId'] = $id;
                 }
@@ -138,11 +239,11 @@ bgcolor=white
             if (isset($Obj[$id]['id'])) 
                 continue;
             
-            $Object = $this->getDoctrine()->getRepository('AriiACKBundle:Object')->find($id);
-            if (!$Object)
+            $Probe = $this->getDoctrine()->getRepository('AriiACKBundle:Probe')->find($id);
+            if (!$Probe)
                 throw new \Exception("'$id' ?");
 
-            $Obj[$id] = $this->extractInfo($Object,$id,$Obj[$id]);
+            $Obj[$id] = $this->extractInfo($Probe,$id,$Obj[$id]);
             
         }
 
@@ -159,23 +260,20 @@ bgcolor=white
             $out .= $this->Node( $id, $Info);
         }
         
-        
-//        print_r($Obj);
-//        exit();
-        
+        sort($Obj);
         $Tree = $this->buildTree($Obj);
+//        print_r($Tree);
+//        exit();
         $out .= $this->Cluster($Tree);
         
-        // print_r($Tree);
-        
+
         $out .=" }\n";
-        // print $out;
-        // exit();
+
         $graphviz = $this->container->get('arii_core.graphviz');
         $Options = array(
             'digraph' => false,
             'output' => $output,
-            'output' => 'png',
+            'output' => 'svg',
             'images' => $images
         );
 
@@ -183,25 +281,26 @@ bgcolor=white
     }
     
     // complete l'objet en cours
-    private function extractInfo($Object,$id,$Obj=[]) {
+    private function extractInfo($Probe,$id,$Obj=[]) {
         // Complement (quel niveau d'information ?
         if (!isset($Obj['id']))          $Obj['id']          = $id;
-        if (!isset($Obj['objType']))     $Obj['objType']     = $Object->getObjType();
-        if (!isset($Obj['name']))        $Obj['name']        = $Object->getName();
-        if (!isset($Obj['desc']))        $Obj['desc']        = $Object->getDescription();
+        if (!isset($Obj['objType']))     $Obj['objType']     = $Probe->getObjType();
+        if (!isset($Obj['name']))        $Obj['name']        = $Probe->getName();
+        if (!isset($Obj['title']))       $Obj['title']       = $Probe->getTitle();
+        if (!isset($Obj['desc']))        $Obj['desc']        = $Probe->getDescription();
         if (!isset($Obj['parentId']))    $Obj['parentId']    = null;
-        if (!isset($Obj['state']))       $Obj['state']       = $Object->getState();
-        if (!isset($Obj['stateTime']))   $Obj['stateTime']   = $Object->getStateTime();
-        if (!isset($Obj['stateUser']))   $Obj['stateUser']   = $Object->getStateUser();
-        if (!isset($Obj['downtime']))    $Obj['downtime']      = $Object->getActive();
-        if (!isset($Obj['downtimeTime']))$Obj['downtimeTime']  = $Object->getActiveTime();
-        if (!isset($Obj['downtimeUser']))$Obj['downtimeUser']  = $Object->getActiveUser();
-        if (!isset($Obj['ack']))         $Obj['ack']         = $Object->getAck();
-        if (!isset($Obj['ackTime']))     $Obj['ackTime']     = $Object->getAckTime();
-        if (!isset($Obj['ackUser']))     $Obj['ackUser']     = $Object->getAckUser();
+        if (!isset($Obj['state']))       $Obj['state']       = $Probe->getState();
+        if (!isset($Obj['stateTime']))   $Obj['stateTime']   = $Probe->getStateTime();
+        if (!isset($Obj['stateUser']))   $Obj['stateUser']   = $Probe->getStateUser();
+        if (!isset($Obj['downtime']))    $Obj['downtime']      = $Probe->getDowntime();
+        if (!isset($Obj['downtimeTime']))$Obj['downtimeTime']  = $Probe->getDowntimeTime();
+        if (!isset($Obj['downtimeUser']))$Obj['downtimeUser']  = $Probe->getDowntimeUser();
+        if (!isset($Obj['ack']))         $Obj['ack']         = $Probe->getAck();
+        if (!isset($Obj['ackTime']))     $Obj['ackTime']     = $Probe->getAckTime();
+        if (!isset($Obj['ackUser']))     $Obj['ackUser']     = $Probe->getAckUser();
         
-        if (!isset($Obj['status']))      $Obj['status']      = $Object->getStatus();
-        if (!isset($Obj['statusTime']))  $Obj['statusTime']  = $Object->getStatusTime();
+        if (!isset($Obj['status']))      $Obj['status']      = $Probe->getStatus();
+        if (!isset($Obj['statusTime']))  $Obj['statusTime']  = $Probe->getStatusTime();
         
         // changement ?
         
@@ -240,14 +339,53 @@ bgcolor=white
         $result='';
         foreach($Tree as $id => $Leaf) {
             $status = $Leaf['status'];
-            $result .= "subgraph cluster_$id {\n";
-            $result .= "style=filled\n";
-            $result .= "bgcolor=".$Leaf['color']."\n";
-            $result .= "$id\n";
-            $result .= $this->Cluster($Leaf['children']);
-            $result .= "}\n";            
+            // On regarde si il y a des enfants
+            // et on calcule le statut global
+            if (count($Leaf['children'])>0) { 
+                $result .= "subgraph cluster_$id {\n";
+                $result .= "style=filled\n";
+                $result .= "bgcolor=\"".$this->Colorize($Leaf['children'])."\"\n";
+                $result .= "label=\"".$Leaf['title']."\"\n";
+                $result .= "$id\n";
+                $result .= $this->Cluster($Leaf['children']);
+                $result .= "}\n";  
+            }
+            else {
+                $result .= "$id\n";
+            }
         }
         return $result;
+    }
+    
+    private function Colorize($Leaves) {
+         $Color = [];
+         $nb=0;
+         foreach($Leaves as $Leaf) {
+            $status = $Leaf['status'];
+            if (isset($Color[$status]))
+                $Color[$status]++;
+            else
+                $Color[$status]=1;
+            $nb++;
+        }
+        // 100%
+        foreach (['ERROR','OK','WARNING','UNKNOWN'] as $s) {
+            if (isset($Color[$s]) and ($Color[$s]==$nb)) {
+                return $this->CColor[$s];
+            }
+        }
+        // Au moins un cas 
+        foreach (['ERROR','WARNING'] as $s) {
+            if (isset($Color[$s]) and ($Color[$s]>0)) {
+                return $this->CColor['WARNING'];
+            }
+        }
+        foreach (['UNKNOWN'] as $s) {
+            if (isset($Color[$s]) and ($Color[$s]>0)) {
+                return $this->CColor['UNKNOWN'];
+            }
+        }
+        return 'black';
     }
     
     private function Node($ID,$Infos,$Fields=array(),$realtime=false) {

@@ -8,13 +8,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * Object
+ * Probe
  *
- * @ORM\Table(name="ARII_OBJECT")
- * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\ObjectRepository")
+ * @ORM\Table(name="ARII_PROBE")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\ProbeRepository")
  * 
  */
-class Object
+class Probe
 {
     public function __construct()
     {
@@ -249,7 +249,7 @@ class Object
      * Set name
      *
      * @param string $name
-     * @return Object
+     * @return Probe
      */
     public function setName($name)
     {
@@ -272,7 +272,7 @@ class Object
      * Set title
      *
      * @param string $title
-     * @return Object
+     * @return Probe
      */
     public function setTitle($title)
     {
@@ -295,7 +295,7 @@ class Object
      * Set description
      *
      * @param string $description
-     * @return Object
+     * @return Probe
      */
     public function setDescription($description)
     {
@@ -318,7 +318,7 @@ class Object
      * Set obj_type
      *
      * @param string $objType
-     * @return Object
+     * @return Probe
      */
     public function setObjType($objType)
     {
@@ -341,7 +341,7 @@ class Object
      * Set source
      *
      * @param string $source
-     * @return Object
+     * @return Probe
      */
     public function setSource($source)
     {
@@ -364,7 +364,7 @@ class Object
      * Set state
      *
      * @param string $state
-     * @return Object
+     * @return Probe
      */
     public function setState($state)
     {
@@ -387,7 +387,7 @@ class Object
      * Set state_comment
      *
      * @param string $stateComment
-     * @return Object
+     * @return Probe
      */
     public function setStateComment($stateComment)
     {
@@ -410,7 +410,7 @@ class Object
      * Set state_time
      *
      * @param \DateTime $stateTime
-     * @return Object
+     * @return Probe
      */
     public function setStateTime($stateTime)
     {
@@ -433,7 +433,7 @@ class Object
      * Set state_user
      *
      * @param string $stateUser
-     * @return Object
+     * @return Probe
      */
     public function setStateUser($stateUser)
     {
@@ -456,7 +456,7 @@ class Object
      * Set state_end
      *
      * @param \DateTime $stateEnd
-     * @return Object
+     * @return Probe
      */
     public function setStateEnd($stateEnd)
     {
@@ -479,7 +479,7 @@ class Object
      * Set status
      *
      * @param string $status
-     * @return Object
+     * @return Probe
      */
     public function setStatus($status)
     {
@@ -502,7 +502,7 @@ class Object
      * Set status_comment
      *
      * @param string $statusComment
-     * @return Object
+     * @return Probe
      */
     public function setStatusComment($statusComment)
     {
@@ -525,7 +525,7 @@ class Object
      * Set status_time
      *
      * @param \DateTime $statusTime
-     * @return Object
+     * @return Probe
      */
     public function setStatusTime($statusTime)
     {
@@ -548,7 +548,7 @@ class Object
      * Set status_user
      *
      * @param string $statusUser
-     * @return Object
+     * @return Probe
      */
     public function setStatusUser($statusUser)
     {
@@ -571,7 +571,7 @@ class Object
      * Set ack
      *
      * @param boolean $ack
-     * @return Object
+     * @return Probe
      */
     public function setAck($ack)
     {
@@ -594,7 +594,7 @@ class Object
      * Set ack_comment
      *
      * @param string $ackComment
-     * @return Object
+     * @return Probe
      */
     public function setAckComment($ackComment)
     {
@@ -617,7 +617,7 @@ class Object
      * Set ack_time
      *
      * @param \DateTime $ackTime
-     * @return Object
+     * @return Probe
      */
     public function setAckTime($ackTime)
     {
@@ -640,7 +640,7 @@ class Object
      * Set ack_user
      *
      * @param string $ackUser
-     * @return Object
+     * @return Probe
      */
     public function setAckUser($ackUser)
     {
@@ -663,7 +663,7 @@ class Object
      * Set ack_end
      *
      * @param \DateTime $ackEnd
-     * @return Object
+     * @return Probe
      */
     public function setAckEnd($ackEnd)
     {
@@ -686,9 +686,9 @@ class Object
      * Set downtime
      *
      * @param string $downtime
-     * @return Object
+     * @return Probe
      */
-    public function setActive($downtime)
+    public function setDowntime($downtime)
     {
         $this->downtime = $downtime;
 
@@ -700,7 +700,7 @@ class Object
      *
      * @return string 
      */
-    public function getActive()
+    public function getDowntime()
     {
         return $this->downtime;
     }
@@ -709,9 +709,9 @@ class Object
      * Set downtime_comment
      *
      * @param string $downtimeComment
-     * @return Object
+     * @return Probe
      */
-    public function setActiveComment($downtimeComment)
+    public function setDowntimeComment($downtimeComment)
     {
         $this->downtime_comment = $downtimeComment;
 
@@ -723,7 +723,7 @@ class Object
      *
      * @return string 
      */
-    public function getActiveComment()
+    public function getDowntimeComment()
     {
         return $this->downtime_comment;
     }
@@ -732,9 +732,9 @@ class Object
      * Set downtime_time
      *
      * @param \DateTime $downtimeTime
-     * @return Object
+     * @return Probe
      */
-    public function setActiveTime($downtimeTime)
+    public function setDowntimeTime($downtimeTime)
     {
         $this->downtime_time = $downtimeTime;
 
@@ -746,7 +746,7 @@ class Object
      *
      * @return \DateTime 
      */
-    public function getActiveTime()
+    public function getDowntimeTime()
     {
         return $this->downtime_time;
     }
@@ -755,9 +755,9 @@ class Object
      * Set downtime_user
      *
      * @param string $downtimeUser
-     * @return Object
+     * @return Probe
      */
-    public function setActiveUser($downtimeUser)
+    public function setDowntimeUser($downtimeUser)
     {
         $this->downtime_user = $downtimeUser;
 
@@ -769,7 +769,7 @@ class Object
      *
      * @return string 
      */
-    public function getActiveUser()
+    public function getDowntimeUser()
     {
         return $this->downtime_user;
     }
@@ -778,9 +778,9 @@ class Object
      * Set downtime_end
      *
      * @param \DateTime $downtimeEnd
-     * @return Object
+     * @return Probe
      */
-    public function setActiveEnd($downtimeEnd)
+    public function setDowntimeEnd($downtimeEnd)
     {
         $this->downtime_end = $downtimeEnd;
 
@@ -792,7 +792,7 @@ class Object
      *
      * @return \DateTime 
      */
-    public function getActiveEnd()
+    public function getDowntimeEnd()
     {
         return $this->downtime_end;
     }
@@ -801,7 +801,7 @@ class Object
      * Set updated
      *
      * @param \DateTime $updated
-     * @return Object
+     * @return Probe
      */
     public function setUpdated($updated)
     {

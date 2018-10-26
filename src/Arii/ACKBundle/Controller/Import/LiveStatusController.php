@@ -67,17 +67,17 @@ class LiveStatusController extends Controller
 
             }
             
-            // si aucun object n'est attaché
-            if (!$record->getObject()) {
+            // si aucun Probe n'est attaché
+            if (!$record->getProbe()) {
                 // on retrouve l'objet HOST
-                $host = $this->getDoctrine()->getRepository("AriiACKBundle:Object")->findOneBy(
+                $host = $this->getDoctrine()->getRepository("AriiACKBundle:Probe")->findOneBy(
                 [
                     'name' => $Info['name'],
                     'obj_type' => 'HOST'
                 ]);
                 
                 if (!$host) {
-                    $host = new \Arii\ACKBundle\Entity\Object();
+                    $host = new \Arii\ACKBundle\Entity\Probe();
                     $host->setName($Info['name']);
                     $host->setTitle($Info['name']);
                     $host->setSource('HOST');
@@ -92,7 +92,7 @@ class LiveStatusController extends Controller
                     
                     $em->persist($host);                    
                 }
-                $record->setObject($host);
+                $record->setProbe($host);
             }
             
             // plusieurs Nagios ?
@@ -421,17 +421,17 @@ state_type	1
                 $record->setState($status);
                 $record->setStateTime(new \DateTime('@'.$Info['last_check']));
                 
-                // si aucun object n'est attaché
-                if (!$record->getObject()) {
+                // si aucun Probe n'est attaché
+                if (!$record->getProbe()) {
                     // on retrouve l'objet SERVICE
-                    $host_service = $this->getDoctrine()->getRepository("AriiACKBundle:Object")->findOneBy(
+                    $host_service = $this->getDoctrine()->getRepository("AriiACKBundle:Probe")->findOneBy(
                     [
                         'name' =>$id,
                         'obj_type' => 'SERVICE'
                     ]);
 
                     if (!$host_service) {
-                        $host_service = new \Arii\ACKBundle\Entity\Object();
+                        $host_service = new \Arii\ACKBundle\Entity\Probe();
                         $host_service->setName($id);
                         $host_service->setTitle($service_name);
                         $host_service->setObjType('SERVICE');
@@ -447,7 +447,7 @@ state_type	1
                         
                         $em->persist($host_service);                        
                     }
-                    $record->setObject($host_service);
+                    $record->setProbe($host_service);
                 }
                 
                 // plusieurs Nagios ?

@@ -62,10 +62,10 @@ class HostsController extends Controller
         $request = Request::createFromGlobals();
         $id = $request->get('id');
         
-        $object = $this->getDoctrine()->getRepository("AriiACKBundle:Host")->find($id);
+        $Probe = $this->getDoctrine()->getRepository("AriiACKBundle:Host")->find($id);
         $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
                 
-        return $this->render('AriiACKBundle:Hosts:bootstrap.html.twig', $serializer->toArray($object) );
+        return $this->render('AriiACKBundle:Hosts:bootstrap.html.twig', $serializer->toArray($Probe) );
     }
 
     public function formAction()

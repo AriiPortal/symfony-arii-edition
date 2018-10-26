@@ -16,5 +16,15 @@
             <file>file:/C:/xampp56/arii/src/Arii/ACKBundle/Resources/views/Hosts/index.html.twig</file>
             <file>file:/C:/xampp56/arii/src/Arii/ACKBundle/Resources/views/Hosts/index.html.old.twig</file>
         </group>
+        <group>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Controller/AlarmsController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Resources/views/Links/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Controller/AlertsController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Entity/AlertRepository.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Resources/views/Graphs/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Resources/views/Hosts/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Resources/views/Services/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ACKBundle/Resources/views/Jobs/index.html.twig</file>
+        </group>
     </open-files>
 </project-private>

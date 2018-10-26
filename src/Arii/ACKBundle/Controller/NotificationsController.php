@@ -72,7 +72,7 @@ class NotificationsController extends Controller{
     function form_render($data){
         // astuce pour traiter les blobs
         foreach (array('TO_DO','ACTION') as $c) {
-            if (is_object($data->get_value($c))) {
+            if (is_Probe($data->get_value($c))) {
                 $value = $data->get_value($c)->load();
                 $data->set_value($c,$value);
                 $data->set_value(strtolower($c),$value);

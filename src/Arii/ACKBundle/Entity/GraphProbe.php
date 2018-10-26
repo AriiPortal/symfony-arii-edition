@@ -8,13 +8,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * Object
+ * Probe
  *
- * @ORM\Table(name="ARII_GRAPH__OBJECT")
- * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\GraphObjectRepository")
+ * @ORM\Table(name="ARII_GRAPH__PROBE")
+ * @ORM\Entity(repositoryClass="Arii\ACKBundle\Entity\GraphProbeRepository")
  * 
  */
-class GraphObject
+class GraphProbe
 {
     public function __construct()
     {
@@ -57,10 +57,10 @@ class GraphObject
     private $graph;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Object")
+     * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Probe")
      * @ORM\JoinColumn(nullable=true)
      **/
-    private $object;
+    private $Probe;
 
     /**
      * Get id
@@ -76,7 +76,7 @@ class GraphObject
      * Set title
      *
      * @param string $title
-     * @return GraphObject
+     * @return GraphProbe
      */
     public function setTitle($title)
     {
@@ -99,7 +99,7 @@ class GraphObject
      * Set description
      *
      * @param string $description
-     * @return GraphObject
+     * @return GraphProbe
      */
     public function setDescription($description)
     {
@@ -122,7 +122,7 @@ class GraphObject
      * Set graph
      *
      * @param \Arii\ACKBundle\Entity\Graph $graph
-     * @return GraphObject
+     * @return GraphProbe
      */
     public function setGraph(\Arii\ACKBundle\Entity\Graph $graph = null)
     {
@@ -142,25 +142,25 @@ class GraphObject
     }
 
     /**
-     * Set object
+     * Set Probe
      *
-     * @param \Arii\ACKBundle\Entity\Object $object
-     * @return GraphObject
+     * @param \Arii\ACKBundle\Entity\Probe $Probe
+     * @return GraphProbe
      */
-    public function setObject(\Arii\ACKBundle\Entity\Object $object = null)
+    public function setProbe(\Arii\ACKBundle\Entity\Probe $Probe = null)
     {
-        $this->object = $object;
+        $this->Probe = $Probe;
 
         return $this;
     }
 
     /**
-     * Get object
+     * Get Probe
      *
-     * @return \Arii\ACKBundle\Entity\Object 
+     * @return \Arii\ACKBundle\Entity\Probe 
      */
-    public function getObject()
+    public function getProbe()
     {
-        return $this->object;
+        return $this->Probe;
     }
 }

@@ -149,6 +149,10 @@ svg_ACK_graph:
     path:  /graph.svg
     defaults: { _controller: AriiACKBundle:Graphs:generate }
 
+svg_ACK_graph_links:
+    path:  /graph/links.svg
+    defaults: { _controller: AriiACKBundle:Graphs:links }
+
 xml_ACK_graph_grid:
     path:  /graphs/grid.xlm
     defaults: { _controller: AriiACKBundle:Graphs:grid }
@@ -302,19 +306,19 @@ xml_ACK_job_toolbar:
     defaults: { _controller: AriiACKBundle:Jobs:toolbar}
 
 #============================================================
-# Objects
+# Probes
 #------------------------------------------------------------
-arii_ACK_objects:
-    path:  /objects
-    defaults: { _controller: AriiACKBundle:Objects:index }
+arii_ACK_probes:
+    path:  /probes
+    defaults: { _controller: AriiACKBundle:Probes:index }
     
-xml_ACK_objects_grid:
-    path:  /objects/grid.xml
-    defaults: { _controller: AriiACKBundle:Objects:grid }
+xml_ACK_probes_grid:
+    path:  /probes/grid.xml
+    defaults: { _controller: AriiACKBundle:Probes:grid }
 
-xml_ACK_objects_grid_menu:
-    path:  /objects/grid_menu.xml
-    defaults: { _controller: AriiACKBundle:Objects:grid_menu}
+xml_ACK_probes_grid_menu:
+    path:  /probes/grid_menu.xml
+    defaults: { _controller: AriiACKBundle:Probes:grid_menu}
 
 #============================================================
 # Links
@@ -328,27 +332,27 @@ xml_ACK_depends_grid:
     defaults: { _controller: AriiACKBundle:Links:dependsGrid }
     
 #============================================================
-# Object
+# Probe
 #------------------------------------------------------------
-xml_ACK_object_form:
-    path:  /object/form.xml
-    defaults: { _controller: AriiACKBundle:Objects:form}
+xml_ACK_probe_form:
+    path:  /probe/form.xml
+    defaults: { _controller: AriiACKBundle:Probes:form}
 
-xml_ACK_object_save:
-    path:  /object/save.xml
-    defaults: { _controller: AriiACKBundle:Objects:save}
+xml_ACK_probe_save:
+    path:  /probe/save.xml
+    defaults: { _controller: AriiACKBundle:Probes:save}
 
-xml_ACK_object_delete:
-    path:  /object/delete.xml
-    defaults: { _controller: AriiACKBundle:Objects:delete}
+xml_ACK_probe_delete:
+    path:  /probe/delete.xml
+    defaults: { _controller: AriiACKBundle:Probes:delete}
 
-xml_ACK_object_toolbar:
-    path:  /object/toolbar.xml
-    defaults: { _controller: AriiACKBundle:Objects:toolbar}
+xml_ACK_probe_toolbar:
+    path:  /probe/toolbar.xml
+    defaults: { _controller: AriiACKBundle:Probes:toolbar}
 
-txt_ACK_object_state:
-    path:  /object/state.txt
-    defaults: { _controller: AriiACKBundle:Objects:state}
+txt_ACK_probe_state:
+    path:  /probe/state.txt
+    defaults: { _controller: AriiACKBundle:Probes:state}
 
 
 #============================================================

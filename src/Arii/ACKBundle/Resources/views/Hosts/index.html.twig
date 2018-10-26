@@ -6,7 +6,7 @@ var State = {"OK": 0, "WARNING": 1, "CRITICAL": 1}
 function Init() {
     mySidebar.items('hosts').setActive();
 
-    myLayout = globalLayout.cells("b").attachLayout('2U');
+    myLayout = globalLayout.cells("b").attachLayout('3L');
     myLayout.cells("a").setText("{{ "Hosts" | trans }}");
 
     myToolbar = myLayout.cells("a").attachToolbar();
@@ -66,6 +66,10 @@ function Init() {
    ];
    myForm = myLayout.cells("b").attachForm(formData);     
    myLayout.cells("b").setText("{{ "Detail" | trans }}");
+
+   myLayout.cells("c").setText("{{ "Probe" | trans }}");
+   myLayout.cells("c").setHeight(300);
+   myLayout.cells("c").collapse();
    
    PageRefresh();
 }

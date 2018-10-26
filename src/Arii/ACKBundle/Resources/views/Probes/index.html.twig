@@ -1,0 +1,129 @@
+{% extends "AriiACKBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+// Module ?
+var bundle='Graphviz';    
+var toolbar;
+var rankdir = 'TB';
+var splines = 'polyline';
+var graph_path= 'live';
+var graph_file= '.*';
+var graph_paths = '';
+var show_params = 'n';
+var show_events = 'n';
+var show_jobs = 'n';
+var show_chains = 'n';
+var show_config = 'n';
+var path= 'live';
+var folder = '';
+var graph;
+    
+function Init() {
+    mySidebar.items('probes').setActive();
+
+    myLayout = globalLayout.cells("b").attachLayout('3L');
+    myLayout.cells("a").setText("{{ "Detail" | trans }}");
+    myLayout.cells("b").hideHeader();
+    myLayout.cells("c").collapse();
+    
+    myGrid = myLayout.cells("a").attachGrid();
+    myGrid.setImagePath( "{{ asset('/images/') }}");
+    myGrid.setHeader("{{ "Name" | trans }},{{ "Description" | trans }},{{ "Type" | trans }}");
+    myGrid.attachHeader("#text_filter,#text_filter,#select_filter");
+    myGrid.setInitWidths("200,*,100");    
+    myGrid.setColAlign("left,left,left");
+    myGrid.setColTypes("ro,ro,ro");
+    myGrid.setColSorting("str,str,str");
+    myGrid.enableAlterCss("even_row","odd_row");   
+    myGrid.enableDragAndDrop(true);    
+    myGrid.init();
+    myGrid.load( "{{ url('xml_ACK_probes_grid') }}?type=HOST" );
+    myGrid.attachEvent("onRowDblClicked", function (rid) {
+        EditProbe(rid);
+    });
+    myGrid.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
+        changeState(sId,sObj,tObj);
+    });
+    
+    myTabbar = myLayout.cells("b").attachTabbar();
+    
+    myTabbar.addTab("detail","{{ "Detail" | trans }}","150px", null, true);
+    myTabbar.addTab("graph","{{ "Graph" | trans }}","150px");
+
+    formData = [
+        { type: "settings", position: "label-left", labelWidth: 80, inputWidth: 350, labelAlign: "right", readonly: 1, position: "label-left" },
+        { type: "hidden", name: 'id' },       
+        {   type: "block",
+            inputWidth: "auto",
+            list: [    
+                {type: "input", name: 'name', label:'{{ 'Name' | trans }}', required: true },
+                {type: "input", name: 'title', label:'{{ 'Title' | trans }}' },
+                {type: "input", name: 'description', label:'{{ 'Description' | trans }}', rows: 6 },
+                {type: "input", name: 'obj_type', label:'{{ 'Type' | trans }}' },
+                {type: "input", name: 'state', label:'{{ 'State' | trans }}' },
+                {type: "input", name: 'state_time', label:'{{ 'State time' | trans }}'},
+                {type: "input", name: 'updated', label:'{{ 'Updated' | trans }}' }                
+            ]
+        }
+    ];
+    myForm = myTabbar.cells("detail").attachForm(formData);
+    
+    myFormToolbar = myTabbar.cells("detail").attachToolbar();
+    myFormToolbar.setIconsPath("{{ asset('/images/') }}");
+    myFormToolbar.loadStruct("{{ url('xml_ACK_probe_toolbar') }}");
+        
+    myLayout.cells("c").setText("{{ "Links" | trans }}");
+    myLayout.cells("c").collapse();
+    
+    myTabbar2 = myLayout.cells("c").attachTabbar();
+    myTabbar2.addTab("contains","{{ "Contains" | trans }}","150px", null, true);
+    myTabbar2.addTab("depends","{{ "Depends" | trans }}","150px");
+    
+    myContains = myTabbar2.cells("contains").attachGrid();
+    myContains.setImagePath( "{{ asset('/images/') }}");
+    myContains.setHeader("{{ "Name" | trans }},{{ "Description" | trans }}");
+    myContains.attachHeader("#text_filter,#text_filter");
+    myContains.setInitWidths("140,*");    
+    myContains.setColAlign("left,left");
+    myContains.setColTypes("ro,ro");
+    myContains.setColSorting("str,str");
+    myContains.enableAlterCss("even_row","odd_row");   
+    myContains.enableDragAndDrop(true);    
+    myContains.init();
+
+    myDepends = myTabbar2.cells("depends").attachGrid();
+    myDepends.setImagePath( "{{ asset('/images/') }}");
+    myDepends.setHeader("{{ "Name" | trans }},{{ "Description" | trans }}");
+    myDepends.attachHeader("#text_filter,#text_filter");
+    myDepends.setInitWidths("140,*");    
+    myDepends.setColAlign("left,left");
+    myDepends.setColTypes("ro,ro");
+    myDepends.setColSorting("str,str");
+    myDepends.enableAlterCss("even_row","odd_row");   
+    myDepends.enableDragAndDrop(true);    
+    myDepends.init();
+}
+
+function PageRefresh() {};
+
+function EditProbe (id) {
+    myLayout.cells("c").expand();    
+    myLayout.cells('c').progressOn();
+    myForm.load("{{ url('xml_ACK_probe_form') }}?id="+id,function(){
+        myLayout.cells('b').progressOff();
+        myContains.load("{{ url('xml_ACK_contains_grid') }}?id="+id, function (rid) {
+            myDepends.load("{{ url('xml_ACK_depends_grid') }}?id="+id, function (rid) {
+                myLayout.cells('c').progressOff();
+            });
+        });
+    });
+    // le dessin en parallele
+    var url = "{{ url('svg_ACK_graph_links') }}";
+    url += "?id="+id;
+    url += "&splines="+encodeURIComponent(splines);
+    myTabbar.cells("graph").attachURL(url);
+}
+
+
+</script>
+{% endblock %}

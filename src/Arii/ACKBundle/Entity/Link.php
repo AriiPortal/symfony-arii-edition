@@ -64,16 +64,20 @@ class Link
     /**
      * @var string
      * 
-     * Source 1 DEPENDS  Target
-     * Source 2 CONTAINS Target
+    * 0: Aucun lien (lien existant mais désactivé)
+    * 1: from CONTAINS to (to est dans from)
+    * 2: from DEPENDS on (from depend de to)
+    * Utile ? 
+    * -- 3: from IS IN to (from est dans to)
+    * -- 4: from IMPACTS to (to depend de from)
      * 
      * @ORM\Column(name="link_type", type="integer")
      * 
      */
-    private $link_type;
+    private $link_type=0;
 
     /**
-     * @var string
+     * @var integer
      * 
      * 
      * @ORM\Column(name="link_strength", type="integer")
@@ -93,6 +97,14 @@ class Link
     */
     private $obj_to;
 
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
+     * 
+     */
+    private $updated;
+    
     /**
      * Get id
      *
@@ -262,5 +274,28 @@ class Link
     public function getLinkStrength()
     {
         return $this->link_strength;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Link
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
     }
 }

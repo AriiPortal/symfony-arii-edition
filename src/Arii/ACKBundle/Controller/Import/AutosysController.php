@@ -60,13 +60,14 @@ class AutosysController extends Controller
                 $Status->setState('OPEN');
                 $Status->setStateTime(new \DateTime());
             }
-            
+
             $Status->setInstance ($instance);            
             $Status->setName     ($name);
             $Status->setTitle    ($job_name);
             $Status->setSource   ('ATS');
+            $Status->setObjType  (4);
             $Status->setJobLog   ('?');
-            
+
             $Status->setType     ($Record['jobType']);
             $Status->setLastStart(new \DateTime('@'.$Record['lastStart']));
             $Status->setLastEnd  (new \DateTime('@'.$Record['lastEnd']));
@@ -77,7 +78,7 @@ class AutosysController extends Controller
                 $Status->setState('OPEN');
             else 
                 $Status->setState('CLOSE');
-            
+
             $Status->setUpdated  (new \DateTime());
             
             $em->persist($Status);

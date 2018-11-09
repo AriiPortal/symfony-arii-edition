@@ -16,7 +16,7 @@ class ServiceRepository extends EntityRepository
     public function listStates($ok,$warning,$critical) {        
         $q = $this
         ->createQueryBuilder('e')
-        ->select('e.id,e.host_name,e.title,e.description,e.state,e.state_time')
+        ->select('e.id,e.host_name,e.title,e.description,e.state,e.state_time,e.synchronised,(e.probe) as probe_id')
         ->orderBy('e.state_time','DESC');
         if ($ok)
             $q->orWhere("e.state = 'OK'");
@@ -53,9 +53,7 @@ class ServiceRepository extends EntityRepository
         
         $q = $this
         ->createQueryBuilder('e')
-        ->select("e.id","e.name","e.title","e.description","e.host_name","e.status","e.state_time","e.state_information",
-                "e.acknowledged","e.downtimes","e.downtimes_info","e.downtimes_user","e.status_time",
-                "e.last_state_change","e.last_time_up","e.last_time_down","e.last_time_unreachable","e.latency")
+        ->select("e.id,e.name,e.title,e.description,e.host_name,e.status,e.state_time,e.state_information,e.acknowledged,e.downtimes,e.downtimes_info,e.downtimes_user,e.status_time,e.last_state_change,e.last_time_up,e.last_time_down,e.last_time_unreachable,e.latency,(e.probe) as probe_id,e.synchronised")
         ->where('e.id = :id')
         ->setParameter('id', $id)
         ->getQuery();

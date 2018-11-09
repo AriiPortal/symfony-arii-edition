@@ -1,0 +1,235 @@
+{% extends "AriiACKBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+// Module ?
+var bundle='Graphviz';    
+var toolbar;
+var rankdir = 'TB';
+var splines = 'polyline';
+var folder = '';
+var graph="{{ id }}";
+    
+function Init() {
+    mySidebar.items('views').setActive();
+
+    myLayout = globalLayout.cells("b").attachLayout('3L');
+    myLayout.cells("a").setText("{{ "Views" | trans }}");
+    myLayout.cells("a").setWidth(400);
+    myLayout.cells("b").hideHeader();
+    myLayout.cells("c").hideHeader();
+    
+    myGrid = myLayout.cells("a").attachGrid();
+    myGrid.setImagePath( "{{ asset('/images/') }}");
+    myGrid.setHeader("{{ "Name" | trans }},{{ "Title" | trans }}");
+    myGrid.attachHeader("#text_filter,#text_filter");
+    // myGrid.setInitWidths("80,*");
+    myGrid.setColAlign("left,left");
+    myGrid.setColTypes("ro,ro");
+    myGrid.setColSorting("str,str");
+    myGrid.enableAlterCss("even_row","odd_row");   
+    myGrid.init();
+    myGrid.load("{{  url('xml_ACK_graph_grid') }}");
+    myGrid.attachEvent("onRowDblClicked", function (rid) {
+        DetailGraph(rid);
+    });
+
+    myTabbar = myLayout.cells("b").attachTabbar();
+    myTabbar.addTab("detail","{{ "Detail" | trans }}","150px", null, true);
+    myTabbar.addTab("graph","{{ "Graph" | trans }}","150px");
+    
+    formData = [
+        { type: "settings", position: "label-left", labelWidth: 80, inputWidth: 350, labelAlign: "right", readonly: 1, position: "label-left" },
+        { type: "hidden", name: 'id' },       
+        {   type: "block",
+            inputWidth: "auto",
+            list: [    
+                {type: "input", name: 'name', label:'{{ 'Name' | trans }}', required: true },
+                {type: "input", name: 'title', label:'{{ 'Title' | trans }}' },
+                {type: "input", name: 'description', label:'{{ 'Description' | trans }}', rows: 6 }                
+            ]
+        }
+
+   ];
+    myForm = myTabbar.cells("detail").attachForm(formData);
+
+    myFormToolbar = myTabbar.cells("detail").attachToolbar();
+    myFormToolbar.setIconsPath("{{ asset('/images/') }}");
+    myFormToolbar.loadStruct("{{ url('xml_ACK_views_toolbar') }}");
+    myFormToolbar.attachEvent("onClick", function(id){
+        switch (id) {
+            case 'delete':
+                // On edite pour sauvegarder
+                myLayout.cells("b").progressOn();
+                dhtmlx.confirm({
+                 title: "{{ "Delete view" | trans }}",
+                 type: "confirm-error",
+                 text: '{{ "Do you confirm the suppression ?" | trans }}',
+                 callback: function(answer) { if (answer) {
+                           myForm.send("{{ url('xml_ACK_view_delete') }}","POST",function(loader,response){
+                           if(response === "success")
+                           {
+                             dhtmlx.message({
+                                title:"{{ "Delete" | trans }}",
+                                type: "Notice",
+                                lifetime: "60000",
+                                text: "{{ "View deleted" | trans }}"
+                             });
+                           }
+                           else 
+                           {
+                             dhtmlx.message({
+                                title:"{{ "Delete" | trans }}",
+                                type: "error",
+                                lifetime: "60000",
+                                text: response
+                             });
+                             myLayout.cells("a").attachHTMLString(response);
+                           }
+                                myGrid.deleteRow(myForm.getItemValue('id'));
+                                myForm.getItemValue('ID','');
+                                myLayout.cells("b").progressOff();
+                            })
+                    }
+                },
+                 cancel: "{{ "No" | trans }}",
+                 ok: "{{ "Yes" | trans }}" });
+                   break;
+            case 'new':
+            case 'add':
+                myForm.clear();
+                break;
+            case "copy":
+                myForm.setItemValue("id",'');
+                dhtmlx.message({
+                        title:"Copy",
+                        type: "Notice",
+                        lifetime: "60000",
+                        text: "{{ "Copy" | trans }}"
+                     });
+                
+                break;
+            case 'save':
+                myLayout.cells("b").progressOn();
+                if(!myForm.validate())
+                {
+                    dhtmlx.message({
+                        title:"Error",
+                        type: "error",
+                        lifetime: "60000",
+                        text: "{{ "Please type in all the required fields!" | trans }}"
+                     });
+                    myLayout.cells("b").progressOff();
+                    return;
+                }
+                myForm.send("{{ url('xml_ACK_view_save') }}","POST",function(loader,response){
+                   if(response === "success")
+                   {
+                        dhtmlx.message({
+                            title:"{{ "Save" | trans }}",
+                            type: "Notice",
+                            lifetime: "60000",              
+                            text: "{{ "Saved" | trans }}"
+                        });
+                        myGrid.updateFromXML("{{ url('xml_ACK_graph_grid') }}");
+                   }
+                   else 
+                   {
+                        dhtmlx.message({
+                           title:"{{ "Save" | trans }}",
+                           type: "alert-error",
+                           lifetime: "60000",
+                           width: "800px",
+                           text: response
+                        });
+                   }
+                   myLayout.cells("b").progressOff();
+                });
+                break;
+            default:
+                alert(id);
+            }
+    });
+
+    // Partie graphique
+    myTabbar.cells("graph").attachURL('{{ asset('/images/arii.jpg') }}'); 
+    myTabbar.cells("graph").attachEvent("onContentLoaded", function(win){
+        myTabbar.cells("graph").progressOff();
+    });
+
+    // le contenu
+    myContent = myLayout.cells("c").attachLayout("2U");
+    myContent.cells("a").setText("{{ "Probes" | trans }}");
+    myContent.cells("b").setText("{{ "Content" | trans }}");    
+    myContent.cells("b").collapse();
+
+    myChoices = myContent.cells("a").attachGrid();
+    myChoices.setImagePath( "{{ asset('/images/') }}");
+    myChoices.setHeader("{{ "Name" | trans }},{{ "Title" | trans }}");
+    myChoices.attachHeader("#text_filter,#text_filter");
+    // myGrid.setInitWidths("80,*");
+    myChoices.setColAlign("left,left");
+    myChoices.setColTypes("ro,ro");
+    myChoices.setColSorting("str,str");
+    myChoices.enableAlterCss("even_row","odd_row");
+    myChoices.enableDragAndDrop(true);    
+    myChoices.init();
+//    myGrid.enableContextMenu(myGridMenu);
+    myChoices.load("{{  url('xml_ACK_probes_grid') }}");
+    myChoices.attachEvent("onRowDblClicked", function (rid) {
+    });
+    // validation d'une suppression
+    myChoices.attachEvent("OnDrop",function(dId,tId,sObj,tObj) {
+        dhx4.ajax.get( "{{ url('txt_ACK_graph_probe') }}?graph_id="+graph+"&probe_id="+dId+'&action=del', function(loader,response) {  
+            DetailGraph(graph);
+        });
+    });
+
+    myProbes = myContent.cells("b").attachGrid();
+    myProbes.setImagePath( "{{ asset('/images/') }}");
+    myProbes.setHeader("{{ "Name" | trans }},{{ "Title" | trans }}");
+    myProbes.attachHeader("#text_filter,#text_filter");
+    // myGrid.setInitWidths("80,*");
+    myProbes.setColAlign("left,left");
+    myProbes.setColTypes("ro,ro");
+    myProbes.setColSorting("str,str");
+    myProbes.enableAlterCss("even_row","odd_row");   
+    myProbes.enableDragAndDrop(true);    
+    myProbes.init();
+    myProbes.attachEvent("OnDrop",function(dId,tId,sObj,tObj) {
+        dhx4.ajax.get( "{{ url('txt_ACK_graph_probe') }}?graph_id="+graph+"&probe_id="+dId+'&action=add', function(loader,response) {  
+            myContent.cells("b").progressOn();
+            DetailGraph(graph);
+        });
+    });
+    
+}
+
+function PageRefresh() {
+//    DrawView();        
+}
+
+function DetailGraph(id) {
+        graph = id;        
+        myForm.load("{{  url('xml_ACK_graph_form') }}?id="+graph,function(id){
+            myProbes.load("{{  url('xml_ACK_graph_probes') }}?id="+graph);
+            myContent.cells("b").expand();
+            myContent.cells("b").progressOff();
+        });
+        DrawView();
+}
+        
+function DrawView() {
+    url = GetUrl();
+    // myLayout.cells("b").progressOn();
+    myTabbar.cells("graph").attachURL(url);
+}
+
+function GetUrl() {
+    var url = "{{ url('svg_ACK_graph') }}";
+    url += "?view="+graph;
+    url += "&splines="+encodeURIComponent(splines);
+return url;
+}
+
+</script>
+{% endblock %}

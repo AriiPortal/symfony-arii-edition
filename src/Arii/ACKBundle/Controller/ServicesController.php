@@ -21,7 +21,7 @@ class ServicesController extends Controller
 
         $Services = $this->getDoctrine()->getRepository('AriiACKBundle:Service')->listStates($ok,$warning,$critical);
         $render = $this->container->get('arii_core.render');     
-        return $render->grid($Services,'host_name,title,description,state,state_time','state');
+        return $render->grid($Services,'host_name,title,description,state,state_time,synchronised,probe_id','state');
     }
 
     public function toolbarAction()
@@ -34,6 +34,24 @@ class ServicesController extends Controller
     public function countAction()
     {
         return new Response( '{ count: "'.$this->getDoctrine()->getRepository('AriiACKBundle:Service')->getNb().'" }' );
+    }
+    
+    public function syncAction()
+    {
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+        $val = $request->get('value');
+
+        $em = $this->getDoctrine()->getManager();
+        
+        $Service = $this->getDoctrine()->getRepository("AriiACKBundle:Service")->find($id);
+        $Service->setSynchronised($val);
+        
+        $em->persist($Service);
+        $em->flush();
+        
+        // pour le futur
+        return new Response( '{ "test": "ok" }' );
     }
     
     public function pieAction()
@@ -71,7 +89,7 @@ class ServicesController extends Controller
     {   
         $request = Request::createFromGlobals();
         $id = $request->get('id');
-        
+
         list($Event) = $this->getDoctrine()->getRepository("AriiACKBundle:Service")->Service($id);     
 
         $dhtmlx = $this->container->get('arii_core.render'); 

@@ -9,7 +9,7 @@
 <script language="javascript">
 var menurefresh;
 dhtmlxEvent(window,"load",function(){
-    AriiLayout('ACK','history,dot,refresh',200);    
+    AriiLayout('ACK','history,dot,refresh',200);
     globalLayout.cells("a").setText("{{ "Menu" | trans }}");
     globalLayout.cells("a").showHeader();
  
@@ -23,8 +23,9 @@ dhtmlxEvent(window,"load",function(){
             { id:"sep1",      type: "separator" },
             { id:"events",    text: "{{ "Events" | trans }}",     icon: "stopped.png" },
             { id:"sep3",      type: "separator" },
+            { id:"views",   text: "{{ "Views" | trans }}",    icon: "view.png" },
+            { id:"links",     text: "{{ "Links" | trans }}",     icon: "link.png" },
             { id:"probes",   text: "{{ "Probes" | trans }}",    icon: "probe.png" },
-//            { id:"links",     text: "{{ "Impact" | trans }}",     icon: "impact.png" },
             { id:"alerts",    text: "{{ "Alerts" | trans }}",     icon: "alert.png" },
             { id:"sep4",      type: "separator" },
             { id:"jobs",      text: "{{ "Jobs" | trans }}",       icon: "job.png" },    

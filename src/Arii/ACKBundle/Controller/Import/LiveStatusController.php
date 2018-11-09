@@ -81,7 +81,7 @@ class LiveStatusController extends Controller
                     $host->setName($Info['name']);
                     $host->setTitle($Info['name']);
                     $host->setSource('HOST');
-                    $host->setObjType('HOST');
+                    $host->setObjType(1);
                     $host->setDescription($Info['alias']);
                     
                     $host->setState($status);
@@ -402,6 +402,9 @@ state_type	1
                     $record->setName($id);                    
                     $record->setHostName($host_name);
                     $record->setHost($host);
+
+                    // sync. par defaut
+                    $record->setSynchronized(1);                    
                 }
                 
                 // STATUS Nagios
@@ -421,33 +424,39 @@ state_type	1
                 $record->setState($status);
                 $record->setStateTime(new \DateTime('@'.$Info['last_check']));
                 
-                // si aucun Probe n'est attaché
-                if (!$record->getProbe()) {
-                    // on retrouve l'objet SERVICE
-                    $host_service = $this->getDoctrine()->getRepository("AriiACKBundle:Probe")->findOneBy(
-                    [
-                        'name' =>$id,
-                        'obj_type' => 'SERVICE'
-                    ]);
+                if ($record->getSynchronized()==0) {
+                    $record->setProbe(null);
+                }
+                else 
+                {
+                    // si aucune sonde n'est attaché
+                    if (!$record->getProbe()) {
+                        // on retrouve l'objet SERVICE
+                        $host_service = $this->getDoctrine()->getRepository("AriiACKBundle:Probe")->findOneBy(
+                        [
+                            'name' =>$id,
+                            'obj_type' => 'SERVICE'
+                        ]);
 
-                    if (!$host_service) {
-                        $host_service = new \Arii\ACKBundle\Entity\Probe();
-                        $host_service->setName($id);
-                        $host_service->setTitle($service_name);
-                        $host_service->setObjType('SERVICE');
-                        $host_service->setSource('SERVICE');
-                        $host_service->setDescription($description);
+                        if (!$host_service) {
+                            $host_service = new \Arii\ACKBundle\Entity\Probe();
+                            $host_service->setName($id);
+                            $host_service->setTitle($service_name);
+                            $host_service->setObjType(2);
+                            $host_service->setSource('SERVICE');
+                            $host_service->setDescription($description);
 
-                        $host_service->setState($status);
-                        $host_service->setStateTime(new \DateTime('@'.$Info['last_check']));
+                            $host_service->setState($status);
+                            $host_service->setStateTime(new \DateTime('@'.$Info['last_check']));
 
-                        // On remonte tout de suite l'état par défaut (celui de Nagios)
-                        $host_service->setStatus($status);
-                        $host_service->setUpdated(new \DateTime());
-                        
-                        $em->persist($host_service);                        
+                            // On remonte tout de suite l'état par défaut (celui de Nagios)
+                            $host_service->setStatus($status);
+                            $host_service->setUpdated(new \DateTime());
+
+                            $em->persist($host_service);                        
+                        }
+                        $record->setProbe($host_service);
                     }
-                    $record->setProbe($host_service);
                 }
                 
                 // plusieurs Nagios ?

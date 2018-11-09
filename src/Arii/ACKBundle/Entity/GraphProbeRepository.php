@@ -12,4 +12,28 @@ use Doctrine\ORM\EntityRepository;
  */
 class GraphProbeRepository extends EntityRepository
 {
+    // Les sondes d'un graph
+    public function findProbes($graph) {        
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e')
+        ->where('e.graph = :graph')
+        ->setParameter('graph', $graph )
+        ->getQuery();
+        return $q->getResult();
+    }
+
+    // La sonde d'un graph
+    public function findProbe($graph,$probe) {        
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e')
+        ->where('e.graph = :graph')
+        ->andWhere('e.probe = :probe')
+        ->setParameter('graph', $graph )
+        ->setParameter('probe', $probe )
+        ->getQuery();
+        return $q->getResult();
+    }
+    
 }

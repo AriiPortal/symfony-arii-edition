@@ -173,7 +173,7 @@ class Status
     /**
      * @var integer
      *
-     * @ORM\Column(name="job_log", type="text" )
+     * @ORM\Column(name="job_log", type="text", nullable=true )
      * 
      */
     private $job_log;

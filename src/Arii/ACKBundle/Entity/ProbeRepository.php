@@ -12,6 +12,21 @@ use Doctrine\ORM\EntityRepository;
  */
 class ProbeRepository extends EntityRepository
 {
+    public function findByFilter($name,$description,$type) {
+        $q = $this
+        ->createQueryBuilder('e')
+        ->where('e.name like :name')
+        ->andWhere('e.description like :description')
+        ->andWhere('BIT_AND(e.obj_type, :type) > 0')
+        ->orderBy('e.name')
+        ->setParameter('name', $name )
+        ->setParameter('description', $description )
+        ->setParameter('type', $type )
+        ->setMaxResults(1000)
+        ->getQuery();
+        return $q->getResult();
+    }
+
     public function findHosts($Probe = 'HOST') {        
         $q = $this
         ->createQueryBuilder('e')
@@ -20,6 +35,7 @@ class ProbeRepository extends EntityRepository
         ->where('e.obj_type = :Probe')
         ->orderBy('e.name')
         ->setParameter('Probe', $Probe )
+        ->setMaxResults(1000)        
         ->getQuery();
         return $q->getResult();
     }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolbar>
+    <item type="button" text="{{ "Name" | trans }}"/>
+    <item type="buttonInput" id="name" value="*" />
+    <item type="button" id="go_name" title="{{ "Filter by name" | trans }}" img="go.png"/>
+    <item type="separator" id="sep1" />
+    <item type="button" text="{{ "Description" | trans }}"/>
+    <item type="buttonInput" id="description" value="*" />
+    <item type="button" id="go_desc" title="{{ "Filter by description" | trans }}" img="go.png"/>
+    <item type="separator" id="sep3" />
+<!--    <item type="button" id="go" text="{{ "Filter" | trans }}" img="go.png"/>
+-->
+    <item type="separator" id="sep2" />
+    <item type="buttonTwoState" id="host" title="{{ "Host" | trans }}" img="server.png" selected="true"/>
+    <item type="buttonTwoState" id="service" title="{{ "Service" | trans }}" img="service.png"/>
+    <item type="buttonTwoState" id="job" title="{{ "Job" | trans }}" img="job.png"/>
+</toolbar>
+    

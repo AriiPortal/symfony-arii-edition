@@ -9,7 +9,7 @@ class ProbesController extends Controller{
 
     public function indexAction()
     {
-        return $this->render('AriiACKBundle:Probes:index.html.twig');
+        return $this->render('AriiACKBundle:Probes:index.html.twig',['probe' => 0]);
     }
 
     public function toolbarAction()
@@ -19,6 +19,13 @@ class ProbesController extends Controller{
         return $this->render("AriiACKBundle:Probes:toolbar.xml.twig", array(), $response);
     }
 
+    public function filterAction()
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/xml');
+        return $this->render("AriiACKBundle:Probes:filter.xml.twig", array(), $response);
+    }
+    
     public function grid_menuAction()
     {
         $response = new Response();
@@ -29,20 +36,35 @@ class ProbesController extends Controller{
     public function gridAction()
     {
         $request = Request::createFromGlobals();
-        $type = $request->get('type');
-
-        $Probes = $this->getDoctrine()->getRepository('AriiACKBundle:Probe')->findBy([], array('name' => 'ASC'), 2000);
+        $name  = str_replace('*','%',$request->get('name'));
+        $description = str_replace('*','%',$request->get('description'));;
+        $type  = $request->get('type');
+        
+        $Probes = $this->getDoctrine()->getRepository('AriiACKBundle:Probe')->findByFilter($name,$description,$type);
         $Grid = [];
         foreach($Probes as $Obj) {
             array_push($Grid, [
                 'id'          => $Obj->getId(),
                 'name'        => $Obj->getName(),
                 'description' => $Obj->getDescription(),
-                'type'        => $Obj->getObjType()
+                'type'        => $this->ImgType($Obj->getObjType())
             ]);
         }
         $render = $this->container->get('arii_core.render');
         return $render->grid($Grid,'name,description,type');
+    }
+    
+    private function ImgType($type) {
+        switch($type) {
+            case 1:
+                return '/images/server.png';
+            case 2:
+                return '/images/service.png';
+            case 3:
+                return '/images/job.png';
+            default:
+                return '/images/unknown.png';
+        }
     }
     
     public function formAction()

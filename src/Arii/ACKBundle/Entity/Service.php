@@ -49,6 +49,7 @@ class Service
      */
     private $description;
 
+// a quoi sert le status ?
      /**
      * @var string
      *
@@ -186,8 +187,16 @@ class Service
     * @ORM\OneToOne(targetEntity="Arii\ACKBundle\Entity\Probe")
     * @ORM\JoinColumn(nullable=true)
     */
-    private $Probe;
+    private $probe;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="synchronised", type="boolean")
+     */
+    private $synchronised=1;
+
+    
     /**
      * Get id
      *
@@ -705,25 +714,48 @@ class Service
     }
 
     /**
-     * Set Probe
+     * Set probe
      *
-     * @param \Arii\ACKBundle\Entity\Probe $Probe
+     * @param \Arii\ACKBundle\Entity\Probe $probe
      * @return Service
      */
-    public function setProbe(\Arii\ACKBundle\Entity\Probe $Probe = null)
+    public function setProbe(\Arii\ACKBundle\Entity\Probe $probe = null)
     {
-        $this->Probe = $Probe;
+        $this->probe = $probe;
 
         return $this;
     }
 
     /**
-     * Get Probe
+     * Get probe
      *
      * @return \Arii\ACKBundle\Entity\Probe 
      */
     public function getProbe()
     {
-        return $this->Probe;
+        return $this->probe;
+    }
+
+    /**
+     * Set synchronised
+     *
+     * @param boolean $synchronised
+     * @return Service
+     */
+    public function setSynchronised($synchronised)
+    {
+        $this->synchronised = $synchronised;
+
+        return $this;
+    }
+
+    /**
+     * Get synchronised
+     *
+     * @return boolean 
+     */
+    public function getSynchronised()
+    {
+        return $this->synchronised;
     }
 }

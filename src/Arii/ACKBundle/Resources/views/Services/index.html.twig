@@ -18,15 +18,15 @@ function Init() {
     });
             
     myGrid = myLayout.cells("a").attachGrid();
-    myGrid.setImagePath( "{{ asset('/images/') }}");
-    myGrid.setHeader("{{ "Host" | trans }},{{ "Name" | trans }},{{ "Description" | trans }},{{ "Status" | trans }},{{ "Time" | trans }}");
-    myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
-    myGrid.setInitWidths("100,150,*,100,160");
-    myGrid.setColAlign("left,left,left,center,right");
-    myGrid.setColTypes("ro,ro,ro,ro,ro");
-    myGrid.setColSorting("str,str,str,str,date");
+    myGrid.setImagePath( "{{ asset('/') }}");
+    myGrid.setHeader("{{ "Host" | trans }},{{ "Name" | trans }},{{ "Description" | trans }},{{ "Status" | trans }},{{ "Time" | trans }},{{ "Sync." | trans }}");
+    myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#master_checkbox");
+    myGrid.setInitWidths("100,150,*,100,160,70");
+    myGrid.setColAlign("left,left,left,center,right,center");
+    myGrid.setColTypes("ro,ro,ro,ro,ro,ch");
+    myGrid.setColSorting("str,str,str,str,date,int");
     myGrid.enableAlterCss("even_row","odd_row");   
-    myGrid.enableDragAndDrop(true);    
+//    myGrid.enableDragAndDrop(true);    
     myGrid.init();
     myGrid.attachEvent("onRowDblClicked", function (rid) {
         EditService(rid);
@@ -34,7 +34,11 @@ function Init() {
     myGrid.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
         changeState(sId,sObj,tObj);
     });
+    myGrid.attachEvent("onCheck", function(sId,tId,sObj){
+        changeProbe(sId,tId,sObj);
+    });
     
+
     formData = [
         { type: "settings", position: "label-left", labelWidth: 80, inputWidth: 250, labelAlign: "right", readonly: 1, position: "label-left" },
         { type: "hidden", name: 'id' },       
@@ -49,6 +53,8 @@ function Init() {
                 {type: "input", name: 'state_time', label:'{{ 'State time' | trans }}' },
                 {type: "input", name: 'state_information', label:'{{ 'Information' | trans }}', rows: 2 },
                 {type: "checkbox", name: 'acknowledged', label:'{{ 'Acknowledged' | trans }}' },
+                {type: "checkbox", name: 'synchronised', label:'{{ 'Synchronised' | trans }}' },
+                {type: "input", name: 'probe_id', label:'{{ 'ProbeId' | trans }}' },
                 {type: "newcolumn" },
                 {type: "input", name: 'downtimes', label:'{{ 'Downtimes' | trans }}' },
                 {type: "input", name: 'downtimes_info', label:'{{ 'Downtimes Info' | trans }}' },
@@ -68,6 +74,24 @@ function Init() {
    myLayout.cells("c").setText("{{ "Probe" | trans }}");
    myLayout.cells("c").setHeight(300);
    myLayout.cells("c").collapse();
+    formData2 = [
+        { type: "settings", position: "label-left", labelWidth: 80, inputWidth: 250, labelAlign: "right", readonly: 1, position: "label-left" },
+        { type: "hidden", name: 'id' },       
+        {   type: "block",
+            inputWidth: "auto",
+            list: [    
+                {type: "input", name: 'name', label:'{{ 'Name' | trans }}', required: true },
+                {type: "input", name: 'title', label:'{{ 'Title' | trans }}' },
+                {type: "input", name: 'description', label:'{{ 'Description' | trans }}', rows: 4 },
+                {type: "input", name: 'host_name', label:'{{ 'Host' | trans }}' },
+                {type: "input", name: 'state', label:'{{ 'Statut' | trans }}' },
+                {type: "input", name: 'state_time', label:'{{ 'State time' | trans }}' },
+                {type: "input", name: 'state_information', label:'{{ 'Information' | trans }}', rows: 2 },
+                {type: "checkbox", name: 'acknowledged', label:'{{ 'Acknowledged' | trans }}' },
+            ]
+        }
+   ];
+   myForm2 = myLayout.cells("c").attachForm(formData2);     
        
    PageRefresh();
 }
@@ -83,10 +107,43 @@ function PageRefresh() {
     });
 }
 
+function changeProbe(id,col,value) {
+//    var probeId=myGrid.getValue(id,col);
+    // Envoi de l'information de synchro
+    dhx4.ajax.get( "{{ url('json_ACK_service_sync') }}?id="+id+"&value="+(value?1:0), function(r1) {  
+/*
+        t = dhx4.s2j(r1.xmlDoc.responseText);
+        if (t['count']>0) 
+            mySidebar.cells("queued").setBubble(t['count']);
+        else
+            mySidebar.cells("queued").clearBubble();     
+*/
+        EditService(id);
+    });
+}
+
 function EditService (id) {
     myLayout.cells('b').progressOn();
+    // Probe ou non ?
+    if (myGrid.cells(id,5).getValue()==='0') {
+        myLayout.cells('c').collapse();
+    }
+    else {
+        myLayout.cells('c').expand();
+    }
     myForm.load("{{ url('xml_ACK_service_form') }}?id="+id,function(){
         myLayout.cells('b').progressOff();
+        // Sonde synchronisée ?
+        if (myForm.getItemValue('synchronised')) {      
+            myLayout.cells('c').expand();
+            myLayout.cells('c').progressOn();
+            myForm2.load("{{ url('xml_ACK_probe_form') }}?id="+myForm.getItemValue('probe_id'),function(){
+                myLayout.cells('c').progressOff();
+            });
+        }
+        else {
+            myLayout.cells('c').collapse();
+        }
     });
 }
 </script>

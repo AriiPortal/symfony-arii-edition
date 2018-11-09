@@ -60,7 +60,8 @@ class GraphProbe
      * @ORM\ManyToOne(targetEntity="Arii\ACKBundle\Entity\Probe")
      * @ORM\JoinColumn(nullable=true)
      **/
-    private $Probe;
+    private $probe;
+    
 
     /**
      * Get id
@@ -142,25 +143,25 @@ class GraphProbe
     }
 
     /**
-     * Set Probe
+     * Set probe
      *
-     * @param \Arii\ACKBundle\Entity\Probe $Probe
+     * @param \Arii\ACKBundle\Entity\Probe $probe
      * @return GraphProbe
      */
-    public function setProbe(\Arii\ACKBundle\Entity\Probe $Probe = null)
+    public function setProbe(\Arii\ACKBundle\Entity\Probe $probe = null)
     {
-        $this->Probe = $Probe;
+        $this->probe = $probe;
 
         return $this;
     }
 
     /**
-     * Get Probe
+     * Get probe
      *
      * @return \Arii\ACKBundle\Entity\Probe 
      */
     public function getProbe()
     {
-        return $this->Probe;
+        return $this->probe;
     }
 }

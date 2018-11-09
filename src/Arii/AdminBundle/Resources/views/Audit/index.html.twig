@@ -3,7 +3,7 @@
 <script language="javascript">
 function Init() {
     
-    myGrid = globalLayout.cells("c").attachGrid();
+    myGrid = globalLayout.cells("b").attachGrid();
     myGrid.setImagePath( "{{ asset('/images/') }}");
     myGrid.setHeader( "{{ "Log" | trans }},{{ "Module" | trans }},{{ "User" | trans }},{{ "Action" | trans }},{{ "Status" | trans }},{{ "Message" | trans }},{{ "IP" | trans }}" );
     myGrid.attachHeader("#text_filter,#select_filter,#select_filter,#text_filter,#select_filter,#text_filter,#select_filter");

@@ -34,8 +34,12 @@ class JiraController extends Controller
         $time = time();
         
         $tools = $this->container->get('arii_core.tools');
+        # Tester que c'est bien un XML
         $array = $tools->xml2array( $log );
         
+        if (!isset($array['rss']['channel']['item'])) 
+            return new Response(sprintf( "# %d\n%d s\n%s\n",0,(time()-$time),"EMPTY!"));
+            
         $Infos = $array['rss']['channel']['item'];
         
         $em = $this->getDoctrine()->getManager();

@@ -60,9 +60,12 @@ class Probe
     private $description;
     
     /**
-     * @var string
-     *
-     * @ORM\Column(name="obj_type", type="string", length=24)
+     * @var integer
+     * 1: HOST
+     * 2: SERVICE
+     * 3: JOB
+     * 
+     * @ORM\Column(name="obj_type", type="integer" )
      * 
      */
     private $obj_type;
@@ -86,7 +89,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="state_comment", type="string", length=255)
+     * @ORM\Column(name="state_comment", type="string", length=255, nullable=true)
      * 
      */
     private $state_comment;
@@ -94,7 +97,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="state_time", type="datetime")
+     * @ORM\Column(name="state_time", type="datetime", nullable=true)
      * 
      */
     private $state_time;
@@ -102,7 +105,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="state_user", type="string", length=64)
+     * @ORM\Column(name="state_user", type="string", length=64, nullable=true)
      * 
      */
     private $state_user;
@@ -110,7 +113,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="state_end", type="datetime")
+     * @ORM\Column(name="state_end", type="datetime", nullable=true)
      * 
      */
     private $state_end;
@@ -118,7 +121,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="status", type="string", length=12)
+     * @ORM\Column(name="status", type="string", length=12, nullable=true)
      * 
      */
     private $status;
@@ -126,7 +129,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="status_comment", type="string", length=255)
+     * @ORM\Column(name="status_comment", type="string", length=255, nullable=true)
      * 
      */
     private $status_comment;
@@ -134,7 +137,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="status_time", type="datetime")
+     * @ORM\Column(name="status_time", type="datetime", nullable=true)
      * 
      */
     private $status_time;
@@ -142,7 +145,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="status_user", type="string", length=64)
+     * @ORM\Column(name="status_user", type="string", length=64, nullable=true)
      * 
      */
     private $status_user;
@@ -150,7 +153,7 @@ class Probe
     /**
      * @var boolean
      *
-     * @ORM\Column(name="ack", type="boolean")
+     * @ORM\Column(name="ack", type="boolean", nullable=true)
      * 
      */
     private $ack;
@@ -158,7 +161,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="ack_comment", type="boolean")
+     * @ORM\Column(name="ack_comment", type="boolean", nullable=true)
      * 
      */
     private $ack_comment;
@@ -166,7 +169,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="ack_time", type="datetime" )
+     * @ORM\Column(name="ack_time", type="datetime", nullable=true )
      * 
      */
     private $ack_time;
@@ -174,7 +177,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="ack_user", type="string", length=64)
+     * @ORM\Column(name="ack_user", type="string", length=64, nullable=true)
      * 
      */
     private $ack_user;
@@ -182,7 +185,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="ack_end", type="datetime" )
+     * @ORM\Column(name="ack_end", type="datetime", nullable=true )
      * 
      */
     private $ack_end;
@@ -190,7 +193,7 @@ class Probe
     /**
      * @var boolean
      *
-     * @ORM\Column(name="downtime", type="boolean")
+     * @ORM\Column(name="downtime", type="boolean", nullable=true)
      * 
      */
     private $downtime;
@@ -198,7 +201,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="downtime_comment", type="string", length=255)
+     * @ORM\Column(name="downtime_comment", type="string", length=255, nullable=true)
      * 
      */
     private $downtime_comment;
@@ -206,7 +209,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="downtime_time", type="datetime")
+     * @ORM\Column(name="downtime_time", type="datetime", nullable=true)
      * 
      */
     private $downtime_time;
@@ -214,7 +217,7 @@ class Probe
     /**
      * @var string
      *
-     * @ORM\Column(name="downtime_user", type="string", length=64)
+     * @ORM\Column(name="downtime_user", type="string", length=64, nullable=true)
      * 
      */
     private $downtime_user;
@@ -222,7 +225,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="downtime_end", type="datetime")
+     * @ORM\Column(name="downtime_end", type="datetime", nullable=true)
      * 
      */
     private $downtime_end;
@@ -230,7 +233,7 @@ class Probe
     /**
      * @var datetime
      *
-     * @ORM\Column(name="updated", type="datetime")
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
      * 
      */
     private $updated;

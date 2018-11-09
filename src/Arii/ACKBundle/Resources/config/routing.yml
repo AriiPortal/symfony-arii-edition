@@ -145,17 +145,71 @@ arii_ACK_graphs:
     path:  /graphs
     defaults: { _controller: AriiACKBundle:Graphs:index }
 
+xml_ACK_graph_grid:
+    path:  /graphs/grid.xml
+    defaults: { _controller: AriiACKBundle:Graphs:grid }
+
+
+#============================================================
+# Graph
+#------------------------------------------------------------
+xml_ACK_graph_form:
+    path:  /graph/form.xml
+    defaults: { _controller: AriiACKBundle:Graph:form }
+
 svg_ACK_graph:
     path:  /graph.svg
-    defaults: { _controller: AriiACKBundle:Graphs:generate }
+    defaults: { _controller: AriiACKBundle:Graph:generate }
 
 svg_ACK_graph_links:
     path:  /graph/links.svg
-    defaults: { _controller: AriiACKBundle:Graphs:links }
+    defaults: { _controller: AriiACKBundle:Graph:links }
 
-xml_ACK_graph_grid:
-    path:  /graphs/grid.xlm
-    defaults: { _controller: AriiACKBundle:Graphs:grid }
+xml_ACK_graph_probes:
+    path:  /graph/probes.xml
+    defaults: { _controller: AriiACKBundle:Graph:probes }
+
+txt_ACK_graph_probe:
+    path:  /graphs/probe.txt
+    defaults: { _controller: AriiACKBundle:Graph:probe }
+    
+#============================================================
+# Views
+#------------------------------------------------------------
+arii_ACK_views:
+    path:  /views
+    defaults: { _controller: AriiACKBundle:Views:index }
+
+arii_ACK_graph_edit:
+    path:  /graph/edit
+    defaults: { _controller: AriiACKBundle:Views:index }
+
+txt_ACK_notifications:
+    path:  /public/notifications.{ext}
+    defaults: { _controller: AriiACKBundle:Notifications:get, ext: txt }
+
+xml_ACK_views_grid:
+    path:  /views/grid.xml
+    defaults: { _controller: AriiACKBundle:Views:grid }
+
+xml_ACK_views_toolbar:
+    path:  /views/toolbar.xml
+    defaults: { _controller: AriiACKBundle:Views:toolbar }
+
+xml_ACK_views_grid_menu:
+    path:  /views/grid_menu.xml
+    defaults: { _controller: AriiACKBundle:Views:grid_menu}
+
+#============================================================
+# View
+#------------------------------------------------------------
+xml_ACK_view_delete:
+    path:  /view/delete.xml
+    defaults: { _controller: AriiACKBundle:Views:delete }
+
+xml_ACK_view_save:
+    path:  /view/save.xml
+    defaults: { _controller: AriiACKBundle:Views:save }
 
 #============================================================
 # Alarms
@@ -205,6 +259,10 @@ arii_ACK_links:
 xml_ACK_links_grid:
     path:  /links/grid.xml
     defaults: { _controller: AriiACKBundle:Links:grid }
+
+xml_ACK_links_probes:
+    path:  /links/probes.xml
+    defaults: { _controller: AriiACKBundle:Links:links }
 
 xml_ACK_links_grid_menu:
     path:  /links/grid_menu.xml
@@ -320,17 +378,21 @@ xml_ACK_probes_grid_menu:
     path:  /probes/grid_menu.xml
     defaults: { _controller: AriiACKBundle:Probes:grid_menu}
 
+xml_ACK_probes_filter:
+    path:  /probes/filter.xml
+    defaults: { _controller: AriiACKBundle:Probes:filter}
+    
 #============================================================
 # Links
 #------------------------------------------------------------
-xml_ACK_contains_grid:
-    path:  /contains/grid.xml
-    defaults: { _controller: AriiACKBundle:Links:containsGrid }
+xml_ACK_links_grid:
+    path:  /links/grid.xml
+    defaults: { _controller: AriiACKBundle:Links:Grid }
 
-xml_ACK_depends_grid:
-    path:  /depends/grid.xml
-    defaults: { _controller: AriiACKBundle:Links:dependsGrid }
-    
+txt_ACK_link_probes:
+    path:  /link/probe.txt
+    defaults: { _controller: AriiACKBundle:Links:probes }
+
 #============================================================
 # Probe
 #------------------------------------------------------------
@@ -447,7 +509,11 @@ xml_ACK_service_toolbar:
 txt_ACK_service_state:
     path:  /service/state.txt
     defaults: { _controller: AriiACKBundle:Services:state}
-    
+
+json_ACK_service_sync:
+    path:  /service/sync.json
+    defaults: { _controller: AriiACKBundle:Services:sync}
+
 #============================================================
 # Synchro
 #--------------------------------------------------------------------

@@ -1,0 +1,28 @@
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    myLayout = globalLayout.cells("b").attachLayout("1C");
+    myLayout.cells("a").hideHeader();
+
+    myGrid = myLayout.cells("a").attachGrid();
+    myGrid.setImagePath( "{{ asset('/images/') }}");
+    myGrid.setHeader("{{ "Spooler" | trans }},{{ "Folder" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "Title" | trans }},{{ "State" | trans }},{{ "Text" | trans }},{{ "Begin" | trans }},{{ "End" | trans }}");
+    myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter");
+    myGrid.setInitWidths("200,*,200,*,*,100,*,150,150");
+    myGrid.setColAlign("left,left,left,left,left,left,left,left,left");
+    myGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myGrid.setColSorting("str,str,str,str,str,str,str,date,date");
+    myGrid.enableAlterCss("","");
+    myGrid.init();
+    myGrid.load("{{ url('xml_JID_global_orders_grid') }}", function(){});    
+}
+
+function PageRefresh() {
+    myGrid.load("{{ url('xml_JID_global_orders_grid') }}", function(){
+        myGrid.refreshFilters();
+        myGrid.filterByAll();        
+    });    
+}
+</script>
+{% endblock %}

@@ -517,4 +517,19 @@ json_ACK_service_sync:
 #============================================================
 # Synchro
 #--------------------------------------------------------------------
- 
+arii_ACK_sync:
+    path:  /sync
+    defaults: { _controller: AriiACKBundle:Sync:index }
+    
+xml_ACK_sync_grid:
+    path:  /sync/grid.xml
+    defaults: { _controller: AriiACKBundle:Sync:grid }
+
+xml_ACK_sync_grid_menu:
+    path:  /sync/grid_menu.xml
+    defaults: { _controller: AriiACKBundle:Sync:grid_menu}
+    
+json_ACK_sync_count:
+    path:  /sync/count.json
+    defaults: { _controller: AriiACKBundle:Sync:count }
+

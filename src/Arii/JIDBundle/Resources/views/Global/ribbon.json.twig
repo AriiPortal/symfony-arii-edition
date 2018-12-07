@@ -1,0 +1,113 @@
+{
+  "items":
+  [
+    {   "type":"block",
+      text:"{{ "module.JID" | trans }}",
+      "text_pos": "top",
+      "list":
+      [
+        {   id: "menu_index",
+          type:  "button",
+          text:  "",
+          isbig: true,
+          img:   "48/jid.png"
+        },
+        {   "type": "buttonSelect",
+          text:"",
+          "img": "view.png",
+          items:
+          [
+            { id:"menu_order", text: "{{ "Orders" | trans }}", img: "order.png" },
+/*            { id:"menu_process", text: "{{ "Processes" | trans }}", img: "cog.png" }, */
+/*            { id:"menu_chain", text: "{{ "Chains" | trans }}", img: "job_chain.png" }, */
+            { id:"menu_job", text: "{{ "Jobs" | trans }}", img: "job.png" },
+            { id:"menu_spooler", text: "{{ "Spoolers" | trans }}", img: "spooler.png" }
+/*            ,
+            { id:"menu_messages", text: "{{ "Messages" | trans }}", img: "warning.png" }
+*/
+            /*                    ,
+            { id:"menu_order", text: "{{ "Processus" | trans }}", img: "job_chain.png" },
+            { id:"menu_ha", text: "{{ "Clusters" | trans }}", img: "ha.png" },
+            { id:"menu_message", text: "{{ "Messages" | trans }}", img: "message.png" },
+            { id:"menu_events", text: "{{ "Events" | trans }}", img: "events.png" }
+            */                 ]
+          },
+          {   type:  "buttonSelect",
+            text:  "",
+            img:   "table.png",
+            items:
+            [
+              {% for k,request in Requests %}
+              { id:"request_{{ request.id }}", text: "{{ request.title }}", img: "{{ request.icon }}.png" },
+              {% endfor %}
+            ]
+          },
+          {   type:  "buttonSelect",
+            text:  "",
+            img:   "tools.png",
+            items:
+            [
+              { id: "silent_install", text: "{{ "Silent install" | trans }}", img: "box.png" },
+              { id: "cron_converter", text: "{{ "Cron converter" | trans }}" , img: "cron.png" },
+              { id: "menu_config", text: "{{ "Config" | trans }}", img: "config.png" },
+            ]
+          }
+        ]
+      },
+      {   "type":"block",
+        text:"{{ "Selction" | trans }}",
+        "text_pos": "bottom",
+        "list":
+        [
+          {   id: "refresh",
+            "type":"buttonSelect",
+            text:"--:--:--",
+            "img": "refresh.png",
+            "items":
+            [
+              { id: "5", text: "5 {{ "seconds" | trans }}" },
+              { id: "30", text: "30 {{ "seconds" | trans }}" },
+              { id: "60", text: "1 {{ "minute" | trans }}" },
+              { id: "300", text: "5 {{ "minutes" | trans }}" },
+              { id: "1800", text: "15 {{ "minutes" | trans }}" },
+              { id: "3600", text: "1 {{ "hour" | trans }}" }
+            ]
+          },
+          {   id: "ref_past",
+            "type":"buttonSelect",
+            text:"{{ app.session.get('past') | slice (0,10) }}",
+            "img": "timeline.png",
+            "items":
+            [
+              { id: "-1", text: "1 {{ "day" | trans }}" },
+              { id: "-2", text: "2 {{ "days" | trans }}" },
+              { id: "-3", text: "3 {{ "days" | trans }}" },
+              { id: "-4", text: "4 {{ "days" | trans }}" },
+              { id: "-5", text: "5 {{ "days" | trans }}" },
+              { id: "-6", text: "6 {{ "days" | trans }}" },
+              { id: "-7", text: "1 {{ "week" | trans }}" },
+              { id: "-14", text: "2 {{ "weeks" | trans }}" },
+              { id: "-21", text: "3 {{ "weeks" | trans }}" },
+              { id: "-30", text: "1 {{ "month" | trans }}" },
+              { id: "-60", text: "2 {{ "months" | trans }}" },
+              { id: "-90", text: "3 {{ "months" | trans }}" },
+              { id: "-180", text: "6 {{ "months" | trans }}" },
+              { id: "-365", text: "1 {{ "year" | trans }}" }
+            ]
+          },
+            {   "type": "buttonSelect",
+              text:"",
+              "id": "Filters",
+              "img": "zoom.png",
+              items:
+              [
+                {id:"filter_edit","type":"button",text:"{{ "New" | trans }}","img":"zoom_in.png","tooltip": "{{ "Edit filter" | trans }}" },                
+                {% for id,filter in Filters %}
+                { id:"filter_{{ id }}", text: "{{ filter }}"  },
+                {% endfor %}
+              ]
+            }
+        ]
+      }
+    ]
+  }

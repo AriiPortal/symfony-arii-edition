@@ -54,5 +54,15 @@ class SchedulerOrderHistoryRepository extends EntityRepository
         ->getQuery();
         return $q->getResult();
     }
+
+    // Pour la synchronisation des historique
+    public function synchroHistory($last_id) { 
+        $q = $this->createQueryBuilder('e')
+        ->where('(e.history) > :id')
+        ->orderBy('e.startTime','DESC')
+        ->setParameter('id',$last_id)
+        ->getQuery();
+        return $q->getResult();
+    }
     
 }

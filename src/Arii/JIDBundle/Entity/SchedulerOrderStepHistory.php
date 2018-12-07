@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * SchedulerOrderStepHistory
  *
  * @ORM\Table(name="scheduler_order_step_history", indexes={@ORM\Index(name="SCHEDULER_OSH_TASK_ID", columns={"TASK_ID"})})
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\JIDBundle\Entity\SchedulerOrderStepHistoryRepository")
  */
 class SchedulerOrderStepHistory
 {
@@ -289,5 +289,15 @@ class SchedulerOrderStepHistory
     public function getErrorText()
     {
         return $this->errorText;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

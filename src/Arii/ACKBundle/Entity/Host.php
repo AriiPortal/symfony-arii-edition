@@ -108,7 +108,7 @@ class Host
     /**
      * @var integer
      *
-     * @ORM\Column(name="downtimes", type="string", length=255, nullable=true)
+     * @ORM\Column(name="downtimes", type="string", length=1024, nullable=true)
      */
     private $downtimes;
         

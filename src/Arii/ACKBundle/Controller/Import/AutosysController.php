@@ -32,20 +32,44 @@ class AutosysController extends Controller
             16 => 'NO_EXEC'        
         ];
 
-    public function dbAction($db)
-    {  
+    public function dbAction($db,$_route)
+    {          
         set_time_limit(3600);
         $time = time();
+            
         $ats = $this->getDoctrine()->getManager($db);
-        $em = $this->getDoctrine()->getManager();
-        
         // Info global
         $Info = $ats->getRepository("AriiATSBundle:UjoAlamode")->findOneBy([ 'type' => 'AUTOSERV']);
         $instance = $Info->getStrVal('strVal');
+        
+        $em = $this->getDoctrine()->getManager();
+        
+        // On recupere les infos de la derniere synchro
+        $Sync = $em->getRepository("AriiReportBundle:Sync")->findOneBy([
+                'db_name' => $db,
+                'entity'  => 'UjoJobst',
+                'route'   => $_route
+        ]);
+
+        // Si il existe
+        if ($Sync) {
+            $start = $Sync->getLastId();            
+        }
+        else {
+            $Sync = new \Arii\ReportBundle\Entity\Sync();
+            $Sync->setName('Autosys '.$instance);
+            $Sync->setDbName($db);
+            $Sync->setEntity('UjoJobst');
+            $Sync->setRoute($_route);
+            $Sync->setCheckPoint('statusTime');
+            // On remonte sur 1 an ?
+            $start = time()-366*24*3600;
+            $Sync->setLastId($start);
+        }
 
         // Referentiel des jobs
         $n = 0;
-        $Records = $ats->getRepository("AriiATSBundle:UjoJobst")->synchroJobst(time()-2*24*3600);
+        $Records = $ats->getRepository("AriiATSBundle:UjoJobst")->synchroJobst($start);
         foreach ($Records as $Record) {
             $job_name       = $Record['jobName'];                        
             $name = "$instance#$job_name";
@@ -65,7 +89,7 @@ class AutosysController extends Controller
             $Status->setName     ($name);
             $Status->setTitle    ($job_name);
             $Status->setSource   ('ATS');
-            $Status->setObjType  (4);
+            $Status->setType     (4);
             $Status->setJobLog   ('?');
 
             $Status->setType     ($Record['jobType']);
@@ -85,8 +109,18 @@ class AutosysController extends Controller
             if ($n++ % 100 == 0)
                 $em->flush();            
         } 
+        $duration = (time()-$time);
+        
+        // On met a jour la table de synchro
+        $Sync->setDuration($duration);
+        $Sync->setNbLines($n);
+        $Sync->setLastId($time);
+        $Sync->setLastUpdate(new \DateTime());
+
+        $em->persist($Sync);
         $em->flush();
-        return new Response(sprintf( "# %d\n%d s\n%s\n",$n,(time()-$time),"success"));        
+                
+        return new Response(sprintf( "# %d\n%d s\n%s\n",$n,$duration,"success"));        
     }
     
     public function statusAction()

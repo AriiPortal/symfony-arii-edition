@@ -1,6 +1,6 @@
 <?php
 
-namespace Arii\CoreBundle\Entity;
+namespace Arii\JOBBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

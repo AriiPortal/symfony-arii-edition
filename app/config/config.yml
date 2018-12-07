@@ -127,6 +127,7 @@ doctrine:
                     AriiSelfBundle: ~
                     AriiMFTBundle: ~
                     AriiACKBundle: ~
+                    AriiJOBBundle: ~
                 dql:
                     datetime_functions:
                         Hour:  Arii\CoreBundle\DQL\%database_ojs_driver%\Hour
@@ -204,7 +205,9 @@ fos_user:
 # Config FOSRestBundle
 sensio_framework_extra:
 #    view: { annotations: false }
-    request: { converters: true }
+    request:
+        converters: true
+        auto_convert: false
 
 fos_rest:
     body_converter:

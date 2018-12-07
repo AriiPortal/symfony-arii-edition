@@ -8,27 +8,27 @@ use Symfony\Component\HttpFoundation\Response;
 class JiraController extends Controller
 {
 
-    public function IssuesAction() {
+    public function IssuesAction($_route) {
         // On traite le log
         if (isset($_FILES['xml']['tmp_name']))
             $log = file_get_contents($_FILES['xml']['tmp_name']);
         else 
             $log = file_get_contents('../workspace/ACK/Input/Jira/bloquants.xml');
         
-        return $this->XML2DB($log,'ISSUE');
+        return $this->XML2DB($log,'ISSUE',$_route);
     }
 
-    public function ChangesAction() {
+    public function ChangesAction($_route) {
         // On traite le log
         if (isset($_FILES['xml']['tmp_name']))
             $log = file_get_contents($_FILES['xml']['tmp_name']);
         else 
             $log = file_get_contents('../workspace/ACK/Input/Jira/changes.xml');
         
-        return $this->XML2DB($log,'CHANGE');
+        return $this->XML2DB($log,'CHANGE',$_route);
     }
     
-    public function XML2DB($log,$event_type)
+    public function XML2DB($log,$event_type,$_route)
     {  
         set_time_limit(300);
         $time = time();
@@ -43,6 +43,28 @@ class JiraController extends Controller
         $Infos = $array['rss']['channel']['item'];
         
         $em = $this->getDoctrine()->getManager();
+        // On recupere les infos de la derniere synchro
+        $Sync = $em->getRepository("AriiReportBundle:Sync")->findOneBy([
+                'route'   => $_route
+        ]);
+
+        // Si il existe
+        if ($Sync) {
+        }
+        else {
+            $Sync = new \Arii\ReportBundle\Entity\Sync();
+            $Sync->setName('Jira '.strtolower($event_type));
+            $Sync->setDbName('jira');
+            $Sync->setEntity(strtolower($event_type));
+            $Sync->setRoute($_route);
+            $Sync->setCheckPoint('statusTime');
+            // On remonte sur 1 an ?
+            $start = time()-366*24*3600;
+            $Sync->setLastId($start);
+        }
+            $Sync->setName('Jira '.strtolower($event_type));
+            $Sync->setEntity(strtolower($event_type));
+
         $n = 0;        
         foreach ($Infos as $Issue) {
             
@@ -101,7 +123,7 @@ class JiraController extends Controller
             // On sauvegarde les commentaires
             if (isset($Issue['comments'])) {                
                 $Comments = $Issue['comments']['comment'];
-                print_r($Comments);
+                // print_r($Comments);
                 $c = 0;
                 while (isset($Comments[$c])) {                
                     $Action = $em->getRepository("AriiACKBundle:Action")->findOneBy([ 'event' => $Event, 'num' => $c ]);   
@@ -130,9 +152,18 @@ class JiraController extends Controller
             if ($n++ % 100 == 0)
                 $em->flush();        
         }
-        $em->flush();
-        return new Response(sprintf( "# %d\n%d s\n%s\n",$n,(time()-$time),"success"));
+        $duration = (time()-$time);
         
+        // On met a jour la table de synchro
+        $Sync->setDuration($duration);
+        $Sync->setNbLines($n);
+        $Sync->setLastId($time);
+        $Sync->setLastUpdate(new \DateTime());
+
+        $em->persist($Sync);
+        $em->flush();
+                
+        return new Response(sprintf( "# %d\n%d s\n%s\n",$n,$duration,"success"));        
     }
     
     private function getTitle($title) {

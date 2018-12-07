@@ -1,33 +1,60 @@
 # ========================================
 # API RESTFUL
 # ========================================
+# ========================================
+# Jobs
+# ----------------------------------------
+api_jobs_get:
+    path:  /jobs
+    defaults: { _controller: AriiAPIBundle:Jobs:list }
+    methods: [GET]
+
+api_jobs_post:
+    path:  /jobs
+    defaults: { _controller: AriiAPIBundle:Jobs:create }
+    methods: [POST]
+
+api_jobs_get:
+    path:  /jobs/{id}
+    defaults: { _controller: AriiAPIBundle:Jobs:get }
+    methods: [GET]
+
+api_jobs_put:
+    path:  /jobs/{id}
+    defaults: { _controller: AriiAPIBundle:Jobs:update }
+    methods: [PUT]
+
+api_jobs_delete:
+    path:  /jobs/{id}
+    defaults: { _controller: AriiAPIBundle:Jobs:delete }
+    methods: [DELETE]
 
 # ========================================
 # Alarms
 # ----------------------------------------
 api_alarm_search:
     path:  /alarms
-    defaults: { _controller: AriiACKBundle:API\Alarm:search }
+    defaults: { _controller: AriiAPIBundle:API\Alarm:search }
     methods: [GET]
 
 api_alarm_create:
     path:  /alarms
-    defaults: { _controller: AriiACKBundle:API\Alarm:create }
+    defaults: { _controller: AriiAPIBundle:API\Alarm:create }
     methods: [POST]
 
 api_alarm_retrieve:
     path:  /alarms/{id}
-    defaults: { _controller: AriiACKBundle:API\Alarm:retrieve }
+    defaults: { _controller: AriiAPIBundle:API\Alarm:retrieve }
     methods: [GET]
 
 api_alarm_update:
     path:  /alarms/{id}
-    defaults: { _controller: AriiACKBundle:API\Alarm:update }
+    defaults: { _controller: AriiAPIBundle:API\Alarm:update }
     methods: [PUT]
 
 api_alarm_delete:
     path:  /alarms/{id}
-    defaults: { _controller: AriiACKBundle:API\Alarm:delete }
+    defaults: { _controller: AriiAPIBundle:API\Alarm:delete }
     methods: [DELETE]
 
 # ========================================

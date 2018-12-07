@@ -30,7 +30,12 @@ dhtmlxEvent(window,"load",function(){
         width: size,
         items:
         [
+            { id:"process", text: "{{ "Process" | trans }}", icon: "process.png" },
+            { id:"sep5",      type: "separator" },
             { id:"orders", text: "{{ "Orders" | trans }}", icon: "order.png" },
+// Admins            
+            { id:"sep5",      type: "separator" },
+            { id:"sync",   text: "{{ "Synchronisation" | trans }}",    icon: "refresh.png" }
         ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){

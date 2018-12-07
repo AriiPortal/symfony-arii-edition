@@ -25,7 +25,7 @@ class Jobs
      * @ORM\ManyToOne(targetEntity="Arii\JOCBundle\Entity\Spoolers")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      **/
-    public $spooler;
+    private $spooler;
 
     /**
      * @var string

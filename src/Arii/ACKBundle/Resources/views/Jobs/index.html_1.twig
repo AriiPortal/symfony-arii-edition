@@ -4,7 +4,7 @@
 function Init() {
     mySidebar.items('jobs').setActive();
 
-    myLayout = globalLayout.cells("b").attachLayout('2U');
+    myLayout = globalLayout.cells("b").attachLayout('3J');
     myLayout.cells("a").hideHeader();
 
     myGrid = myLayout.cells("a").attachGrid();
@@ -18,7 +18,6 @@ function Init() {
     myGrid.enableAlterCss("even_row","odd_row");   
     myGrid.enableDragAndDrop(true);    
     myGrid.init();
-    myGrid.load( "{{ url('xml_ACK_jobs_grid') }}?state=OPEN" );    
     myGrid.attachEvent("onRowDblClicked", function (rid) {
         EditEvent(rid);
     });
@@ -26,7 +25,7 @@ function Init() {
         changeState(sId,sObj,tObj);
     });
     
-    myTabbar = myLayout.cells("b").attachTabbar();
+    myTabbar = myLayout.cells("c").attachTabbar();
     myTabbar.addTab("ack","{{ "Escalated" | trans }}","150px", null, true);
     myTabbar.addTab("close","{{ "Closed" | trans }}","150px");
     myTabbar.attachEvent("onContentLoaded", function(id){
@@ -82,10 +81,81 @@ function Init() {
     myActions.attachEvent("onRowDblClicked", function (rid) {
     });   
 
+    myGridEsc = myTabbar.cells("ack").attachGrid();
+    myGridEsc.setImagePath( "{{ asset('/images/') }}");
+    myGridEsc.setHeader("{{ "Type" | trans }},{{ "Name" | trans }},{{ "Title" | trans }},{{ "Status" | trans }},{{ "State" | trans }},{{ "Time" | trans }}");
+    myGridEsc.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myGridEsc.setInitWidths("80,0,*,100,0,160");
+    myGridEsc.setColAlign("right,right,left,center,center,right");
+    myGridEsc.setColTypes("ro,ro,ro,ro,ro,ro");
+    myGridEsc.setColSorting("str,str,str,str,str,date");
+    myGridEsc.enableAlterCss("even_row","odd_row"); 
+    myGridEsc.enableDragAndDrop(true);    
+    myGridEsc.init();
+    myGridEsc.load( "{{ url('xml_ACK_jobs_grid') }}?state=ESC." );
+    myGridEsc.attachEvent("onRowDblClicked", function (rid) {
+        EditEvent(rid);
+    });
+    myGridEsc.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
+        changeState(sId,sObj,tObj);
+    });
+
+    myGridClose = myTabbar.cells("close").attachGrid();
+    myGridClose.setImagePath( "{{ asset('/images/') }}");
+    myGridClose.setHeader("{{ "Name" | trans }},{{ "Title" | trans }},{{ "Status" | trans }},{{ "State" | trans }},{{ "Time" | trans }}");
+    myGridClose.setHeader("{{ "Type" | trans }},{{ "Name" | trans }},{{ "Title" | trans }},{{ "Status" | trans }},{{ "State" | trans }},{{ "Time" | trans }}");
+    myGridClose.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myGridClose.setInitWidths("80,0,*,100,0,160");
+    myGridClose.setColAlign("right,right,left,center,center,right");
+    myGridClose.setColTypes("ro,ro,ro,ro,ro,ro");
+    myGridClose.setColSorting("str,str,str,str,str,date");
+    myGridClose.enableAlterCss("even_row","odd_row");    
+    myGridClose.enableDragAndDrop(true);    
+    myGridClose.init();
+    myGridClose.load( "{{ url('xml_ACK_jobs_grid') }}?state=CLOSE" );
+    myGridClose.attachEvent("onRowDblClicked", function (rid) {
+        EditEvent(rid);
+    });
+    myGridClose.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
+        changeState(sId,sObj,tObj);
+    });
+    
 }
 
 function PageRefresh() {
     myGrid.load( "{{ url('xml_ACK_jobs_grid') }}?state=OPEN" );
+}
+
+
+function changeState(rowId,sgrid,tgrid) {
+    var state;
+    var text;
+    var layout;
+    if (tgrid == myGridEsc) {
+        state = 'ESC.';
+        text= 'OPEN -> ESCALATED';
+        layout = myLayout.cells('c');
+    }
+    else if (tgrid == myGridClose) {
+        state = 'CLOSE';
+        text= 'OPEN -> CLOSE';
+        layout = myLayout.cells('c');
+    }
+    else if (tgrid == myGrid) {
+        state = 'OPEN';
+        text= 'OPEN';
+        layout = myLayout.cells('a');
+    }
+    layout.progressOn();
+    dhx4.ajax.get( "{{ url('txt_ACK_event_state') }}?id="+rowId+'&state='+state, function(loader,response) {  
+        // On verifie que c'est bien en base de données
+        tgrid.load( "{{ url('xml_ACK_jobs_grid') }}?state="+state, function() {
+            // Si oui , on supprime l'ancien
+            sgrid.deleteRow(rowId);
+            layout.progressOff();
+        });        
+    });
+    return;
 }
 
 function EditEvent (id) {

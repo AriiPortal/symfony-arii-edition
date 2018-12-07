@@ -19,8 +19,11 @@ class LiveStatusController extends Controller
         exit();
     }
 
-    public function hostsAction()
+    public function hostsAction($_route)
     {
+        $time = time();
+        set_time_limit(3600);
+        
         // On traite le log
         if (isset($_FILES['txt']['tmp_name']))
             $log = file_get_contents($_FILES['txt']['tmp_name']);
@@ -30,6 +33,22 @@ class LiveStatusController extends Controller
         $Infos = $this->csv2array($log);
 
         $em = $this->getDoctrine()->getManager();
+        // On recupere les infos de la derniere synchro
+        $Sync = $em->getRepository("AriiReportBundle:Sync")->findOneBy([
+                'route'   => $_route
+        ]);
+        // Si il existe
+        if ($Sync) {
+        }
+        else {
+            $Sync = new \Arii\ReportBundle\Entity\Sync();
+            $Sync->setName('Nagios Hosts');
+            $Sync->setDbName('livestatus');
+            $Sync->setEntity('Hosts');
+            $Sync->setRoute($_route);
+            $Sync->setCheckPoint('statusTime');
+        }
+        
         $n = 0;
         foreach ($Infos as $Info) {
 
@@ -137,15 +156,22 @@ class LiveStatusController extends Controller
                 $record->setDowntimesUser(null);
                 $record->setDowntimesInfo($Info['downtimes_with_info']);
             }            
-                     
+            
             $em->persist($record);
             if ($n++ % 100 == 0)
                 $em->flush();            
         }
-        $em->flush();
-        print "($n)";
+        $duration = (time()-$time);
         
-        return new Response("success");        
+        // On met a jour la table de synchro
+        $Sync->setDuration($duration);
+        $Sync->setNbLines($n);
+        $Sync->setLastId(0);
+        $Sync->setLastUpdate(new \DateTime());
+
+        $em->persist($Sync);        
+        $em->flush();
+        return new Response(sprintf( "# %d\n%d s\n%s\n",$n,$duration,"success"));    
     }
     
 /* Exemple de service
@@ -353,9 +379,10 @@ state	2
 state_type	1
 
  */
-    public function servicesAction()
+    public function servicesAction($_route)
     {
-        set_time_limit(1800);        
+        $time = time();        
+        set_time_limit(1800);     
         // On traite le log
         if (isset($_FILES['csv']['tmp_name']))
             $log = file_get_contents($_FILES['svc']['tmp_name']);
@@ -366,6 +393,25 @@ state_type	1
         $update_time = new \DateTime();
         
         $em = $this->getDoctrine()->getManager();
+        // On recupere les infos de la derniere synchro
+        $Sync = $em->getRepository("AriiReportBundle:Sync")->findOneBy([
+                'route'   => $_route
+        ]);
+        // Si il existe
+        if ($Sync) {
+        }
+        else {
+            $Sync = new \Arii\ReportBundle\Entity\Sync();
+            $Sync->setName('Nagios Services');
+            $Sync->setDbName('livestatus');
+            $Sync->setEntity('Services');
+            $Sync->setRoute($_route);
+            $Sync->setCheckPoint('statusTime');
+            // On remonte sur 1 an ?
+            $start = time()-366*24*3600;
+            $Sync->setLastId($start);
+        }
+        
         $n = 0;
         foreach ($Infos as $Info) {
             
@@ -404,7 +450,7 @@ state_type	1
                     $record->setHost($host);
 
                     // sync. par defaut
-                    $record->setSynchronized(1);                    
+                    $record->setSynchronised(1);                    
                 }
                 
                 // STATUS Nagios
@@ -424,7 +470,7 @@ state_type	1
                 $record->setState($status);
                 $record->setStateTime(new \DateTime('@'.$Info['last_check']));
                 
-                if ($record->getSynchronized()==0) {
+                if ($record->getSynchronised()==0) {
                     $record->setProbe(null);
                 }
                 else 
@@ -473,14 +519,18 @@ state_type	1
             if ($n++ % 100 == 0)
                 $em->flush();            
         }
+        $duration = (time()-$time);
         
-        // $update_time
+        // On met a jour la table de synchro
+        $Sync->setDuration($duration);
+        $Sync->setNbLines($n);
+        $Sync->setLastId($time);
+        $Sync->setLastUpdate(new \DateTime());
+
+        $em->persist($Sync);
         $em->flush();
-        
-        // Purge
-        // $this->getDoctrine()->getRepository("AriiACKBundle:Service")->purge($update_time);        
-        print "(+$n)";
-        return new Response("success");        
+                
+        return new Response(sprintf( "# %d\n%d s\n%s\n",$n,$duration,"success"));        
     }
     
     // Symfony3 offre un serializer

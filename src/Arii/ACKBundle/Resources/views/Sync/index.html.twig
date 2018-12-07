@@ -1,0 +1,36 @@
+{% extends "AriiACKBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    mySidebar.items('sync').setActive();
+
+    myLayout = globalLayout.cells("b").attachLayout('1C');
+    myLayout.cells("a").hideHeader();
+
+    myGrid = myLayout.cells("a").attachGrid();
+    myGrid.setImagePath( "{{ asset('/images/') }}");
+    myGrid.setHeader("{{ "Name" | trans }},{{ "DB" | trans }},{{ "Update" | trans }},{{ "Duration" | trans }},{{ "Lines" | trans }},{{ "Delay" | trans }}");
+    myGrid.attachHeader("#text_filter,#text_filter,#text_filter,#numeric_filter,#numeric_filter,#numeric_filter");
+    myGrid.setInitWidths("*,100,150,160,150,150");
+    myGrid.setColAlign("left,left,left,right,right,right");
+    myGrid.setColTypes("ro,ro,ro,ro,ro,ro");
+    myGrid.setColSorting("str,str,date,int,int,int");
+    myGrid.enableAlterCss("even_row","odd_row");   
+    myGrid.enableDragAndDrop(true);    
+    myGrid.init();
+    myGrid.load( "{{ url('xml_ACK_sync_grid') }}" );    
+    myGrid.attachEvent("onRowDblClicked", function (rid) {
+        EditEvent(rid);
+    });
+    myGrid.attachEvent("onDrag", function(sId,tId,sObj,tObj,sInd,tInd){
+        changeState(sId,sObj,tObj);
+    });
+
+}
+
+function PageRefresh() {
+    myGrid.load( "{{ url('xml_ACK_sync_grid') }}" );
+}
+
+</script>
+{% endblock %}

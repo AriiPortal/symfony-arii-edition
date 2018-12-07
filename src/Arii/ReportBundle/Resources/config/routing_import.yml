@@ -1,0 +1,6 @@
+#================================
+# Synchronisation Ordres
+#================================
+arii_Report_import_orders:
+    pattern:  /orders/{db}
+    defaults: { _controller: AriiReportBundle:Import\Orders:db }

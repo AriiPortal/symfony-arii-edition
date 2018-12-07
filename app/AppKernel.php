@@ -20,6 +20,7 @@ class AppKernel extends Kernel
         new JMS\SerializerBundle\JMSSerializerBundle(),
         new Arii\UserBundle\AriiUserBundle(),
         new Arii\CoreBundle\AriiCoreBundle(),
+        new Arii\APIBundle\AriiAPIBundle(),
         new Arii\AdminBundle\AriiAdminBundle(),
         new Arii\JIDBundle\AriiJIDBundle(),
         new Arii\DSBundle\AriiDSBundle(),

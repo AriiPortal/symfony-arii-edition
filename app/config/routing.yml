@@ -16,7 +16,7 @@ arii_home:
 # Arii common
 # Utilisé par tous les modules
 # ----------------------------------------
-arii_api:
+arii_common:
     resource: "@AriiCoreBundle/Resources/config/routing_arii.yml"
     prefix:   /arii
     requirements:
@@ -26,10 +26,8 @@ arii_api:
 # API Bundle
 # ----------------------------------------
 arii_api:
-    resource: "@AriiCoreBundle/Resources/config/api.yml"
-    prefix:   /api
-    requirements:
-        _locale: en|fr|es|de|cn|ar|ru|jp
+    resource: "@AriiAPIBundle/Resources/config/routing.yml"
+    prefix:   /api/v1
     
 # ========================================
 # Core Bundle
@@ -97,7 +95,6 @@ arii_jid:
     prefix:   /jid/{_locale}
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
-
 # ========================================
 # DS 
 # ----------------------------------------
@@ -142,6 +139,11 @@ arii_Report:
     prefix:   /report/{_locale}
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
+
+
+arii_Report_import:
+    resource: "@AriiReportBundle/Resources/config/routing_import.yml"
+    prefix:   /import/report
 
 # ========================================
 # Autosys

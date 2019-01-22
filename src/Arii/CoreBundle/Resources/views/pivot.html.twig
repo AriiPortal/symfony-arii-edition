@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+{% block head %}
+        <!-- external libs from cdnjs -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-basic-latest.min.js"></script>
+
+        <!-- PivotTable.js libs from pivottable/dist -->
+        <link rel="stylesheet" type="text/css" href="{{ asset('pivottable/dist/pivot.css') }}">
+        <script type="text/javascript" src="{{ asset('pivottable/dist/pivot.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('pivottable/dist/export_renderers.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('pivottable/dist/d3_renderers.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('pivottable/dist/plotly_renderers.js') }}"></script>
+
+        <style>
+            body {font-family: Verdana;}
+            .node {
+              border: solid 1px white;
+              font: 10px sans-serif;
+              line-height: 12px;
+              overflow: hidden;
+              position: absolute;
+              text-indent: 2px;
+            }
+        </style>
+{% endblock %}
+{% block body %}{% endblock %}
+</html>

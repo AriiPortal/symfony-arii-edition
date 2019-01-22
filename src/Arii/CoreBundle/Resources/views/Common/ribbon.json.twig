@@ -3,37 +3,142 @@
    [
         {   
             type:       "block", 
-/*            text:       "{{ BUNDLE.module }}",  */
+            text:       "{{ BUNDLE.title }}",  
             text_pos:   "top", 
             list:
                 [
                    {
-                        type:   "button", 
+                        type:   "buttonSelect", 
                         id:     "home",
                         text:   "", 
                         isbig:  true, 
-                        img:    "48/{{ BUNDLE.mod }}.png"
-                    },
-                    {
-                        type:   "button", 
-                        id:     "main",
-                        text:   "{{ "Menu" | trans }}", 
-                        img:    "main.png"
-                    },
-                    {
-                        type:   "buttonSelect", 
-                        id:     "browsing",
-                        text:   "", 
-                        img:    "go.png",
+                        img:    "48/{{ BUNDLE.mod }}.png",
                         items:
                         [
+                            {
+                                 id:     "main",
+                                 text:   "Ari'i", 
+                                 img:    "home.png"
+                            },
+                        {id:"sep0", type: "separator"},
 {% for menu in MENU %}
-                            { id:"BUNDLE_{{ menu.mod }}", text: "{{ menu.title | trans }}", img: "{{ menu.mod }}.png" },
+                        { id:"BUNDLE_{{ menu.mod }}", text: "{{ menu.title | trans }}", img: "{{ menu.mod }}.png" },
 {% endfor %}
+                        {id:"sep1", type: "separator"},
+                            {
+                                 id:     "USER_logout",
+                                 text:   "{{ "Logout" }}", 
+                                 img:    "logout.png"
+                            }
                         ]
-                    }                    
+                    }
                 ]
         }
+{% if ACTIVATED.databases_ats %}
+    ,
+     {   "type":"block", 
+          "id": "current_filter",
+          text:"{{ "Repository" | trans }}", 
+          text_pos:   "top",           
+          "list":
+          [
+             {   "type": "buttonSelect", 
+                 width: 140,
+                 mode: 'cols',
+                 text:"",
+                 "id": "db",
+                 "img": "database.png", 
+                 comboDefaultImage: 'search.png',
+                 comboType: 'image',
+                 items:
+                 [ 
+        {% for k,filter in FILTERS %}
+            { value:"{{ filter.id }}", text: "{{ filter.name }}" },
+        {% endfor %}
+                  ]
+              },          
+          ]
+      }
+{% endif %}        
+{% if ACTIVATED.filters_ats %}
+    ,
+     {   "type":"block", 
+          "id": "current_filter",
+          text:"{{ "Filter" | trans }}", 
+          text_pos:   "top",           
+          "list":
+          [
+                {   type: 'group', 
+                    list:[
+                        {                        "type":"button", "img": "spooler.png"},
+                        {   id: "filter_spooler", "type":"input",  width: 120, "tooltip": "{{"Spooler" | trans }}"  }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {                        "type":"button", "img": "folder.png"},
+                        {   id: "filter_folder", "type":"input",  width: 120, "tooltip": "{{"Folder" | trans }}"  }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {                           "type":"button", "img": "job_chain.png"},
+                        {   id: "filter_job_chain", "type":"input",  width: 120, "tooltip": "{{"Chain" | trans }}"  }
+                    ]
+                },
+                {type : "newLevel"},
+                {   type: 'group', 
+                    list:[
+                        {                         "type":"button", "img": "order.png"},
+                        {   id: "filter_trigger", "type":"input",  width: 120, "tooltip": "{{"Order" | trans }}"   }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {                         "type":"button", "img": "job.png"},
+                        {   id: "filter_job_name",     "type":"input",  width: 120, "tooltip": "{{"Job" | trans }}"   }
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        {   id: "filter_status_running", "type":"buttonTwoState", "img": "running.png"},
+                        {   id: "filter_status_success", "type":"buttonTwoState", "img": "success.png"},
+                        {   id: "filter_status_failure", "type":"buttonTwoState", "img": "failure.png"},
+                        {   id: "filter_status_error", "type":"buttonTwoState", "img": "error.png"},
+                    ]
+                },
+                {   type: 'group', 
+                    list:[
+                        { id:"filter_group",   "type":"buttonTwoState",text:"","img":"group.png","tooltip": "{{ "Public" | trans }}", state: false },
+                        { id:"filter_user",   "type":"buttonTwoState",text:"*","img":"user.png","tooltip": "{{ "Mine" | trans }}", state: true },
+                    ]
+                },
+             {   "type": "buttonCombo", 
+                 width: 140,
+                 mode: 'cols',
+                 text:"",
+                 "id": "Filters",
+                 "img": "search.png", 
+                 comboDefaultImage: 'search.png',
+                 comboType: 'image',
+                 items:
+                 [ 
+        {% for k,filter in FILTERS %}
+            { value:"{{ filter.id }}", text: "{{ filter.name }}" },
+        {% endfor %}
+                  ]
+              },
+                {   type: 'group', 
+                    list:[
+                        { id:"filter_save",   "type":"button",text:"","img":"save.png","tooltip": "{{ "Save" | trans }}" },
+                        { id:"filter_edit",   "type":"button",text:"","img":"edit.png","tooltip": "{{ "Edit" | trans }}" },
+                        { id:"filter_delete", "type":"button",text:"","img":"delete.png","tooltip": "{{ "Delete" | trans }}" }
+                    ]
+                },
+              
+          ]
+      }
+{% endif %}        
 {% if ACTIVATED.filters_ojs %}
     ,
      {   "type":"block", 
@@ -189,28 +294,19 @@
                          text:   "{{ "Group" | trans }}", 
                          img:    "group.png"
                     },
-                    {   type: 'group', 
-                        list:[
-                            {   
-                                type:   "buttonSelect", 
-                                id:     "lang",
-                                text:   "", 
-                                img:    "flags/{{ app.request.locale }}.png",
-                                items:
-                                [
-        {% for lang,info in LANG %}
-                                { id:"LANG_{{ lang }}", text: "{{ info.string }}", img: "{{ lang }}.png" },
-        {% endfor %}
-                                ]
-                            },
-                            {
-                                 type:   "button", 
-                                 id:     "USER_logout",
-                                 text:   "", 
-                                 img:    "logout.png"
-                            }
+                    {   
+                        type:   "buttonSelect", 
+                        id:     "lang",
+                        text:   "", 
+                        img:    "flags/{{ app.request.locale }}.png",
+                        items:
+                        [
+                        
+{% for lang,info in LANG %}
+                        { id:"LANG_{{ lang }}", text: "{{ info.string }}", img: "{{ lang }}.png" },
+{% endfor %}
                         ]
-                    },
+                    }
                     
                 ]
         }

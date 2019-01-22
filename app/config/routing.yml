@@ -7,8 +7,8 @@ arii_Alert_index:
     defaults: {_controller: AriiCoreBundle:Default:default }
     
 arii_home:
-    path:  /home/{_locale}
-    defaults: { _controller: AriiCoreBundle:Default:index }
+    path:  /{_locale}/home
+    defaults: { _controller: AriiCoreBundle:Default:index, _lang: en  }
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp
 
@@ -18,7 +18,7 @@ arii_home:
 # ----------------------------------------
 arii_common:
     resource: "@AriiCoreBundle/Resources/config/routing_arii.yml"
-    prefix:   /arii
+    prefix:   /{_locale}/arii
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp
 
@@ -34,7 +34,7 @@ arii_api:
 # ----------------------------------------
 arii_core:
     resource: "@AriiCoreBundle/Resources/config/routing.yml"
-    prefix:   /home/{_locale}
+    prefix:   /{_locale}/home
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp
                 
@@ -43,7 +43,7 @@ arii_core:
 # ----------------------------------------
 arii_Admin:
     resource: "@AriiAdminBundle/Resources/config/routing.yml"
-    prefix:   /admin/{_locale}
+    prefix:   /{_locale}/admin
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -52,7 +52,7 @@ arii_Admin:
 # ----------------------------------------
 arii_JOB:
     resource: "@AriiJOBBundle/Resources/config/routing.yml"
-    prefix:   /job/{_locale}
+    prefix:   /{_locale}/job
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -61,7 +61,7 @@ arii_JOB:
 # ----------------------------------------
 arii_ACK:
     resource: "@AriiACKBundle/Resources/config/routing.yml"
-    prefix:   /ack/{_locale}
+    prefix:   /{_locale}/ack
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -74,7 +74,7 @@ arii_ACK_import:
 # ----------------------------------------
 arii_Self:
     resource: "@AriiSelfBundle/Resources/config/routing.yml"
-    prefix:   /self/{_locale}
+    prefix:   /{_locale}/self
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -83,7 +83,7 @@ arii_Self:
 # ----------------------------------------
 arii_Plumb:
     resource: "@AriiPlumbBundle/Resources/config/routing.yml"
-    prefix:   /plumb/{_locale}
+    prefix:   /{_locale}/plumb
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -92,7 +92,7 @@ arii_Plumb:
 # ----------------------------------------
 arii_jid:
     resource: "@AriiJIDBundle/Resources/config/routing.yml"
-    prefix:   /jid/{_locale}
+    prefix:   /{_locale}/jid
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 # ========================================
@@ -100,7 +100,7 @@ arii_jid:
 # ----------------------------------------
 arii_ds:
     resource: "@AriiDSBundle/Resources/config/routing.yml"
-    prefix:   /ds/{_locale}
+    prefix:   /{_locale}/ds
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -109,7 +109,7 @@ arii_ds:
 # ----------------------------------------
 arii_mft:
     resource: "@AriiMFTBundle/Resources/config/routing.yml"
-    prefix:   /mft/{_locale}
+    prefix:   /{_locale}/mft
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -118,7 +118,7 @@ arii_mft:
 # ----------------------------------------
 arii_Graphviz:
     resource: "@AriiGraphvizBundle/Resources/config/routing.yml"
-    prefix:   /gvz/{_locale}
+    prefix:   /{_locale}/gvz
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -127,7 +127,7 @@ arii_Graphviz:
 # ----------------------------------------
 arii_JOC:
     resource: "@AriiJOCBundle/Resources/config/routing.yml"
-    prefix:   /joc/{_locale}
+    prefix:   /{_locale}/joc
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -136,7 +136,7 @@ arii_JOC:
 # ----------------------------------------
 arii_Report:
     resource: "@AriiReportBundle/Resources/config/routing.yml"
-    prefix:   /report/{_locale}
+    prefix:   /{_locale}/report
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -150,7 +150,7 @@ arii_Report_import:
 # ----------------------------------------
 arii_ATS:
     resource: "@AriiATSBundle/Resources/config/routing.yml"
-    prefix:   /ats/{_locale}
+    prefix:   /{_locale}/ats
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -229,7 +229,7 @@ arii_user:
 # ----------------------------------------
 arii_Time:
     resource: "@AriiTimeBundle/Resources/config/routing.yml"
-    prefix:   /time/{_locale}
+    prefix:   /{_locale}/time
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -238,7 +238,7 @@ arii_Time:
 # ----------------------------------------
 arii_I5:
     resource: "@AriiI5Bundle/Resources/config/routing.yml"
-    prefix:   /i5/{_locale}
+    prefix:   /{_locale}/i5
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -247,7 +247,7 @@ arii_I5:
 # ----------------------------------------
 arii_Blockly:
     resource: "@AriiBlocklyBundle/Resources/config/routing.yml"
-    prefix:   /blockly/{_locale}
+    prefix:   /{_locale}/blockly
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -256,6 +256,6 @@ arii_Blockly:
 # ----------------------------------------
 arii_Print:
     resource: "@AriiPRTBundle/Resources/config/routing.yml"
-    prefix:   /prt/{_locale}
+    prefix:   /{_locale}/prt
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 

@@ -90,6 +90,8 @@ class CommonController extends Controller
         // Informations en cours        
         $Activated = [
             'filters' => 0,
+            'databases_ats' => 0,
+            'databases_ojs' => 0,
             'filters_ojs' => 0,
             'filters_ats' => 0,
             'history' => 0,            

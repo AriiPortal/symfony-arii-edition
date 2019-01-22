@@ -49,7 +49,7 @@ class JobsController extends FOSRestController
         return new View("User Added Successfully", Response::HTTP_OK);
     }
     
-    public function updateAction($id)
+    public function updateAction($id, Request $request)
     {
         $data = new Job;
         $name = $request->get('name');

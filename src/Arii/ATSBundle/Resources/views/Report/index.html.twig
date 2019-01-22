@@ -1,0 +1,15 @@
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block dhtmlx_plus %}
+{% include "AriiCoreBundle:Common:ribbon.js.twig" %}    
+{% endblock dhtmlx_plus %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    globalLayout.cells("b").setText("{{ "Orders" | trans }}");    
+    globalLayout.cells("b").attachURL("{{ url('html_ATS_pivot') }}");
+}
+
+function PageRefresh() {}
+
+</script>
+{% endblock %}

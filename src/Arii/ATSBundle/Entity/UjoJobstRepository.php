@@ -16,7 +16,7 @@ class UjoJobstRepository extends EntityRepository
     public function synchroJobst($past) {        
         $q = $this
         ->createQueryBuilder('e')
-        ->select('e.jobName,e.description,e.jobType,e.runNum,e.ntry,e.lastStart,e.lastEnd,e.exitCode,e.runMachine,e.status')
+        ->select('e.jobName,e.boxName,e.description,e.jobType,e.runNum,e.ntry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.status,e.statusTime')
         ->where('e.statusTime > :past')
         ->setParameter('past', $past)
         ->getQuery();

@@ -1,0 +1,34 @@
+{% extends "AriiCoreBundle::pivot.html.twig" %}
+{% block body %}
+        <script type="text/javascript">
+    // This example has all the renderers loaded,
+    // and should work with touch devices.
+
+    $(function(){
+        var derivers = $.pivotUtilities.derivers;
+
+        var renderers = $.extend(
+            $.pivotUtilities.renderers,
+            $.pivotUtilities.plotly_renderers,
+            $.pivotUtilities.d3_renderers,
+            $.pivotUtilities.export_renderers
+            );
+
+        $.getJSON("{{ url('json_ATS_report') }}", function(mps) {
+            $("#output").pivotUI(mps, {
+                renderers: renderers,
+/*                derivedAttributes: {
+                    "Age Bin": derivers.bin("Age", 10),
+                    "Gender Imbalance": function(mp) {
+                        return mp["Gender"] == "Male" ? 1 : -1;
+                    }
+                },
+                cols: ["Age Bin"], rows: ["Gender"],
+*/
+                rendererName: "{{ "Table Barchart" | trans }}"
+            });
+        });
+     });
+        </script>
+        <div id="output"></div>
+{% endblock %}

@@ -16,9 +16,12 @@ var status;
 var sort="last";
 
 dhtmlxEvent(window,"load",function(){       
-    AriiLayout('ATS','history,refresh',size);
+    AriiLayout('ATS','databases_ats,history,refresh',size);
     
-    mySidebar = globalLayout.cells("a").attachSidebar({
+    menuLayout = globalLayout.cells("a").attachLayout("2E");
+    
+    menuLayout.cells("a").setText("{{ "Menu" | trans }}");
+    mySidebar = menuLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
         width: size,
@@ -27,6 +30,8 @@ dhtmlxEvent(window,"load",function(){
             { id:"alarms", text: "{{ "Alarms" | trans }}", icon: "error.png" },
             { id:"boxes", text: "{{ "Boxes" | trans }}", icon: "box.png" },
             { id:"audit", text: "{{ "Audit" | trans }}", icon: "audit.png" },
+            { type: "separator" },
+            { id:"report", text: "{{ "Report" | trans }}", icon: "report.png" },
             { type: "separator" },
             { id:"templates", text: "{{ "Templates" | trans }}", icon: "wand.png" },
         ]
@@ -41,6 +46,9 @@ dhtmlxEvent(window,"load",function(){
         document.location.href = "{{ url('arii_ATS_index') }}/db/"+db+"/"+id;
         return true;
     });
+    
+    menuLayout.cells("b").setText("{{ "Instances" | trans }}");
+    menuLayout.cells("b").setHeight(size+40);
     Init();
 });
 </script>

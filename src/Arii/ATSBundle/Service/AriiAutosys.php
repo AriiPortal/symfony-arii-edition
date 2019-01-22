@@ -116,7 +116,7 @@ class AriiAutosys
         }
         return $state;
     }
-
+    
     public function Status($status) {   
         $Status = array (
             1 => 'RUNNING',

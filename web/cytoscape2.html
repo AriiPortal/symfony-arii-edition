@@ -1,0 +1,152 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="cytoscape.min.js"></script>
+  <style>
+    body {
+		font-size: 14px;
+    }
+    #cy {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+  </style>
+</head>
+<body>
+    <div id="cy"></div>
+  <script>
+var cy = cytoscape({
+  container: document.getElementById('cy'),
+
+  boxSelectionEnabled: false,
+  autounselectify: true,
+  
+  // so we can see the ids
+  style: [
+    {
+      selector: 'node',
+      style: {
+		'font-size': '12px',
+        'label': 'data(id)',
+		'color': 'data(color)'
+      }
+    },	
+	{
+	  selector: 'edge',
+	  style: {
+		'width': 3,
+		'line-color': 'data(color)',
+		'target-arrow-color': '#ccc',
+		'curve-style': 'bezier',
+		'target-arrow-shape': 'triangle', // there are far more options for this property here: http://js.cytoscape.org/#style/edge-arrow
+		'target-arrow-color':  'data(color)'
+		}
+	},
+    {
+      selector: ':selected',
+      css: {
+        'background-color': 'black',
+        'line-color': 'black',
+        'target-arrow-color': 'black',
+        'source-arrow-color': 'black',
+		'target-arrow-shape': 'triangle'
+      }
+    },
+	{
+      selector: '$node > node',
+      css: {
+        'padding-top': '10px',
+        'padding-left': '10px',
+        'padding-bottom': '10px',
+        'padding-right': '10px',
+        'text-valign': 'top',
+        'text-halign': 'center',
+        'background-color': '#bbb'
+      }
+    }
+	
+  ],
+  
+  elements: [ // flat array of nodes and edges
+    { // node n1
+      group: 'nodes', // 'nodes' for a node, 'edges' for an edge
+      // NB the group field can be automatically inferred for you but specifying it
+      // gives you nice debug messages if you mis-init elements
+      data: { // element data (put json serialisable dev data here)
+        id: 'ZP.GA.JOB.IANQryMoisMoins2Clear', // mandatory (string or number) id for each element, assigned automatically on undefined
+        parent: 'ZP.GA.BOX.IANTraitMoisMoins2', // indicates the compound node parent id; not defined => no parent
+        // (`parent` can be effectively changed by `eles.move()`)
+      },
+      // scratchpad data (usually temp or nonserialisable data)
+      scratch: {
+        _foo: 'bar' // app fields prefixed by underscore; extension fields unprefixed
+      },
+  directed: true, // whether the tree is directed downwards (or edges can point in any direction if false)
+  padding: 30, // padding on fit  
+	  animate: true,
+      selected: false, // whether the element is selected (default false)
+      selectable: true, // whether the selection state is mutable (default true)
+      locked: false, // when locked a node's position is immutable (default false)
+      grabbable: true, // whether the node can be grabbed and moved by the user
+      classes: ['foo', 'bar'] // an array (or a space separated string) of class names that the element has
+    },
+    { // node n2
+      data: { id: 'ZP.GA.JOB.IANZoMoisMoins2Clear',  color: '#FF00FF',  parent: 'ZP.GA.BOX.IANTraitMoisMoins2' }
+    },
+    { // node n3
+      data: { id: 'ZP.GA.JOB.IANMoisMoins2CreatPrFr',  color: '#FF0000',  parent: 'ZP.GA.BOX.IANTraitMoisMoins2' }
+    },
+    { // node n4
+      data: { id: 'ZP.GA.JOB.IANMoisMoins2PausePrFr',  color: '#FF0000',  parent: 'ZP.GA.BOX.IANTraitMoisMoins2', "arrow": "triangle"  }
+    },
+    { // node nparent
+      data: { id: 'ZP.GA.BOX.IANTraitMoisMoins2' }
+    },
+    { // edges
+      data: {
+        id: 'ZP.GA.JOB.IANZoMoisMoins2Clear--ZP.GA.JOB.IANMoisMoins2CreatPrFr',
+		color: '#0000ff',
+        // inferred as an edge because `source` and `target` are specified:
+        source: 'ZP.GA.JOB.IANZoMoisMoins2Clear', // the source node id (edge comes from this node)
+        target: 'ZP.GA.JOB.IANMoisMoins2CreatPrFr'  // the target node id (edge goes to this node)
+        // (`source` and `target` can be effectively changed by `eles.move()`)
+      }
+    },
+    { // edges
+      data: {
+        id: 'ZP.GA.JOB.IANQryMoisMoins2Clear--ZP.GA.JOB.IANMoisMoins2CreatPrFr',
+		color: '#00FF00',
+        // inferred as an edge because `source` and `target` are specified:
+        source: 'ZP.GA.JOB.IANQryMoisMoins2Clear', // the source node id (edge comes from this node)
+        target: 'ZP.GA.JOB.IANMoisMoins2CreatPrFr'  // the target node id (edge goes to this node)
+        // (`source` and `target` can be effectively changed by `eles.move()`)
+      }
+    },
+    { // edges
+      data: {
+        id: 'ZP.GA.JOB.IANMoisMoins2CreatPrFr--ZP.GA.JOB.IANMoisMoins2PausePrFr',
+		color: '#FF0000',
+        // inferred as an edge because `source` and `target` are specified:
+        source: 'ZP.GA.JOB.IANMoisMoins2CreatPrFr', // the source node id (edge comes from this node)
+        target: 'ZP.GA.JOB.IANMoisMoins2PausePrFr'  // the target node id (edge goes to this node)
+        // (`source` and `target` can be effectively changed by `eles.move()`)
+      }
+    }
+  ]
+
+});
+cy.animation();
+cy.layout({
+    name: 'breadthfirst',
+    directed: true,
+	padding: 5,
+	nodeSep: 20,
+}).run();
+  </script>
+</body>
+</html>

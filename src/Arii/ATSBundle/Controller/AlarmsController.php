@@ -39,7 +39,7 @@ class AlarmsController extends Controller
     {
         $em = $this->getDoctrine()->getManager($db);        
         $state = $this->container->get('arii_ats.state2');        
-        $Alarms = $state->Changes($em);
+        $Alarms = $state->Alarms($em);
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');

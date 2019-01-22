@@ -2,6 +2,62 @@
 # API RESTFUL
 # ========================================
 # ========================================
+# Hosts
+# ----------------------------------------
+api_hosts_list:
+    path:  /hosts
+    defaults: { _controller: AriiAPIBundle:Hosts:list }
+    methods: [GET]
+
+api_hosts_post:
+    path:  /hosts
+    defaults: { _controller: AriiAPIBundle:Hosts:create }
+    methods: [POST]
+
+api_hosts_get:
+    path:  /hosts/{id}
+    defaults: { _controller: AriiAPIBundle:Hosts:get }
+    methods: [GET]
+
+api_hosts_put:
+    path:  /hosts/{id}
+    defaults: { _controller: AriiAPIBundle:Hosts:update }
+    methods: [PUT]
+
+api_hosts_delete:
+    path:  /hosts/{id}
+    defaults: { _controller: AriiAPIBundle:Hosts:delete }
+    methods: [DELETE]
+
+# ========================================
+# Alarms
+# ----------------------------------------
+api_alarm_search:
+    path:  /alarms
+    defaults: { _controller: AriiAPIBundle:API\Alarm:search }
+    methods: [GET]
+
+api_alarm_create:
+    path:  /alarms
+    defaults: { _controller: AriiAPIBundle:API\Alarm:create }
+    methods: [POST]
+
+api_alarm_retrieve:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:retrieve }
+    methods: [GET]
+
+api_alarm_update:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:update }
+    methods: [PUT]
+
+api_alarm_delete:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:delete }
+    methods: [DELETE]
+
+# ========================================
 # Jobs
 # ----------------------------------------
 api_jobs_get:

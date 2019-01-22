@@ -128,10 +128,10 @@ class DefaultController extends Controller
             if ($name!='Core')
                 array_push($liste, 
                     array( 
-                        'mod' => strtolower($name), 
-                        'module' => $name, 
-                        'url' => $url, 
-                        'class' => $class, 
+                        'mod' => strtolower($name),
+                        'module' => $name,
+                        'url' => $url,
+                        'class' => $class,
                         'title' => 'module.'.$name ) );
         }   
 

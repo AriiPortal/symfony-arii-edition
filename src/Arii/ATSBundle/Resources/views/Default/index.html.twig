@@ -2,9 +2,9 @@
 {% block body %}
 <script language="javascript">
 function Init() {
-    globalLayout.cells("c").setText("{{ "Orders" | trans }}");
+    globalLayout.cells("b").setText("{{ "Orders" | trans }}");
     
-    myLayout = globalLayout.cells("c").attachLayout("1C");
+    myLayout = globalLayout.cells("b").attachLayout("1C");
     myLayout.cells("a").hideHeader();
 
     myGrid = myLayout.cells("a").attachGrid();

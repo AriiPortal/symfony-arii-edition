@@ -252,3 +252,11 @@ arii_pushbullet:
 html_pushbullet_me:
     path:  /pushbullet/me
     defaults: { _controller: AriiCoreBundle:Pushbullet:me }
+
+#--------------------------------------------------------------------
+# Test
+#--------------------------------------------------------------------
+png_demo_microbar:
+    path:  /service/microbar.png
+    defaults: { _controller: AriiCoreBundle:Service\GD:microbar }
+

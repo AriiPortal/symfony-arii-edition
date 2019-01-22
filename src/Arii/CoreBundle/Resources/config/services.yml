@@ -86,8 +86,16 @@ services:
         class: Arii\CoreBundle\Service\AriiRequests
         arguments: [ "@arii_core.portal", @doctrine, "@arii_core.date", @templating ]
         
+    arii_core.gd:
+        class: Arii\CoreBundle\Service\AriiGD
+        arguments: [ "@service_container", "@arii_core.portal" ]
+
     arii_core.mermaid:
         class: Arii\CoreBundle\Service\AriiMermaid
+        arguments: [ "@service_container", "@arii_core.portal" ]
+
+    arii_core.flowchart:
+        class: Arii\CoreBundle\Service\AriiFlowchart
         arguments: [ "@service_container", "@arii_core.portal" ]
 
     arii_core.graphviz:

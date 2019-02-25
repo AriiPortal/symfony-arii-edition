@@ -1,7 +1,0 @@
-arii_JID_api_order_log:
-    path:  /db/{db}/order/{id}/log.html
-    defaults: { _controller: AriiJIDBundle:Order:log, db: ojs_db, id: 0 }
-
-arii_JID_api_task_log:
-    path:  /db/{db}/task/{id}/log.html
-    defaults: { _controller: AriiJIDBundle:Task:log, db: ojs_db, id: 0 }

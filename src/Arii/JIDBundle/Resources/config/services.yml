@@ -10,12 +10,17 @@ services:
         tags:
             - { name: twig.extension }
 
+# Couche DB Historique
+    arii_jid.History:
+        class: Arii\JIDBundle\Service\AriiHistory
+        arguments: [ "@arii_core.portal", "@arii_core.tools"]
+
 # Definition du module
     arii_jid.sos:
         class: Arii\JIDBundle\Service\AriiSOS
         arguments: [ "@arii_core.portal", "@arii_core.dhtmlx", "@arii_core.sql" ]
 
-    arii_jid.history:
+    arii_jid.historyOLD:
         class: Arii\JIDBundle\Service\AriiHistory
         arguments: [ "@arii_core.portal", "@arii_core.dhtmlx", "@arii_core.sql", "@arii_core.date", "@arii_core.tools"]
 

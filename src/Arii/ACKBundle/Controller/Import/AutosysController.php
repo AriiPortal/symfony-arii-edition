@@ -179,11 +179,5 @@ class AutosysController extends Controller
         return new Response("success");        
     }
     
-    public function purgeAction()
-    {  
-        set_time_limit(300);
-        return new Response("success");        
-    }
-    
 }
 

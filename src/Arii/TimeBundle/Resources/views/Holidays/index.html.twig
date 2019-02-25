@@ -18,25 +18,11 @@
 </div>	
 </div>
 <script charset="utf-8">
-dhtmlxEvent(window,"load",function(){
-        
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(350); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-    globalLayout.cells("c").hideHeader(); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Time_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );    
+function Init() {
     
-    dhxGrid = globalLayout.cells("a").attachGrid();
+    myLayout = globalLayout.cells("b").attachLayout("3L");
+    
+    dhxGrid = myLayout.cells("a").attachGrid();
     dhxGrid.setImagePath( "{{ asset('/images/') }}");
     dhxGrid.setHeader("{{ "Name" | trans }},{{ "Description" | trans }}");
     dhxGrid.setHeader("#text_filter,#text_filter");
@@ -48,7 +34,7 @@ dhtmlxEvent(window,"load",function(){
     dhxGrid.load("{{ url('xml_Time_holidays') }}");
     dhxGrid.attachEvent("onRowDblClicked", Detail );
     
-    var myLayout = globalLayout.cells("b").attachLayout("2U");
+    var myLayout = myLayout.cells("b").attachLayout("2U");
     myLayout.cells("a").setHeight(300); 
     myLayout.cells("b").setWidth(350); 
     myLayout.cells("a").hideHeader();     
@@ -161,7 +147,7 @@ dhtmlxEvent(window,"load",function(){
         }
     });
 
-});
+}
 
 function Detail(id) {
     globalLayout.cells("b").progressOn();

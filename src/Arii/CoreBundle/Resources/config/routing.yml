@@ -1,7 +1,20 @@
+# --------------------------------------------------------------------------
+# Portail
+# --------------------------------------------------------------------------
 arii_Core_index:
     path:  /
     defaults: { _controller: AriiCoreBundle:Default:index }
     
+# --------------------------------------------------------------------------
+# Core
+# --------------------------------------------------------------------------
+arii_Core_swagger:
+    path:  /core/swagger
+    defaults: { _controller: AriiCoreBundle:Default:swagger }
+
+# --------------------------------------------------------------------------
+# Public
+# --------------------------------------------------------------------------
 arii_Home_index:
     path:  /
     defaults: { _controller: AriiCoreBundle:Default:index }
@@ -18,14 +31,14 @@ arii_Core_readme:
     path:  /public/readme
     defaults: { _controller: AriiCoreBundle:Default:readme }
     
-html_Core_readme:
-    path:  /public/readme.html
-    defaults: { _controller: AriiCoreBundle:Default:readme_html }
-
 html_Home_readme:
     path:  /public/readme.html
     defaults: { _controller: AriiCoreBundle:Default:readme_html }
-    
+
+html_Home_swagger:
+    path:  /public/swagger.html
+    defaults: { _controller: AriiCoreBundle:Default:swagger }
+
 json_Home_ribbon:
     path:  /home/ribbon.json
     defaults: { _controller: AriiCoreBundle:Default:ribbon }

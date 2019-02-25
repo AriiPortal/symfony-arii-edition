@@ -1,0 +1,12 @@
+# --------------------------------------------------------------------------
+# Referentiels
+# --------------------------------------------------------------------------
+api_JID_repos_list:
+    path:  /repos
+    defaults: { _controller: AriiJIDBundle:API\Repos:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_repos_create:
+    path:  /repos
+    defaults: { _controller: AriiJIDBundle:API\Repos:create, repoId: ojs_db }
+    methods: [POST]

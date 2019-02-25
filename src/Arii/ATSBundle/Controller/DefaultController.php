@@ -58,7 +58,7 @@ class DefaultController extends Controller
         // Base de donnees courante ?
         // passée en variable        
         $request = Request::createFromGlobals();
-            $portal = $this->container->get('arii_core.portal');
+        $portal = $this->container->get('arii_core.portal');
         if ($request->get('db')!='')
             $portal->setDatabaseByName($request->get('db'));
         if ($request->get('db_id')!='')
@@ -108,10 +108,17 @@ class DefaultController extends Controller
         return $this->render('AriiATSBundle:Default:readme.html.twig');
     }
 
+    public function swaggerAction()
+    {
+        $portal = $this->container->get('arii_core.portal');
+        return $this->render('AriiATSBundle:Default:swagger.html.twig', [ 'db' => $portal->getDatabase() ]);
+    }
+
     public function sendevent_toolbarAction()
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
+        
         return $this->render('AriiATSBundle:Default:sendevent_toolbar.xml.twig',array(), $response );
     }
 

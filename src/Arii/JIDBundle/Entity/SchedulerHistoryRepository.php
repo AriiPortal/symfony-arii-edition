@@ -12,22 +12,36 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerHistoryRepository extends EntityRepository
 {
-    // Pour la synchronisation des historique
-    public function synchroHistory($past) { 
-        $driver = $this->_em->getConnection()->getDriver()->getName();
-        if ($driver=='oci8') {
-            $dbh = $this->_em->getConnection();
-            $sth = $dbh->prepare("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
-            $sth->execute();
-        }
-        
-        $q = $this->createQueryBuilder('e')
-        ->select('e.jobName,e.steps,e.startTime,e.endTime,e.exitCode,e.spoolerId,e.error,e.errorCode,e.errorText,e.log')
-        ->where('e.startTime > :past')
-        ->orderBy('e.startTime','DESC')
-        ->setParameter('past',$past)
-        ->getQuery();
-        return $q->getResult();
-    }
     
+   public function findSpoolers()
+   {
+        return $this->createQueryBuilder('a')
+            ->Select('a.spoolerId,a.clusterMemberId,count(a) as Runs,max(a.startTime) as latestRun,min(a.startTime) as oldestRun')
+            ->groupBy('a.spoolerId,a.clusterMemberId')                
+            ->orderBy('a.spoolerId,a.clusterMemberId')
+            ->getQuery()
+            ->getResult();
+   }    
+
+   public function findRuns($from,$to,$sort='DESC',$limit=100)
+   {
+        $q = $this->createQueryBuilder('a')
+            ->Select(
+                    'a.id as taskId,a.spoolerId,a.clusterMemberId,a.jobName,a.startTime,a.endTime,a.cause,a.steps,a.exitCode,a.error,a.errorCode,a.errorText,a.parameters,a.log,a.pid,a.agentUrl,
+                    s.step,
+                    o.jobChain,o.spoolerId,o.state,o.stateText,o.orderId')
+            ->leftjoin('AriiJIDBundle:SchedulerOrderStepHistory','s',\Doctrine\ORM\Query\Expr\Join::WITH,'a.id = s.task')                
+            ->leftjoin('AriiJIDBundle:SchedulerOrderHistory','o',\Doctrine\ORM\Query\Expr\Join::WITH,'s.task = o.history')                
+            ->Where('a.endTime <= :endTime')
+            ->orderBy('a.startTime',$sort)
+            ->setParameter('endTime', $to)
+            ->setMaxResults($limit);
+        if ($from != null) {
+            $q->andWhere('a.startTime >= :startTime')
+            ->setParameter('startTime', $from);
+        }    
+        return $q->getQuery()
+                ->getResult();
+   }    
+   
 }

@@ -48,10 +48,10 @@ function AriiLayout(bundle,activated,size) {
                 window.location = '{{ path('arii_homepage') }}';
                 break;
             case 'home':
-                window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/{{ app.request.locale }}';        
+                window.location = '{{ path('arii_homepage') }}{{ app.request.locale }}/'+bundle.toLowerCase();        
                 break;
             case 'BUNDLE':
-                window.location = '{{ path('arii_homepage') }}'+id[1]+'/{{ app.request.locale }}';
+                window.location = '{{ path('arii_homepage') }}{{ app.request.locale }}/'+id[1];
                 break;
             case 'LANG':
                 window.location = '{{ path('arii_homepage') }}'+bundle.toLowerCase()+'/'+id[1];
@@ -76,6 +76,9 @@ function AriiLayout(bundle,activated,size) {
                         break;
                     case 'readme':
                         window.location = '{{ path('arii_ACK_readme') }}';
+                        break;
+                    case 'api':
+                        window.location = '{{ path('arii_homepage') }}{{ app.request.locale }}/'+bundle.toLowerCase()+'/swagger';
                         break;
                     default:
                         alert(id[1]);
@@ -226,6 +229,12 @@ function AriiLayout(bundle,activated,size) {
                 dhx4.ajax.get( "{{ url('arii_session_update') }}?day_past="+day_past, function() {
                     
                 });                
+                break;
+            case 'limit':
+                dhx4.ajax.get( "{{ url('arii_session_update') }}?limit="+value, function() {                    
+                });                
+                myRibbon.setItemText("limit", value);
+                myRibbon.setValue("limit",value);
                 break;
             default:
                 alert('VALUE '+itemid);

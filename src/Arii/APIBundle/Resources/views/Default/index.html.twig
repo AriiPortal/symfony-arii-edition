@@ -1,0 +1,9 @@
+{% extends "AriiAPIBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    myLayout = globalLayout.cells("b").attachLayout("1C");
+    myLayout.cells("a").hideHeader();
+}
+</script>
+{% endblock %}

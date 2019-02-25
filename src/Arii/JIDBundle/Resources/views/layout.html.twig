@@ -17,7 +17,7 @@ var status;
 var sort="last";
 
 dhtmlxEvent(window,"load",function(){
-    AriiLayout('JID','filters_ojs,history,refresh',size);
+    AriiLayout('JID','databases_ojs,filters_ojs,history,refresh,help',size);
     
     menuLayout = globalLayout.cells("a").attachLayout("2E");
     menuLayout.cells("a").setText("{{ "Menu" | trans }}");

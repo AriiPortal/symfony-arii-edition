@@ -1,0 +1,10 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiAPIBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    globalLayout.cells("b").setText("{{ "API" | trans }}");
+    globalLayout.cells("b").attachURL("{{ url('html_Home_swagger') }}?route={{ app.request.attributes.get('_route') }}");
+}
+</script>
+{% endblock %}

@@ -20,25 +20,11 @@
 </div>
 </div>
 <script charset="utf-8">
-dhtmlxEvent(window,"load",function(){
-        
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(350); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-    globalLayout.cells("c").hideHeader(); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Time_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );    
+function Init() {
     
-    dhxGrid = globalLayout.cells("a").attachGrid();
+    myLayout = globalLayout.cells("b").attachLayout("3L");
+    
+    dhxGrid = myLayout.cells("a").attachGrid();
     dhxGrid.setImagePath( "{{ asset('/images/') }}");
     dhxGrid.setHeader("{{ "Name" | trans }},{{ "Description" | trans }}");
     dhxGrid.setHeader("#text_filter,#text_filter");
@@ -85,21 +71,21 @@ dhtmlxEvent(window,"load",function(){
     scheduler.init('scheduler_here',null, "month");	
 
 //    scheduler.load( "{ { url('xml_Time_calendar') }}" );
-    timeline  = globalLayout.cells("b").attachScheduler( new Date() , 'year', 'scheduler_here', scheduler);
+    timeline  = myLayout.cells("b").attachScheduler( new Date() , 'year', 'scheduler_here', scheduler);
 
     scheduler.attachEvent("onClick",function(id, value){
         alert(id);
     });
 
-    var myLayout = globalLayout.cells("c").attachLayout("2U");
-    myLayout.cells("a").setHeight(300); 
-    myLayout.cells("b").setWidth(350); 
-    myLayout.cells("a").hideHeader();     
-    myLayout.cells("b").hideHeader();
+    var detailLayout = myLayout.cells("c").attachLayout("2U");
+    detailLayout.cells("a").setHeight(300); 
+    detailLayout.cells("b").setWidth(350); 
+    detailLayout.cells("a").hideHeader();     
+    detailLayout.cells("b").hideHeader();
     // myTab.addTab("reference","{{ "Reference" | trans }}","100px", null, true);
     // myTab.addTab("rules","{{ "Rules" | trans }}","100px");
 
-    myGridToolbar = myLayout.cells("a").attachToolbar();
+    myGridToolbar = detailLayout.cells("a").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");
     myGridToolbar.loadStruct( "{{ url('xml_Time_rules_toolbar') }}");
 
@@ -138,9 +124,9 @@ dhtmlxEvent(window,"load",function(){
           label: "{{ "Updated"| trans }}"
         }    
     ];
-    myForm = myLayout.cells("a").attachForm(formData);
+    myForm = detailLayout.cells("a").attachForm(formData);
 
-    dhxTest = myLayout.cells("b").attachGrid();
+    dhxTest = detailLayout.cells("b").attachGrid();
     dhxTest.setImagePath( "{{ asset('/images/') }}");
     // dhxTest.setHeader("{{ "Name" | trans }}");
     dhxTest.setHeader("#text_filter");
@@ -170,14 +156,14 @@ dhtmlxEvent(window,"load",function(){
         }
     });
 
-});
+}
 
 function Detail(id) {
-    globalLayout.cells("c").progressOn();
+    myLayout.cells("c").progressOn();
     myForm.load("{{ url('xml_Time_rules_form') }}?id="+id, function(){    
         dhxTest.clearAndLoad("{{ url('xml_Time_rule_test') }}?rule="+ encodeURIComponent(myForm.getItemValue('rule')), function () {
             scheduler.load("{{ url('xml_Time_rule_test_schedule') }}?rule="+ encodeURIComponent(myForm.getItemValue('rule')));
-            globalLayout.cells("c").progressOff();
+            myLayout.cells("c").progressOff();
         });
     });    
 }

@@ -96,7 +96,8 @@ class CommonController extends Controller
             'filters_ats' => 0,
             'history' => 0,            
             'refresh' => 0,
-            'messaging' => 0
+            'messaging' => 0,
+            'help' => 0
         ];
         foreach (explode(',',$activated) as $act) {
             $Activated[$act] = 1;

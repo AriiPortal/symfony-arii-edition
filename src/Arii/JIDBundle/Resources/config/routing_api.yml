@@ -1,0 +1,52 @@
+# --------------------------------------------------------------------------
+# Referentiels
+# --------------------------------------------------------------------------
+api_JID_repos_list:
+    path:  /repos
+    defaults: { _controller: AriiJIDBundle:API\Repos:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_repos_create:
+    path:  /repos
+    defaults: { _controller: AriiJIDBundle:API\Repos:create, repoId: ojs_db }
+    methods: [POST]
+
+# --------------------------------------------------------------------------
+# Spoolers
+# --------------------------------------------------------------------------
+api_JID_spoolers_list:
+    path:  /repos/{repoId}/spoolers
+    defaults: { _controller: AriiJIDBundle:API\Spoolers:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_repos_create:
+    path:  /repos/{repoId}/spoolers
+    defaults: { _controller: AriiJIDBundle:API\Spoolers:create, repoId: ojs_db }
+    methods: [POST]
+
+# --------------------------------------------------------------------------
+# Jobs
+# --------------------------------------------------------------------------
+api_JID_jobs_list:
+    path:  /repos/{repoId}/jobs
+    defaults: { _controller: AriiJIDBundle:API\Repos:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_jobs_create:
+    path:  /repos/{repoId}/jobs
+    defaults: { _controller: AriiJIDBundle:API\Repos:create, repoId: ojs_db }
+    methods: [POST]
+
+# --------------------------------------------------------------------------
+# Runs
+# --------------------------------------------------------------------------
+api_JID_runs_list:
+    path:  /repos/{repoId}/runs
+    defaults: { _controller: AriiJIDBundle:API\Runs:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_runs_create:
+    path:  /repos/{repoId}/runs
+    defaults: { _controller: AriiJIDBundle:API\Runs:create, repoId: ojs_db }
+    methods: [POST]
+

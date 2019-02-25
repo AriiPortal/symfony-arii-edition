@@ -35,7 +35,8 @@ class AriiFilter
             'monthday' => $date->format('m').$date->format('d'),  // code jour
             'max_result' => 1000,     // limitation 
             'only_warning' => 0,  // alertes
-            'sort' => 'last'          // tri par défaut         
+            'sort' => 'last',          // tri par défaut
+            'retention' => 35          // tri par défaut
         ];
         
         $request = Request::createFromGlobals();

@@ -1,0 +1,403 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "A Workload Automation API for Autosys",
+    "version" : "1.0.0",
+    "title" : "Autosys API",
+    "contact" : {
+      "name" : "Arii",
+      "url" : "https://localhost/api/v1/bundles/ats",
+      "email" : "arii@sos-paris.com"
+    }
+  },
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/jobs" : {
+      "get" : {
+        "summary" : "get a list of all jobs",
+        "parameters" : [ {
+          "name" : "jobName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "description" : "Application code",
+          "minLength" : 3,
+          "maxLength" : 3
+        }, {
+          "name" : "applicationName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "environment",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "x-example" : "T,P,D"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/job"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Add a new job",
+        "parameters" : [ ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
+          }
+        }
+      }
+    },
+    "/jobs/{jobId}" : {
+      "get" : {
+        "summary" : "get information for a job",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "$ref" : "#/definitions/job"
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Update a job",
+        "consumes" : [ ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/job"
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Status 202"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete a job",
+        "parameters" : [ ],
+        "responses" : {
+          "204" : {
+            "description" : "Status 204"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "jobId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/jobs/{jobId}/runs" : {
+      "get" : {
+        "summary" : "Get all executions for a job",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/run"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Add a new run",
+        "consumes" : [ ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/run"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "jobId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/jobs/{jobId}/runs/{runId}" : {
+      "get" : {
+        "summary" : "get a run",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "$ref" : "#/definitions/run"
+            }
+          },
+          "404" : {
+            "description" : "The job does not exist"
+          },
+          "500" : {
+            "description" : "Status 500"
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Update a run",
+        "parameters" : [ ],
+        "responses" : {
+          "202" : {
+            "description" : "Status 202"
+          },
+          "403" : {
+            "description" : "No permission to add a run"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete a run",
+        "parameters" : [ ],
+        "responses" : {
+          "204" : {
+            "description" : "Status 204"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "jobId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      }, {
+        "name" : "runId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/activities" : {
+      "get" : {
+        "summary" : "get all activities",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "activit" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activities/{activityId}/jobs" : {
+      "get" : {
+        "summary" : "get all jobs for an activity",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "activityId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/activities/{activityId}/tasks" : {
+      "get" : {
+        "summary" : "List of task for an activity",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "activityId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/transfers" : {
+      "get" : {
+        "summary" : "Get all transfers",
+        "parameters" : [ {
+          "name" : "partner",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "description" : "Partner"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "name" : {
+                  "type" : "string"
+                },
+                "title" : {
+                  "type" : "string"
+                },
+                "description" : {
+                  "type" : "string"
+                },
+                "env" : {
+                  "type" : "string"
+                },
+                "steps" : {
+                  "type" : "string"
+                },
+                "step_start" : {
+                  "type" : "string"
+                },
+                "step_end" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Exception" : {
+      "type" : "object",
+      "required" : [ "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        },
+        "stackTrace" : {
+          "type" : "string"
+        },
+        "innerException" : {
+          "$ref" : "#/definitions/Exception"
+        }
+      },
+      "description" : "A technical exception"
+    },
+    "Error" : {
+      "type" : "object",
+      "required" : [ "code", "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string",
+          "description" : "A technical message"
+        },
+        "display" : {
+          "type" : "string",
+          "description" : "A user friendly displayable message"
+        },
+        "code" : {
+          "type" : "string",
+          "description" : "An error code"
+        }
+      },
+      "description" : "A business error"
+    },
+    "Validation" : {
+      "type" : "object",
+      "properties" : {
+        "validations" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "display" : {
+                "type" : "string"
+              },
+              "code" : {
+                "type" : "string"
+              },
+              "fields" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "valParams" : {
+                "type" : "object"
+              }
+            }
+          }
+        }
+      },
+      "description" : "A list of entity validation problems"
+    },
+    "job" : {
+      "type" : "object",
+      "properties" : {
+        "jobName" : {
+          "type" : "string",
+          "description" : "Job name"
+        },
+        "jobType" : {
+          "type" : "string",
+          "description" : "Type of job (command, file_watcher, file transfer...)"
+        },
+        "Command" : {
+          "type" : "string",
+          "description" : "Command to execute"
+        },
+        "Machine" : {
+          "type" : "string"
+        }
+      }
+    },
+    "run" : {
+      "type" : "object",
+      "properties" : {
+        "start_time" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "end_time" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "status" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

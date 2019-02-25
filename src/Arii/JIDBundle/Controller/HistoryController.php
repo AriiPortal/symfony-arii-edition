@@ -829,21 +829,4 @@ $time = time();
         return $no;
     }
 
-   public function purgeAction( )
-    {
-        $request = Request::createFromGlobals();
-        $Ids = explode('#',$request->get('job_id'));
-        $id = $Ids[0];
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('data');
-        $sql = $this->container->get('arii_core.sql');
-        $qry = $sql->Delete(array('SCHEDULER_HISTORY'))
-              .$sql->Where(array('ID' => $id));
-        $res = $data->sql->query( $qry );
-        if ($res>0)
-            print $this->get('translator')->trans('Job purged');
-        else 
-            print $this->get('translator')->trans('ERROR !');
-        exit();
-    }
 }

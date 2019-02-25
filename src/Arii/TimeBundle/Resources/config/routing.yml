@@ -9,13 +9,13 @@ arii_Time_readme:
     path:  /readme
     defaults: { _controller: AriiTimeBundle:Default:readme }
 
+arii_Time_swagger:
+    path:  /swagger
+    defaults: { _controller: AriiTimeBundle:Default:swagger }
+
 xml_Time_toolbar:
     path:  /toolbar.xml
     defaults: { _controller: AriiTimeBundle:Default:toolbar }
-
-json_Time_ribbon:
-    path:  /ribbon.json
-    defaults: { _controller: AriiTimeBundle:Default:ribbon }
 
 xml_Time_menu:
     path:  /menu.xml

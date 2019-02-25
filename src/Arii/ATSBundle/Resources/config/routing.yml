@@ -5,6 +5,10 @@ arii_ATS_readme:
     path:  /readme
     defaults: { _controller: AriiATSBundle:Default:readme }
 
+arii_ATS_swagger:
+    path:  /swagger
+    defaults: { _controller: AriiATSBundle:Default:swagger }
+
 html_ATS_summary:
     path:  /summary
     defaults: { _controller: AriiATSBundle:Default:summary }

@@ -15,30 +15,6 @@ class DBController extends Controller
           $this->images = $request->getUriForPath('/../arii/images/wa');
     }
     
-/******************************************************************/
-    public function purge_historyAction($lines=40)
-    {
-        $dhtmlx = $this->container->get('arii_core.dhtmlx');
-        $data = $dhtmlx->Connector('data');
-        /* Traitements à purger */
-        $qry = 'select count(ID) as ID,SPOOLER_ID, JOB_NAME from SCHEDULER_HISTORY group by SPOOLER_ID,JOB_NAME having(count(ID)>'.$lines.')';
-        $res = $data->sql->query( $qry );
-        while ($line = $data->sql->get_next($res)) {
-            $spooler = $line['SPOOLER_ID'];
-            $job_name = $line['JOB_NAME'];
-            print $line['ID'].") ".$line['JOB_NAME']." ".$line['SPOOLER_ID'].": ";
-            $sel = 'select ID from SCHEDULER_HISTORY where JOB_NAME="'.$job_name.'" and SPOOLER_ID="'.$spooler.'" order by ID desc';
-            $res_sel = $data->sql->query( $sel );
-            $row = 0;
-            while (($line2 = $data->sql->get_next($res_sel)) and ($row<$lines)) { $row++; }
-            $max_id = $line2['ID'];
-            print "[$max_id]<br/>";
-            $del = 'delete from SCHEDULER_HISTORY where JOB_NAME="'.$job_name.'" and SPOOLER_ID="'.$spooler.'" and ID<='.$max_id;
-            $res_del = $data->sql->query( $del );
-        }
-        exit();
-    }  
-
     /******************************************************************/
     public function statusAction($lines=40)
     {

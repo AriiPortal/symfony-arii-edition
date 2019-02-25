@@ -34,6 +34,41 @@
                     }
                 ]
         }
+{% if ACTIVATED.databases_ojs %}
+    ,
+     {   "type":"block", 
+          "id": "current_filter",
+          text:"{{ "Repository" | trans }}", 
+          text_pos:   "top",           
+          "list":
+          [
+            {   "type": "buttonSelect", 
+                 width: 140,
+                 mode: 'cols',
+                 text:"",
+                 "id": "db",
+                 "img": "database.png", 
+                 comboDefaultImage: 'search.png',
+                 comboType: 'image',
+                 items:
+                 [ 
+        {% for k,filter in FILTERS %}
+            { value:"{{ filter.id }}", text: "{{ filter.name }}" },
+        {% endfor %}
+                  ]
+            },
+            {   "type" : "slider", 
+                "text" : "{{ INTERFACE.limit }}",
+                "id"   : "limit",
+                "size" : 100,
+                "min"  : 200,
+                "max"  : 30000,
+                "step" : 400,
+                "value": 5000
+            }
+          ]
+      }
+{% endif %}                
 {% if ACTIVATED.databases_ats %}
     ,
      {   "type":"block", 
@@ -327,7 +362,25 @@
                 ]
         }
     
-{% endif %}        
+{% endif %}
+{% if ACTIVATED.help %}
+        ,
+        {   
+            type:       "block", 
+            text:       "{{ "help" | trans }}", 
+            text_pos:   "top", 
+            list:
+                [
+                    {
+                         type:   "button", 
+                         id:     "HELP_api",
+                         text:   "{{ "API" }}", 
+                         img:    "plugin.png"
+                    }
+                ]
+        }
+    
+{% endif %}
 /*        ,
         {   
             type:       "block", 

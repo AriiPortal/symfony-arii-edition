@@ -1,25 +1,12 @@
 {% extends "AriiTimeBundle::layout.html.twig" %}
 {% block body %}
+<body>
 <script language="javascript">
-dhtmlxEvent(window,"load",function(){  
+function Init() {
         
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");  
-    globalLayout.cells("a").setWidth(350); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
+    myLayout = globalLayout.cells("b").attachLayout("1C");
+    myLayout.cells("a").hideHeader();
 
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Time_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );    
-    
-
-});
-
+}
 </script>
 {% endblock %}

@@ -27,8 +27,14 @@ arii_common:
 # ----------------------------------------
 arii_api:
     resource: "@AriiAPIBundle/Resources/config/routing.yml"
+    prefix:   /{_locale}/api
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp
+
+arii_api_REST:
+    resource: "@AriiAPIBundle/Resources/config/routing_api.yml"
     prefix:   /api/v1
-    
+            
 # ========================================
 # Core Bundle
 # ----------------------------------------
@@ -95,6 +101,11 @@ arii_jid:
     prefix:   /{_locale}/jid
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_jid_API:
+    resource: "@AriiJIDBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/jid
+        
 # ========================================
 # DS 
 # ----------------------------------------
@@ -154,6 +165,9 @@ arii_ATS:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_ATS_API:
+    resource: "@AriiATSBundle/Resources/config/routing_api.yml"
+    prefix:   /api/ats
 
 # ----------------------------------------
 # Housekeeping
@@ -233,6 +247,10 @@ arii_Time:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_Time_API:
+    resource: "@AriiTimeBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/time
+        
 # ========================================
 # I5
 # ----------------------------------------

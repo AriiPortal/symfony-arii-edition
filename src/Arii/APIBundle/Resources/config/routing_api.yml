@@ -1,0 +1,182 @@
+# --------------------------------------------------------------------------
+# Interface
+# --------------------------------------------------------------------------
+api_API_runs_list:
+    path:  /repos/{repoId}/runs
+    defaults: { _controller: AriiJIDBundle:API\Runs:list, repoId: ojs_db }
+    methods: [GET]
+
+api_API_runs_create:
+    path:  /repos/{repoId}/runs
+    defaults: { _controller: AriiJIDBundle:API\Runs:create, repoId: ojs_db }
+    methods: [POST]
+
+# ========================================
+# Hosts
+# ----------------------------------------
+api_hosts_list:
+    path:  /hosts
+    defaults: { _controller: AriiAPIBundle:Hosts:list }
+    methods: [GET]
+
+api_hosts_post:
+    path:  /hosts
+    defaults: { _controller: AriiAPIBundle:Hosts:create }
+    methods: [POST]
+
+api_hosts_get:
+    path:  /hosts/{id}
+    defaults: { _controller: AriiAPIBundle:Hosts:get }
+    methods: [GET]
+
+api_hosts_put:
+    path:  /hosts/{id}
+    defaults: { _controller: AriiAPIBundle:Hosts:update }
+    methods: [PUT]
+
+api_hosts_delete:
+    path:  /hosts/{id}
+    defaults: { _controller: AriiAPIBundle:Hosts:delete }
+    methods: [DELETE]
+
+# ========================================
+# Alarms
+# ----------------------------------------
+api_alarm_search:
+    path:  /alarms
+    defaults: { _controller: AriiAPIBundle:API\Alarm:search }
+    methods: [GET]
+
+api_alarm_create:
+    path:  /alarms
+    defaults: { _controller: AriiAPIBundle:API\Alarm:create }
+    methods: [POST]
+
+api_alarm_retrieve:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:retrieve }
+    methods: [GET]
+
+api_alarm_update:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:update }
+    methods: [PUT]
+
+api_alarm_delete:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:delete }
+    methods: [DELETE]
+
+# ========================================
+# Jobs
+# ----------------------------------------
+api_jobs_get:
+    path:  /jobs
+    defaults: { _controller: AriiAPIBundle:Jobs:list }
+    methods: [GET]
+
+api_jobs_post:
+    path:  /jobs
+    defaults: { _controller: AriiAPIBundle:Jobs:create }
+    methods: [POST]
+
+api_jobs_get:
+    path:  /jobs/{id}
+    defaults: { _controller: AriiAPIBundle:Jobs:get }
+    methods: [GET]
+
+api_jobs_put:
+    path:  /jobs/{id}
+    defaults: { _controller: AriiAPIBundle:Jobs:update }
+    methods: [PUT]
+
+api_jobs_delete:
+    path:  /jobs/{id}
+    defaults: { _controller: AriiAPIBundle:Jobs:delete }
+    methods: [DELETE]
+
+# ========================================
+# Alarms
+# ----------------------------------------
+api_alarm_search:
+    path:  /alarms
+    defaults: { _controller: AriiAPIBundle:API\Alarm:search }
+    methods: [GET]
+
+api_alarm_create:
+    path:  /alarms
+    defaults: { _controller: AriiAPIBundle:API\Alarm:create }
+    methods: [POST]
+
+api_alarm_retrieve:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:retrieve }
+    methods: [GET]
+
+api_alarm_update:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:update }
+    methods: [PUT]
+
+api_alarm_delete:
+    path:  /alarms/{id}
+    defaults: { _controller: AriiAPIBundle:API\Alarm:delete }
+    methods: [DELETE]
+
+# ========================================
+# Applications
+# ----------------------------------------
+api_application_search:
+    path:  /applications
+    defaults: { _controller: AriiCoreBundle:API\Application:search }
+    methods: [GET]
+
+api_application_create:
+    path:  /applications
+    defaults: { _controller: AriiCoreBundle:API\Application:create }
+    methods: [POST]
+
+api_application_retrieve:
+    path:  /applications/{id}
+    defaults: { _controller: AriiCoreBundle:API\Application:retrieve }
+    methods: [GET]
+
+api_application_update:
+    path:  /applications/{id}
+    defaults: { _controller: AriiCoreBundle:API\Application:update }
+    methods: [PUT]
+
+api_application_delete:
+    path:  /applications/{id}
+    defaults: { _controller: AriiCoreBundle:API\Application:delete }
+    methods: [DELETE]
+
+# ========================================
+# Categories
+# ----------------------------------------
+api_category_search:
+    path:  /categories
+    defaults: { _controller: AriiCoreBundle:API\Category:search }
+    methods: [GET]
+
+api_category_create:
+    path:  /categories
+    defaults: { _controller: AriiCoreBundle:API\Category:create }
+    methods: [POST]
+
+api_category_retrieve:
+    path:  /categories/{id}
+    defaults: { _controller: AriiCoreBundle:API\Category:retrieve }
+    methods: [GET]
+
+api_category_update:
+    path:  /categories/{id}
+    defaults: { _controller: AriiCoreBundle:API\Category:update }
+    methods: [PUT]
+
+api_category_delete:
+    path:  /categories/{id}
+    defaults: { _controller: AriiCoreBundle:API\Category:delete }
+    methods: [DELETE]
+
+

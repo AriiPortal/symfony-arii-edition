@@ -16,7 +16,7 @@ var status;
 var sort="last";
 
 dhtmlxEvent(window,"load",function(){       
-    AriiLayout('ATS','databases_ats,history,refresh',size);
+    AriiLayout('ATS','databases_ats,history,refresh,help',size);
     
     menuLayout = globalLayout.cells("a").attachLayout("2E");
     
@@ -43,7 +43,7 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });    
     mySidebar.attachEvent("onSelect", function(id, value){
-        document.location.href = "{{ url('arii_ATS_index') }}/db/"+db+"/"+id;
+        document.location.href = "{{ url('arii_ATS_index') }}/"+id;
         return true;
     });
     
@@ -185,4 +185,3 @@ function Sendevent( Job, Event )
 </script>
 {% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}
-            

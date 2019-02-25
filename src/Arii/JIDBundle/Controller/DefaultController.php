@@ -28,6 +28,12 @@ class DefaultController extends Controller
         return $this->render('AriiJIDBundle:Default:index.html.twig', [ 'db' => $db ]);
     }
 
+    public function swaggerAction()
+    {
+        $portal = $this->container->get('arii_core.portal');
+        return $this->render('AriiJIDBundle:Default:swagger.html.twig', [ 'db' => $portal->getDatabase() ]);
+    }
+    
     public function summaryAction($db)
     {
         $portal = $this->container->get('arii_core.portal');

@@ -9,85 +9,39 @@
 <script language="javascript">
 var menurefresh;
 dhtmlxEvent(window,"load",function(){
-    AriiLayout('ACK','history,dot,refresh',200);
+    AriiLayout('API','help',300);
     globalLayout.cells("a").setText("{{ "Menu" | trans }}");
     globalLayout.cells("a").showHeader();
  
     mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
+        width: 300,
         // template: "tiles",
         items:
         [
-            { id:"alarms",    text: "{{ "Alarms" | trans }}",     icon: "alarm.png" },
-            { id:"graphs",    text: "{{ "Graphs" | trans }}",     icon: "chart_organisation.png" },
-            { id:"sep1",      type: "separator" },
-            { id:"events",    text: "{{ "Events" | trans }}",     icon: "stopped.png" },
-            { id:"sep3",      type: "separator" },
-            { id:"views",   text: "{{ "Views" | trans }}",    icon: "view.png" },
-            { id:"links",     text: "{{ "Links" | trans }}",     icon: "link.png" },
-            { id:"probes",   text: "{{ "Probes" | trans }}",    icon: "probe.png" },
-            { id:"alerts",    text: "{{ "Alerts" | trans }}",     icon: "alert.png" },
-            { id:"sep4",      type: "separator" },
-            { id:"jobs",      text: "{{ "Jobs" | trans }}",       icon: "job.png" },    
-            { id:"services",  text: "{{ "Services" | trans }}",   icon: "server_connect.png" },
-            { id:"hosts",   text: "{{ "Hosts" | trans }}",    icon: "server.png" },
-// Admins            
-            { id:"sep5",      type: "separator" },
-            { id:"sync",   text: "{{ "Synchronisation" | trans }}",    icon: "refresh.png" },            
+            { id:"ats",    text: "{{ "summary.ATS" | trans }}",     icon: "ats.png" },
+            { id:"jid",    text: "{{ "summary.JID" | trans }}",     icon: "jid.png" }            
         ]
     });
-    mySidebar.attachEvent("onBubbleClick", function(id, value){
+    mySidebar.attachEvent("onBubbleClick", function(id, value){        
         // bubble clicked, your code here
         // 'return true' means item allowed to be selected
         // false - otherwise
         return true;
     });    
     mySidebar.attachEvent("onSelect", function(id, value){
-        document.location.href = "{{ url('arii_ACK_index') }}"+id;
+        globalLayout.cells("b").setText("{{ "id" | trans }}");
+        globalLayout.cells("b").attachURL("{{ url('html_Home_swagger') }}?bundle="+id);
         return true;
     });
     mySidebar.setSizes();
-    
-    menurefresh = setInterval( "MenuRefresh()",update*1000);    
     Init();
-    MenuRefresh();
 });
 </script>
 {% endblock onload %}
 {% block body %}{% endblock%}
 {% block script %}
-<script language="javascript">      
-function MenuRefresh() {
-    var t;
-    dhx4.ajax.get( "{{ url('json_ACK_events_count') }}",function(r1) {  
-        t = dhx4.s2j(r1.xmlDoc.responseText);
-        if (t['count']>0) 
-            mySidebar.cells("events").setBubble(t['count']);
-        else
-            mySidebar.cells("events").clearBubble();     
-        dhx4.ajax.get( "{{ url('json_ACK_jobs_count') }}",function(r2) {  
-            t = dhx4.s2j(r2.xmlDoc.responseText);
-            if (t['count']>0) 
-                mySidebar.cells("jobs").setBubble(t['count']);
-            else
-                mySidebar.cells("jobs").clearBubble();        
-            dhx4.ajax.get( "{{ url('json_ACK_hosts_count') }}",function(r3) {  
-                t = dhx4.s2j(r3.xmlDoc.responseText);
-                if (t['count']>0)
-                    mySidebar.cells("hosts").setBubble(t['count']);
-                else
-                    mySidebar.cells("hosts").clearBubble();        
-                dhx4.ajax.get( "{{ url('json_ACK_services_count') }}",function(r3) {  
-                    t = dhx4.s2j(r3.xmlDoc.responseText);
-                    if (t['count']>0)
-                        mySidebar.cells("services").setBubble(t['count']);
-                    else
-                        mySidebar.cells("services").clearBubble();        
-                });
-            });
-        });
-    });
-}
+<script language="javascript">
 </script>
 {% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}

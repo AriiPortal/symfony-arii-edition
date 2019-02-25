@@ -33,7 +33,7 @@ class ReportFilter
             'second' => $date->format('s'),
             'limit' => 10,
             'category' => '*',
-            'monthday' => $date->format('m').$date->format('d')  // code jour
+            'monthday' => $date->format('m').$date->format('d')
         ];
         
         $request = Request::createFromGlobals();
@@ -107,7 +107,7 @@ class ReportFilter
     }
     
     // fonction obsolete
-    public function getFilter($env='',$app='',$day_past='',$day='',$month='',$year='',$class='', $hour='', $spooler='' ) {       
+    public function getFilter($env='',$app='',$day_past='',$day='',$month='',$year='',$class='', $hour='', $spooler='', $retention='' ) {       
         $User = $this->portal->getUserInterface();        
 
         // nouveauté
@@ -133,6 +133,10 @@ class ReportFilter
         if ($day_past=='') $day_past = -90;
         $User['day_past'] = $day_past;
         
+        if ($retention=='') $retention = $User['retention'];
+        if ($retention=='') $retention = 35;
+        $User['retention'] = $retention;
+
         $date = new \DateTime();
         // compatibilite temporaire
         if (!isset($User['day'])) $User['day']=$date->format('d');

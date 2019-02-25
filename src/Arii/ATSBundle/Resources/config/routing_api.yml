@@ -1,0 +1,6 @@
+# --------------------------------------------------------------------------
+# PAGES PRINCIPALES
+# --------------------------------------------------------------------------
+json_ATS_repos:
+    path:  /repos
+    defaults: { _controller: AriiATSBundle:API\Repos:list }

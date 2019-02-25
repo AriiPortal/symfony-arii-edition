@@ -1,0 +1,9 @@
+{% extends "AriiTimeBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    globalLayout.cells("b").setText("{{ "Time" | trans }}");    
+    globalLayout.cells("b").attachURL("{{ url('html_Home_swagger') }}?route={{ app.request.attributes.get('_route') }}");
+}
+</script>
+{% endblock %}

@@ -276,5 +276,28 @@ class DefaultController extends Controller
         return $this->render('AriiCoreBundle:Templates:bootstrap.html.twig', array('doc' => $value));
     }
 
+    public function swaggerAction($route="arii_Core_index") 
+    {
+        $request = $this->container->get('request');
+        if ($request->get('bundle')!='') {
+            $bundle = $request->get('bundle');
+        }
+        else {
+            if ($request->get('route')!='') 
+                $route = $request->get('route');
+            // Historique...
+            if (substr($route,0,10)=='arii_Home_') {
+                $bundle = 'Core';
+            }
+            else {
+                $p = strpos($route,'_',5);
+                $bundle = substr($route,5,$p-5);
+            }
+        }
+        
+        return $this->render('AriiCoreBundle:Templates:swagger.html.twig', array(
+            'url' => "http://localhost/swagger/$bundle.json"
+        ));
+    }    
 
 }

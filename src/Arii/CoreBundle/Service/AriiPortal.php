@@ -2295,7 +2295,7 @@ Gris    #f2f2f2
         if (isset($Databases[$name])) {
             return $this->session->set('Database',$Databases[$name]);
         }
-        return array();
+        return null;
     }
 
     public function getDatabaseByConnection($instance='',$login='') {

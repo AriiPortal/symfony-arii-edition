@@ -18,14 +18,6 @@ class DefaultController extends Controller
         return $this->render('AriiTimeBundle:Default:readme.html.twig');
     }
 
-    public function ribbonAction()
-    {
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        
-        return $this->render('AriiTimeBundle:Default:ribbon.json.twig',array(), $response );
-    }
-
     public function menuAction()
     {
         $response = new Response();
@@ -34,4 +26,10 @@ class DefaultController extends Controller
         return $this->render('AriiTimeBundle:Default:menu.xml.twig',array(), $response );
     }
 
+    public function swaggerAction()
+    {
+        $portal = $this->container->get('arii_core.portal');
+        return $this->render('AriiTimeBundle:Default:swagger.html.twig');
+    }
+        
 }

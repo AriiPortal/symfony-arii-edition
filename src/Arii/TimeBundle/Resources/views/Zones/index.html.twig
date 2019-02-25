@@ -1,29 +1,17 @@
 {% extends "AriiTimeBundle::layout.html.twig" %}
 {% block body %}
-<script charset="utf-8">
-
-dhtmlxEvent(window,"load",function(){
-        
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(350); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Time_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );    
+<body>
+<script language="javascript">
+function Init() {
     
-    dhxTree = globalLayout.cells("a").attachTree();
+    myLayout = globalLayout.cells("b").attachLayout("3L");
+    myLayout.cells("a").hideHeader();
+    
+    dhxTree = myLayout.cells("a").attachTree();
     dhxTree.setImagesPath("{{ asset('/images/') }}");
     dhxTree.load( "{{ url('xml_Time_zones_tree') }}" );
 
-    dhxGrid = globalLayout.cells("b").attachGrid();
+    dhxGrid = myLayout.cells("b").attachGrid();
     dhxGrid.setImagePath( "{{ asset('/images/') }}");
     dhxGrid.setHeader("{{ "Code" | trans }},{{ "Name" | trans }},{{ "Description" | trans }},{{ "Latitude" | trans }},{{ "Longitude" | trans }}");
     dhxGrid.attachHeader("#text_filter,#text_filter,#text_filter,#numeric_filter,#numeric_filter");
@@ -34,7 +22,7 @@ dhtmlxEvent(window,"load",function(){
     dhxGrid.init();
     dhxGrid.load("{{ url('xml_Time_zones') }}");
 
-    myTab = globalLayout.cells("c").attachLayout("2U");
+    myTab = myLayout.cells("c").attachLayout("2U");
     myTab.cells("a").hideHeader();
     myTab.cells("a").setWidth(450); 
     myTab.cells("b").hideHeader(); 
@@ -121,13 +109,13 @@ dhtmlxEvent(window,"load",function(){
                 break;
         }
     });
-});
+}
 
 function Detail(id) {
-    globalLayout.cells("c").progressOn();
+    myLayout.cells("c").progressOn();
     myForm.clear();
     myForm.load("{{ url('xml_Time_zones_form') }}?id="+id, function () {
-        globalLayout.cells("c").progressOff();
+        myLayout.cells("c").progressOff();
         var latLng = new google.maps.LatLng(  myForm.getItemValue("latitude"), myForm.getItemValue("longitude") ); 
         var marker = new google.maps.Marker({
          position : latLng,

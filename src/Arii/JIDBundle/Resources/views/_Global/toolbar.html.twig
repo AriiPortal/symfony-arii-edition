@@ -15,7 +15,7 @@ var GlobalBar,
 GlobalBar = new dhtmlXToolbarObject("GlobalBarObj", "dhx_skyblue");
 GlobalBar.setIconsPath( "{{ asset('/images/') }}" );
 GlobalBar.loadXML( "{{ url('xml_toolbar') }}", function(){
-    GBCalendar = new dhtmlXCalendarObject(GlobalBar.getInput('ref_date'));
+    GBCalendar = new dhtmlXCalendarObject(GlobalBar.getInput('refDate'));
 //    GBCalendar.enableTime (true);
     GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
     GBCalendar.setWeekStartDay(1);
@@ -40,10 +40,10 @@ GlobalBar.attachEvent("onClick", function(id) {
             GlobalBar.setItemText('refresh',id);
             break;
         case 'date_select':
-            dhtmlxAjax.get( "{{ url('arii_session_update') }}?ref_date=now()", function (loader) {
+            dhtmlxAjax.get( "{{ url('arii_session_update') }}?refDate=now()", function (loader) {
                 if ( loader.xmlDoc.responseXML !== null ) {
-                    right_now = loader.doXPath("//ref_date")[0].firstChild.data;
-                    GlobalBar.setValue('ref_date', right_now ); 
+                    right_now = loader.doXPath("//refDate")[0].firstChild.data;
+                    GlobalBar.setValue('refDate', right_now ); 
                 }
                 GlobalRefresh(); 
             });
@@ -137,8 +137,8 @@ GlobalBar.attachEvent("onEnter", function(id) {
         case 'filter_str':
             dhtmlxAjax.get( "{{ url('arii_session_update') }}?filter_str="+GlobalBar.getValue(id), GlobalRefresh() );
             break;
-        case 'ref_date':
-            dhtmlxAjax.get( "{{ url('arii_session_update') }}?ref_date="+GlobalBar.getValue(id), GlobalRefresh() );
+        case 'refDate':
+            dhtmlxAjax.get( "{{ url('arii_session_update') }}?refDate="+GlobalBar.getValue(id), GlobalRefresh() );
             break;
         default:
             alert(id);

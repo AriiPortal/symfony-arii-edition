@@ -8,29 +8,17 @@ var update=30;
 var autorefresh;
 var status;
 
-dhtmlxEvent(window,"load",function(){ 
+function Init(){ 
 var size=410;
 
+    myLayout = globalLayout.cells("b").attachLayout("4E");
+    
     menu = new dhtmlXMenuObject(null);
     menu.setIconsPath( "{{ asset('/images/') }}" );
     menu.renderAsContextMenu();
     menu.loadStruct("{{ url('xml_JOC_orders_menu') }}");
 
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");
-    globalLayout.cells("a").setWidth(size); 
-    globalLayout.cells("c").setText("{{ "Detail" | trans }}"); 
-    
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_JOC_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    myAccordion = globalLayout.cells("a").attachAccordion();
+    myAccordion = myLayout.cells("b").attachAccordion();
     myAccordion.addItem("status", "{{ "Status" | trans }}");
     myAccordion.addItem("folders", "{{ "Folders" | trans }}");
 
@@ -58,14 +46,14 @@ var size=410;
         myGrid.getFilterElement(5).value = status;
     });
 {% if is_granted('ROLE_OPERATOR') %}
-    myGridToolbar = globalLayout.cells("b").attachToolbar();
+    myGridToolbar = myLayout.cells("b").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");
     myGridToolbar.loadStruct("{{ url('xml_JOC_orders_toolbar') }}");
 
     myGridToolbar.attachEvent( "onClick", function(id, value) {
         switch (id) {
             case "refresh":
-                globalLayout.cells("b").progressOn();
+                myLayout.cells("b").progressOn();
                 update = value;
                 GridRefresh();
                 break;
@@ -89,11 +77,11 @@ var size=410;
         }
     });
 {% endif %}
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("b").hideHeader();
-    // globalLayout.cells("c").setHeight(300);
+    myLayout.cells("a").hideHeader();
+    myLayout.cells("b").hideHeader();
+    // myLayout.cells("c").setHeight(300);
 
-    myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("b").attachGrid();
     myGrid.setImagePath( "{{ asset('/images/') }}");
     myGrid.setHeader("{{ "Spooler" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "State" | trans }},{{ "Output" | trans }},{{ "Status" | trans }},{{ "Start time" | trans }},{{ "Title" | trans }}");
     myGrid.attachHeader("#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter");
@@ -104,14 +92,14 @@ var size=410;
     myGrid.enableAlterCss("","");
     myGrid.enableSmartRendering(true,50);
     myGrid.init();
-    globalLayout.cells("b").progressOn();
+    myLayout.cells("b").progressOn();
     myGrid.load( "{{ url('xml_JOC_orders_grid') }}?chained="+chained+"&only_warning="+only_warning, function() {
-        globalLayout.cells("b").progressOff();
+        myLayout.cells("b").progressOff();
     } );
     // myGrid.setColumnHidden(0,true); 
     myGrid.setColumnHidden(4,true); 
     myGrid.setColumnHidden(7,true); 
-    myTabbar = globalLayout.cells("c").attachTabbar();
+    myTabbar = myLayout.cells("c").attachTabbar();
     myTabbar.addTab("order","{{ "Order" | trans }}","120px", null, true);
     myTabbar.addTab("execution","{{ "Execution" | trans }}","120px");
     myTabbar.addTab("schema","{{ "Schema" | trans }}","120px");
@@ -135,7 +123,7 @@ var size=410;
     myDetailToolbar = myDetailLayout.cells("a").attachToolbar();
     myDetailToolbar.setIconsPath("{{ asset('/images/') }}");
     myDetailToolbar.loadStruct( "{{ url('xml_JOC_orders_form_toolbar') }}" , function(){
-        GBCalendar = new dhtmlXCalendarObject(myDetailToolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(myDetailToolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -200,12 +188,12 @@ var size=410;
                 });
                 var paramsStr = params.join(",");
                 var start_time = '';
-                start_time = myDetailToolbar.getValue("ref_date");
+                start_time = myDetailToolbar.getValue("refDate");
                 // alert("{{ url('arii_JOC_command') }}?command="+itemid+"&params="+encodeURIComponent(params)+"&time="+start_time+"&id="+id); 
                 dhtmlx.message({
                 type: "Notice",
                 text: Text });
-                globalLayout.cells("b").progressOn();  
+                myLayout.cells("b").progressOn();  
                 // alert("{{ url('arii_JOC_command') }}?command="+itemid+"&params="+encodeURIComponent(params)+"&time="+start_time+"&id="+id);
                 dhx4.ajax.post("{{ url('arii_JOC_command') }}","command="+itemid+"&params="+encodeURIComponent(params)+"&time="+start_time+"&id="+id,function(loader,response){
                     dhtmlx.message({
@@ -213,8 +201,8 @@ var size=410;
                     expire: 10000,
                     width: "500px",
                     text: loader.xmlDoc.responseText });
-                    globalLayout.cells("b").progressOff();        
-                    globalLayout.cells("a").progressOn();        
+                    myLayout.cells("b").progressOff();        
+                    myLayout.cells("a").progressOn();        
                     // internal refresh
                     spooler_id = myForm.getItemValue('SPOOLER_ID');
                     // alert("{{ url('arii_JOC_sync') }}?id="+spooler_id);
@@ -224,7 +212,7 @@ var size=410;
                         expire: 10000,
                         width: "500px",
                         text: loader.xmlDoc.responseText });                  
-                        globalLayout.cells("a").progressOff();        
+                        myLayout.cells("a").progressOff();        
                         GridRefresh();
                     });
                 });
@@ -260,12 +248,12 @@ var size=410;
     });
 {% endif %}
 
-    globalLayout.cells("c").collapse(); 
+    myLayout.cells("c").collapse(); 
     autorefresh = setInterval( "GridRefresh()",update*1000);
-});
+}
 
 function OrderDetail(id) {
-    globalLayout.cells("c").expand(); 
+    myLayout.cells("c").expand(); 
     myTabbar.cells("order").progressOn();
     myTabbar.cells("execution").progressOn();
     myTabbar.cells("schema").progressOn();
@@ -319,10 +307,10 @@ function GridRefresh() {
         myGrid.refreshFilters();
         myGrid.filterBy(5, status);        
         myGrid.filterByAll();
-        globalLayout.cells("b").progressOff();
+        myLayout.cells("b").progressOff();
         myDonut.load( "{{ url('xml_JOC_orders_pie') }}?chained="+chained+"&only_warning="+only_warning, function () {
             myDonut.refresh();
-            globalLayout.progressOff();
+            myLayout.progressOff();
             autorefresh = setInterval( "GridRefresh()", update*1000 );
         });        
     });

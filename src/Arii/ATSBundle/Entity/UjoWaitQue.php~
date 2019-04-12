@@ -1,0 +1,232 @@
+<?php
+
+namespace Arii\ATSBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * UjoWaitQue
+ *
+ * @ORM\Table(name="UJO_WAIT_QUE", indexes={@ORM\Index(name="xak1ujo_wait_que", columns={"QUE_NAME"})})
+ * @ORM\Entity
+ */
+class UjoWaitQue
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="JOB_LOAD", type="integer", nullable=true)
+     */
+    private $jobLoad;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="JOID", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
+    private $joid;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="MAX_LOAD", type="integer", nullable=true)
+     */
+    private $maxLoad;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="PRIORITY", type="integer", nullable=true)
+     */
+    private $priority;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="QUE_NAME", type="string", length=161, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
+    private $queName;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="STAMP", type="integer", nullable=true)
+     */
+    private $stamp;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="WF_JOID", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
+    private $wfJoid;
+
+
+
+    /**
+     * Set jobLoad
+     *
+     * @param integer $jobLoad
+     * @return UjoWaitQue
+     */
+    public function setJobLoad($jobLoad)
+    {
+        $this->jobLoad = $jobLoad;
+
+        return $this;
+    }
+
+    /**
+     * Get jobLoad
+     *
+     * @return integer 
+     */
+    public function getJobLoad()
+    {
+        return $this->jobLoad;
+    }
+
+    /**
+     * Set joid
+     *
+     * @param integer $joid
+     * @return UjoWaitQue
+     */
+    public function setJoid($joid)
+    {
+        $this->joid = $joid;
+
+        return $this;
+    }
+
+    /**
+     * Get joid
+     *
+     * @return integer 
+     */
+    public function getJoid()
+    {
+        return $this->joid;
+    }
+
+    /**
+     * Set maxLoad
+     *
+     * @param integer $maxLoad
+     * @return UjoWaitQue
+     */
+    public function setMaxLoad($maxLoad)
+    {
+        $this->maxLoad = $maxLoad;
+
+        return $this;
+    }
+
+    /**
+     * Get maxLoad
+     *
+     * @return integer 
+     */
+    public function getMaxLoad()
+    {
+        return $this->maxLoad;
+    }
+
+    /**
+     * Set priority
+     *
+     * @param integer $priority
+     * @return UjoWaitQue
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    /**
+     * Get priority
+     *
+     * @return integer 
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * Set queName
+     *
+     * @param string $queName
+     * @return UjoWaitQue
+     */
+    public function setQueName($queName)
+    {
+        $this->queName = $queName;
+
+        return $this;
+    }
+
+    /**
+     * Get queName
+     *
+     * @return string 
+     */
+    public function getQueName()
+    {
+        return $this->queName;
+    }
+
+    /**
+     * Set stamp
+     *
+     * @param integer $stamp
+     * @return UjoWaitQue
+     */
+    public function setStamp($stamp)
+    {
+        $this->stamp = $stamp;
+
+        return $this;
+    }
+
+    /**
+     * Get stamp
+     *
+     * @return integer 
+     */
+    public function getStamp()
+    {
+        return $this->stamp;
+    }
+
+    /**
+     * Set wfJoid
+     *
+     * @param integer $wfJoid
+     * @return UjoWaitQue
+     */
+    public function setWfJoid($wfJoid)
+    {
+        $this->wfJoid = $wfJoid;
+
+        return $this;
+    }
+
+    /**
+     * Get wfJoid
+     *
+     * @return integer 
+     */
+    public function getWfJoid()
+    {
+        return $this->wfJoid;
+    }
+}

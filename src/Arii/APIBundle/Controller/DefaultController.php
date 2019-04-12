@@ -14,9 +14,9 @@ class DefaultController extends Controller
     {
     }
 
-    public function indexAction($db)
+    public function indexAction()
     {
-        return $this->render('AriiAPIBundle:Default:index.html.twig', [ 'db' => $db ]);
+        return $this->render('AriiAPIBundle:Default:index.html.twig' );
     }
 
     public function swaggerAction()

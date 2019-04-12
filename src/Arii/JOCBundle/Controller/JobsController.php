@@ -381,18 +381,18 @@ class JobsController extends Controller {
         return $return;
     }
 
-    public function gridAction($ordered = 0, $only_warning = 1)
+    public function gridAction($ordered = 0, $onlyWarning = 1)
     {
         $request = Request::createFromGlobals();
         if ($request->get('chained')!='') {
             $ordered = $request->get('chained');
         }
-        if ($request->get('only_warning')!='') {
-            $only_warning = $request->get('only_warning');
+        if ($request->get('onlyWarning')!='') {
+            $onlyWarning = $request->get('onlyWarning');
         }
 
         $State = $this->container->get('arii_joc.state');
-        $Jobs = $State->Jobs($ordered,$only_warning);
+        $Jobs = $State->Jobs($ordered,$onlyWarning);
 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');      
@@ -406,7 +406,7 @@ class JobsController extends Controller {
         
         foreach ($Jobs as $k=>$job) {
             $state = $job['STATE'];
-            if ($only_warning and ($state=='pending')) continue;
+            if ($onlyWarning and ($state=='pending')) continue;
             
             if (isset($this->ColorStatus[$state])) 
                 $color = $this->ColorStatus[$state];

@@ -1,51 +1,13 @@
 {% extends "AriiAdminBundle::layout.html.twig" %}
 {% block body %}
 <script language="javascript">
-dhtmlxEvent(window,"load",function(){
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(410); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-    globalLayout.cells("c").hideHeader(); 
+function Init() {
+ 
+    myLayout = globalLayout.cells("b").attachLayout("3L");  
+    myLayout.cells("a").setWidth(300);
+    myLayout.cells("a").setText("{{ "Categories" | trans }}");
     
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Admin_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    myTree = globalLayout.cells("a").attachTree();
-    myTree.setImagesPath("{{ asset('/images/') }}");
-    myTree.load( "{{ url('xml_Admin_categories_tree') }}" );
-    myTree.enableDragAndDrop(true, false);
-    myTree.attachEvent("onClick",function(id){
-        globalLayout.cells("b").progressOn();
-        myGrid.clearAll();
-        myGrid.load("{{ url('xml_Admin_connections_grid') }}?id="+id, function() {
-            globalLayout.cells("b").progressOff();
-        });
-    })    
-
-    myGridToolbar = globalLayout.cells("c").attachToolbar();
-    myGridToolbar.setIconsPath("{{ asset('/images/') }}");
-    myGridToolbar.loadStruct("{{ url('xml_Admin_repository_toolbar') }}", function () {
-        {%if id == '' %}
-            myGridToolbar.hideItem("delete_repository");
-        {%endif%}
-    });
-    myGridToolbar.attachEvent("onClick",onClick);
-
-    myGridMenu = new dhtmlXMenuObject();
-    myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
-    myGridMenu.renderAsContextMenu();
-    myGridMenu.attachEvent("onClick", onMenuClick);
-    myGridMenu.loadStruct("{{ url('xml_Admin_repositories_menu') }}");
-
-    myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("b").attachGrid();
     myGrid.selMultiRows = true;
     myGrid.setImagePath("{{ asset('arii/images/treegrid/') }}");
     myGrid.setHeader("{{ "Name"| trans }},{{ "Type"| trans }},{{ "Role"| trans }},{{ "Description"| trans }},{{ "Driver"| trans }},{{ "DB"| trans }},{{ "Connection"| trans }},{{ "Login"| trans }}");
@@ -53,8 +15,6 @@ dhtmlxEvent(window,"load",function(){
     myGrid.setInitWidths("200,100,200,*,100,200,200,150");
     myGrid.setColAlign("left,left,left,left,left,left,left,left");
     myGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
-    myGrid.enableContextMenu(myGridMenu);
-//    myGrid.enableLightMouseNavigation( false );
     myGrid.load("{{ url('xml_Admin_repositories_grid') }}");
     myGrid.init();
 
@@ -109,12 +69,12 @@ dhtmlxEvent(window,"load",function(){
             label: "{{ "Database" | trans }}"
         }     
     ];
-    myForm = globalLayout.cells("c").attachForm(formData);
+    myForm = myLayout.cells("c").attachForm(formData);
     myForm.enableLiveValidation(true);
     {%if id != '' %}
     myForm.load("{{ url('xml_Admin_repository_form') }}?id="+"{{ id }}" );
     {%endif%}
-});
+}
         
 function onClick(id){
     switch (id){

@@ -10,9 +10,108 @@
       "email" : "arii@sos-paris.com"
     }
   },
+  "host": "localhost/app_dev.php/api/v1/bundles/ats",  
   "consumes" : [ "application/json" ],
   "produces" : [ "application/json" ],
   "paths" : {
+    "/repos" : {
+      "get" : {
+        "summary" : "get a list of all repos",
+        "tags" : [ "Repos" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/job"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Add a new repo",
+        "tags" : [ "Repos" ],
+        "parameters" : [ ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
+          }
+        }
+      }
+    },        
+    "/repos/{repoId}/alarms" : {
+      "get" : {
+        "summary" : "get a list of alarms",
+        "tags" : [ "Alarms" ],
+        "parameters" : [ {
+          "name" : "repoId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "default" : "ats_db"
+        },
+        {
+          "name" : "outputFormat",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "enum": [ "json", "xml" ],
+          "default" : "json"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/alarm"
+              }
+            }
+          }
+        }
+      }
+    }, 
+    "/repos/{repoId}/alarms/{alarmId}" : {
+      "get" : {
+        "summary" : "get an alarm",
+        "tags" : [ "Alarms" ],
+        "parameters" : [ {
+          "name" : "repoId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "default" : "ats_db"
+        },
+        {
+          "name" : "alarmId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        },
+        {
+          "name" : "outputFormat",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "enum": [ "json", "xml" ],
+          "default" : "json"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/alarm"
+              }
+            }
+          }
+        }
+      }
+    }, 
     "/jobs" : {
       "get" : {
         "summary" : "get a list of all jobs",
@@ -396,6 +495,61 @@
         },
         "status" : {
           "type" : "string"
+        }
+      }
+    },
+    "alarm" : {
+      "type" : "object",
+      "properties" : {
+        "eoid" : {
+          "type" : "string",
+          "description" : "Event id"
+        },
+        "joid" : {
+          "type" : "integer",
+          "format" : "date-time"
+        },
+        "alarm" : {
+          "type" : "string"
+        },
+        "alarmTime" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "state" : {
+          "type" : "string"
+        },
+        "stateTime" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "response" : {
+          "type" : "string"
+        },
+        "theUser" : {
+          "type" : "string"
+        },
+        "jobName" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "status" : {
+          "type" : "string"
+        },
+        "color" : {
+          "type" : "string"
+        },
+        "stateGrid" : {
+          "type" : "string"
+        },
+        "nb" : {
+          "type" : "integer"
+        },
+        "firstTime" : {
+          "type" : "string",
+          "format" : "date-time"
         }
       }
     }

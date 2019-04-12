@@ -89,17 +89,6 @@ xml_modules:
     defaults: { _controller: AriiCoreBundle:Default:modules }
 
 #--------------------------------------------------------------------
-# Session 
-#--------------------------------------------------------------------
-arii_session_update:
-    path:  /session/update
-    defaults: { _controller: AriiCoreBundle:Session:update }
-
-arii_session_view:
-    path:  /session/view
-    defaults: { _controller: AriiCoreBundle:Session:view }
-
-#--------------------------------------------------------------------
 # Favoris 
 #--------------------------------------------------------------------
 xml_favorites:

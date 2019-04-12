@@ -189,7 +189,7 @@ function Job( Command, id, Text, Toolbar, Time ) {
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct( Toolbar, function(){
         if (Time) {
-            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
             GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
             GBCalendar.setWeekStartDay(1);
         }
@@ -222,7 +222,7 @@ function Job( Command, id, Text, Toolbar, Time ) {
                 var paramsStr = params.join(",");
                 var start_time = '';
                 if (Time)
-                    start_time = toolbar.getValue("ref_date");
+                    start_time = toolbar.getValue("refDate");
                 dhtmlx.message({
                 type: "Notice",
                 text: Text+" <strong>"+id+"</strong>" });
@@ -364,7 +364,7 @@ function Order( Command, id, Text, Toolbar, Time, chain )
 
     toolbar.loadStruct(Toolbar,function(){
         if (Time) {
-            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
             GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
             GBCalendar.setWeekStartDay(1);
         }
@@ -404,7 +404,7 @@ function Order( Command, id, Text, Toolbar, Time, chain )
                 var paramsStr = params.join(",");
                 var start_time = '';
                 if (Time)
-                    start_time = toolbar.getValue("ref_date");
+                    start_time = toolbar.getValue("refDate");
                 dhtmlx.message({
                     type: "Notice",
                     text: Text 
@@ -480,7 +480,7 @@ var largeur = 600;
     var toolbar = winLayout.cells("a").attachToolbar();
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct(Toolbar ,function(){
-        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -502,7 +502,7 @@ var largeur = 600;
                 var paramsStr = params.join(",");
                 var start_time = '';
                 if (Time)
-                    start_time = toolbar.getValue("ref_date");
+                    start_time = toolbar.getValue("refDate");
                 dhtmlx.message({
                 type: "Notice",
                 text: "{{ "Start order" | trans }} <strong>"+id+"</strong>" });

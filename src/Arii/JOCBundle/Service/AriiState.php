@@ -26,7 +26,7 @@ class AriiState
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
-   public function Jobs($ordered = false, $only_warning= true) {   
+   public function Jobs($ordered = false, $onlyWarning= true) {   
         $date = $this->date;        
         $sql = $this->sql;
         $db = $this->db;
@@ -39,7 +39,7 @@ class AriiState
         if (!$ordered) {
             $Fields['{standalone2}'] = 'ORDERED';
         }
-        if ($only_warning) {
+        if ($onlyWarning) {
             $Fields['{!pending}'] = 'j.STATE';
         }
         $qry = $sql->Select(array('s.NAME as SPOOLER',
@@ -168,7 +168,7 @@ class AriiState
         return $RemoteSchedulers;
    }
    
-   public function Orders( $nested=0, $only_warning= true, $sort='last', $id=-1) {
+   public function Orders( $nested=0, $onlyWarning= true, $sort='last', $id=-1) {
         $date = $this->date;
         $sql = $this->sql;
         $db = $this->db;
@@ -224,7 +224,7 @@ class AriiState
             else {
                 $status = 'UNKNOWN!';
             }
-            if (($only_warning) and (($status =='DONE') or ($status =='WAITING'))) continue;
+            if (($onlyWarning) and (($status =='DONE') or ($status =='WAITING'))) continue;
             $Orders[$id] = $line;
             $Orders[$id]['STATUS'] = $status;
             $p = strpos($line['PATH'],',');

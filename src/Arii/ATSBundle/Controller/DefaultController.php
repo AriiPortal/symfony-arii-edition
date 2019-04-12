@@ -9,16 +9,9 @@ use Symfony\Component\Yaml\Parser;
 
 class DefaultController extends Controller
 {
-    public function indexAction($db)
+    public function indexAction($repoId='ats_db')
     {
-        // La db est en parametre ?
-        $request = Request::createFromGlobals();
-            $portal = $this->container->get('arii_core.portal');
-        if ($request->get('db')!='')
-            $portal->setDatabaseByName($request->get('db'));
-        if ($request->get('db_id')!='')
-            $portal->setDatabaseById($request->get('db_id'));
-        return $this->render('AriiATSBundle:Default:index.html.twig', [ 'db' => $db ]);
+        return $this->render('AriiATSBundle:Default:index.html.twig', [ 'db' => $repoId ]);
     }
     
     // Index sur la base de données
@@ -92,17 +85,6 @@ class DefaultController extends Controller
         return $this->render('AriiATSBundle:Default:summary.html.twig',array('module' => $Module, 'Repositories' => $Repositories, 'db_active' => $db_active ));
     }
 
-    public function mainAction()
-    {
-        $portal = $this->container->get('arii_core.portal');
-        $Spoolers=$portal->getNodesBy('vendor', 'ats'); 
-        
-        return $this->render('AriiATSBundle:Default:summary.html.twig',
-            array(  'module'   => $portal->getModule('ATS'), 
-                    'Spooler'  => $portal->getJobScheduler(),
-                    'Database' => $portal->getDatabase() ));                
-    }
-    
     public function readmeAction()
     {
         return $this->render('AriiATSBundle:Default:readme.html.twig');

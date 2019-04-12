@@ -382,13 +382,13 @@ dhtmlxEvent(window,"load",function(){
     });
    
     loaded = false;
-    jobAppsChart.load( '{{ url('arii_Report_jobs_app') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}', function() {
-        jobNbChart.load( '{{ url('xml_Report_jobs_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}', function() {
-//            jobADChart.load( '{ { url('xml_Report_jobs_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}', function() {
-                runExecutionsChart.load( '{{ url('xml_Report_runs_executions_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}', function() {
-                    runExecChart.load( '{{ url('xml_Report_runs_status_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}' , function() {
-                        runAlarmsChart.load( '{{ url('xml_Report_runs_alarms_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}', function() {
-                            runDetailChart.load( '{{ url('xml_Report_runs_status_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&day_past={{ day_past }}' , function() {
+    jobAppsChart.load( '{{ url('arii_Report_jobs_app') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}', function() {
+        jobNbChart.load( '{{ url('xml_Report_jobs_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}', function() {
+//            jobADChart.load( '{ { url('xml_Report_jobs_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}', function() {
+                runExecutionsChart.load( '{{ url('xml_Report_runs_executions_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}', function() {
+                    runExecChart.load( '{{ url('xml_Report_runs_status_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}' , function() {
+                        runAlarmsChart.load( '{{ url('xml_Report_runs_alarms_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}', function() {
+                            runDetailChart.load( '{{ url('xml_Report_runs_status_chart') }}?app={{ app }}&env={{ env }}&month={{ month }}&year={{ year}}&dayPast={{ dayPast }}' , function() {
                                 loaded = true;
                             });
                         });

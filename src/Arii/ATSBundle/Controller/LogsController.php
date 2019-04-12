@@ -26,7 +26,7 @@ class LogsController extends Controller
         return $this->render('AriiATSBundle:Logs:toolbar.xml.twig',array(), $response );
     }
 
-    public function EventDemonAction($only_warning=0,$job_only=0)
+    public function EventDemonAction($onlyWarning=0,$job_only=0)
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');

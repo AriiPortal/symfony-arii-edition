@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 arii_API_index:
     path:  /
-    defaults: { _controller: AriiJIDBundle:Default:index }
+    defaults: { _controller: AriiAPIBundle:Default:index }
 
 arii_API_swagger:
     path:  /swagger

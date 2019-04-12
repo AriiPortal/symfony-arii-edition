@@ -7,8 +7,8 @@
 {% endblock dhtmlx_plus %}
 {% block onload %}
 <script language="javascript">
-var size=180;
 var db="{{ db }}";
+var size=180;
 var max_history = 0; // pas d'historique
 var chained = 0; // que des chaines normales
 var only_warning = 0;
@@ -16,48 +16,153 @@ var status;
 var sort="last";
 
 dhtmlxEvent(window,"load",function(){       
-    AriiLayout('ATS','databases_ats,history,refresh,help',size);
+    AriiLayout('ATS','databases,filters_ats,history,refresh,help',size);
     
     menuLayout = globalLayout.cells("a").attachLayout("2E");
     
     menuLayout.cells("a").setText("{{ "Menu" | trans }}");
-    mySidebar = menuLayout.cells("a").attachSidebar({
+    
+    myAccordion = menuLayout.cells("a").attachAccordion();
+    myAccordion.addItem( "status", "{{ "Status" | trans }}", true); 
+    mySidebar = myAccordion.cells("status").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
         width: size,
         items:
         [
-            { id:"alarms", text: "{{ "Alarms" | trans }}", icon: "error.png" },
-            { id:"boxes", text: "{{ "Boxes" | trans }}", icon: "box.png" },
-            { id:"audit", text: "{{ "Audit" | trans }}", icon: "audit.png" },
-            { type: "separator" },
-            { id:"report", text: "{{ "Report" | trans }}", icon: "report.png" },
-            { type: "separator" },
-            { id:"templates", text: "{{ "Templates" | trans }}", icon: "wand.png" },
+            { id:  "alarms", text: "{{ "Alarms" | trans }}", icon: "error.png" },
+            { id:  "processes", text: "{{ "Processes" | trans }}", icon: "process.png" }
         ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){
-        // bubble clicked, your code here
-        // 'return true' means item allowed to be selected
-        // false - otherwise
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
         return true;
     });    
     mySidebar.attachEvent("onSelect", function(id, value){
-        document.location.href = "{{ url('arii_ATS_index') }}/"+id;
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
+        return true;
+    });
+    myAccordion.addItem( "components", "{{ "Components" | trans }}"); 
+    mySidebar2 = myAccordion.cells("components").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:  "schedulers", text: "{{ "Schedulers" | trans }}", icon: "scheduler.png" },
+            { id:  "appservers", text: "{{ "App. servers" | trans }}", icon: "app_server.png" },
+            { id:  "agents", text: "{{ "Agents" | trans }}", icon: "machine.png" },
+            { id:  "queues", text: "{{ "Queues" | trans }}", icon: "queue.png" },
+        ]
+    });
+    mySidebar2.attachEvent("onBubbleClick", function(id, value){
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
+        return true;
+    });    
+    mySidebar2.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
+        return true;
+    });
+    myAccordion.addItem( "audit", "{{ "Audit" | trans }}"); 
+    mySidebar3 = myAccordion.cells("audit").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:  "actions", text: "{{ "Actions" | trans }}", icon: "audit.png" },
+            { id:  "changes", text: "{{ "Changes" | trans }}", icon: "edit.png" },
+            { type:"separator" },
+        ]
+    });
+    mySidebar3.attachEvent("onBubbleClick", function(id, value){
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
+        return true;
+    });    
+    mySidebar3.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
+        return true;
+    });
+    myAccordion.addItem( "misc", "{{ "Miscellaneous" | trans }}"); 
+    mySidebar4 = myAccordion.cells("misc").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:  "report", text: "{{ "Report" | trans }}", icon: "report.png" },
+            { type:"separator" },
+            { id:  "templates", text: "{{ "Templates" | trans }}", icon: "wand.png" },
+        ]
+    });
+    mySidebar4.attachEvent("onBubbleClick", function(id, value){
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
+        return true;
+    });    
+    mySidebar4.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_ATS_index') }}"+id;
         return true;
     });
     
-    menuLayout.cells("b").setText("{{ "Instances" | trans }}");
-    menuLayout.cells("b").setHeight(size+40);
+    menuLayout.cells("b").setText("{{ "Status" | trans }}");
+    menuLayout.cells("b").setHeight(size+80);
+    pieChart = menuLayout.cells("b").attachChart( {
+            view:    "donut",
+            value:   "#nb#",
+            color:   "#color#",
+            tooltip: "#nb#",
+            legend:{
+                    width:    0,
+                    align:    "left",
+                    valign:   "bottom",
+                    template: "#id#"
+            },
+            pieInnerText: "#nb#",
+            shadow:false
+    });
     Init();
+    PageRefresh();
 });
 </script>
 {% endblock onload %}
 {% block body %}{% endblock%}
 {% block script %}
 <script language="javascript">
-function GlobalRefresh() {
-    PageRefresh();
+function PageRefresh() {
+    var currentTime = new Date();
+    var hours = currentTime.getHours();
+    var minutes = currentTime.getMinutes();
+    var seconds = currentTime.getSeconds();
+    if (minutes < 10){
+    minutes = "0" + minutes;
+    }
+    if (seconds < 10){
+    seconds = "0" + seconds;
+    }
+    // Graphique principal
+    var url = "{{ url('api_ATS_alarms_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxPie";
+    var timestamp = currentTime.getTime();
+    pieChart.load(url.replace('REPOID',db),"json", function() {
+        // Clear, on supprime ce qui est egal a 0
+        for(i=0;i<pieChart.dataCount();i++) {
+            var id = pieChart.idByIndex(i);
+            var data = pieChart.get(id);
+            if ((timestamp/1000)-data.timestamp>0) {
+                pieChart.remove(id);
+            }
+        }
+        pieChart.refresh();
+        var url = "{{ url('api_ATS_alarms_infos', { "repoId": "REPOID" } ) }}";
+        dhx4.ajax.get( "{{ url('api_ATS_alarms_infos') }}" ,function(r1) {  
+            t = dhx4.s2j(r1.xmlDoc.responseText);
+            if (t['state']['NOT_CLOSED']>0) 
+                mySidebar.cells("alarms").setBubble(t['state']['NOT_CLOSED']);
+            else
+                mySidebar.cells("alarms").clearBubble();     
+        });
+    });
+    myRibbon.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );    
+    GridRefresh();
 }
 
 function Sendevent( Job, Event )
@@ -119,7 +224,7 @@ function Sendevent( Job, Event )
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct( "{{ url('xml_ATS_sendevent_form_toolbar') }}" ,function(){
         if (Time) {
-            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
             GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
             GBCalendar.setWeekStartDay(1);
         }
@@ -155,7 +260,7 @@ function Sendevent( Job, Event )
         switch(itemid) {
             case "execute":
                 if (Time)
-                    start_time = toolbar.getValue("ref_date");
+                    start_time = toolbar.getValue("refDate");
                 break;
             case "cancel":
                 msg.close();

@@ -1,0 +1,53 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    
+    myProcessesLayout = globalLayout.cells("b").attachLayout('2E');
+    myProcessesLayout.cells('a').setText("{{ "Processes" | trans }}");
+    myProcessesLayout.cells('b').hideHeader();
+
+    myProcessesChart = myProcessesLayout.cells('a').attachChart({
+        view:  "barH",
+        color: function (obj) {
+            switch (obj.status) {
+                case "SUCCESS":
+                    return 'green';
+                default:
+                    return 'red';
+            }
+        },
+        value: 1, 
+        label: "#data2#",
+        group:{
+                by:"#data2#",
+                map:{
+                        status:["count"]
+                }                
+        }        
+    });
+
+    myProcessesGrid = myProcessesLayout.cells('b').attachGrid();
+    myProcessesGrid.selMultiRows = true;
+    myProcessesGrid.setImagePath( "{{ asset('/images/') }}");
+    myProcessesGrid.setHeader("{{ "Process" | trans }},{{ "description" | trans }},{{ "Status" | trans }},{{ "Time" | trans }},{{ "Last start" | trans }},{{ "Last end" | trans }},{{ "Next start" | trans }}");
+    myProcessesGrid.attachHeader("#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myProcessesGrid.setInitWidths("*,*,100,150,150,150,150");
+    myProcessesGrid.setColAlign("left,left,left,left,left,left,left");
+    myProcessesGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro");
+    myProcessesGrid.setColSorting("str,str,str,date,date,date,date");
+    myProcessesGrid.enableAlterCss("","");
+    myProcessesGrid.init();
+}
+
+function GridRefresh() {
+    myProcessesGrid.load( "{{ url('api_ATS_processes_list') }}?outputFormat=dhtmlxGrid", function() {        
+        myProcessesGrid.refreshFilters();
+        myProcessesGrid.filterByAll();
+        myProcessesChart.clearAll();
+        myProcessesChart.parse( myProcessesGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

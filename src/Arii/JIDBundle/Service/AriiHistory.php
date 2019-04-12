@@ -11,13 +11,176 @@ class AriiHistory
 {
     protected $portal;
     protected $tools;
-
+    protected $TZoffset;
+    protected $TZinterval;
+    
     public function __construct (
             \Arii\CoreBundle\Service\AriiPortal $portal,
             \Arii\CoreBundle\Service\AriiTools $tools ) {
 
         $this->portal = $portal;
         $this->tools = $tools;        
+        
+        # Recalage Doctrine
+        $timezone = new \DateTimeZone(date_default_timezone_get());
+        $this->TZoffset = $timezone->getOffset(new \DateTime()); 
+    }
+    
+/*********************************************************************
+ * Clusters
+ *********************************************************************/
+    public function Clusters($em) {
+
+        // On se base sur l'historique
+        $Clusters = $em->getRepository("AriiJIDBundle:SchedulerClusters")->findClusters();
+        foreach ($Clusters as $k=>$Cluster) {
+            if ($Cluster['active']+$Cluster['dead']>0)
+                $Clusters[$k]['status'] = round($Cluster['active']*100/($Cluster['active']+$Cluster['dead']));
+            else 
+                $Clusters[$k]['status'] = 0;
+            $Clusters[$k]['delay'] = time() - $Cluster['lastHeartBeat'];
+            $date = new \DateTime();
+            $Clusters[$k]['lastHeartBeat'] = $date->setTimestamp($Cluster['lastHeartBeat']);
+        }
+        return $Clusters;
+    }
+
+    public function ClusterMembers($em,$schedulerId) {
+
+        // On se base sur l'historique
+        $Clusters = $em->getRepository("AriiJIDBundle:SchedulerClusters")->findMembers($schedulerId);
+        foreach ($Clusters as $k=>$Cluster) {
+            $p = strpos($Cluster['memberId'],'/');
+            if ($p>0)
+                $Clusters[$k]['memberId'] = substr($Cluster['memberId'],$p+1);
+            $Clusters[$k]['delay'] = time() - $Cluster['lastHeartBeat'];            
+            $date = new \DateTime();
+            $Clusters[$k]['lastHeartBeat'] = $date->setTimestamp($Cluster['lastHeartBeat']);
+            $date2 = new \DateTime();
+            $Clusters[$k]['nextHeartBeat'] = $date2->setTimestamp($Cluster['nextHeartBeat']);
+            $XML = $this->tools->xml2array($Clusters[$k]['xml']);
+            if (isset($XML['cluster_member_attr'])) {
+                foreach ($XML['cluster_member_attr'] as $p=>$Param) {
+                    switch($p) {
+                        case 'running_since':
+                            $Clusters[$k][$p] = new \DateTime($Param);
+                            break;
+                        default:
+                            switch($Param) {
+                                case 'yes':
+                                    $Clusters[$k][$p] = 1;
+                                    break;
+                                default:
+                                    $Clusters[$k][$p] = $Param;
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        return $Clusters;
+    }
+    
+/*********************************************************************
+ * Instances
+ *********************************************************************/
+    public function Instances($em) {
+
+        // On se base sur l'historique
+        $Instances = $em->getRepository("AriiJIDBundle:SchedulerInstances")->findInstances();
+        foreach ($Instances as $k=>$Instance) {
+            // Suppression des connexions
+            $db = $Instance['dbName'];
+            $db = str_replace('jdbc -class=','',$db);
+            $db = substr($db,0,strpos($db,' -user='));
+            $Instances[$k]['dbName'] = $db;
+        }
+        return $Instances;
+    }
+
+ /*********************************************************************
+ * Orders
+ *********************************************************************/
+    public function Orders($em) {
+
+        // On se base sur l'historique
+        $History = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findOrders();
+        $Orders = [];
+        $Done = [];
+        foreach ($History as $k=>$Order) {    
+            $id = $Order['spoolerId'].'#'.$Order['jobChain'].'#'.$Order['orderId'];
+            if (isset($Done[$id])) continue;
+            $Done[$id]=true;
+            $Orders[$k] = $Order;
+            if ($Order['endTime']) {
+                $endTime = $Order['endTime']->getTimestamp();
+                $Order['endTime']->modify($this->TZoffset." second");
+            }
+            else {
+                $endTime = time() - $this->TZoffset;
+            }
+            $Orders[$k]['runtime'] = $endTime - $Order['startTime']->getTimestamp();
+            $Order['startTime']->modify($this->TZoffset." second");
+            // Couleur
+            if ($Order['state']==='SUCCESS') {
+                $Orders[$k]['status'] = 'SUCCESS';
+            }
+            elseif (substr($Order['state'],0,1)==='!') {
+                $Orders[$k]['status'] = 'FAILURE';                
+            }
+            else {
+                $Orders[$k]['status'] = 'RUNNING';                                
+            }
+        }
+        return $Orders;
+    }
+
+    public function Order($em,$orderId) {
+
+        // On se base sur l'historique
+        $Orders = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findOrder($orderId);
+        $Order = array_pop($Orders);
+        if ($Order['endTime']) {
+            $endTime = $Order['endTime']->getTimestamp();
+            $Order['endTime']->modify($this->TZoffset." second");
+        }
+        else {
+            $endTime = time() - $this->TZoffset;
+        }
+        $Order['runtime'] = $endTime - $Order['startTime']->getTimestamp();
+        $Order['startTime']->modify($this->TZoffset." second");
+        return $Order;
+    }
+    
+ /*********************************************************************
+ * OrderSteps
+ *********************************************************************/
+    
+    public function OrderSteps($em,$history_id) {
+
+        // On se base sur l'historique
+        $Steps = $em->getRepository("AriiJIDBundle:SchedulerOrderStepHistory")->findOrderSteps($history_id);
+        foreach ($Steps as $k=>$Step) {    
+            if ($Step['endTime']) {
+                $endTime = $Step['endTime']->getTimestamp();
+                $Step['endTime']->modify($this->TZoffset." second");
+            }
+            else {
+                $endTime = time() - $this->TZoffset;
+            }
+            $Steps[$k]['runtime'] = $endTime - $Step['startTime']->getTimestamp();
+            $Step['startTime']->modify($this->TZoffset." second");            
+            // Couleur
+            if ($Step['error']) {
+                $Steps[$k]['status'] = 'FAILURE';                                
+                $Steps[$k]['errorText'] = substr($Step['errorText'],15);
+            }
+            else {
+                $Steps[$k]['status'] = 'SUCCESS';
+            }
+        }
+        return $Steps;
     }
     
 /*********************************************************************
@@ -53,12 +216,14 @@ class AriiHistory
         foreach ($Runs as $k=>$Run) {
             $Run['log'] = base64_encode(stream_get_contents($Run['log']));
             $Runs[$k] = $Run;
+               $Orders[$id]['END_TIME'] = $Order->getEndTime()->format("Y-M-d H:i:s");
+               $Orders[$id]['DURATION'] =  $Order->getEndTime()->getTimestamp() - $Order->getStartTime()->getTimestamp();               
         }        
         return $Runs;
     }
     
     // Requetes sans jointure pour accélerer l'affichage
-    public function Orders($em,$start,$end,$history=0,$nested=false,$only_warning=false,$sort='last') {
+    public function OrdersDetailed($em,$start,$end,$history=0,$nested=false,$onlyWarning=false,$sort='last') {
       
        $tools = $this->tools;
        $Orders = array();
@@ -86,7 +251,7 @@ class AriiHistory
            if ($JobChainNode->getAction() == 'stop') $StopNode[$sn]=1;
        }
        
-       $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findStates($start,$end,$only_warning);
+       $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findStates($start,$end,$onlyWarning);
        foreach($OrderHistory as $Order) {
            if (!$nested) {
                // if (substr($Order->getOrderId(),0,1)=='.') continue;
@@ -214,7 +379,7 @@ class AriiHistory
            else {
                $status = 'SUCCESS';
            }
-           if (($only_warning)and ($status == 'SUCCESS')) continue;
+           if (($onlyWarning)and ($status == 'SUCCESS')) continue;
            $Orders[$on]['STATUS'] = $status;
            if  ($line['NEXT_TIME']==$line['START_TIME'])
                $Orders[$on]['NEXT_TIME']='';
@@ -227,7 +392,7 @@ class AriiHistory
     }
 
    //ajout de la variable bool pour dissocier les jobs avec ou sans chaines
-   public function Jobs($history_max=0,$ordered = 0,$only_warning= 1,$next=1, $name="", $spooler="") {
+   public function Jobs($history_max=0,$ordered = 0,$onlyWarning= 1,$next=1, $name="", $spooler="") {
 
      $data = $this->db->Connector('data');
 
@@ -300,7 +465,7 @@ class AriiHistory
           $status = 'SUCCESS';
         }
 
-        if (($only_warning) and ($status == 'SUCCESS')) continue;
+        if (($onlyWarning) and ($status == 'SUCCESS')) continue;
 
         $Jobs[$id]['id'] = $line['ID'];
         $Jobs[$id]['spooler'] = $line['SPOOLER_ID'];

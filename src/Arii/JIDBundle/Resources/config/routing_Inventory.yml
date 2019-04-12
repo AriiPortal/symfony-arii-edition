@@ -1,0 +1,7 @@
+# --------------------------------------------------------------------------
+# Instances
+# --------------------------------------------------------------------------
+arii_JID_inventory_instances:
+    path:  /instances
+    defaults: { _controller: AriiJIDBundle:Inventory\Instances:index}
+

@@ -116,9 +116,9 @@ class SidebarController extends Controller
         $datec = sprintf("%04d-%02d",$info['tm_year']+1900,$info['tm_mon']+1);
         $heurec = sprintf("%02d:%02d:%02d",$info['tm_hour'],$info['tm_min'],$info['tm_sec']);
         
-        $time = $request->query->get( 'ref_date' );
+        $time = $request->query->get( 'refDate' );
         if ($time == "") {
-            $time = $session->get('ref_date' );
+            $time = $session->get('refDate' );
         }
 
         // Date reference Get ou Session ou Date actuelle
@@ -173,7 +173,7 @@ class SidebarController extends Controller
         else {
             $yp = $y;
         }
-        $Cal['precedent'] = $_SERVER['PHP_SELF'].'?ref_date='.sprintf("%04d-%02d-%02d ",$yp,$mp,$d).$heurec;
+        $Cal['precedent'] = $_SERVER['PHP_SELF'].'?refDate='.sprintf("%04d-%02d-%02d ",$yp,$mp,$d).$heurec;
 
         // 1er jour du mois
         $Cal['mois'] = 'str_month.'.($m*1);
@@ -206,7 +206,7 @@ class SidebarController extends Controller
         
         for($i=1;$i<=$nb;$i++) {
             $j = $jf+$i-2;
-            $D[$j] = '<a href="'.$_SERVER['PHP_SELF'].'?ref_date='.$date.'-'.substr("0".$i,-2).' '.$heurec.'"';
+            $D[$j] = '<a href="'.$_SERVER['PHP_SELF'].'?refDate='.$date.'-'.substr("0".$i,-2).' '.$heurec.'"';
             if (($date==$datec) and ($i==$dc)) 
                 $D[$j] .= ' class="today"';
             elseif ($i==$d)
@@ -232,18 +232,18 @@ class SidebarController extends Controller
 
         }
         $Cal['jours'] = $D;
-        $Cal['suivant'] = $_SERVER['PHP_SELF'].'?ref_date='.sprintf("%04d-%02d-%02d ",$y,$m,$d).$heurec;
+        $Cal['suivant'] = $_SERVER['PHP_SELF'].'?refDate='.sprintf("%04d-%02d-%02d ",$y,$m,$d).$heurec;
         
-        $ref_date = $date.'-'.substr("0".$d,-2).' '.$heurec;
-        $session->set( 'ref_date', $ref_date );
+        $refDate = $date.'-'.substr("0".$d,-2).' '.$heurec;
+        $session->set( 'refDate', $refDate );
         
         // Passe et futur
-        $Cal['ref_past'] = $session->get('ref_past' );
-        if ($Cal['ref_past']=="") 
-            $Cal['ref_past'] = 4;
-        $Cal['ref_future'] = $session->get('ref_future' );
-        if ($Cal['ref_future']=="") 
-            $Cal['ref_future'] = 2;
+        $Cal['refPast'] = $session->get('refPast' );
+        if ($Cal['refPast']=="") 
+            $Cal['refPast'] = 4;
+        $Cal['refFuture'] = $session->get('refFuture' );
+        if ($Cal['refFuture']=="") 
+            $Cal['refFuture'] = 2;
         
       return $this->render('AriiJOCBundle:Sidebar:calendar.html.twig', $Cal );
     }

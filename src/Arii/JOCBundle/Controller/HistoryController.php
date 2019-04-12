@@ -28,13 +28,13 @@ class HistoryController extends Controller
         
         // Une date peut etre passe en get
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )) {
-            $ref_date   = $request->query->get( 'ref_date' );
-            $session->setRefDate( $ref_date );
+        if ($request->query->get( 'refDate' )) {
+            $refDate   = $request->query->get( 'refDate' );
+            $session->setRefDate( $refDate );
         } else {
-            $ref_date   = $session->getRefDate();
+            $refDate   = $session->getRefDate();
         }
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
         
         $past   = $session->getRefPast();
         $future = $session->getRefFuture();
@@ -45,9 +45,9 @@ class HistoryController extends Controller
         $Timeline['step'] = $step;
     
         // on recalcule la date courante moins la plage de passé 
-        $year = substr($ref_date, 0, 4);
-        $month = substr($ref_date, 5, 2);
-        $day = substr($ref_date, 8, 2);
+        $year = substr($refDate, 0, 4);
+        $month = substr($refDate, 5, 2);
+        $day = substr($refDate, 8, 2);
         
         $start = substr($session->getPast(),11,2);
         $Timeline['start'] = (60/$step)*$start;
@@ -92,13 +92,13 @@ class HistoryController extends Controller
         
         // Une date peut etre passe en get
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )) {
-            $ref_date   = $request->query->get( 'ref_date' );
-            $session->setRefDate( $ref_date );
+        if ($request->query->get( 'refDate' )) {
+            $refDate   = $request->query->get( 'refDate' );
+            $session->setRefDate( $refDate );
         } else {
-            $ref_date   = $session->getRefDate();
+            $refDate   = $session->getRefDate();
         }
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
         
         $past   = $session->getRefPast();
         $future = $session->getRefFuture();
@@ -109,9 +109,9 @@ class HistoryController extends Controller
         $Timeline['step'] = $step;
     
         // on recalcule la date courante moins la plage de passé 
-        $year = substr($ref_date, 0, 4);
-        $month = substr($ref_date, 5, 2);
-        $day = substr($ref_date, 8, 2);
+        $year = substr($refDate, 0, 4);
+        $month = substr($refDate, 5, 2);
+        $day = substr($refDate, 8, 2);
         
         $start = substr($session->getPast(),11,2);
         $Timeline['start'] = (60/$step)*$start;
@@ -193,7 +193,7 @@ $qry = 'SELECT count(ID) as NB,left(START_TIME,13) as START_TIME,END_TIME as END
         $data = $dhtmlx->Connector('scheduler');
 
        $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
 
 //        $options = $dhtmlx->Connector('options');
 
@@ -222,7 +222,7 @@ $qry = 'SELECT count(ID) as NB,left(START_TIME,13) as START_TIME,END_TIME as END
     function color_rows($row){
         if ($row->get_value('END_TIME')=='') {
             $row->set_value("color", 'orange');
-            $row->set_value("END_TIME", $this->ref_date );
+            $row->set_value("END_TIME", $this->refDate );
         }
         elseif ($row->get_value('ERROR')>0) {
             $row->set_value("color", 'red');

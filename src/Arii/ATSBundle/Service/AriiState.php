@@ -35,9 +35,8 @@ class AriiState
            $StopChain[$cn]=1;
        }
     }
-
     
-   public function Jobs($box='',$only_warning=0,$box_more=0) {   
+   public function Jobs($box='',$onlyWarning=0,$box_more=0) {   
         $date = $this->date;        
         $sql = $this->sql;
         $db = $this->db;
@@ -65,7 +64,7 @@ class AriiState
         $Jobs = array();
         while ($line = $data->sql->get_next($res))
         {   
-            if ($only_warning and (($line['STATUS']==4) or ($line['STATUS']==8))) continue;
+            if ($onlyWarning and (($line['STATUS']==4) or ($line['STATUS']==8))) continue;
             $jn = $line['JOB_NAME'];
             $joid = $line['JOID'];
             $Jobs[$jn] =$line;
@@ -73,7 +72,7 @@ class AriiState
         return $Jobs;
    }
 
-   public function Boxes($box='%',$only_warning=0,$box=0) {   
+   public function Boxes($box='%',$onlyWarning=0,$box=0) {   
         $date = $this->date;        
         $sql = $this->sql;
         $db = $this->db;
@@ -100,7 +99,7 @@ class AriiState
         $Jobs = array();
         while ($line = $data->sql->get_next($res))
         {   
-            if ($only_warning 
+            if ($onlyWarning 
                     and (($line['STATUS']==4) or ($line['STATUS']==8)) 
                     and (($line['JOB_STATUS']==4) or ($line['JOB_STATUS']==7) or ($line['JOB_STATUS']==8) or ($line['JOB_STATUS']==11)) ) continue;
             $jn = $line['BOX_NAME'];

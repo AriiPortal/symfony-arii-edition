@@ -23,10 +23,10 @@ class DashboardController extends Controller
             $header = $request->query->get('header');
         
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get('env'),
             $request->query->get('app'),
-            $request->query->get('day_past'),
+            $request->query->get('dayPast'),
             $request->query->get('day' ),                
             $request->query->get('month'),
             $request->query->get('year')
@@ -182,7 +182,7 @@ class DashboardController extends Controller
             array(  'month' => $month,
                     'month_str' => $month_str,
                     'year'  => $year,    
-                    'day_past' => $day_past,
+                    'dayPast' => $dayPast,
                     'app'   => $app,
                     'application' => $application,
                     'env' => $env,

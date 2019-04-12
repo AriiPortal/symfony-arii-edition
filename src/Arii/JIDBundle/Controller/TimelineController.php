@@ -37,13 +37,13 @@ class TimelineController extends Controller
         
         // Une date peut etre passe en get
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )) {
-            $ref_date   = $request->query->get( 'ref_date' );
-            $session->setRefDate( $ref_date );
+        if ($request->query->get( 'refDate' )) {
+            $refDate   = $request->query->get( 'refDate' );
+            $session->setRefDate( $refDate );
         } else {
-            $ref_date   = $session->getRefDate();
+            $refDate   = $session->getRefDate();
         }
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
         
         $past   = $session->getRefPast();
         $future = $session->getRefFuture();
@@ -55,9 +55,9 @@ class TimelineController extends Controller
         $Timeline['step'] = 60;
     
         // on recalcule la date courante moins la plage de passé 
-        $year = substr($ref_date, 0, 4);
-        $month = substr($ref_date, 5, 2);
-        $day = substr($ref_date, 8, 2);
+        $year = substr($refDate, 0, 4);
+        $month = substr($refDate, 5, 2);
+        $day = substr($refDate, 8, 2);
         
         $start = substr($session->getPast(),11,2);
         $Timeline['start'] = (60/$step)*$start;
@@ -97,7 +97,7 @@ class TimelineController extends Controller
         $row->set_value("JOB_NAME", '<img src="'.$this->images.'/running.png"/>');
         if ($row->get_value('END_TIME')=='') {
             $row->set_value("color", 'orange');
-            $row->set_value("END_TIME", $this->ref_date );
+            $row->set_value("END_TIME", $this->refDate );
         }
         elseif ($row->get_value('ERROR')>0) {
             $row->set_value("color", 'red');
@@ -121,7 +121,7 @@ class TimelineController extends Controller
         $data = $dhtmlx->Connector('data');
         
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -197,7 +197,7 @@ class TimelineController extends Controller
         $data = $dhtmlx->Connector('data');
 
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -262,7 +262,7 @@ class TimelineController extends Controller
         $data = $dhtmlx->Connector('data');
 
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -305,7 +305,7 @@ class TimelineController extends Controller
 
         $session =  $this->container->get('arii_core.session'); 
         $tools =  $this->container->get('arii_core.tools');
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -350,7 +350,7 @@ class TimelineController extends Controller
         $data = $dhtmlx->Connector('data');
 
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -414,7 +414,7 @@ class TimelineController extends Controller
         $data = $dhtmlx->Connector('data');
 
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -480,7 +480,7 @@ class TimelineController extends Controller
         $data = $dhtmlx->Connector('data');
 
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');

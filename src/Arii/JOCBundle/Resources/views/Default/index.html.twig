@@ -3,7 +3,7 @@
 <script language="javascript">
 function Init() {    
     
-    Dashboard = globalLayout.cells("c").attachLayout("2E");
+    Dashboard = globalLayout.cells("b").attachLayout("2E");
     myLayoutUp = Dashboard.cells("a").attachLayout("3W");
     myLayoutDown = Dashboard.cells("b").attachLayout("3W");
     
@@ -111,7 +111,7 @@ function Init() {
 
 }
 
-function PageRefresh() {
+function GridRefresh() {
 SpoolersChart.load( "{{ url('xml_JOC_spoolers_pie') }}", function () {
     OrdersChart.load("{{ url('xml_JOC_orders_pie') }}", function () {
         ChainsChart.load("{{ url('xml_JOC_chains_pie') }}", function () {

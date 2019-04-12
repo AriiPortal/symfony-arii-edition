@@ -24,17 +24,11 @@
 {% for menu in MENU %}
                         { id:"BUNDLE_{{ menu.mod }}", text: "{{ menu.title | trans }}", img: "{{ menu.mod }}.png" },
 {% endfor %}
-                        {id:"sep1", type: "separator"},
-                            {
-                                 id:     "USER_logout",
-                                 text:   "{{ "Logout" }}", 
-                                 img:    "logout.png"
-                            }
                         ]
                     }
                 ]
         }
-{% if ACTIVATED.databases_ojs %}
+{% if ACTIVATED.databases %}
     ,
      {   "type":"block", 
           "id": "current_filter",
@@ -43,58 +37,39 @@
           "list":
           [
             {   "type": "buttonSelect", 
-                 width: 140,
-                 mode: 'cols',
-                 text:"",
-                 "id": "db",
-                 "img": "database.png", 
-                 comboDefaultImage: 'search.png',
-                 comboType: 'image',
-                 items:
-                 [ 
-        {% for k,filter in FILTERS %}
-            { value:"{{ filter.id }}", text: "{{ filter.name }}" },
+                width: 140,
+                text: "",
+                "id": "db",
+                "img": "database.png", 
+                items:
+                [ 
+        {% for k,repo in REPOS %}
+            { id:"db.{{ repo.name }}", text: "{{ repo.title }}" },
         {% endfor %}
-                  ]
+                ]
+            },
+            {   "type": "buttonSelect", 
+                width: 140,
+                text: "Lausanne",
+                "id": "site",
+                "img": "site.png", 
+                items:
+                [ 
+            { id:"site.lausanne", text: "Lausanne" },
+                ]
             },
             {   "type" : "slider", 
-                "text" : "{{ INTERFACE.limit }}",
-                "id"   : "limit",
+                "text" : "{{ INTERFACE.maxResults }}",
+                "id"   : "maxResult",
                 "size" : 100,
-                "min"  : 200,
-                "max"  : 30000,
-                "step" : 400,
-                "value": 5000
+                "min"  : 100,
+                "max"  : 10000,
+                "step" : 100,
+                "value": 1000
             }
           ]
       }
 {% endif %}                
-{% if ACTIVATED.databases_ats %}
-    ,
-     {   "type":"block", 
-          "id": "current_filter",
-          text:"{{ "Repository" | trans }}", 
-          text_pos:   "top",           
-          "list":
-          [
-             {   "type": "buttonSelect", 
-                 width: 140,
-                 mode: 'cols',
-                 text:"",
-                 "id": "db",
-                 "img": "database.png", 
-                 comboDefaultImage: 'search.png',
-                 comboType: 'image',
-                 items:
-                 [ 
-        {% for k,filter in FILTERS %}
-            { value:"{{ filter.id }}", text: "{{ filter.name }}" },
-        {% endfor %}
-                  ]
-              },          
-          ]
-      }
-{% endif %}        
 {% if ACTIVATED.filters_ats %}
     ,
      {   "type":"block", 
@@ -265,8 +240,8 @@
                 {   type: 'group', 
                     position: "right",
                     list:[
-                        {   id: "date_now",    "type":"button", "img":"clock.png", "text":"&nbsp{{ INTERFACE.day_past }}" },
-                        {   id: "date_days",   "type":"slider", size: 110, max: 31, value: {{ INTERFACE.day_past*-1 }}  }
+                        {   id: "date_now",    "type":"button", "img":"clock.png", "text":"&nbsp{{ INTERFACE.dayPast }}" },
+                        {   id: "date_days",   "type":"slider", size: 110, max: 31, value: {{ INTERFACE.dayPast*-1 }}  }
                     ]
                 },
                 {   type: 'group', 
@@ -279,7 +254,7 @@
                 {   type: 'group', 
                     list:[
                         {   id: "date_end_change",   "type":"button", "img":"clock_stop.png", disable: true },
-                        {   id: "date_end",          "type":"input",  value: "{{ INTERFACE.ref_date | date('Y-m-d H:i:s') }}", width: 130  }
+                        {   id: "date_end",          "type":"input",  value: "{{ INTERFACE.refDate | date('Y-m-d H:i:s') }}", width: 130  }
                     ]
                 }
             ]
@@ -293,8 +268,8 @@
           "text": "{{ "Refresh" | trans }}",
           "list":
           [
-                { id: "refresh_pause", "type": "buttonTwoState", "text":"{{ INTERFACE.refresh }}", "img":"control_play.png", state: {% if INTERFACE.refresh_pause==1 %}true{% else %}false{% endif %} },
-                { id: "refresh_update","type": "buttonSelect", text: "{% if INTERFACE.refresh==5 %}5s{% endif %}{% if INTERFACE.refresh==30 %}30s{% endif %}{% if INTERFACE.refresh==60 %}1min{% endif %}{% if INTERFACE.refresh==300 %}5min{% endif %}{% if INTERFACE.refresh==900 %}15min{% endif %}{% if INTERFACE.refresh==1800 %}30min{% endif %}{% if INTERFACE.refresh==3600 %}1h{% endif %}", "img": "timeline.png",
+                { id: "refreshPause", "type": "buttonTwoState", "text":"{{ INTERFACE.refresh }}", "img":"control_play.png", state: {% if INTERFACE.refreshPause==1 %}true{% else %}false{% endif %} },
+                { id: "refreshUpdate","type": "buttonSelect", text: "{% if INTERFACE.refresh==5 %}5s{% endif %}{% if INTERFACE.refresh==30 %}30s{% endif %}{% if INTERFACE.refresh==60 %}1min{% endif %}{% if INTERFACE.refresh==300 %}5min{% endif %}{% if INTERFACE.refresh==900 %}15min{% endif %}{% if INTERFACE.refresh==1800 %}30min{% endif %}{% if INTERFACE.refresh==3600 %}1h{% endif %}", "img": "timeline.png",
                 "items": 
                 [ 
                    { id: "refresh_seconds_5", text: "5 {{ "seconds" | trans }}" },
@@ -306,9 +281,33 @@
                    { id: "refresh_seconds_3600", text: "1 {{ "hour" | trans }}" }
                 ]
             },
-            { id: "refresh_next", "type": "text", "text": "00:00:00" }
+            { id: "refreshNext", "type": "text", "text": "00:00:00" }
           ]
       }
+{% endif %}
+{% if ACTIVATED.help %}
+        ,
+        {   
+            type:       "block", 
+            text:       "{{ "help" | trans }}", 
+            text_pos:   "top", 
+            list:
+                [
+                    {   
+                         type:   "button", 
+                         id:     "HELP_readme",
+                         text:   "{{ "Guide" | trans }}", 
+                         img:    "doc.png"
+                    },
+                    {
+                         type:   "button", 
+                         id:     "HELP_api",
+                         text:   "{{ "API" }}", 
+                         img:    "plugin.png"
+                    }
+                ]
+        }
+    
 {% endif %}
         ,
         {   
@@ -318,30 +317,39 @@
             list:
                 [
                     {   
-                         type:   "button", 
-                         id:     "USER_role",
-                         text:   "{{ USER.roles }}", 
-                         img:    "role_admin.png"
+                        type:   "button", 
+                        id:     "USER_role",
+                        text:   "{{ USER.roles }}", 
+                        img:    "role_admin.png"
                     },
                     {
-                         type:   "button", 
-                         id:     "USER_group",
-                         text:   "{{ "Group" | trans }}", 
-                         img:    "group.png"
+                        type:   "button", 
+                        id:     "USER_group",
+                        text:   "{{ "Group" | trans }}", 
+                        img:    "group.png"
                     },
-                    {   
-                        type:   "buttonSelect", 
-                        id:     "lang",
-                        text:   "", 
-                        img:    "flags/{{ app.request.locale }}.png",
-                        items:
-                        [
-                        
-{% for lang,info in LANG %}
-                        { id:"LANG_{{ lang }}", text: "{{ info.string }}", img: "{{ lang }}.png" },
-{% endfor %}
-                        ]
-                    }
+                    {   type : "group", list : [
+                        {   
+                            type:   "buttonSelect", 
+                            id:     "lang",
+                            text:   "", 
+                            img:    "flags/{{ app.request.locale }}.png",
+                            items:
+                            [
+
+    {% for lang,info in LANG %}
+                            { id:"LANG_{{ lang }}", text: "{{ info.string }}", img: "{{ lang }}.png" },
+    {% endfor %}
+                            ]
+                        },
+                        {
+                             type:   "button", 
+                             id:     "USER_logout",
+                             text:   "{{ "Logout" }}", 
+                             img:    "logout.png"
+                        }
+                    ] }
+                    
                     
                 ]
         }
@@ -358,24 +366,6 @@
                          id:     "USER_message",
                          text:   "{{ "Messages" | trans }}", 
                          img:    "email.png"
-                    }
-                ]
-        }
-    
-{% endif %}
-{% if ACTIVATED.help %}
-        ,
-        {   
-            type:       "block", 
-            text:       "{{ "help" | trans }}", 
-            text_pos:   "top", 
-            list:
-                [
-                    {
-                         type:   "button", 
-                         id:     "HELP_api",
-                         text:   "{{ "API" }}", 
-                         img:    "plugin.png"
                     }
                 ]
         }

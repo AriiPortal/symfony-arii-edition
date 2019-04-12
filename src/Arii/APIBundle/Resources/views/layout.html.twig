@@ -14,13 +14,18 @@ dhtmlxEvent(window,"load",function(){
     globalLayout.cells("a").showHeader();
  
     mySidebar = globalLayout.cells("a").attachSidebar({
-        icons_path: "{{ asset('/images/') }}",
+        icons_path: "{{ asset('/bundles/') }}",
         width: 300,
-        // template: "tiles",
+        template: "tiles",
         items:
         [
-            { id:"ats",    text: "{{ "summary.ATS" | trans }}",     icon: "ats.png" },
-            { id:"jid",    text: "{{ "summary.JID" | trans }}",     icon: "jid.png" }            
+            { id:"core",   text: "{{ "summary.Core" | trans }}",     icon: "ariicore/icon_32.png" },
+            { id:"api",    text: "{{ "summary.API"  | trans }}",     icon: "ariiapi/icon_32.png" },
+            { id:"ats",    text: "{{ "summary.ATS"  | trans }}",     icon: "ariiats/icon_32.png" },
+            { id:"jid",    text: "{{ "summary.JID"  | trans }}",     icon: "ariijid/icon_32.png" },
+            { id:"joc",    text: "{{ "summary.JOC"  | trans }}",     icon: "ariijoc/icon_32.png" },
+            { id:"time",   text: "{{ "summary.Time" | trans }}",     icon: "ariitime/icon_32.png" },
+            
         ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){        

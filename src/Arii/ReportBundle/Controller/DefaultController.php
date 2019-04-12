@@ -87,7 +87,7 @@ class DefaultController extends Controller
             $Spoolers[$s]=1;
             $e = $Job['env'];
             $Envs[$e]=1;
-            $t = $Job['job_class'];
+            $t = $Job['jobClass'];
             $Classes[$t]=1;
         }
             

@@ -1,0 +1,58 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    myAccordion.cells( "components" ).open(false); 
+    
+    myAgentsLayout = globalLayout.cells("b").attachLayout('2E');
+    myAgentsLayout.cells('a').setText("{{ "Machines" | trans }}");
+    myAgentsLayout.cells('b').hideHeader();
+    myAgentsLayout.cells('b').setHeight(160);
+
+    myAgentsChart = myAgentsLayout.cells('a').attachChart({
+            view:         "donut",
+            value:        "1",
+            label:        "",
+            tooltip:      "#data2#",
+            color: function (obj) {
+                switch (obj.data2) {
+                    case 'o':
+                        return "green";
+                    case 'm':
+                        return "red";
+                    default:
+                        return "orange";
+                }
+            },
+            border:false,
+            pieInnerText: "#data0#",
+            shadow: 0,
+            legend:{
+                width: 200,
+                template: "#data0#",
+                valign:"top",
+                align:"left"
+            } 
+    });
+    myAgentsGrid = myAgentsLayout.cells('b').attachGrid();
+    myAgentsGrid.selMultiRows = true;
+    myAgentsGrid.setImagePath( "{{ asset('/images/') }}");
+    myAgentsGrid.setHeader("{{ "Name" | trans }},{{ "Host" | trans }},{{ "StatusNatif" | trans }},{{ "Status" | trans }},{{ "Description" | trans }},{{ "Type" | trans }},{{ "Max load" | trans }},{{ "Factor" | trans }}");
+    myAgentsGrid.setInitWidths("120,*,100,150,100,100,100,100");
+    myAgentsGrid.setColAlign("left,left,center,left,left,left,left,left");
+    myAgentsGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
+    myAgentsGrid.setColSorting("str,str,int,date,str,str,str,str");
+    myAgentsGrid.enableAlterCss("","");
+    myAgentsGrid.init();
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_ATS_agents_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myAgentsGrid.load( url.replace('REPOID',db) , function() {        
+        myAgentsChart.clearAll();
+        myAgentsChart.parse( myAgentsGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

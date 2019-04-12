@@ -12,9 +12,26 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrderHistoryRepository extends EntityRepository
 {
+    public function findOrders() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.history as id,e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
+        ->orderBy('e.history','desc')
+        ->setMaxResults(1000)
+        ->getQuery();
+        return $q->getResult();
+    }
 
-   public function findHistory($from,$to,$sort='DESC',$limit=100)
-   {
+    public function findOrder($orderId) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
+        ->where('e.history = :id')
+        ->setParameter('id',$orderId)
+        ->getQuery();
+        return $q->getResult();
+    }
+    
+    public function findHistory($from,$to,$sort='DESC',$limit=100)
+    {
         $q = $this->createQueryBuilder('o')
             ->Select(
                     'a.id as taskId,a.spoolerId,a.clusterMemberId,a.jobName,a.startTime,a.endTime,a.cause,a.steps,a.exitCode,a.error,a.errorCode,a.errorText,a.parameters,a.log,a.pid,a.agentUrl,
@@ -32,7 +49,7 @@ class SchedulerOrderHistoryRepository extends EntityRepository
         }    
         return $q->getQuery()
                 ->getResult();
-   }    
+    }    
     
    public function findSpoolers()
    {
@@ -57,7 +74,7 @@ class SchedulerOrderHistoryRepository extends EntityRepository
     }
     
     // Pour la synchronisation des historique
-    public function findStates($start,$end,$max_result,$sort='last',$only_warning=true) { 
+    public function findStates($start,$end,$maxResult,$sort='last',$onlyWarning=true) { 
         $q = $this->createQueryBuilder('e')
         ->where('e.startTime >= :start')
         ->andWhere('e.endTime <= :end')
@@ -65,14 +82,14 @@ class SchedulerOrderHistoryRepository extends EntityRepository
         ->setParameter('start', $start)
         ->setParameter('end', $end);
         
-        if ($only_warning)
+        if ($onlyWarning)
             $q->andWhere("e.state like '!%'");
         
         switch ($sort) {
             case 'last':
                 $q->orderBy('e.endTime');
         }
-        return $q->setMaxResults($max_result)
+        return $q->setMaxResults($maxResult)
                 ->getQuery()
                 ->getResult();
     }

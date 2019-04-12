@@ -142,7 +142,7 @@ class AriiAutosys
    }
 
     public function ColorStatus($status) {
-        if (!isset($this->ColorStatus[$status]))
+       if (!isset($this->ColorStatus[$status]))
             return array('black','#FF0000');
         $color = $this->ColorStatus[$status]['color'];
         $bgcolor= $this->ColorStatus[$status]['bgcolor'];

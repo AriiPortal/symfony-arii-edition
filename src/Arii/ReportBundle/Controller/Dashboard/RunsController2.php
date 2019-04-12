@@ -13,10 +13,10 @@ class RunsController extends Controller
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
-            $request->query->get( 'day_past' ),                
+            $request->query->get( 'dayPast' ),                
             $request->query->get( 'day' ),
             $request->query->get( 'month' ),
             $request->query->get( 'year' )
@@ -28,7 +28,7 @@ class RunsController extends Controller
                 'env' => $env,
                 'month' => $month,
                 'year' => $year,
-                'day_past' => $day_past
+                'dayPast' => $dayPast
                 ) 
             );
     }
@@ -59,7 +59,7 @@ class RunsController extends Controller
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$application,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
             -30,
@@ -97,7 +97,7 @@ class RunsController extends Controller
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$application,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
             -30,
@@ -134,7 +134,7 @@ class RunsController extends Controller
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$application,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
             -30,
@@ -170,10 +170,10 @@ class RunsController extends Controller
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
-            $request->query->get( 'day_past' ),
+            $request->query->get( 'dayPast' ),
             $request->query->get( 'day' ),
             $request->query->get( 'month' ),
             $request->query->get( 'year' )
@@ -208,7 +208,7 @@ class RunsController extends Controller
         list($app,$env,$date) = explode(':', $scope);
         list($year,$month) = explode('-', $date);
 
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter( 
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter( 
                 $env, 
                 $app, 
                 -32, 

@@ -1,28 +1,56 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiATSBundle::layout.html.twig" %}
 {% block body %}
-<script language="javascript">
+<script type="text/javascript">
 function Init() {
-    globalLayout.cells("b").setText("{{ "Orders" | trans }}");
     
-    myLayout = globalLayout.cells("b").attachLayout("1C");
-    myLayout.cells("a").hideHeader();
+    var myTab = globalLayout.cells("b").attachTabbar();
+    myTab.addTab("schedulers","{{ "Schedulers" | trans }}","100px", null, true);
+    myTab.addTab("check","{{ "Auto Check" | trans }}","100px");
 
-    myGrid = myLayout.cells("a").attachGrid();
-    myGrid.selMultiRows = true;
-    myGrid.setImagePath( "{{ asset('/images/') }}");
-    myGrid.setHeader("{{ "Node" | trans }},{{ "Database" | trans }},name");
-    myGrid.attachHeader("#text_filter,#select_filter,#text_filter,");
-    myGrid.setColAlign("left,left,left");
-    myGrid.setInitWidths("*,*,0");
-    myGrid.setColTypes("ro,ro,ro");
-    myGrid.setColSorting("str,str,str");
-    myGrid.init();
-    myGrid.load( "{{ url('xml_ATS_nodes_grid') }}");
-    myGrid.attachEvent("onRowDblClicked",function(id) { 
+    myServersLayout = myTab.cells("schedulers").attachLayout('2E');
+    myServersLayout.cells('b').hideHeader();
+    myServersLayout.cells('b').setHeight(160);
+
+    myServersChart = myServersLayout.cells('a').attachChart({
+            view:         "donut",
+            value:        "1",
+            label:        "",
+            tooltip:      "#data2#",
+            color: function (obj) {
+                if (obj.data2==1) 
+                    return "green";
+                else
+                    return "red";
+            },
+            border:false,
+            pieInnerText: "#data0#",
+            shadow: 0,
+            legend:{
+                width: 200,
+                template: "#data0#",
+                valign:"top",
+                align:"left"
+            } 
     });
+
+    myServersGrid = myServersLayout.cells('b').attachGrid();
+    myServersGrid.selMultiRows = true;
+    myServersGrid.setImagePath( "{{ asset('/images/') }}");
+    myServersGrid.setHeader("{{ "Role" | trans }},{{ "Host" | trans }},{{ "Status" | trans }},{{ "Time" | trans }},{{ "PID" | trans }}");
+    myServersGrid.setInitWidths("120,*,100,150,100");
+    myServersGrid.setColAlign("left,left,center,left,right");
+    myServersGrid.setColTypes("ro,ro,ch,ro,ro");
+    myServersGrid.setColSorting("str,str,int,date,str");
+    myServersGrid.enableAlterCss("","");
+    myServersGrid.init();
 }
 
-function PageRefresh() {}
-
+function GridRefresh() {
+    myServersGrid.load( "{{ url('api_ATS_schedulers_list') }}?outputFormat=dhtmlxGrid", function() {        
+        myServersChart.clearAll();
+        myServersChart.parse( myServersGrid, "dhtmlxgrid");
+    });
+}
 </script>
 {% endblock %}

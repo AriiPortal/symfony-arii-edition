@@ -360,7 +360,7 @@ function StartJob( id ) {
     toolbar = winLayout.cells("a").attachToolbar();
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct("{{ url('arii_JID_toolbar_start_job') }}",function(){
-        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -389,7 +389,7 @@ function StartJob( id ) {
                     params.push(param);
                 });
                 var paramsStr = params.join("||");
-                var start_time = toolbar.getValue("ref_date");
+                var start_time = toolbar.getValue("refDate");
                 dhtmlx.message({
                 type: "Notice",
                 text: "{{ "Start job" | trans }} <strong>"+id+"</strong>" });

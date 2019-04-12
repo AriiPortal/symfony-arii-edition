@@ -1,12 +1,20 @@
 # --------------------------------------------------------------------------
-# Referentiels
+# Code
 # --------------------------------------------------------------------------
-api_JID_repos_list:
-    path:  /repos
-    defaults: { _controller: AriiJIDBundle:API\Repos:list, repoId: ojs_db }
+api_Time_code_list:
+    path:  /code
+    defaults: { _controller: AriiTimeBundle:API\Code:list }
     methods: [GET]
 
-api_JID_repos_create:
-    path:  /repos
-    defaults: { _controller: AriiJIDBundle:API\Repos:create, repoId: ojs_db }
+# --------------------------------------------------------------------------
+# Zones
+# --------------------------------------------------------------------------
+api_Time_zones_list:
+    path:  /zones
+    defaults: { _controller: AriiTimeBundle:API\Zones:list }
+    methods: [GET]
+
+api_Time_zones_create:
+    path:  /zones
+    defaults: { _controller: AriiTimeBundle:API\Zones:create }
     methods: [POST]

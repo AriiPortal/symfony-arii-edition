@@ -20,16 +20,6 @@ class ZonesController extends Controller
         return $this->render('AriiTimeBundle:Zones:toolbar.xml.twig',array(), $response );
     }
     
-    public function gridAction() {
-        $em = $this->getDoctrine()->getManager();
-        $request = $this->getRequest();
-        $request->getLocale();
-        $Zones = $em->getRepository("AriiTimeBundle:Zones")->findZones();        
-        
-        $dhtmlx = $this->container->get('arii_core.render'); 
-        return $dhtmlx->grid($Zones,'name,title,description,latitude,longitude');        
-    }
-
     public function selectAction() {        
         $em = $this->getDoctrine()->getManager();
         $request = $this->getRequest();

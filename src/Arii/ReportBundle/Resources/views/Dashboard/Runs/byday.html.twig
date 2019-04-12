@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"3L");
@@ -71,7 +71,7 @@ dhtmlxEvent(window,"load",function(){
     myToolbar.loadStruct("{{ url('xml_Report_toolbar') }}", function() {
         this.setItemText("APP",this.getListOptionText("APP",this.getListOptionSelected("APP")));
         this.setItemText("ENV",this.getListOptionText("ENV",this.getListOptionSelected("ENV")));
-        this.setItemText("DAY_PAST",this.getListOptionText("DAY_PAST",this.getListOptionSelected("DAY_PAST")));
+        this.setItemText("dayPast",this.getListOptionText("dayPast",this.getListOptionSelected("dayPast")));
         this.setItemText("MONTH",this.getListOptionText("MONTH",this.getListOptionSelected("MONTH")));
     });
     myToolbar.attachEvent( "onClick", function(id, value) {
@@ -92,9 +92,9 @@ dhtmlxEvent(window,"load",function(){
                 month = id;
                 GlobalRefresh();
                 break;
-            case "DAY_PAST":
-                this.setItemText("DAY_PAST",this.getListOptionText("DAY_PAST",this.getListOptionSelected("DAY_PAST")));
-                day_past = id;
+            case "dayPast":
+                this.setItemText("dayPast",this.getListOptionText("dayPast",this.getListOptionSelected("dayPast")));
+                dayPast = id;
                 GlobalRefresh();
                 break;
             case "YEAR":
@@ -300,7 +300,7 @@ dhtmlxEvent(window,"load",function(){
     
     rowArr = []; // array of grid rows
     newArr = []; // main array for chart
-    grid.load("{{ url('xml_Report_runs_applications_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past ,function(){
+    grid.load("{{ url('xml_Report_runs_applications_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast ,function(){
         rows = grid.getRowsNum();
         columns = grid.getColumnCount();
         for (var c=0; c<columns; c++){ // c - columns
@@ -372,17 +372,17 @@ function GlobalRefresh() {
     globalLayout.cells("b").progressOn();
     globalLayout.cells("c").collapse();
     barChart.clearAll();
-    barChart.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+    barChart.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
         // barChart2.parse(barChart, 'dhtmlxgrid');
-        barChart2.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+        barChart2.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
             scatterChart.clearAll();
-            scatterChart.load( "{{ url('xml_Report_runs_status_hour_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+            scatterChart.load( "{{ url('xml_Report_runs_status_hour_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
                 globalLayout.cells("b").progressOff();
                 donutChart.clearAll();
-                donutChart.load( "{{ url('xml_Report_runs_alarms_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
-                    myApps.load( "{{ url('xml_Report_apps_grid') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+                donutChart.load( "{{ url('xml_Report_runs_alarms_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
+                    myApps.load( "{{ url('xml_Report_apps_grid') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
                         globalLayout.cells("a").progressOff();
-                        myRibbon.loadStruct("{{ url('json_Report_ribbon') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function () {                    
+                        myRibbon.loadStruct("{{ url('json_Report_ribbon') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function () {                    
                         });                
                     });
                });

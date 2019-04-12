@@ -76,7 +76,7 @@ class LocksController extends Controller {
     {
         $request = Request::createFromGlobals();        
         $nested = $request->get('chained');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
         $sort = $request->get('sort');
 
         $state = $this->container->get('arii_joc.state');
@@ -151,7 +151,7 @@ class LocksController extends Controller {
     {
         $request = Request::createFromGlobals();
         $nested = $request->get('chained');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
         $sort = $request->get('sort');
 
         $state = $this->container->get('arii_joc.state');

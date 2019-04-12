@@ -24,11 +24,11 @@ class AppController extends Controller
             'end'        => $Filters['end']->format('Y-m-d H:i:s'),
             'env'        => $Filters['env'],
             'app'        => $Filters['appl'],
-            'class'      => $Filters['job_class']
+            'class'      => $Filters['jobClass']
         ];
 
         $em = $this->getDoctrine()->getManager(); 
-        $Jobs = $em->getRepository("AriiReportBundle:JOBDay")->findJobs($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['job_class'],false);
+        $Jobs = $em->getRepository("AriiReportBundle:JOBDay")->findJobs($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass'],false);
 
         $xml = "<?xml version='1.0' encoding='iso-8859-1'?><data>";
         // Cas ou le job class est précisé
@@ -36,11 +36,11 @@ class AppController extends Controller
         foreach ($Jobs as $Job) {
             $env = (isset($Job['env'])?$Job['env']:$Filters['env']);
             $app = (isset($Job['app'])?$Job['app']:$Filters['appl']);
-            $job_class = (isset($Job['job_class'])?$Job['job_class']:$Filters['job_class']);
-            $xml .= '<item id="'.$env.'|'.$app.'|'.$job_class.'|'.$Job['date']->format('md').'">';
+            $jobClass = (isset($Job['jobClass'])?$Job['jobClass']:$Filters['jobClass']);
+            $xml .= '<item id="'.$env.'|'.$app.'|'.$jobClass.'|'.$Job['date']->format('md').'">';
             $xml .= '<app>'.$app.'</app>';
             $xml .= '<env>'.$env.'</env>';
-            $xml .= '<job_class>'.$job_class.'</job_class>';
+            $xml .= '<jobClass>'.$jobClass.'</jobClass>';
             $xml .= '<mois>'.$this->get('translator')->trans('month.'.($Job['date']->format('m'))*1).'</mois>';
             $xml .= '<jour>'.$Job['date']->format('d').'</jour>';
             $xml .= '<jobs>'.$Job['jobs'].'</jobs>';

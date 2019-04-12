@@ -6,7 +6,7 @@ function Init() {
     
     myLayout = globalLayout.cells("b").attachLayout("3L");
     myLayout.cells("a").hideHeader();
-    
+
     dhxTree = myLayout.cells("a").attachTree();
     dhxTree.setImagesPath("{{ asset('/images/') }}");
     dhxTree.load( "{{ url('xml_Time_zones_tree') }}" );
@@ -20,13 +20,13 @@ function Init() {
     dhxGrid.setColTypes("ro,ro,ro,ro,ro");
     dhxGrid.setColSorting("str,str,str,int,int");
     dhxGrid.init();
-    dhxGrid.load("{{ url('xml_Time_zones') }}");
+    dhxGrid.load("{{ url('api_Time_zones_list') }}?outputFormat=dhtmlx");
 
     myTab = myLayout.cells("c").attachLayout("2U");
     myTab.cells("a").hideHeader();
     myTab.cells("a").setWidth(450); 
     myTab.cells("b").hideHeader(); 
-    
+
     formData = [
         { type: "settings", position: "label-left", labelWidth: 110, inputWidth: 200,labelAlign: "left",noteWidth: 200 },
         {type: "hidden",name: "id"},         
@@ -60,8 +60,7 @@ function Init() {
           label: "{{ "Longitude"| trans }}"
         }
     ];
-    
-    
+
     myToolbar = myTab.cells("a").attachToolbar();
     myToolbar.setIconsPath("{{ asset('/images/') }}");
     myToolbar.loadStruct( "{{ url('xml_Time_zones_toolbar') }}");
@@ -74,7 +73,7 @@ function Init() {
    });
 
     dhxTree.attachEvent("onClick",function(id){
-        dhxGrid.load("{{ url('xml_Time_zones') }}?id="+id);
+        dhxGrid.load("{{ url('api_Time_zones_list') }}?outputFormat=dhtmlx&id="+id);
     })    
 
     myToolbar.attachEvent("onClick",function(itemid){
@@ -99,7 +98,7 @@ function Init() {
                     expire: 10000,
                     width: "500px",
                     text: loader.xmlDoc.responseText });
-                    dhxGrid.load("{{ url('xml_Time_zones') }}", function() {
+                    dhxGrid.load("{{ url('api_Time_zones_list') }}?outputFormat=dhtmlx", function() {
                         globalLayout.cells("b").progressOff();
                     });
                 });

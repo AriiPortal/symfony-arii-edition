@@ -29,17 +29,17 @@ class JobsController extends Controller
         $User = $portal->getUserInterface();
         
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )!='')
-            $User['ref_date'] = $request->query->get( 'ref_date' );
+        if ($request->query->get( 'refDate' )!='')
+            $User['refDate'] = $request->query->get( 'refDate' );
             
-        $ref_date = $User['ref_date'];
+        $refDate = $User['refDate'];
         $past   = $User['past'];
         $future = $User['future'];
         $refresh = $User['refresh'];
         
         $portal->getUserInterface($User);
         
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
 
         // On prend 24 fuseaux entre maintenant et le passe
         // on trouve le step en minute
@@ -48,9 +48,9 @@ class JobsController extends Controller
         $Timeline['step'] = 60;
 
         // on recalcule la date courante moins la plage de passé
-        $year = substr($ref_date, 0, 4);
-        $month = substr($ref_date, 5, 2);
-        $day = substr($ref_date, 8, 2);
+        $year = substr($refDate, 0, 4);
+        $month = substr($refDate, 5, 2);
+        $day = substr($refDate, 8, 2);
 
         $start = substr($past,11,2);
         $Timeline['start'] = (60/$step)*$start;
@@ -90,10 +90,10 @@ class JobsController extends Controller
 
         $request = Request::createFromGlobals();
         $cyclic = $request->get('cyclic');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
 
         $history = $this->container->get('arii_ds.dailyschedule');
-        $Jobs = $history->DailySchedule( $cyclic, $only_warning, true);
+        $Jobs = $history->DailySchedule( $cyclic, $onlyWarning, true);
         
         $date = $this->container->get('arii_core.date');
         
@@ -129,13 +129,13 @@ class JobsController extends Controller
         return $response;
     }
     
-    public function pieAction($history_max=0,$ordered = 0,$only_warning=1) {        
+    public function pieAction($history_max=0,$ordered = 0,$onlyWarning=1) {        
         $request = Request::createFromGlobals();
         $cyclic = $request->get('cyclic');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
 
         $ds = $this->container->get('arii_ds.dailyschedule');
-        $Jobs = $ds->DailySchedule($cyclic, $only_warning, true);
+        $Jobs = $ds->DailySchedule($cyclic, $onlyWarning, true);
 
         $States = array('WAITING','EXECUTED','DELAYED','BLOCKED');
         foreach ($States as $state) {
@@ -147,7 +147,7 @@ class JobsController extends Controller
             $Status[$status]++;
         }
         
-        if ($only_warning) $Status['EXECUTED']=$Status['WAITING']=0; 
+        if ($onlyWarning) $Status['EXECUTED']=$Status['WAITING']=0; 
         $pie = '<data>';
         foreach ($Status as $status=>$nb) {
             $pie .= '<item id="'.$status.'"><STATUS>'.str_replace(' ','_',$status).'</STATUS><JOBS>'.$nb.'</JOBS><COLOR>'.$this->ColorStatus[$status].'</COLOR></item>';
@@ -163,13 +163,13 @@ class JobsController extends Controller
     {
         $request = Request::createFromGlobals();
         $cyclic = $request->get('cyclic');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
 
         $dhtmlx = $this->container->get('arii_core.dhtmlx');
         $data = $dhtmlx->Connector('data');
         
         $ds = $this->container->get('arii_ds.dailyschedule');
-        $Jobs = $ds->DailySchedule( $cyclic, $only_warning, true);
+        $Jobs = $ds->DailySchedule( $cyclic, $onlyWarning, true);
         
         $xml = '<data>';
         foreach ($Jobs as $id=>$line) {

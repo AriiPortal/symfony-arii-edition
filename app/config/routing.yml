@@ -43,7 +43,11 @@ arii_core:
     prefix:   /{_locale}/home
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp
-                
+
+arii_core_REST:
+    resource: "@AriiCoreBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1
+
 # ========================================
 # Admin 
 # ----------------------------------------
@@ -99,6 +103,18 @@ arii_Plumb:
 arii_jid:
     resource: "@AriiJIDBundle/Resources/config/routing.yml"
     prefix:   /{_locale}/jid
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_jid_inventory:
+    resource: "@AriiJIDBundle/Resources/config/routing_Inventory.yml"
+    prefix:   /{_locale}/jid/inventory
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_jid_report:
+    resource: "@AriiJIDBundle/Resources/config/routing_Report.yml"
+    prefix:   /{_locale}/jid/report
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
@@ -167,7 +183,7 @@ arii_ATS:
 
 arii_ATS_API:
     resource: "@AriiATSBundle/Resources/config/routing_api.yml"
-    prefix:   /api/ats
+    prefix:   /api/v1/bundles/ats
 
 # ----------------------------------------
 # Housekeeping

@@ -38,9 +38,9 @@ class RUNHour
     /**
      * @var integer
      *
-     * @ORM\Column(name="job_class", type="string", length=24, nullable=true)
+     * @ORM\Column(name="jobClass", type="string", length=24, nullable=true)
      */
-    private $job_class;
+    private $jobClass;
     
     /**
      * @var date
@@ -346,26 +346,26 @@ class RUNHour
     }
     
     /**
-     * Set job_class
+     * Set jobClass
      *
      * @param string $jobClass
      * @return JOB
      */
     public function setJobClass($jobClass)
     {
-        $this->job_class = $jobClass;
+        $this->jobClass = $jobClass;
 
         return $this;
     }
 
     /**
-     * Get job_class
+     * Get jobClass
      *
      * @return string 
      */
     public function getjobClass()
     {
-        return $this->job_class;
+        return $this->jobClass;
     }
 
 

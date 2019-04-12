@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"2U");
@@ -164,7 +164,7 @@ function GlobalRefresh() {
     myChart.setColumnHidden(3,env!='*');
     myChart.setColumnHidden(4,app!='*');
     myChart.setColumnHidden(5,job_class!='*');
-    myChart.load("{{ url('xml_Report_runs_hour_status')}}?app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&day_past="+day_past,function(){
+    myChart.load("{{ url('xml_Report_runs_hour_status')}}?app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&dayPast="+dayPast,function(){
         scatterChart.clearAll();
         scatterChart.parse(myChart,"dhtmlxgrid");
         globalLayout.cells("b").progressOff();
@@ -175,8 +175,8 @@ function Execution(id) {
     myLayout.cells("b").expand();
     myLayout.cells("b").progressOn();
     myRuns.clearAll();
-    alert("{{ url('xml_Report_runs_hour_jobs') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past+"&day="+day);
-    myRuns.load("{{ url('xml_Report_runs_day_jobs') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past+"&day="+id, function () {
+    alert("{{ url('xml_Report_runs_hour_jobs') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast+"&day="+day);
+    myRuns.load("{{ url('xml_Report_runs_day_jobs') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast+"&day="+id, function () {
         myLayout.cells("b").progressOff();
     });
 }

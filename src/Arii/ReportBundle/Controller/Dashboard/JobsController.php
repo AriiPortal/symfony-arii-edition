@@ -26,7 +26,7 @@ class JobsController extends Controller
         $end   = new \DateTime($Filters['year']."-$month-$day 23:59:59");
 
         $em = $this->getDoctrine()->getManager(); 
-        $Jobs = $em->getRepository("AriiReportBundle:JOB")->findJobs($start,$end,$Filters['env'],$Filters['appl'],$Filters['job_class']);
+        $Jobs = $em->getRepository("AriiReportBundle:JOB")->findJobs($start,$end,$Filters['env'],$Filters['appl'],$Filters['jobClass']);
         
         $xml = "<?xml version='1.0' encoding='iso-8859-1'?><rows>";
         $xml .= '<head><afterInit><call command="clearAll"/></afterInit></head>';        
@@ -174,9 +174,9 @@ class JobsController extends Controller
             list($month,$year) = explode('-', $scope);
         }
         else {
-            list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter();
+            list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter();
         }
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter( 
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter( 
             $env, 
             $app, 
             -32, 
@@ -268,10 +268,10 @@ class JobsController extends Controller
             list($month,$year) = explode('-', $scope);
         }
         else {
-            list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter();
+            list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter();
         }
 $month = 2;
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter( $env, $app, -32, $month, $year );
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter( $env, $app, -32, $month, $year );
         
         $em = $this->getDoctrine()->getManager();
         if (($env == '*') and ($app=='*'))
@@ -349,10 +349,10 @@ $month = 2;
     {    
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
-            $request->query->get( 'day_past' ),
+            $request->query->get( 'dayPast' ),
             $request->query->get( 'day' ),
             $request->query->get( 'month' ),
             $request->query->get( 'year' )
@@ -420,7 +420,7 @@ $month = 2;
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
             -120,
@@ -505,10 +505,10 @@ $month = 2;
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$application,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
-            $request->query->get( 'day_past' ),
+            $request->query->get( 'dayPast' ),
             $request->query->get( 'day' ),
             $request->query->get( 'month' ),
             $request->query->get( 'year' )

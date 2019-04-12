@@ -12,10 +12,10 @@ class JobsAppController extends Controller
     {
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
-            $request->query->get( 'day_past' ),
+            $request->query->get( 'dayPast' ),
             $request->query->get( 'day' ),
             $request->query->get( 'month' ),
             $request->query->get( 'year' )
@@ -28,7 +28,7 @@ class JobsAppController extends Controller
                 'month' => $month,
                 'day' => $day,
                 'year' => $year,
-                'day_past' => $day_past
+                'dayPast' => $dayPast
                 ) 
             );
     }
@@ -38,7 +38,7 @@ class JobsAppController extends Controller
     {    
         $request = Request::createFromGlobals();
         $filter = $this->container->get('report.filter');
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
             -30,

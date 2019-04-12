@@ -1,9 +1,4 @@
-module.ACK: Acquittements
-summary.ACK: Suivi des incidents
-text.ACK: Escalade les alertes, route les messages et met à jour les instructions pour les exploitants. 
+module.API: Rest API
+summary.API: API pour le portail
+text.API: Accès au portail Autosys à travers une API Rest respectant la norme openAPI. 
 Author: E. Angenault
-Issue:
-    state:
-        - 0:   OPEN
-        - 64:  ACK.
-        - 128: CLOSE

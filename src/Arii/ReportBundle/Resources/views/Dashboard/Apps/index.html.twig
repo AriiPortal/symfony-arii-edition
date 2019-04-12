@@ -9,7 +9,7 @@ var category="{{ category }}",
     month={{ month }},
     year={{ year }},
     day={{ day }},
-    day_past={{ day_past }},
+    dayPast={{ dayPast }},
     limit=99;
 
 dhtmlxEvent(window,"load",function(){     
@@ -114,15 +114,15 @@ dhtmlxEvent(window,"load",function(){
     
     jobsChart.attachEvent("onItemClick",function(id){ 
         app = id;
-        window.location = "{{ url('arii_Report_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past;
+        window.location = "{{ url('arii_Report_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast;
     });
     runsChart.attachEvent("onItemClick",function(id){ 
         app = id;
-        window.location = "{{ url('arii_Report_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past;
+        window.location = "{{ url('arii_Report_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast;
     });
     alertsChart.attachEvent("onItemClick",function(id){ 
         app = id;
-        window.location = "{{ url('arii_Report_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past;
+        window.location = "{{ url('arii_Report_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast;
     });
     GlobalRefresh();
 });

@@ -15,14 +15,18 @@ services:
         class: Arii\JIDBundle\Service\AriiHistory
         arguments: [ "@arii_core.portal", "@arii_core.tools"]
 
+    arii_jid.Inventory:
+        class: Arii\JIDBundle\Service\AriiInventory
+        arguments: [ "@arii_core.portal", "@arii_core.tools"]
+
+    arii_jid.Report:
+        class: Arii\JIDBundle\Service\AriiReport
+        arguments: [ "@arii_core.portal", "@arii_core.tools"]
+
 # Definition du module
     arii_jid.sos:
         class: Arii\JIDBundle\Service\AriiSOS
         arguments: [ "@arii_core.portal", "@arii_core.dhtmlx", "@arii_core.sql" ]
-
-    arii_jid.historyOLD:
-        class: Arii\JIDBundle\Service\AriiHistory
-        arguments: [ "@arii_core.portal", "@arii_core.dhtmlx", "@arii_core.sql", "@arii_core.date", "@arii_core.tools"]
 
 # Passage en doctrine
     arii_jid.history2:

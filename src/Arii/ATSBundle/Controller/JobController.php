@@ -171,7 +171,7 @@ class JobController extends Controller
                 break;         
             default:
                 $table = 'UJO_JOB';
-                $return = strtoupper('joid,job_name,job_type,box_joid,owner,permission,n_retrys,create_stamp,external_app,has_box_success,has_override,is_active,job_qualifier,mach_name,sub_application,wf_joid,description,box_terminator,job_terminator,alert,create_userid,has_blob,has_condition,has_resource,is_currver,over_num,tag,update_userid,profile,numero,max_exit_success,send_notification,service_desk,as_applic,as_group,destination_file,has_box_failure,has_notification,has_service_desk,job_class,job_ver,over_seed,update_stamp');
+                $return = strtoupper('joid,job_name,job_type,box_joid,owner,permission,n_retrys,create_stamp,external_app,has_box_success,has_override,is_active,job_qualifier,mach_name,sub_application,wf_joid,description,box_terminator,job_terminator,alert,create_userid,has_blob,has_condition,has_resource,is_currver,over_num,tag,update_userid,profile,numero,max_exit_success,send_notification,service_desk,as_applic,as_group,destination_file,has_box_failure,has_notification,has_service_desk,jobClass,job_ver,over_seed,update_stamp');
         }
         
         $sql = $this->container->get('arii_core.sql');                  

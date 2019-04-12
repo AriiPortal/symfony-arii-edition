@@ -93,13 +93,13 @@ class HistoryController extends Controller
         
         // Une date peut etre passe en get
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )) {
-            $ref_date   = $request->query->get( 'ref_date' );
-            $session->setRefDate( $ref_date );
+        if ($request->query->get( 'refDate' )) {
+            $refDate   = $request->query->get( 'refDate' );
+            $session->setRefDate( $refDate );
         } else {
-            $ref_date   = $session->getRefDate();
+            $refDate   = $session->getRefDate();
         }
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
         
         $past   = $session->getRefPast();
         $future = $session->getRefFuture();
@@ -110,9 +110,9 @@ class HistoryController extends Controller
         $Timeline['step'] = $step;
     
         // on recalcule la date courante moins la plage de passé 
-        $year = substr($ref_date, 0, 4);
-        $month = substr($ref_date, 5, 2);
-        $day = substr($ref_date, 8, 2);
+        $year = substr($refDate, 0, 4);
+        $month = substr($refDate, 5, 2);
+        $day = substr($refDate, 8, 2);
         
         $start = substr($session->getPast(),11,2);
         $Timeline['start'] = (60/$step)*$start;
@@ -170,14 +170,14 @@ class HistoryController extends Controller
         
         // Une date peut etre passe en get
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )) {
-            $ref_date   = $request->query->get( 'ref_date' );
-            $session->setRefDate( $ref_date );
+        if ($request->query->get( 'refDate' )) {
+            $refDate   = $request->query->get( 'refDate' );
+            $session->setRefDate( $refDate );
         } else {
-            $ref_date   = $session->getRefDate();
+            $refDate   = $session->getRefDate();
         }
         
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
         
         $past   = $session->getRefPast();
         // Pas de future dans l'historique
@@ -191,9 +191,9 @@ class HistoryController extends Controller
         $Timeline['step'] = $step;
         $Timeline['step'] = 60;
         // on recalcule la date courante moins la plage de passé 
-        $year = substr($ref_date, 0, 4);
-        $month = substr($ref_date, 5, 2);
-        $day = substr($ref_date, 8, 2);
+        $year = substr($refDate, 0, 4);
+        $month = substr($refDate, 5, 2);
+        $day = substr($refDate, 8, 2);
         
         $start = substr($session->getPast(),11,2);
         $Timeline['start'] = (60/$step)*$start;

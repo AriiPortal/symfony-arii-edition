@@ -20,8 +20,8 @@ class AriiFilter
         $Default = [
             'env' => 'P',
             'app' => '*',
-            'day_past' => -30,
-            'job_class' => '*',
+            'dayPast' => -30,
+            'jobClass' => '*',
             'spooler' => '*',
             'hour' => $date->format('h'),
             'day' => $date->format('d'),
@@ -30,20 +30,23 @@ class AriiFilter
             'hour' => $date->format('H'),
             'minute' => $date->format('i'),
             'second' => $date->format('s'),
-            'limit' => 10,
             'category' => '*',
             'monthday' => $date->format('m').$date->format('d'),  // code jour
-            'max_result' => 1000,     // limitation 
-            'only_warning' => 0,  // alertes
+            'maxResults' => 1000,     // limitation 
+            'onlyWarning' => 0,  // alertes
             'sort' => 'last',          // tri par défaut
-            'retention' => 35          // tri par défaut
+            'retention' => 35,          // tri par défaut
+            'outputFormat' => 'dhtmlx',
+            'bundle' => '',   // Bundle en cours
+            'repoId' => 'local', // repo en cours
+            'machine' => null, // machine en cours
         ];
         
         $request = Request::createFromGlobals();
         $User = $this->portal->getUserInterface();    
 
         // le jour est la reference
-        $User['day_past'] = $User['ref_past'];
+        $User['dayPast'] = $User['refPast'];
         
         foreach (array_keys($Default) as $f) {
             // cas speciaux
@@ -86,7 +89,7 @@ class AriiFilter
         // Calcul fixe
         $end = new \DateTime($User['year'].'-'.$User['month'].'-'.$User['day'].' 23:59:59');
         $start = clone $end;
-        $start->add(\DateInterval::createFromDateString(($User['day_past']*86400+1).' seconds'));
+        $start->add(\DateInterval::createFromDateString(($User['dayPast']*86400+1).' seconds'));
         
         $User['start'] = $start;
         $User['end'] = $end;
@@ -96,14 +99,14 @@ class AriiFilter
         $User['month'] = $User['month']*1;
         // 
         // Conflit avec app.request de twig
-        $User['ref_past'] = $User['day_past'];
+        $User['refPast'] = $User['dayPast'];
         $Filters = $this->portal->setUserInterface($User);
         
         $Filters['appl']=$Filters['app'];
         unset($Filters['app']);
         
         // Contexte
-        foreach ([ 'max_result', 'only_warning', 'sort'] as $f)  {
+        foreach ([ 'maxResults', 'onlyWarning', 'sort', 'outputFormat', 'bundle', 'repoId', 'machine'] as $f)  {
             if ($request->query->get($f)!='')
                 $Filters[$f] = $request->query->get($f);
         }
@@ -114,75 +117,7 @@ class AriiFilter
         }
         return $Filters;
     }
-    
-    // fonction obsolete
-    public function getFilter($env='',$app='',$day_past='',$day='',$month='',$year='',$class='', $hour='', $spooler='' ) {       
-        $User = $this->portal->getUserInterface();        
-
-        // nouveauté
-        if (!isset($User['class'])) $User['class']='*';
         
-        if ($class=='') $class = $User['class'];
-        if ($class=='') $class = '*';        
-        $User['class'] = $class;
-        
-        if ($env=='') $env = $User['env'];
-        if ($env=='') $env = 'P';        
-        $User['env'] = $env;
-        
-        if ($app=='') $app = $User['app'];
-        if ($app=='') $app = '*';
-        $User['app'] = $app;
-
-        if ($spooler=='') $spooler = $User['spooler'];
-        if ($spooler=='') $spooler = 'arii';
-        $User['spooler'] = $spooler;
-        
-        if ($day_past=='') $day_past = $User['day_past'];
-        if ($day_past=='') $day_past = -90;
-        $User['day_past'] = $day_past;
-        
-        $date = new \DateTime();
-        // compatibilite temporaire
-        if (!isset($User['day'])) $User['day']=$date->format('d');
-        if ($day=='') $day = $User['day'];
-        if ($day=='') $day = $date->format('d');
-        $User['day'] = $day;
-        
-        if ($year=='') $year = $User['year'];
-        if ($year=='') $year = $date->format('Y');
-        $User['year'] = $year;
-
-        if ($month=='') $month = $User['month'];
-        if ($month=='last') {
-            $date->modify("last month");
-            $month = $date->format('m');
-        }
-
-        if ($hour=='') $hour = $User['hour'];
-        if ($hour=='') $hour = $date->format('H');
-        $User['hour'] = $hour;
-        
-/*        
-        $end = new \DateTime("$year-$month-01 23:59:59");
-        $end->modify('last day of this month');
-        
-        $month_add = round($day_past/30)+1; // on va du 1er au 31 de la fin
-        $start = new \DateTime("$year-$month-01"); 
-        $start->modify("$month_add months");
-        $start->modify('first day of this month');
-        // on se positionne au premier jour de mois precedent
-        $this->start = date('Y-m-d',strtotime(substr($User['day_past'],0,8).'01'));
-*/
-        // Calcul fixe
-        $end = new \DateTime("$year-$month-$day");
-        $start = clone $end;
-        $start->add(\DateInterval::createFromDateString($day_past.' day'));
-
-        $this->portal->setUserInterface($User);
-        return array($env,$app,$day_past,$day,$month,$year,$start,$end,$class,$hour,$spooler);
-    }
-    
     public function getEnv() {
         $User = $this->portal->getUserInterface();
     return $User['env'];  

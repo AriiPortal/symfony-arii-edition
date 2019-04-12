@@ -796,7 +796,7 @@ function AddOrder(id)
     toolbar = winLayout.cells('a').attachToolbar();
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct("{{ url('arii_JID_toolbar_add_order') }}",function(){
-        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -928,7 +928,7 @@ var largeur = 600;
     toolbar = winLayout.cells("a").attachToolbar();
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct("{{ url('arii_JID_toolbar_start_order') }}",function(){
-        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -948,7 +948,7 @@ var largeur = 600;
                     params.push(param);
                 });
                 var paramsStr = params.join(",");
-                var start_time = toolbar.getValue("ref_date");
+                var start_time = toolbar.getValue("refDate");
                 dhtmlx.message({
                 type: "Notice",
                 text: "{{ "Start order" | trans }} <strong>"+id+"</strong>" });
@@ -1012,7 +1012,7 @@ var largeur = 600;
     toolbar = winLayout.cells("a").attachToolbar();
     toolbar.setIconsPath("{{ asset('/images/') }}");
     toolbar.loadStruct("{{ url('arii_JID_toolbar_start_order') }}",function(){
-        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -1032,7 +1032,7 @@ var largeur = 600;
                     params.push(param);
                 });
                 var paramsStr = params.join(",");
-                var start_time = toolbar.getValue("ref_date");
+                var start_time = toolbar.getValue("refDate");
                 dhtmlx.message({
                 type: "Notice",
                 text: "{{ "Start order" | trans }} <strong>"+id+"</strong>" });

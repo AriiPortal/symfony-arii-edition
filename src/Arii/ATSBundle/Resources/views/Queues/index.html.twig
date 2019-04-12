@@ -1,0 +1,78 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    myAccordion.cells( "components" ).open(false); 
+    
+    myQueuesLayout = globalLayout.cells("b").attachLayout('3J');
+    myQueuesLayout.cells('a').setText("{{ "Queues" | trans }}");
+    myQueuesLayout.cells('b').setText("{{ "Members" | trans }}");
+    myQueuesLayout.cells('b').collapse();
+    myQueuesLayout.cells('c').hideHeader();
+    
+    myQueuesChart = myQueuesLayout.cells('a').attachChart({
+        view:         "donut",
+        value:        "#data3#",
+        label:        "#data0#",
+        tooltip:      "#data1#",
+        color: function (obj) {
+            if (obj.data1==="Online") 
+                return "green";
+            else if (obj.data1==="Offline") 
+                return "red";
+            else return "orange";
+        },
+        border:false,
+        pieInnerText: "",
+        shadow: 0,
+        legend:{
+            width: 200,
+            template: "#data0#",
+            valign:"top",
+            align:"left"
+        } 
+    });
+    myQueuesGrid = myQueuesLayout.cells('c').attachGrid();
+    myQueuesGrid.setHeader("{{ "Queue" | trans }},{{ "Status" | trans }},{{ "maxLoad" | trans }},{{ "Machines" | trans }},{{ "Percent" | trans }},{{ "Online" | trans }},{{ "Offline" | trans }}");
+    myQueuesGrid.attachHeader("#text_filter,#select_filter,#numeric_filter,#numeric_filter,#numeric_filter,#numeric_filter,#numeric_filter");
+    myQueuesGrid.setInitWidths("*,150,90,90,90,0,90");
+    myQueuesGrid.setColAlign("left,center,right,right,right,right,right");
+    myQueuesGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro");
+    myQueuesGrid.setColSorting("str,str,int,int,int,int,int");
+    myQueuesGrid.enableAlterCss("","");
+    myQueuesGrid.init();
+
+    myMachinesGrid = myQueuesLayout.cells('b').attachGrid();
+    myMachinesGrid.setHeader("{{ "Parent" | trans }},{{ "Machine" | trans }},{{ "maxLoad" | trans }},{{ "Status" | trans }},{{ "opsys" | trans }}");
+    myMachinesGrid.attachHeader("#text_filter,#text_filter,#numeric_filter,#select_filter,#select_filter");
+    myMachinesGrid.setInitWidths("0,*,90,200,90");
+    myMachinesGrid.setColAlign("left,left,right,center,right");
+    myMachinesGrid.setColTypes("ro,ro,ro,ro,ro");
+    myMachinesGrid.enableAlterCss("","");
+    myMachinesGrid.init();
+    
+    myQueuesChart.attachEvent("onItemclick", function (id,obj,trg) {
+        name = myQueuesChart.get(id).data0;    
+        myQueuesLayout.cells('b').setText(name);
+        myQueuesLayout.cells('b').expand();
+        myQueuesLayout.cells('b').progressOn();        
+        var url = "{{ url('api_ATS_queues_get', { "queueName": "QUEUENAME" } ) }}?outputFormat=dhtmlxGrid";
+        myMachinesGrid.load( url.replace('QUEUENAME',name), function() {  
+            myQueuesLayout.cells('b').progressOff();
+        });    
+    });    
+    
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_ATS_queues_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myQueuesGrid.load( url.replace('REPOID',db), function() {        
+        myQueuesGrid.refreshFilters();
+        myQueuesGrid.filterByAll();
+        myQueuesChart.clearAll();
+        myQueuesChart.parse( myQueuesGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

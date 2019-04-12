@@ -27,7 +27,7 @@ class AriiDailySchedule
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
-   public function DailySchedule($em, $cyclic = 0, $only_warning=1, $standalone=1) { 
+   public function DailySchedule($em, $cyclic = 0, $onlyWarning=1, $standalone=1) { 
 
          
         $Fields = array (
@@ -81,7 +81,7 @@ class AriiDailySchedule
                 $status='UNKNOWN';            
             }
             
-            if (($only_warning) and ($ok)) continue; 
+            if (($onlyWarning) and ($ok)) continue; 
             $Jobs[$id] = $line;
             $Jobs[$id]['STATUS'] = $status;
         }  

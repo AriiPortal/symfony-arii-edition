@@ -20,9 +20,9 @@ class RunsHourController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
-        $Runs = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['job_class']);        
+        $Runs = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass']);        
 //        if (!$Runs)
-//            throw new \Exception("Start: ".$start->format('Y-m-d')."\nEnd: ".$end->format('Y-m-d')."\nApp: ".$app."\nEnv: ".$env."\nClass: ".$job_class);
+//            throw new \Exception("Start: ".$start->format('Y-m-d')."\nEnd: ".$end->format('Y-m-d')."\nApp: ".$app."\nEnv: ".$env."\nClass: ".$jobClass);
 
         $xml = "<?xml version='1.0' encoding='iso-8859-1'?><rows>";
         $xml .= '<head><afterInit><call command="clearAll"/></afterInit></head>';
@@ -40,8 +40,8 @@ class RunsHourController extends Controller
                 $xml .= '<cell>'.$Run['application'].'</cell>';
             else
                 $xml .= '<cell/>';
-            if (isset($Run['job_class']))
-                $xml .= '<cell>'.$Run['job_class'].'</cell>';
+            if (isset($Run['jobClass']))
+                $xml .= '<cell>'.$Run['jobClass'].'</cell>';
             else
                 $xml .= '<cell/>';
             if ($Run['executions']>0)

@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"2U");
@@ -161,12 +161,12 @@ dhtmlxEvent(window,"load",function(){
 
 function GlobalRefresh() {
     donutChart.clearAll();
-    donutChart.load( "{{ url('arii_Report_jobs_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+    donutChart.load( "{{ url('arii_Report_jobs_app') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
         globalLayout.cells("a").progressOff();
         barChartMonth.clearAll();
-        barChartMonth.load( "{{ url('xml_Report_jobs_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {            
+        barChartMonth.load( "{{ url('xml_Report_jobs_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {            
             barChartDay.clearAll();
-            barChartDay.load( "{{ url('xml_Report_app_jobs') }}?app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&day_past="+day_past, function() {            
+            barChartDay.load( "{{ url('xml_Report_app_jobs') }}?app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {            
                 globalLayout.cells("b").progressOff();
             });
         });

@@ -43,7 +43,7 @@ class OrdersController extends Controller
     
     public function indexAction()
     {
-      return $this->render('AriiJOCBundle:Orders:index.html.twig' );
+        return $this->render('AriiJOCBundle:Orders:index.html.twig' );
     }
 
     public function listAction()
@@ -95,11 +95,11 @@ class OrdersController extends Controller
     {
         $request = Request::createFromGlobals();        
         $nested = $request->get('chained');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
         $sort = $request->get('sort');
 
         $state = $this->container->get('arii_joc.state');
-        $Orders = $state->Orders($nested,$only_warning,$sort);
+        $Orders = $state->Orders($nested,$onlyWarning,$sort);
         
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');

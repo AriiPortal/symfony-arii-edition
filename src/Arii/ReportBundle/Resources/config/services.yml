@@ -28,8 +28,4 @@ services:
     report.my_functions:
         class: Arii\ReportBundle\Service\MyFunctions
         arguments: [ ]
-
-    report.filter:
-        class: Arii\ReportBundle\Service\ReportFilter
-        arguments: [  "@arii_core.portal" ]
   

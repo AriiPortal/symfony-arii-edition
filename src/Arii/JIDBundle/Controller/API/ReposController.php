@@ -17,7 +17,7 @@ class ReposController extends Controller
         $Databases = $portal->getDatabases();
         $Repos = [];
         foreach ($Databases as $k=>$v) {
-            if (substr($k,0,4)=='ojs_') {
+            if (substr($k,0,6)=='ojs_db') {
                 $Repos[$k] = [
                     'title' => $Databases[$k]['title'],
                     'description' => $Databases[$k]['description']

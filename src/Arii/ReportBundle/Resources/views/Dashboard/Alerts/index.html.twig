@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"2U");
@@ -77,7 +77,7 @@ dhtmlxEvent(window,"load",function(){
     });
     jobsChart.attachEvent("onItemClick",function(id){ 
         app = id;
-        window.location = "{{ url('arii_Report_index') }}application?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past;
+        window.location = "{{ url('arii_Report_index') }}application?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast;
     });    
 
     myChart = myTab.cells("list").attachGrid();
@@ -197,7 +197,7 @@ function Execution(id) {
     myLayout.cells("b").expand();
     myLayout.cells("b").progressOn();
     myRuns.clearAll();
-//    alert("{{ url('xml_Report_runs_hour_jobs') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past+"&day="+day);
+//    alert("{{ url('xml_Report_runs_hour_jobs') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast+"&day="+day);
     myRuns.load("{{ url('xml_Report_runs_day_jobs') }}?app="+app, function () {
         myLayout.cells("b").progressOff();
     });

@@ -13,15 +13,15 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 class RUNHourRepository extends EntityRepository
 {
-   public function findRuns($start, $end, $env='*', $app='*',$job_class='*')
+   public function findRuns($start, $end, $env='*', $app='*',$jobClass='*')
     {
         $Filter = [ 'run.date','run.hour' ];   
         if ($env=='*')
             array_push($Filter,'run.env');
         if ($app=='*')
             array_push($Filter,'run.app');
-        if ($job_class=='*')
-            array_push($Filter,'run.job_class');
+        if ($jobClass=='*')
+            array_push($Filter,'run.jobClass');
         $f = implode(',',$Filter);
         
         $q = $this->createQueryBuilder('run')
@@ -39,9 +39,9 @@ class RUNHourRepository extends EntityRepository
         if ($app!='*')
             $q->andWhere('run.app = :app')
                 ->setParameter('app', $app);
-        if ($job_class!='*')
-            $q->andWhere('run.job_class = :job_class')
-                ->setParameter('job_class', $job_class);
+        if ($jobClass!='*')
+            $q->andWhere('run.jobClass = :jobClass')
+                ->setParameter('jobClass', $jobClass);
       
                         $query = $q->getQuery();
                         print $query->getSQL();
@@ -60,15 +60,15 @@ class RUNHourRepository extends EntityRepository
             ->getResult();
    }   
     
-   public function findAlerts($start, $end, $env='*', $app='*',$job_class='*')
+   public function findAlerts($start, $end, $env='*', $app='*',$jobClass='*')
     {
         $Filter = [ 'run.date','run.hour' ];   
         if ($env=='*')
             array_push($Filter,'run.env');
         if ($app=='*')
             array_push($Filter,'run.app');
-        if ($job_class=='*')
-            array_push($Filter,'run.job_class');
+        if ($jobClass=='*')
+            array_push($Filter,'run.jobClass');
         $f = implode(',',$Filter);
         
         $q = $this->createQueryBuilder('run')
@@ -87,9 +87,9 @@ class RUNHourRepository extends EntityRepository
         if ($app!='*')
             $q->andWhere('run.app = :app')
                 ->setParameter('app', $app);
-        if ($job_class!='*')
-            $q->andWhere('run.job_class = :job_class')
-                ->setParameter('job_class', $job_class);
+        if ($jobClass!='*')
+            $q->andWhere('run.jobClass = :jobClass')
+                ->setParameter('jobClass', $jobClass);
 /*        
                         $query = $q->getQuery();
                         print $query->getSQL();
@@ -112,10 +112,10 @@ class RUNHourRepository extends EntityRepository
    public function findRunsByDay($start, $end)
     {
         return $this->createQueryBuilder('run')
-              ->Select('run.date,run.spooler_name,run.app,run.env,run.job_class,sum(run.warnings) as warnings,sum(run.alarms) as alarms,sum(run.acks) as acks,sum(run.executions) as executions')
+              ->Select('run.date,run.spooler_name,run.app,run.env,run.jobClass,sum(run.warnings) as warnings,sum(run.alarms) as alarms,sum(run.acks) as acks,sum(run.executions) as executions')
               ->where('run.date >= :start')
               ->andWhere('run.date < :end')
-              ->groupBy('run.date,run.spooler_name,run.app,run.env,run.job_class')
+              ->groupBy('run.date,run.spooler_name,run.app,run.env,run.jobClass')
               ->orderBy('run.date,run.spooler_name')
               ->setParameter('start', $start)
               ->setParameter('end', $end)

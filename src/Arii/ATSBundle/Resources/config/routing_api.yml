@@ -1,6 +1,121 @@
 # --------------------------------------------------------------------------
 # PAGES PRINCIPALES
 # --------------------------------------------------------------------------
-json_ATS_repos:
+api_ATS_repos:
     path:  /repos
     defaults: { _controller: AriiATSBundle:API\Repos:list }
+
+# --------------------------------------------------------------------------
+# Actions
+# --------------------------------------------------------------------------
+api_ATS_actions_list:
+    path:  /repos/{repoId}/actions
+    defaults: { _controller: AriiATSBundle:API\Actions:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Agents
+# --------------------------------------------------------------------------
+api_ATS_agents_list:
+    path:  /repos/{repoId}/agents
+    defaults: { _controller: AriiATSBundle:API\Agents:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Alarms
+# --------------------------------------------------------------------------
+api_ATS_alarms_list:
+    path:  /repos/{repoId}/alarms
+    defaults: { _controller: AriiATSBundle:API\Alarms:list, repoId: ats_db }
+
+api_ATS_alarms_infos:
+    path:  /repos/{repoId}/alarms/infos
+    defaults: { _controller: AriiATSBundle:API\Alarms:infos, repoId: ats_db }
+
+api_ATS_alarms_get:
+    path:  /repos/{repoId}/alarms/{eventId}
+    defaults: { _controller: AriiATSBundle:API\Alarms:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Boxes
+# --------------------------------------------------------------------------
+api_ATS_boxes_list:
+    path:  /repos/{repoId}/boxes
+    defaults: { _controller: AriiATSBundle:API\Boxes:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Changes
+# --------------------------------------------------------------------------
+api_ATS_changes_list:
+    path:  /repos/{repoId}/changes
+    defaults: { _controller: AriiATSBundle:API\Changes:list, repoId: ats_db }
+
+api_ATS_changes_get:
+    path:  /repos/{repoId}/changes/{auditId}
+    defaults: { _controller: AriiATSBundle:API\Changes:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Boxes
+# --------------------------------------------------------------------------
+api_ATS_boxes_list:
+    path:  /repos/{repoId}/jobs
+    defaults: { _controller: AriiATSBundle:API\Boxes:list, repoId: ats_db }
+
+api_ATS_boxes_get:
+    path:  /repos/{repoId}/boxes/{jobId}
+    defaults: { _controller: AriiATSBundle:API\Boxes:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Jobs
+# --------------------------------------------------------------------------
+api_ATS_jobs_list:
+    path:  /repos/{repoId}/jobs
+    defaults: { _controller: AriiATSBundle:API\Jobs:list, repoId: ats_db }
+
+api_ATS_jobs_get:
+    path:  /repos/{repoId}/jobs/{jobId}
+    defaults: { _controller: AriiATSBundle:API\Jobs:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Machines
+# --------------------------------------------------------------------------
+api_ATS_machines_list:
+    path:  /repos/{repoId}/machines
+    defaults: { _controller: AriiATSBundle:API\Machines:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Processes
+# --------------------------------------------------------------------------
+api_ATS_processes_list:
+    path:  /repos/{repoId}/processes
+    defaults: { _controller: AriiATSBundle:API\Processes:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Queues
+# --------------------------------------------------------------------------
+api_ATS_queues_list:
+    path:  /repos/{repoId}/queues
+    defaults: { _controller: AriiATSBundle:API\Queues:list, repoId: ats_db }
+
+api_ATS_queues_get:
+    path:  /repos/{repoId}/queues/{queueName}
+    defaults: { _controller: AriiATSBundle:API\Queues:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# WaitQueues
+# --------------------------------------------------------------------------
+api_ATS_waitqueues_list:
+    path:  /repos/{repoId}/wait_queues
+    defaults: { _controller: AriiATSBundle:API\WaitQueues:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Schedulers
+# --------------------------------------------------------------------------
+api_ATS_schedulers_list:
+    path:  /repos/{repoId}/schedulers
+    defaults: { _controller: AriiATSBundle:API\Schedulers:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# AppServers
+# --------------------------------------------------------------------------
+api_ATS_appservers_list:
+    path:  /repos/{repoId}/appservers
+    defaults: { _controller: AriiATSBundle:API\AppServers:list, repoId: ats_db }

@@ -1,45 +1,45 @@
 {
   "swagger" : "2.0",
+  "openapi" : "2.0",
   "info" : {
-    "description" : "A Workload Automation API for Autosys",
+    "description" : "API Rest",
     "version" : "1.0.0",
-    "title" : "Autosys API",
+    "title" : "API",
     "contact" : {
       "name" : "Arii",
-      "url" : "https://wiki.vaudoise.ch/display/DEVS/Standards+API+v1.1",
+      "url" : "https://localhost",
       "email" : "arii@sos-paris.com"
     }
   },
+  "host": "localhost/app_dev.php/api/v1",
   "consumes" : [ "application/json" ],
   "produces" : [ "application/json" ],
+  "servers" : [
+    {
+        "url": "https://api.example.com/v1",
+        "description": "Production server (uses live data)"
+    },
+    {
+        "url": "https://localhost/app_dev.php/api/v1",
+        "description": "Local server"
+    }    
+  ],
+  "schemes": [
+    "http",
+    "https"
+    ],
   "paths" : {
-    "/jobs" : {
+    "/session" : {
       "get" : {
-        "summary" : "get a list of all jobs",
+        "summary" : "Get a list of parameters",
+        "tags" : [ "Session" ],
         "parameters" : [ {
-          "name" : "jobName",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "applicationCode",
+          "name" : "outputFormat",
           "in" : "query",
           "required" : false,
           "type" : "string",
-          "description" : "Application code",
-          "minLength" : 3,
-          "maxLength" : 3
-        }, {
-          "name" : "applicationName",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "environment",
-          "in" : "query",
-          "required" : false,
-          "type" : "string",
-          "x-example" : "T,P,D"
+          "enum": [ "json", "xml" ],
+          "default" : "json"
         } ],
         "responses" : {
           "200" : {
@@ -47,256 +47,160 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/job"
+                "$ref" : "#/definitions/session"
               }
             }
           }
         }
       },
       "post" : {
-        "summary" : "Add a new job",
-        "parameters" : [ ],
-        "responses" : {
-          "201" : {
-            "description" : "Status 201"
-          }
-        }
-      }
-    },
-    "/jobs/{jobId}" : {
-      "get" : {
-        "summary" : "get information for a job",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "$ref" : "#/definitions/job"
-            }
-          }
-        }
-      },
-      "put" : {
-        "summary" : "Update a job",
-        "consumes" : [ ],
-        "parameters" : [ {
-          "name" : "body",
-          "in" : "body",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/job"
-          }
-        } ],
-        "responses" : {
-          "202" : {
-            "description" : "Status 202"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete a job",
-        "parameters" : [ ],
-        "responses" : {
-          "204" : {
-            "description" : "Status 204"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "jobId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/jobs/{jobId}/runs" : {
-      "get" : {
-        "summary" : "Get all executions for a job",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/run"
-              }
-            }
-          }
-        }
-      },
-      "post" : {
-        "summary" : "Add a new run",
-        "consumes" : [ ],
-        "parameters" : [ {
-          "name" : "body",
-          "in" : "body",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/run"
-          }
-        } ],
-        "responses" : {
-          "201" : {
-            "description" : "Status 201"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "jobId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/jobs/{jobId}/runs/{runId}" : {
-      "get" : {
-        "summary" : "get a run",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "$ref" : "#/definitions/run"
-            }
-          },
-          "404" : {
-            "description" : "The job does not exist"
-          },
-          "500" : {
-            "description" : "Status 500"
-          }
-        }
-      },
-      "put" : {
-        "summary" : "Update a run",
+        "summary" : "Create a fresh session",
+        "tags" : [ "Session" ],
         "parameters" : [ ],
         "responses" : {
           "202" : {
-            "description" : "Status 202"
-          },
-          "403" : {
-            "description" : "No permission to add a run"
+            "description" : "Reinitialised session"
           }
         }
       },
-      "delete" : {
-        "summary" : "Delete a run",
-        "parameters" : [ ],
+      "patch" : {
+        "summary" : "Update the session",
+        "tags" : [ "Session" ],
+        "parameters" : [ {
+          "name" : "session",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref":"#/definitions/session"
+          }
+        } ],
         "responses" : {
           "204" : {
-            "description" : "Status 204"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "jobId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      }, {
-        "name" : "runId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/activities" : {
-      "get" : {
-        "summary" : "get all activities",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "type" : "object",
-              "properties" : {
-                "activit" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
+            "description" : "Refresh value updated"
+          }     
         }
       }
     },
-    "/activities/{activityId}/jobs" : {
+    "/repos" : {
       "get" : {
-        "summary" : "get all jobs for an activity",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "activityId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/activities/{activityId}/tasks" : {
-      "get" : {
-        "summary" : "List of task for an activity",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "activityId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/transfers" : {
-      "get" : {
-        "summary" : "Get all transfers",
+        "summary" : "Get the list of repos",
+        "tags" : [ "Repos" ],
         "parameters" : [ {
-          "name" : "partner",
+          "name" : "type",
           "in" : "query",
           "required" : false,
           "type" : "string",
-          "description" : "Partner"
+          "enum": [ "ats", "ojs" ],
+          "default" : "ojs"
+        },
+        {
+          "name" : "outputFormat",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "enum": [ "json", "xml" ],
+          "default" : "json"
         } ],
         "responses" : {
           "200" : {
-            "description" : "Status 200",
+            "description" : "OK",
             "schema" : {
-              "type" : "object",
-              "properties" : {
-                "name" : {
-                  "type" : "string"
-                },
-                "title" : {
-                  "type" : "string"
-                },
-                "description" : {
-                  "type" : "string"
-                },
-                "env" : {
-                  "type" : "string"
-                },
-                "steps" : {
-                  "type" : "string"
-                },
-                "step_start" : {
-                  "type" : "string"
-                },
-                "step_end" : {
-                  "type" : "string"
+                "code" : {
+                  "type" : "string",
+                  "description" : "An error code"
                 }
-              }
             }
-          }
+          },
+          "404" : {
+            "description" : "Parameter not found"
+          }        
+        }
+      },   
+      "post" : {
+        "summary" : "Create a new repo",
+        "tags" : [ "Repos" ],
+        "parameters" : [           {
+            "name": "repo",
+            "in": "body",
+            "description": "Repo to add (the repo must be defined in config.yml)",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/repo"
+            }
+          } ],
+        "responses" : {
+          "201" : {
+            "description" : "Repo created"
+          }     
         }
       }
-    }
+    },
+    "/repos/{repoName}" : {
+      "get" : {
+        "summary" : "Get information about repo by name",
+        "tags" : [ "Repos" ],
+        "parameters" : [ {
+          "name" : "repoName",
+          "in" : "path",
+          "required" : false,
+          "type" : "string",
+          "default" : "ojs_db"
+        },
+        {
+          "name" : "outputFormat",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "enum": [ "json", "xml" ],
+          "default" : "json"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+                "code" : {
+                  "type" : "string",
+                  "description" : "An error code"
+                }
+            }
+          },
+          "404" : {
+            "description" : "Parameter not found"
+          }        
+        }
+      },   
+      "put" : {
+        "summary" : "Update the repo",
+        "tags" : [ "Repos" ],
+        "parameters" : [ {
+          "name" : "repoName",
+          "in" : "path",
+          "required" : false,
+          "type" : "string",
+          "default" : "ojs_db"
+        },
+        {
+            "name": "repo",
+            "in": "body",
+            "description": "Repo to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/repo"
+            }
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "Repo updated"
+          },
+          "404" : {
+            "description" : "Repo not found"
+          },
+          "500" : {
+            "description" : "Server error"
+          }     
+        }
+      }
+    }    
   },
   "definitions" : {
     "Exception" : {
@@ -363,41 +267,76 @@
       },
       "description" : "A list of entity validation problems"
     },
-    "job" : {
+    "session" : {
       "type" : "object",
       "properties" : {
-        "jobName" : {
+        "date" : {
           "type" : "string",
-          "description" : "Job name"
+          "format": "date-time" ,       
+          "description" : "Current date"
         },
-        "jobType" : {
+        "day" : {
+          "type" : "integer",
+          "description" : "Current day"
+        },
+        "month" : {
+          "type" : "integer",
+          "description" : "Current month"
+        },
+        "year" : {
+          "type" : "integer",
+          "description" : "Current year"
+        },
+        "timestamp" : {
+          "type" : "integer",
+          "description" : "Current epoch"
+        },
+        "start" : {
           "type" : "string",
-          "description" : "Type of job (command, file_watcher, file transfer...)"
+          "format": "date-time" , 
+          "description" : "Start date"
         },
-        "Command" : {
+        "end" : {
           "type" : "string",
-          "description" : "Command to execute"
+          "format": "date-time" , 
+          "description" : "End date"
+        },        
+        "refresh" : {
+          "type" : "integer",
+          "default" : 30,
+          "description" : "Refresh period in seconds"
         },
-        "Machine" : {
-          "type" : "string"
+        "refreshPause" : {
+          "type" : "boolean",
+          "description" : "Refresh paused if true"
+        },
+        
+        "spooler" : {
+          "type" : "string",
+          "description" : "Name of the spooler"
         }
       }
     },
-    "run" : {
+    "repo" : {
       "type" : "object",
       "properties" : {
-        "start_time" : {
+        "name" : {
           "type" : "string",
-          "format" : "date-time"
-        },
-        "end_time" : {
+          "description" : "Name of the repo"
+        },        
+        "title" : {
           "type" : "string",
-          "format" : "date-time"
-        },
-        "status" : {
-          "type" : "string"
-        }
+          "description" : "Display name of the repo"
+        },        
+        "description" : {
+          "type" : "string",
+          "description" : "Description of the repo"
+        },        
+        "type" : {
+          "type" : "string",
+          "description" : "Type of the repo"
+        }        
       }
-    }
+    }    
   }
 }

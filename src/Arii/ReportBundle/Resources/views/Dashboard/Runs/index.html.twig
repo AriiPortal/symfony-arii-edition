@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"3L");
@@ -175,9 +175,9 @@ function GlobalRefresh() {
     globalLayout.cells("c").collapse();
 
     barChart.clearAll();
-    barChart.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+    barChart.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
         barChart2.clearAll();
-        barChart2.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past);
+        barChart2.load( "{{ url('xml_Report_runs_status_chart') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast);
     });
 
 };

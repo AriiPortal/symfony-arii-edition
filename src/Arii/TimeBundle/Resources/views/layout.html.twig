@@ -14,12 +14,7 @@ var size = 200;
 dhtmlxEvent(window,"load",function(){
     AriiLayout('Time','help',size);
     
-    menuLayout = globalLayout.cells("a").attachLayout("2E");
-    menuLayout.cells("a").setText("{{ "Menu" | trans }}");
-    menuLayout.cells("b").setHeight(size);
-    menuLayout.cells("b").hideHeader();
-    
-    mySidebar = menuLayout.cells("a").attachSidebar({
+    mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
         width: size,

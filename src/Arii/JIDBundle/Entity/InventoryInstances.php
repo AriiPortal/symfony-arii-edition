@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * InventoryInstances
  *
  * @ORM\Table(name="inventory_instances", uniqueConstraints={@ORM\UniqueConstraint(name="INVENTORY_II_UNIQUE", columns={"SCHEDULER_ID", "HOSTNAME", "PORT"})}, indexes={@ORM\Index(name="REPORTING_II_SCHEDULER_ID", columns={"SCHEDULER_ID"}), @ORM\Index(name="REPORTING_II_HOST", columns={"HOSTNAME", "PORT"})})
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\JIDBundle\Entity\InventoryInstancesRepository")
  */
 class InventoryInstances
 {

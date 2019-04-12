@@ -20,9 +20,11 @@ class OrderController extends Controller {
             $request = Request::createFromGlobals();
             $id = $request->get('id');
         }
-        
+
         $JID = $this->container->get('arii.JID');
-        $log = $JID->getOrderLog($id,$db);
+        $portal = $this->container->get('arii_core.portal');       
+
+        $log = $JID->getOrderLog($id,$portal->getDatabase());
         if (!$log) {
             $sos = $this->container->get('arii_jid.sos');
             // $log = $sos->Log($spooler, '/show_log?order='.$order.'&history_id='.$id);

@@ -15,10 +15,24 @@ class ConfigController extends Controller
 
     public function configAction()
     {
-        $portal = $this->container->get('arii_core.portal');
-        $db = $portal->getDatabase();
+        $portal = $this->container->get('arii_core.portal');    
+        $repoId = $portal->getDatabase();
+        $DB = $this->getDoctrine()->getRepository('AriiCoreBundle:Repo')->findOneBy(['name' => $repoId ]);
+        $Repo = [];
+        if ($DB)
+            $Repo['name'] = $DB->getName();
+        else
+            $Repo['name'] = $repoId;
         
-        return $this->render('AriiJIDBundle:Config:config.html.twig', array('db' => $db));
+        // On complete avec les infos 
+        $em = $this->getDoctrine()->getManager($repoId);
+        $Params = $em->getConnection()->getParams();
+        foreach (['driver','host','port','user','dbname','service','servicename','charset'] as $k) {
+            if (isset($Params[$k])) 
+                $Repo[$k] = $Params[$k];
+        } 
+        
+        return $this->render('AriiJIDBundle:Config:config.html.twig', $Repo );
     }
 
 }

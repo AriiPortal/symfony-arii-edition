@@ -1,0 +1,45 @@
+# --------------------------------------------------------------------------
+# Interface
+# --------------------------------------------------------------------------
+api_Core_session_list:
+    path:  /session
+    defaults: { _controller: AriiCoreBundle:API\Session:list }
+    methods: [GET]
+
+api_Core_session_init:
+    path:  /session
+    defaults: { _controller: AriiCoreBundle:API\Session:init }
+    methods: [POST]
+
+api_Core_session_update:
+    path:  /session
+    defaults: { _controller: AriiCoreBundle:API\Session:update }
+    methods: [PUT,PATCH]
+
+api_Core_session_get:
+    path:  /session/{parameter}
+    defaults: { _controller: AriiCoreBundle:API\Session:get }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Referentiels
+# --------------------------------------------------------------------------
+api_Core_repos_list:
+    path:  /repos
+    defaults: { _controller: AriiCoreBundle:API\Repos:list }
+    methods: [GET]
+
+api_Core_repos_get:
+    path:  /repos/{repoId}
+    defaults: { _controller: AriiCoreBundle:API\Repos:get, repoId: default }
+    methods: [GET]
+
+api_Core_repos_create:
+    path:  /repos
+    defaults: { _controller: AriiCoreBundle:API\Repos:create }
+    methods: [POST]
+
+api_Core_repos_update:
+    path:  /repos/{repoId}
+    defaults: { _controller: AriiCoreBundle:API\Repos:update, repoId: ojs_db }
+    methods: [PUT,PATCH]

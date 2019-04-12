@@ -35,13 +35,13 @@ class RuntimesController extends Controller
         return $this->render('AriiATSBundle:Runtimes:grid_menu.xml.twig',array(), $response );
     }
 
-    public function gridAction($only_warning=0,$job_only=0)
+    public function gridAction($onlyWarning=0,$job_only=0)
     {
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'only_warning' ))
-            $only_warning = $request->query->get( 'only_warning' );
+        if ($request->query->get( 'onlyWarning' ))
+            $onlyWarning = $request->query->get( 'onlyWarning' );
         if ($request->query->get( 'job_warning' ))
-            $only_warning = $request->query->get( 'job_warning' );
+            $onlyWarning = $request->query->get( 'job_warning' );
 
         $sql = $this->container->get('arii_core.sql');                 
         $qry = $sql->Select(array('j.JOID','j.JOB_NAME','s.STATUS', 's.LAST_START','a.AVG_RUN_TIME' ))

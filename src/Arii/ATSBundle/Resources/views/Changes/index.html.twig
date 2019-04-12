@@ -1,0 +1,62 @@
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    myAccordion.cells( "audit" ).open(false); 
+    
+    globalLayout.cells("b").setText("{{ "Audit" | trans}}");
+    
+    myLayoutJobs = globalLayout.cells("b").attachLayout("2U");
+    myLayoutJobs.cells("a").setWidth(800); 
+    myLayoutJobs.cells("a").setText("{{ "Jobs" | trans }}"); 
+    myLayoutJobs.cells("b").setText("{{ "Detail" | trans }}"); 
+    myLayoutJobs.cells("b").collapse();
+    
+    myGridJobs = myLayoutJobs.cells("a").attachGrid();
+    myGridJobs.setImagePath( "{{ asset('/images/') }}");
+    myGridJobs.setHeader("{{ "Date" | trans }},{{ "Event" | trans }},{{ "Job" | trans }},{{ "User" | trans }},{{ "Domain" | trans }}");
+    myGridJobs.attachHeader("#text_filter,#select_filter,#text_filter,#select_filter,#select_filter");
+    myGridJobs.setInitWidths("140,80,*,120,120");
+    myGridJobs.setColAlign("left,left,left,left,left");
+    myGridJobs.setColTypes("ro,ro,ro,ro,ro");
+    myGridJobs.setColSorting("date,str,str,str,str");
+    myGridJobs.enableAlterCss("","");
+    myGridJobs.init();    
+    myGridJobs.attachEvent("onRowDblClicked", Detail );
+
+    myDetail = myLayoutJobs.cells("b").attachGrid();
+    myDetail.selMultiRows = true;
+    myDetail.setImagePath( "{{ asset('/images/') }}");
+    myDetail.setHeader("{{ "Seq." | trans }},{{ "Attr." | trans }},{{ "Attribute" | trans }},{{ "E." | trans }}");
+    myDetail.attachHeader("#numeric_filter,#text_filter,#text_filter,#text_filter");
+    myDetail.setInitWidths("0,140,*,0");
+    myDetail.setColAlign("right,left,left,left");
+    myDetail.setColTypes("ro,ro,ro,ro");
+    myDetail.setColSorting("int,str,str,int");
+    myDetail.enableMultiline(true);
+    myDetail.enableAlterCss("","");
+    myDetail.init();
+
+    globalLayout.cells("b").progressOn();
+}
+
+function GridRefresh() {   
+    var url = "{{ url('api_ATS_changes_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    alert(url.replace('REPOID',db));
+    myGridJobs.load( url.replace('REPOID',db) , function(){    
+        myGridJobs.refreshFilters();
+        myGridJobs.filterByAll();
+        globalLayout.cells("b").progressOff();
+    });         
+}
+
+function Detail(id) {
+    myLayoutJobs.cells("b").expand();
+    myLayoutJobs.cells("b").progressOn();
+    var url = "{{ url('api_ATS_changes_get', { "repoId": "REPOID", "auditId": "JOBID" } ) }}?outputFormat=dhtmlxGrid";
+    myDetail.clearAndLoad( url.replace('REPOID',db).replace('JOBID',id), function(){
+        myLayoutJobs.cells("b").progressOff();
+    });    
+}
+</script>
+{% endblock %}

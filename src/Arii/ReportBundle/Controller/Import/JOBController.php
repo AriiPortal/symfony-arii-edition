@@ -122,7 +122,7 @@ class JOBController extends Controller
             // Preparation des données
             $app       = $Job['app'];
             $env       = $Job['env'];
-            $job_class = $Job['job_class'];            
+            $jobClass = $Job['jobClass'];            
             $spooler   = $Job['spooler_name'];            
             
             $created = new \Datetime($Job['created']);
@@ -130,7 +130,7 @@ class JOBController extends Controller
             $updated = new \Datetime($Job['updated']);
             $end = ($Job['deleted']!=''?$deleted:$updated);
             
-            $id = "$app#$env#$job_class#$spooler";
+            $id = "$app#$env#$jobClass#$spooler";
             
             // on ajoute directement le created et le deleted
             $id_created = $id.'#'.$created->format("Y-m-d");            
@@ -171,7 +171,7 @@ class JOBController extends Controller
         $connection->executeUpdate($q);
         
         foreach ($Exist as $k=>$jobs) {            
-            list($app,$env,$job_class,$spooler_name,$date) = explode('#',$k);
+            list($app,$env,$jobClass,$spooler_name,$date) = explode('#',$k);
             
             // truncate ?! si on truncate on perd l'historique
 /*            
@@ -179,7 +179,7 @@ class JOBController extends Controller
                 array( 
                     'app'=>$app,
                     'env' =>$env,
-                    'job_class' =>$job_class,
+                    'jobClass' =>$jobClass,
                     'spooler_name' =>$spooler_name,
                     'date' => new \DateTime($date)
                 )
@@ -195,12 +195,12 @@ class JOBController extends Controller
             
             $JobDay->setApp($app);            
             $JobDay->setEnv($env);
-            $JobDay->setJobClass($job_class);
+            $JobDay->setJobClass($jobClass);
             $JobDay->setSpoolerName($spooler_name);
             $JobDay->setDate(new \DateTime($date));                        
             $JobDay->setJobs($jobs);
             
-            $id =  "$app#$env#$job_class#$spooler_name#$date";         
+            $id =  "$app#$env#$jobClass#$spooler_name#$date";         
             if (isset($Created[$id]))
                 $JobDay->setCreated($Created[$id]);            
             if (isset($Deleted[$id]))
@@ -232,7 +232,7 @@ class JOBController extends Controller
             
             $app = $Job['app'];
             $env = $Job['env'];
-            $class = $Job['job_class'];            
+            $class = $Job['jobClass'];            
             $month = $Job['month'];
             $year = $Job['year'];
             $spooler_name = $Job['spooler_name'];

@@ -59,12 +59,12 @@
 {% endfor %}
     </item>
     <item type="separator" id="sep6"/>
-    <item type="buttonSelect" id="DAY_PAST" text="{{ day_past }}" img="timeline.png">
-        <item type="button" id="-1" text="1 {{ "Day" | trans }}"{% if day_past==-1%} selected="true"{% endif %}/>
-        <item type="button" id="-7" text="1 {{ "Week" | trans }}"{% if day_past==-7%} selected="true"{% endif %}/>
-        <item type="button" id="-30" text="1 {{ "Month" | trans }}"{% if day_past==-30%} selected="true"{% endif %}/>
-        <item type="button" id="-90" text="3 {{ "Months" | trans }}"{% if day_past==-90%} selected="true"{% endif %}/>
-        <item type="button" id="-180" text="6 {{ "Months" | trans }}"{% if day_past==-180%} selected="true"{% endif %}/>
-        <item type="button" id="-365" text="1 {{ "Year" | trans }}"{% if day_past==-365%} selected="true"{% endif %}/>
+    <item type="buttonSelect" id="dayPast" text="{{ dayPast }}" img="timeline.png">
+        <item type="button" id="-1" text="1 {{ "Day" | trans }}"{% if dayPast==-1%} selected="true"{% endif %}/>
+        <item type="button" id="-7" text="1 {{ "Week" | trans }}"{% if dayPast==-7%} selected="true"{% endif %}/>
+        <item type="button" id="-30" text="1 {{ "Month" | trans }}"{% if dayPast==-30%} selected="true"{% endif %}/>
+        <item type="button" id="-90" text="3 {{ "Months" | trans }}"{% if dayPast==-90%} selected="true"{% endif %}/>
+        <item type="button" id="-180" text="6 {{ "Months" | trans }}"{% if dayPast==-180%} selected="true"{% endif %}/>
+        <item type="button" id="-365" text="1 {{ "Year" | trans }}"{% if dayPast==-365%} selected="true"{% endif %}/>
     </item>
 </toolbar>

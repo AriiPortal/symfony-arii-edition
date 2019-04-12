@@ -14,10 +14,10 @@ class AriiSQL
     protected $job_chain;
     protected $order_id;
     protected $status;
-    protected $ref_date;
-    protected $ref_past;
-    protected $ref_future;
-    protected $ref_timestamp;
+    protected $refDate;
+    protected $refPast;
+    protected $refFuture;
+    protected $refTimestamp;
     
     protected $past;
     protected $future;
@@ -60,10 +60,10 @@ class AriiSQL
         $User = $portal->getUserInterface(); 
 
         $this->spooler    = $User['spooler'];       
-        $this->ref_date   = $User['ref_date'];
-        $this->ref_past   = $User['ref_past'];
-        $this->ref_future = $User['ref_future'];
-        $this->ref_timestamp = $User['ref_timestamp'];
+        $this->refDate   = $User['refDate'];
+        $this->refPast   = $User['refPast'];
+        $this->refFuture = $User['refFuture'];
+        $this->refTimestamp = $User['refTimestamp'];
         $this->past   = $User['past'];
         $this->future = $User['future'];
 
@@ -183,7 +183,7 @@ class AriiSQL
                    break;
                case '{start_timestamp}':
                     array_push( $Where, 
-                           '( '.$this->Date($Fields['{start_timestamp}'],' >= ',($this->ref_timestamp+($this->ref_past*86400))).' )' );
+                           '( '.$this->Date($Fields['{start_timestamp}'],' >= ',($this->refTimestamp+($this->refPast*86400))).' )' );
                    break;
                case '{next_start_time}':
                     array_push( $Where, 

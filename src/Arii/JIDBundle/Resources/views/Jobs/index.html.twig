@@ -244,7 +244,7 @@ dhtmlxEvent(window,"load",function(){
     myDetailToolbar = myDetailLayout.cells("a").attachToolbar();
     myDetailToolbar.setIconsPath("{{ asset('/images/') }}");
     myDetailToolbar.loadStruct( "{{ url('xml_JID_jobs_form_toolbar') }}" , function(){
-        GBCalendar = new dhtmlXCalendarObject(myDetailToolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(myDetailToolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });
@@ -312,7 +312,7 @@ dhtmlxEvent(window,"load",function(){
                 });
                 var paramsStr = params.join(",");
                 var start_time = '';
-                start_time = myDetailToolbar.getValue("ref_date");
+                start_time = myDetailToolbar.getValue("refDate");
                 // alert("{{ url('arii_XML_Command') }}?command="+itemid+"&params="+encodeURIComponent(params)+"&time="+start_time+"&job_id="+id); 
                 dhtmlx.message({
                 type: "Notice",

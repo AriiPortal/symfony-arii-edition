@@ -29,10 +29,10 @@ class OrdersController extends Controller
     {     
         $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
-        $Timeline['ref_date'] = $Filters['ref_date'];
+        $Timeline['refDate'] = $Filters['refDate'];
         // On prend 24 fuseaux entre maintenant et le passe
         // on trouve le step en minute
-        $diff  	= date_diff( $Filters['date_future'], $Filters['date_past'] );
+        $diff  	= date_diff( $Filters['dateFuture'], $Filters['datePast'] );
         $step = ($diff->h)*2.5; // heure * 60 minutes / 24 fuseaux
         if ($step == 0) $step = 1;
         $Timeline['step'] = 60;
@@ -47,7 +47,7 @@ class OrdersController extends Controller
 
         // Liste des spoolers
         $em = $this->getDoctrine()->getManager($db);        
-        $Timeline['spoolers'] = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->listSpoolers($Filters['date_past']);
+        $Timeline['spoolers'] = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->listSpoolers($Filters['datePast']);
         return $this->render('AriiDSBundle:Orders:index.html.twig', array('refresh' => $Filters['refresh'], 'Timeline' => $Timeline ) );
     }
 
@@ -210,13 +210,13 @@ public function tzformat($date,$plus=0) {
         return $this->render('AriiDSBundle:Orders:menu.xml.twig');
     }
 
-    public function pieAction($history_max=0,$ordered = 0,$only_warning=1) {        
+    public function pieAction($history_max=0,$ordered = 0,$onlyWarning=1) {        
         $request = Request::createFromGlobals();
         $cyclic = $request->get('cyclic');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
 
         $ds = $this->container->get('arii_ds.dailyschedule');
-        $Jobs = $ds->DailySchedule($cyclic, $only_warning, false);
+        $Jobs = $ds->DailySchedule($cyclic, $onlyWarning, false);
 
         $States = array('WAITING','EXECUTED','DELAYED','BLOCKED');
         foreach ($States as $state) {
@@ -228,7 +228,7 @@ public function tzformat($date,$plus=0) {
             $Status[$status]++;
         }
         
-        if ($only_warning) $Status['EXECUTED']=$Status['WAITING']=0; 
+        if ($onlyWarning) $Status['EXECUTED']=$Status['WAITING']=0; 
         $pie = '<data>';
         foreach ($Status as $status=>$nb) {
             $pie .= '<item id="'.$status.'"><STATUS>'.str_replace(' ','_',$status).'</STATUS><ORDERS>'.$nb.'</ORDERS><COLOR>'.$this->ColorStatus[$status].'</COLOR></item>';
@@ -293,13 +293,13 @@ public function tzformat($date,$plus=0) {
     {
         $request = Request::createFromGlobals();
         $cyclic = $request->get('cyclic');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
 
         $dhtmlx = $this->container->get('arii_core.dhtmlx');
         $data = $dhtmlx->Connector('data');
         
         $ds = $this->container->get('arii_ds.dailyschedule');
-        $Jobs = $ds->DailySchedule( $cyclic, $only_warning, false);
+        $Jobs = $ds->DailySchedule( $cyclic, $onlyWarning, false);
         
         $xml = '<data>';
         foreach ($Jobs as $id=>$line) {
@@ -327,10 +327,10 @@ public function tzformat($date,$plus=0) {
 
         $request = Request::createFromGlobals();
         $cyclic = $request->get('cyclic');
-        $only_warning = $request->get('only_warning');
+        $onlyWarning = $request->get('onlyWarning');
 
         $history = $this->container->get('arii_ds.dailyschedule');
-        $Orders = $history->DailySchedule( $cyclic, $only_warning, false);
+        $Orders = $history->DailySchedule( $cyclic, $onlyWarning, false);
         
         $date = $this->container->get('arii_core.date');
         

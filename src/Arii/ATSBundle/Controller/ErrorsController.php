@@ -42,11 +42,11 @@ class ErrorsController extends Controller
     }
 
     // Temps d'exécution trop long
-    public function runtimesAction($only_warning=0)
+    public function runtimesAction($onlyWarning=0)
     {
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'only_warning' ))
-            $only_warning=$request->query->get( 'only_warning');
+        if ($request->query->get( 'onlyWarning' ))
+            $onlyWarning=$request->query->get( 'onlyWarning');
 
         $sql = $this->container->get('arii_core.sql');
         
@@ -128,10 +128,10 @@ class ErrorsController extends Controller
             $data->set_row_color("#00cccc");
     }
 
-    public function pieAction($only_warning=0) {
+    public function pieAction($onlyWarning=0) {
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'only_warning' ))
-            $only_warning=$request->query->get( 'only_warning');
+        if ($request->query->get( 'onlyWarning' ))
+            $onlyWarning=$request->query->get( 'onlyWarning');
 
         $dhtmlx = $this->container->get('arii_core.dhtmlx');
         $data = $dhtmlx->Connector('data');
@@ -150,7 +150,7 @@ class ErrorsController extends Controller
         while ($line = $data->sql->get_next($res))
         {            
             $status = $autosys->AlarmState($line['STATE']);         
-            if ($only_warning and ($status == "CLOSED")) 
+            if ($onlyWarning and ($status == "CLOSED")) 
                 $Status[$status] = 0;
             else
                 $Status[$status] = $line['NB'];

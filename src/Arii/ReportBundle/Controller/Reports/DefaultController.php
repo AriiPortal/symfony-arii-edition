@@ -47,7 +47,7 @@ class DefaultController extends Controller
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
-        $Envs = $em->getRepository("AriiReportBundle:JOB")->findEnv($Filters['start'],$Filters['end'],$Filters['appl'],$Filters['job_class']);
+        $Envs = $em->getRepository("AriiReportBundle:JOB")->findEnv($Filters['start'],$Filters['end'],$Filters['appl'],$Filters['jobClass']);
         
         $xml = "<?xml version='1.0' encoding='iso-8859-1'?><data>";
         $nb=0;
@@ -72,7 +72,7 @@ class DefaultController extends Controller
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
-        $Doms = $em->getRepository("AriiReportBundle:JOB")->findDom($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class']);
+        $Doms = $em->getRepository("AriiReportBundle:JOB")->findDom($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass']);
         
         $xml = "<?xml version='1.0' encoding='iso-8859-1'?><data>";
         $nb=0;
@@ -97,7 +97,7 @@ class DefaultController extends Controller
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
-        $Apps = $em->getRepository("AriiReportBundle:JOB")->findApp($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class']);
+        $Apps = $em->getRepository("AriiReportBundle:JOB")->findApp($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass']);
         
         $xml = "<?xml version='1.0' encoding='iso-8859-1'?><data>";
         $nb=0;
@@ -129,7 +129,7 @@ class DefaultController extends Controller
         foreach ($Jcls as $jcl) {
             $xml .= '<item id="'.$jcl['jcl'].'">';
             $xml .= '<jcl>'.$jcl['jcl'].'</jcl>';
-            $xml .= '<job_class>'.$this->get('translator')->trans('class.'.$jcl['jcl']).'</job_class>';
+            $xml .= '<jobClass>'.$this->get('translator')->trans('class.'.$jcl['jcl']).'</jobClass>';
             $xml .= '<count>'.$jcl['jcls'].'</count>';
             $xml .= '</item>';
         }
@@ -173,7 +173,7 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         $end = clone $Filters['start'];
         $end = $end->add(\DateInterval::createFromDateString('1 day'));
-        $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$end,$Filters['env'],$Filters['job_class'],true,'jobs','DESC');
+        $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$end,$Filters['env'],$Filters['jobClass'],true,'jobs','DESC');
         
         $Parameters = [
             'repository' => "AriiReportBundle:JOBDay",
@@ -181,7 +181,7 @@ class DefaultController extends Controller
             'end'        => $Filters['end']->format('Y-m-d H:i:s'),
             'env'        => $Filters['env'],
             'app'        => $Filters['appl'],
-            'class'      => $Filters['job_class']
+            'class'      => $Filters['jobClass']
         ];
 
         $portal = $this->container->get('arii_core.portal');
@@ -220,7 +220,7 @@ class DefaultController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
-        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class'],'runs','DESC');
+        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],'runs','DESC');
 
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();
@@ -255,7 +255,7 @@ class DefaultController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
-        $DBRuns = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['job_class'],'alarms','DESC');
+        $DBRuns = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass'],'alarms','DESC');
 
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();
@@ -316,7 +316,7 @@ class DefaultController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
-        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class'],'rate','DESC');
+        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],'rate','DESC');
         
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();
@@ -365,7 +365,7 @@ class DefaultController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
-        $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class'],false,'created','DESC');
+        $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],false,'created','DESC');
 
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();
@@ -404,7 +404,7 @@ class DefaultController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
-        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findByDay($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['job_class'],false);
+        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findByDay($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass'],false);
         
         $Parameters = [
             'repository' => "AriiReportBundle:RUNDay",
@@ -412,7 +412,7 @@ class DefaultController extends Controller
             'end'        => $Filters['end']->format('Y-m-d H:i:s'),
             'env'        => $Filters['env'],
             'app'        => $Filters['appl'],
-            'class'      => $Filters['job_class']
+            'class'      => $Filters['jobClass']
         ];
         
         $nb=0;

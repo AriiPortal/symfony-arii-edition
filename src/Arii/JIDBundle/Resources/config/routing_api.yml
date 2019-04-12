@@ -12,6 +12,32 @@ api_JID_repos_create:
     methods: [POST]
 
 # --------------------------------------------------------------------------
+# Clusters
+# --------------------------------------------------------------------------
+api_JID_clusters_list:
+    path:  /repos/{repoId}/clusters
+    defaults: { _controller: AriiJIDBundle:API\Clusters:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_clusters_get:
+    path:  /repos/{repoId}/clusters/{schedulerId}/members
+    defaults: { _controller: AriiJIDBundle:API\Clusters:get, repoId: ojs_db }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Instances
+# --------------------------------------------------------------------------
+api_JID_instances_list:
+    path:  /repos/{repoId}/instances
+    defaults: { _controller: AriiJIDBundle:API\Instances:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_inventory_instances_list:
+    path:  /repos/{repoId}/inventory_instances
+    defaults: { _controller: AriiJIDBundle:API\Inventory\Instances:list, repoId: ojs_db }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
 # Spoolers
 # --------------------------------------------------------------------------
 api_JID_spoolers_list:
@@ -23,6 +49,24 @@ api_JID_repos_create:
     path:  /repos/{repoId}/spoolers
     defaults: { _controller: AriiJIDBundle:API\Spoolers:create, repoId: ojs_db }
     methods: [POST]
+
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+api_JID_orders_list:
+    path:  /repos/{repoId}/orders
+    defaults: { _controller: AriiJIDBundle:API\Orders:list, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_orders_get:
+    path:  /repos/{repoId}/orders/{orderId}
+    defaults: { _controller: AriiJIDBundle:API\Orders:get, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_orders_steps:
+    path:  /repos/{repoId}/orders/{orderId}/steps
+    defaults: { _controller: AriiJIDBundle:API\Orders:steps, repoId: ojs_db }
+    methods: [GET]
 
 # --------------------------------------------------------------------------
 # Jobs

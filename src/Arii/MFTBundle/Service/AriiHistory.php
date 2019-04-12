@@ -26,7 +26,7 @@ class AriiHistory
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
-   public function Transfers($history=0,$only_warning= 1) {   
+   public function Transfers($history=0,$onlyWarning= 1) {   
         $data = $this->db->Connector('data');
         $sql = $this->sql;
         $date = $this->date;

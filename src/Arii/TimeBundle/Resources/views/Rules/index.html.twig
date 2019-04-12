@@ -22,8 +22,9 @@
 <script charset="utf-8">
 function Init() {
     
-    myLayout = globalLayout.cells("b").attachLayout("3L");
+    myLayout = globalLayout.cells("b").attachLayout("3U");
     
+    // Liste des jours 
     dhxGrid = myLayout.cells("a").attachGrid();
     dhxGrid.setImagePath( "{{ asset('/images/') }}");
     dhxGrid.setHeader("{{ "Name" | trans }},{{ "Description" | trans }}");
@@ -36,6 +37,7 @@ function Init() {
     dhxGrid.load("{{ url('xml_Time_rules') }}");
     dhxGrid.attachEvent("onRowDblClicked", Detail );
     
+    // Calendrier
     //scheduler.locale.labels.section_custom="Section";
     scheduler.config.details_on_create=false;
     scheduler.config.details_on_dblclick=false;
@@ -82,8 +84,6 @@ function Init() {
     detailLayout.cells("b").setWidth(350); 
     detailLayout.cells("a").hideHeader();     
     detailLayout.cells("b").hideHeader();
-    // myTab.addTab("reference","{{ "Reference" | trans }}","100px", null, true);
-    // myTab.addTab("rules","{{ "Rules" | trans }}","100px");
 
     myGridToolbar = detailLayout.cells("a").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");

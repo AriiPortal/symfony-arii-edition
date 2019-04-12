@@ -12,13 +12,22 @@ use Doctrine\ORM\EntityRepository;
  */
 class UjoJobstRepository extends EntityRepository
 {
-    // Pour la synchronisation des acquittements
-    public function synchroJobst($past) {        
+    public function findProcesses() {
         $q = $this
         ->createQueryBuilder('e')
-        ->select('e.jobName,e.boxName,e.description,e.jobType,e.runNum,e.ntry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.status,e.statusTime')
-        ->where('e.statusTime > :past')
-        ->setParameter('past', $past)
+        ->select('e.jobName,e.description,e.lastStart,e.lastEnd,e.status,e.statusTime,e.nextStart')
+        ->where('e.jobType = 98')
+        ->where('e.boxJoid = :box')
+        ->orderBy('e.jobName')
+        ->setParameter('box',0)
+        ->getQuery();
+        return $q->getResult();
+    }
+
+    public function findQueues() {
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.jobName,e.jobLoad,e.status')
         ->getQuery();
         return $q->getResult();
     }

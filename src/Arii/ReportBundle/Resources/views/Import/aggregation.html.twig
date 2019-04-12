@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"2U");
@@ -49,16 +49,16 @@ dhtmlxEvent(window,"load",function(){
     mySidebar.attachEvent("onSelect", function(itemid){
         switch (itemid) {
             case 'runs_hour':
-                myLayout.cells("b").attachURL("{{ url('html_Report_runs2runhours') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past);
+                myLayout.cells("b").attachURL("{{ url('html_Report_runs2runhours') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast);
                 break;
             case 'runs_day':
-                myLayout.cells("b").attachURL("{{ url('html_Report_runs2rundays') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past);
+                myLayout.cells("b").attachURL("{{ url('html_Report_runs2rundays') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast);
                 break;
             case 'runs_week':
-                myLayout.cells("b").attachURL("{{ url('html_Report_runs2runweeks') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past);
+                myLayout.cells("b").attachURL("{{ url('html_Report_runs2runweeks') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast);
                 break;
             case 'runs_month':
-                myLayout.cells("b").attachURL("{{ url('html_Report_runs2runyears') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past);
+                myLayout.cells("b").attachURL("{{ url('html_Report_runs2runyears') }}?force=0&html=1&app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast);
                 break;
             default:
                 break;
@@ -70,7 +70,7 @@ dhtmlxEvent(window,"load",function(){
         switch(id) {
             case 'update':
                 globalLayout.cells("b").progressOn();
-                dhx4.ajax.get( "{{ url('html_Report_runs2runhours') }}?force=0&html=1&app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&day_past="+day_past, function(loader,response){
+                dhx4.ajax.get( "{{ url('html_Report_runs2runhours') }}?force=0&html=1&app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&dayPast="+dayPast, function(loader,response){
                     dhtmlx.message({
                         title:"Done",
                         type: "Notice",
@@ -88,8 +88,8 @@ dhtmlxEvent(window,"load",function(){
 
 function GlobalRefresh() {
     globalLayout.cells("b").progressOn();
-    // alert("{{ url('xml_Report_runs2runhours_check') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past);
-    myRunsHour.load( "{{ url('xml_Report_runs2runhours_check') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past, function() {
+    // alert("{{ url('xml_Report_runs2runhours_check') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast);
+    myRunsHour.load( "{{ url('xml_Report_runs2runhours_check') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast, function() {
         myStatus.setText(myRunsHour.getRowsNum());
         globalLayout.cells("b").progressOff();
     });

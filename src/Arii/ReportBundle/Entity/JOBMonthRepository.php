@@ -21,7 +21,7 @@ class JOBMonthRepository extends EntityRepository
         if ($env=='*')
             array_push($Filter,'job.env');
         if ($class=='*')
-            array_push($Filter,'job.job_class');
+            array_push($Filter,'job.jobClass');
 */        
         $f = implode(',',$Filter);
         $qb = $this->createQueryBuilder('job')
@@ -37,7 +37,7 @@ class JOBMonthRepository extends EntityRepository
             $qb->andWhere('job.env = :env')
                  ->setParameter('env', $env);        
         if ($class!='*')
-            $qb->andWhere('job.job_class = :class')
+            $qb->andWhere('job.jobClass = :class')
                  ->setParameter('class', $class);
         
         return $qb->getQuery()

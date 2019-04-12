@@ -32,10 +32,6 @@ arii_Time_zones:
     path:  /zones
     defaults: { _controller: AriiTimeBundle:Zones:index }
 
-xml_Time_zones:
-    path:  /zones/grid.xml
-    defaults: { _controller: AriiTimeBundle:Zones:grid }
-
 xml_Time_zones_tree:
     path:  /zones/tree.xml
     defaults: { _controller: AriiTimeBundle:Zones:tree }

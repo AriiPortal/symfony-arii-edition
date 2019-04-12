@@ -73,16 +73,9 @@ class CommonController extends Controller
         // Heure locale à revoir
         $tz = array();
 
-/*
-        foreach (timezone_identifiers_list() as $c) {
-            $p = strpos($c,'/');
-            $continent = substr($c,0,$p);
-            $country = substr($c,$p+1);
-            if ($continent != '') 
-                $tz[$continent][$country]=str_replace('_',' ',$country);            
-        }
- */
         // Informations utilisateur
+        $repos = $portal->getReposByType($bundle);
+           
         $userInfos = $portal->getUserInfo();
         $userInterface = $portal->getUserInterface();
         $userFilters = $portal->getUserFilters();
@@ -90,8 +83,7 @@ class CommonController extends Controller
         // Informations en cours        
         $Activated = [
             'filters' => 0,
-            'databases_ats' => 0,
-            'databases_ojs' => 0,
+            'databases' => 0,
             'filters_ojs' => 0,
             'filters_ats' => 0,
             'history' => 0,            
@@ -106,7 +98,8 @@ class CommonController extends Controller
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');   
         return $this->render('AriiCoreBundle:Common:ribbon.json.twig',
-            [                
+            [      
+                'REPOS' => $repos,
                 'MENU' => $liste, 
                 'LANG' => $lang, 
                 'BUNDLE' => $current, 

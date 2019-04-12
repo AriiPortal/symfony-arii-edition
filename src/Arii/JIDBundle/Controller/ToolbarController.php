@@ -12,7 +12,7 @@ class ToolbarController extends Controller
     {
         // date de reference
         $session = $this->container->get('arii_core.session');
-        $ref_date = $session->getRefDate();
+        $refDate = $session->getRefDate();
 
         $refresh = $session->getRefresh();
         
@@ -34,7 +34,7 @@ class ToolbarController extends Controller
         
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
-        return $this->render('AriiJIDBundle:Toolbar:global.xml.twig', array( 'refresh' => $refresh, 'ref_date' => $ref_date, 'database' => $database, 'databases' => $databases, 'filter' => $filter, 'filters' => $filters ), $response );
+        return $this->render('AriiJIDBundle:Toolbar:global.xml.twig', array( 'refresh' => $refresh, 'refDate' => $refDate, 'database' => $database, 'databases' => $databases, 'filter' => $filter, 'filters' => $filters ), $response );
     }
     
     public function defaultAction()

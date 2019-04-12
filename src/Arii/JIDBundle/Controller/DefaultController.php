@@ -23,9 +23,10 @@ class DefaultController extends Controller
         $this->CurrentDate = date('Y-m-d');
     }
 
-    public function indexAction($db)
+    public function indexAction()
     {
-        return $this->render('AriiJIDBundle:Default:index.html.twig', [ 'db' => $db ]);
+        $portal = $this->container->get('arii_core.portal');
+        return $this->render('AriiJIDBundle:Default:index.html.twig', [ 'db' => $portal->getDatabase() ]);
     }
 
     public function swaggerAction()

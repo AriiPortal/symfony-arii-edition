@@ -1,4 +1,8 @@
 services:
-    arii_time.timecode:
-        class: Arii\TimeBundle\Service\AriiTimecode
+    arii_time.code:
+        class: Arii\TimeBundle\Service\AriiTimeCode
         arguments: [ "@arii_core.date" ]
+
+    arii_time.db:
+        class: Arii\TimeBundle\Service\AriiTimeDB
+        arguments: [ "@arii_core.portal" ]

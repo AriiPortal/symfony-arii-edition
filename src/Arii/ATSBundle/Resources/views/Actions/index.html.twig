@@ -1,0 +1,33 @@
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    myAccordion.cells( "audit" ).open(false); 
+
+    globalLayout.cells("b").setText("{{ "Actions" | trans}}");
+    
+    myGridEvents = globalLayout.cells("b").attachGrid();
+    myGridEvents.setImagePath( "{{ asset('/images/') }}");
+    myGridEvents.setHeader("{{ "Date" | trans }},{{ "Event" | trans }},{{ "Job" | trans }},{{ "Status" | trans }},{{ "Variable" | trans }},{{ "User" | trans }},{{ "Domain" | trans }},{{ "Comment" | trans }},{{ "Ins." | trans }}");
+    myGridEvents.attachHeader("#text_filter,#select_filter,#text_filter,#select_filter,#text_filter,#select_filter,#select_filter,#text_filter,#select_filter");
+    myGridEvents.setInitWidths("140,180,*,100,*,120,120,*,0");
+    myGridEvents.setColAlign("left,left,left,left,left,left,left,left,left");
+    myGridEvents.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myGridEvents.setColSorting("date,str,str,str,str,str,str,str,str");
+    myGridEvents.enableAlterCss("","");
+    myGridEvents.init();    
+    
+    globalLayout.cells("b").progressOn();
+    GridRefresh();
+}
+
+function GridRefresh() {   
+    var url = "{{ url('api_ATS_actions_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myGridEvents.load( url.replace('REPOID',db), function(){    
+        myGridEvents.refreshFilters();
+        myGridEvents.filterByAll();
+        globalLayout.cells("b").progressOff();
+    });   
+}
+</script>
+{% endblock %}

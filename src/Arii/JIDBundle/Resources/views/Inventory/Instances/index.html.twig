@@ -1,0 +1,58 @@
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+
+    myInstancesLayout = globalLayout.cells("b").attachLayout('2E');
+    myInstancesLayout.cells('a').setText("{{ "Instances" | trans }}");
+    myInstancesLayout.cells('b').hideHeader();
+    
+    myInstancesChart =  myInstancesLayout.cells("a").attachChart ({
+            view:"pie",
+            container:"bar_container",
+            value:"#SUCCESS#",
+            label:"#SUCCESS#",
+            tooltip: "#SUCCESS#",
+            fill:true,
+            color:"#ccebc5",
+            padding:{
+                left: 100
+            },
+            yAxis:{
+                    template: "#INSTANCE#"
+            },
+            xAxis:{
+    /*
+                    title:"{{ "Hour" | trans }}",
+                    template:"#INSTANCE#",
+                    lines: false
+    */
+            }
+    //        disableItems:true
+    });
+    
+    myInstancesGrid = myInstancesLayout.cells('b').attachGrid();
+    myInstancesGrid.selMultiRows = true;
+    myInstancesGrid.setImagePath( "{{ asset('/images/') }}"); 13
+    myInstancesGrid.setHeader("{{ "Scheduler" | trans }},{{ "Hostname" | trans }},{{ "Port" | trans }},{{ "Config" | trans }},{{ "Start time" | trans }},{{ "End time" | trans }}");
+    myInstancesGrid.attachHeader("#select_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter");
+    myInstancesGrid.setInitWidths("*,*,100,*,150,150");
+    myInstancesGrid.setColAlign("left,left,right,left,right,right");
+    myInstancesGrid.setColTypes("ro,ro,ro,ro,ro,ro");
+    myInstancesGrid.setColSorting("str,str,int,str,date,date");
+    myInstancesGrid.enableAlterCss("","");
+    myInstancesGrid.init();
+    GridRefresh();
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_JID_inventory_instances_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myInstancesGrid.load( url.replace('REPOID',db), function() {        
+        myInstancesGrid.refreshFilters();
+        myInstancesGrid.filterByAll();
+        myInstancesChart.clearAll();
+        myInstancesChart.parse( myInstancesGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

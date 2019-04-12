@@ -34,17 +34,17 @@ class JobsController extends Controller
         $User = $portal->getUserInterface();
         
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'ref_date' )!='')
-            $User['ref_date'] = $request->query->get( 'ref_date' );
+        if ($request->query->get( 'refDate' )!='')
+            $User['refDate'] = $request->query->get( 'refDate' );
             
-        $ref_date = $User['ref_date'];
+        $refDate = $User['refDate'];
         $past   = $User['past'];
         $future = $User['future'];
         $refresh = $User['refresh'];
         
         $portal->getUserInterface($User);
         
-        $Timeline['ref_date'] = $ref_date;
+        $Timeline['refDate'] = $refDate;
 
         // On prend 24 fuseaux entre maintenant et le passe
         // on trouve le step en minute
@@ -53,9 +53,9 @@ class JobsController extends Controller
         $Timeline['step'] = 60;
 
         // on recalcule la date courante moins la plage de passé
-        $year = $ref_date->format('Y');
-        $month = $ref_date->format('m');
-        $day = $ref_date->format('d');
+        $year = $refDate->format('Y');
+        $month = $refDate->format('m');
+        $day = $refDate->format('d');
 
         $start = substr($past,11,2);
         $Timeline['start'] = (60/$step)*$start;
@@ -252,7 +252,7 @@ class JobsController extends Controller
             $history_max = $request->get('history');
         }
         $ordered = $request->get('chained');
-        $stopped = $request->get('only_warning');
+        $stopped = $request->get('onlyWarning');
 
         $history = $this->container->get('arii_jid.history');
 
@@ -298,7 +298,7 @@ class JobsController extends Controller
         return $response;
     }
 
-    public function pieAction($history_max=0,$ordered = 0,$only_warning=1) {
+    public function pieAction($history_max=0,$ordered = 0,$onlyWarning=1) {
         
          $color = array (
              'SUCCESS' => '#ccebc5',
@@ -313,9 +313,9 @@ class JobsController extends Controller
              $history_max = $request->get('history');
          }
          $ordered = $request->get('chained');
-         $only_warning = $request->get('only_warning');
+         $onlyWarning = $request->get('onlyWarning');
          $history = $this->container->get('arii_jid.history');
-         $Jobs = $history->Jobs(0, $ordered, $only_warning, false);
+         $Jobs = $history->Jobs(0, $ordered, $onlyWarning, false);
          $stopped=$success=$failure=$running=0;
          foreach ($Jobs as $k=>$job) {
              if (isset($job['stopped'])) {
@@ -504,7 +504,7 @@ class JobsController extends Controller
         $data = $dhtmlx->Connector('data');
 
         $session =  $this->container->get('arii_core.session');
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
         $xml = '<data>';
 
         $sql = $this->container->get('arii_core.sql');
@@ -608,7 +608,7 @@ class JobsController extends Controller
             $history_max = $request->get('history');
         }
         $ordered = $request->get('chained');
-        $stopped = $request->get('only_warning');
+        $stopped = $request->get('onlyWarning');
 
         $history = $this->container->get('arii_jid.history');
 
@@ -634,7 +634,7 @@ class JobsController extends Controller
             $history_max = $request->get('history');
         }
         $ordered = $request->get('chained');
-        $stopped = $request->get('only_warning');
+        $stopped = $request->get('onlyWarning');
 
         $history = $this->container->get('arii_jid.history');
 

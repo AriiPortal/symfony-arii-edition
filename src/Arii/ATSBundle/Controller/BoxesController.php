@@ -36,18 +36,18 @@ class BoxesController extends Controller
         return $this->render('AriiATSBundle:Boxes:menu.xml.twig',array(), $response );
     }
 
-    public function statusAction($box='',$only_warning=0,$job=0)
+    public function statusAction($box='',$onlyWarning=0,$job=0)
     {
         $request = Request::createFromGlobals();
         if ($request->query->get( 'box' )!='')
             $box = $request->query->get( 'box' );      
-        if ($request->query->get( 'only_warning' ))
-            $only_warning = $request->query->get( 'only_warning' );
+        if ($request->query->get( 'onlyWarning' ))
+            $onlyWarning = $request->query->get( 'onlyWarning' );
         else
-            $only_warning = 0;
+            $onlyWarning = 0;
 
         $state = $this->container->get('arii_ats.state');
-        $Job = $state->Boxes($box,$only_warning,true);
+        $Job = $state->Boxes($box,$onlyWarning,true);
                 
         $response = new Response();
         $response->headers->set('Content-Type', 'text/xml');
@@ -96,17 +96,17 @@ class BoxesController extends Controller
         return $response;        
     }
 
-    public function pieAction($only_warning=0) {
+    public function pieAction($onlyWarning=0) {
         $request = Request::createFromGlobals();
         if ($request->query->get( 'box' ))
             $box = $request->query->get( 'box' );      
         else 
             $box = '';
-        if ($request->query->get( 'only_warning' )!='')
-            $only_warning = $request->query->get( 'only_warning' );
+        if ($request->query->get( 'onlyWarning' )!='')
+            $onlyWarning = $request->query->get( 'onlyWarning' );
 
         $state = $this->container->get('arii_ats.state');
-        $Job = $state->Boxes($box,$only_warning);
+        $Job = $state->Boxes($box,$onlyWarning);
 
         $autosys = $this->container->get('arii_ats.autosys');
         foreach ($Job as $k=>$j) {
@@ -131,8 +131,8 @@ class BoxesController extends Controller
 
     public function treeAction() {
         $request = Request::createFromGlobals();
-        if ($request->query->get( 'only_warning' ))
-            $only_warning = $request->query->get( 'only_warning' );
+        if ($request->query->get( 'onlyWarning' ))
+            $onlyWarning = $request->query->get( 'onlyWarning' );
         
         $sql = $this->container->get('arii_core.sql');                  
         $qry = $sql->Select(array('JOID','BOX_JOID','JOB_NAME','DESCRIPTION','STATUS'))
@@ -140,7 +140,7 @@ class BoxesController extends Controller
                 .$sql->Where(array( 
                     'JOB_TYPE' => 98, 
                     '{job_name}'   => 'JOB_NAME'));
-        if ($only_warning)
+        if ($onlyWarning)
                 $qry .= " and STATUS<>4";
         $qry .= $sql->OrderBy(array('JOB_NAME'));
 
@@ -156,15 +156,15 @@ class BoxesController extends Controller
         $data->set_value("JOB_NAME","<font color='".$bgcolor."'>".$data->get_value("JOB_NAME")."</font>");
     }
     
-    public function barchartAction($tag='application',$only_warning=0) {
+    public function barchartAction($tag='application',$onlyWarning=0) {
         $dhtmlx = $this->container->get('arii_core.dhtmlx');
         $data = $dhtmlx->Connector('data');
 
         $request = Request::createFromGlobals();
         if ($request->query->get( 'tag' )) 
             $tag = $request->query->get( 'tag' );
-        if ($request->query->get( 'only_warning' ))
-            $only_warning = $request->query->get( 'only_warning' );
+        if ($request->query->get( 'onlyWarning' ))
+            $onlyWarning = $request->query->get( 'onlyWarning' );
 
         $Fields = array( '{job_name}'   => 'JOB_NAME' );
         $sql = $this->container->get('arii_core.sql');
@@ -193,7 +193,7 @@ class BoxesController extends Controller
                 $domain = "UNKNOWN";
             $id = $domain.'/'.$autosys->Status($line['STATUS']);
             $Domain[$domain] = 1;
-            if(($only_warning==1) and ($line['STATUS']==4)) {
+            if(($onlyWarning==1) and ($line['STATUS']==4)) {
                 $Status[$id] = 0;            
             }
             else {

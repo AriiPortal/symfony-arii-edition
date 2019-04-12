@@ -12,7 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrderStepHistoryRepository extends EntityRepository
 {   
-
+    public function findOrderSteps($id) {
+        $q = $this->createQueryBuilder('e')
+        ->select('IDENTITY(e.task) as id,e.step,e.state,e.startTime,e.endTime,e.error,e.errorCode,e.errorText')
+        ->where('e.history = :id')
+        ->setParameter('id',$id)
+        ->orderBy('e.step')
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     public function firstId() {
         $q = $this->createQueryBuilder('s')
         ->select('min(s.task)')

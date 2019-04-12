@@ -219,7 +219,7 @@ class RunsController extends Controller
         list($app,$env,$date) = explode(':', $scope);
         list($year,$month) = explode('-', $date);
 
-        list($env,$app,$day_past,$day,$month,$year,$start,$end) = $filter->getFilter(
+        list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $env, $app, -32, 1, $month, $year 
         );
 
@@ -264,7 +264,7 @@ class RunsController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
-        $R = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['job_class']);
+        $R = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass']);
         $Runs = array();        
         foreach ($R as $run) {
             $id = $run['date']->format('Ymd').':'.sprintf("%02d",$run['hour']);

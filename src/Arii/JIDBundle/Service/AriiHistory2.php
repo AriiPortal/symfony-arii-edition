@@ -48,7 +48,7 @@ class AriiHistory2
     }
     
     // Requetes sans jointure pour accélerer l'affichage
-    public function Orders($em,$start,$end,$history=0,$nested=false,$only_warning=false,$sort='last') {
+    public function Orders($em,$start,$end,$history=0,$nested=false,$onlyWarning=false,$sort='last') {
       
        $tools = $this->tools;
        $Orders = array();
@@ -76,7 +76,7 @@ class AriiHistory2
            if ($JobChainNode->getAction() == 'stop') $StopNode[$sn]=1;
        }
        
-       $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findStates($start,$end,$only_warning);
+       $OrderHistory = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findStates($start,$end,$onlyWarning);
        foreach($OrderHistory as $Order) {
            if (!$nested) {
                // if (substr($Order->getOrderId(),0,1)=='.') continue;
@@ -204,7 +204,7 @@ class AriiHistory2
            else {
                $status = 'SUCCESS';
            }
-           if (($only_warning)and ($status == 'SUCCESS')) continue;
+           if (($onlyWarning)and ($status == 'SUCCESS')) continue;
            $Orders[$on]['STATUS'] = $status;
            if  ($line['NEXT_TIME']==$line['START_TIME'])
                $Orders[$on]['NEXT_TIME']='';
@@ -217,7 +217,7 @@ class AriiHistory2
     }
 
    //ajout de la variable bool pour dissocier les jobs avec ou sans chaines
-   public function Jobs($history_max=0,$ordered = 0,$only_warning= 1,$next=1, $name="", $spooler="") {
+   public function Jobs($history_max=0,$ordered = 0,$onlyWarning= 1,$next=1, $name="", $spooler="") {
 
      $data = $this->db->Connector('data');
 
@@ -290,7 +290,7 @@ class AriiHistory2
           $status = 'SUCCESS';
         }
 
-        if (($only_warning) and ($status == 'SUCCESS')) continue;
+        if (($onlyWarning) and ($status == 'SUCCESS')) continue;
 
         $Jobs[$id]['id'] = $line['ID'];
         $Jobs[$id]['spooler'] = $line['SPOOLER_ID'];

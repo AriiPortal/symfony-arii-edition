@@ -35,7 +35,7 @@ class CheckController extends Controller
             $xml .= '<cell>'.$run['spooler_name'].'</cell>';
             $xml .= '<cell>'.$run['env'].'</cell>';
             $xml .= '<cell>'.$run['app'].'</cell>';
-            $xml .= '<cell>'.$run['job_class'].'</cell>';
+            $xml .= '<cell>'.$run['jobClass'].'</cell>';
             $xml .= '<cell>'.$run['status'].'</cell>';
             $xml .= '<cell>'.$run['executions'].'</cell>';            
             $xml .= '<cell>'.$run['alarms'].'</cell>';

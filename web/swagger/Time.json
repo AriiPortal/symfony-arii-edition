@@ -29,18 +29,43 @@
     "https"
     ],
   "paths" : {
-    "/repos" : {
+    "/code" : {
       "get" : {
-        "summary" : "Get a list of all repos",
-        "tags" : [ "Repositories" ],
+        "summary" : "Get a list of calculated days",
+        "tags" : [ "Code" ],
         "parameters" : [  ],
+        "responses" : {
+          "200" : {
+            "description" : "A list of calculated days",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/day"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zones" : {
+      "get" : {
+        "summary" : "Get a list of zones",
+        "tags" : [ "Zones" ],
+        "parameters" : [  {
+          "name" : "outputFormat",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "enum": [ "json", "xml", "dhtmlx" ],
+          "default" : "json"
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/repo"
+                "$ref" : "#/definitions/zone"
               }
             }
           }
@@ -113,162 +138,14 @@
       },
       "description" : "A list of entity validation problems"
     },
-    "repo" : {
+    "day" : {
       "type" : "object",
       "properties" : {
       }
     },
-    "spooler" : {
+    "zone" : {
       "type" : "object",
       "properties" : {
-        "start_time" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
-        "end_time" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
-        "status" : {
-          "type" : "string"
-        }
-      }
-    },    
-    "job" : {
-      "type" : "object",
-      "properties" : {
-        "jobName" : {
-          "type" : "string",
-          "description" : "Job name"
-        },
-        "jobType" : {
-          "type" : "string",
-          "description" : "Type of job (command, file_watcher, file transfer...)"
-        },
-        "Command" : {
-          "type" : "string",
-          "description" : "Command to execute"
-        },
-        "Machine" : {
-          "type" : "string"
-        }
-      }
-    },
-    "order" : {
-      "type" : "object",
-      "properties" : {
-        "orderId" : {
-          "type" : "string",
-          "description" : "Order"
-        },        
-        "jobChain" : {
-          "type" : "string",
-          "description" : "Job chain"
-        },
-        "step" : {
-          "type" : "integer",
-          "description" : "Step"
-        },
-        "title" : {
-          "type" : "string",
-          "description" : "Job chain"
-        },
-        "state" : {
-          "type" : "string",
-          "description" : "Job chain"
-        },
-        "stateText" : {
-          "type" : "string",
-          "description" : "Job chain"
-        }
-      }
-    },
-    "run" : {
-      "type" : "object",
-      "properties" : {
-        "repoId" : {
-          "type" : "string",
-          "description" : "Database alias"
-        },
-        "taskId" : {
-          "type" : "integer",
-          "description" : "Id in jobscheduler database"
-        },
-        "spooler" : {
-          "type" : "string",
-          "description" : "Spooler name"
-        },
-        "startTime" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "Start time"
-        },
-        "endTime" : {
-          "type" : "string",
-          "description" : "End time"
-        },
-        "steps" : {
-          "type" : "integer",
-          "description" : "Steps"
-        },
-        "exitCode" : {
-          "type" : "integer",
-          "description" : "Exit code of the script"
-        },
-        "error" : {
-          "type" : "integer",
-          "description" : "Error"
-        },
-        "error_code" : {
-          "type" : "string",
-          "description" : "Error code"
-        },
-        "error_text" : {
-          "type" : "string",
-          "description" : "Error text"
-        },
-        "parameters" : {
-          "type" : "array",
-          "enum" : "...",
-          "description" : "Parameters"
-        },
-        "log" : {
-          "type" : "string",
-          "description" : "Output"
-        },
-        "pid" : {
-          "type" : "integer",
-          "description" : "PID"
-        },
-        "cause" : {
-          "type" : "array",
-          "enum" : [ "", "cause", "period_repeat", "period_single", "queue_at"],
-          "description" : "Trigger"
-        },
-        "orderId" : {
-          "type" : "string",
-          "description" : "Order"
-        },        
-        "jobChain" : {
-          "type" : "string",
-          "description" : "Job chain"
-        },
-        "step" : {
-          "type" : "integer",
-          "description" : "Step"
-        },
-        "title" : {
-          "type" : "string",
-          "description" : "Job chain"
-        },
-        "state" : {
-          "type" : "string",
-          "description" : "Job chain"
-        },
-        "stateText" : {
-          "type" : "string",
-          "description" : "Job chain"
-        }
       }
     }
   }

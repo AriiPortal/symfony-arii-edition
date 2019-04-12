@@ -128,7 +128,7 @@ class SpoolersController extends Controller
         $data = $dhtmlx->Connector('scheduler');
 
         $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->getRefDate();
+        $this->refDate  =  $session->getRefDate();
 
 //        $options = $dhtmlx->Connector('options');
 
@@ -157,7 +157,7 @@ class SpoolersController extends Controller
     function color_rows($row){
         if ($row->get_value('END_TIME')=='') {
             $row->set_value("color", 'orange');
-            $row->set_value("END_TIME", $this->ref_date );
+            $row->set_value("END_TIME", $this->refDate );
         }
         elseif ($row->get_value('ERROR')>0) {
             $row->set_value("color", 'red');
@@ -170,7 +170,7 @@ class SpoolersController extends Controller
         $data = $dhtmlx->Connector('scheduler');
 
        $session =  $this->container->get('arii_core.session'); 
-        $this->ref_date  =  $session->get('ref_date');
+        $this->refDate  =  $session->get('refDate');
 
         $sql = $this->container->get('arii_core.sql');
         

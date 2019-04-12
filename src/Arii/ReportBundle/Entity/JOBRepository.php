@@ -23,7 +23,7 @@ class JOBRepository extends EntityRepository
             if ($env=='*')
                 array_push($Filter,'job.env');
             if ($class=='*')
-                array_push($Filter,'job.job_class');
+                array_push($Filter,'job.jobClass');
         }
 
         $f = implode(',',$Filter);
@@ -40,7 +40,7 @@ class JOBRepository extends EntityRepository
             $qb->andWhere('job.env = :env')
                  ->setParameter('env', $env);        
         if ($class!='*')
-            $qb->andWhere('job.job_class = :class')
+            $qb->andWhere('job.jobClass = :class')
                  ->setParameter('class', $class);
         
         return $qb->getQuery()
@@ -48,7 +48,7 @@ class JOBRepository extends EntityRepository
    }
 
    // Liste des environnements 
-   public function findEnv($start,$end,$app='*',$job_class='*')
+   public function findEnv($start,$end,$app='*',$jobClass='*')
    {
         //création de l'expression OR
         $qb = $this->createQueryBuilder('job')
@@ -64,16 +64,16 @@ class JOBRepository extends EntityRepository
             $qb->andWhere('job.app = :app')
                  ->setParameter('app', $app);
 
-        if ($job_class!='*')
-            $qb->andWhere('job.job_class = :job_class')
-                 ->setParameter('job_class', $job_class);
+        if ($jobClass!='*')
+            $qb->andWhere('job.jobClass = :jobClass')
+                 ->setParameter('jobClass', $jobClass);
         
         return $qb->getQuery()
              ->getResult();
    }
 
    // Liste des applications 
-   public function findApp($start,$end,$env='*',$job_class='*')
+   public function findApp($start,$end,$env='*',$jobClass='*')
    {
         $qb = $this->createQueryBuilder('job')
             ->Select('job.app,count(job) as apps')
@@ -87,9 +87,9 @@ class JOBRepository extends EntityRepository
         if ($env!='*')
             $qb->andWhere('job.env = :env')
                  ->setParameter('env', $env);
-        if ($job_class!='*')
-            $qb->andWhere('job.job_class = :job_class')
-                 ->setParameter('job_class', $job_class);
+        if ($jobClass!='*')
+            $qb->andWhere('job.jobClass = :jobClass')
+                 ->setParameter('jobClass', $jobClass);
 
         return $qb->getQuery()
              ->getResult();
@@ -100,11 +100,11 @@ class JOBRepository extends EntityRepository
    {
         //création de l'expression OR
         $qb = $this->createQueryBuilder('job')
-            ->Select('job.job_class as jcl,count(job) as jcls')
+            ->Select('job.jobClass as jcl,count(job) as jcls')
             ->where('job.created <= :start')
             ->andWhere('job.deleted is null OR job.deleted >= :end')
-            ->groupBy('job.job_class')
-            ->orderBy('job.job_class','ASC')
+            ->groupBy('job.jobClass')
+            ->orderBy('job.jobClass','ASC')
             ->setParameter('start', $start)
             ->setParameter('end', $end);
 
@@ -138,7 +138,7 @@ class JOBRepository extends EntityRepository
    }
    
    // Liste des domaines 
-   public function findDom($start,$end,$env='*',$job_class='*')
+   public function findDom($start,$end,$env='*',$jobClass='*')
    {
         //création de l'expression OR
         $qb = $this->createQueryBuilder('job')
@@ -157,9 +157,9 @@ class JOBRepository extends EntityRepository
             $qb->andWhere('job.env = :env')
                  ->setParameter('env', $env);
 
-        if ($job_class!='*')
-            $qb->andWhere('job.job_class = :job_class')
-                 ->setParameter('job_class', $job_class);
+        if ($jobClass!='*')
+            $qb->andWhere('job.jobClass = :jobClass')
+                 ->setParameter('jobClass', $jobClass);
         
         return $qb->getQuery()
              ->getResult();
@@ -171,9 +171,9 @@ class JOBRepository extends EntityRepository
         $driver = $this->_em->getConnection()->getDriver()->getName();
         switch ($driver) {
             case 'oci8':
-                $sql = "SELECT TRUNC(job.created) as JOB_CREATED,TRUNC(job.updated) as JOB_UPDATED,TRUNC(job.deleted) as JOB_DELETED,job.spooler_name,job.app,job.env,job.job_class,count(*) as jobs
+                $sql = "SELECT TRUNC(job.created) as JOB_CREATED,TRUNC(job.updated) as JOB_UPDATED,TRUNC(job.deleted) as JOB_DELETED,job.spooler_name,job.app,job.env,job.jobClass,count(*) as jobs
                         FROM REPORT_JOB job 
-                        GROUP BY TRUNC(job.created),TRUNC(job.updated),TRUNC(job.deleted),job.spooler_name,job.app,job.env,job.job_class";
+                        GROUP BY TRUNC(job.created),TRUNC(job.updated),TRUNC(job.deleted),job.spooler_name,job.app,job.env,job.jobClass";
 
                 $rsm = new ResultSetMapping();
                 $rsm->addScalarResult('JOB_CREATED', 'created');
@@ -181,7 +181,7 @@ class JOBRepository extends EntityRepository
                 $rsm->addScalarResult('JOB_DELETED', 'deleted');
                 $rsm->addScalarResult('ENV', 'env');
                 $rsm->addScalarResult('APP', 'app');
-                $rsm->addScalarResult('JOB_CLASS', 'job_class');
+                $rsm->addScalarResult('jobClass', 'jobClass');
                 $rsm->addScalarResult('SPOOLER_NAME', 'spooler_name');
                 $rsm->addScalarResult('JOBS', 'jobs');
                 $query = $this->_em->createNativeQuery($sql, $rsm);
@@ -190,8 +190,8 @@ class JOBRepository extends EntityRepository
                 break;
             default:
                 $qb = $this->createQueryBuilder('job')
-                     ->Select('TRUNC(job.created),TRUNC(job.updated),TRUNC(job.deleted),job.spooler_name,job.app,job.env,job.job_class,count(job) as jobs')
-                     ->groupBy('TRUNC(job.created),TRUNC(job.updated),TRUNC(job.deleted),job.spooler_name,job.app,job.env,job.job_class');
+                     ->Select('TRUNC(job.created),TRUNC(job.updated),TRUNC(job.deleted),job.spooler_name,job.app,job.env,job.jobClass,count(job) as jobs')
+                     ->groupBy('TRUNC(job.created),TRUNC(job.updated),TRUNC(job.deleted),job.spooler_name,job.app,job.env,job.jobClass');
         }
         return $qb->getQuery()
              ->getResult();
@@ -200,11 +200,11 @@ class JOBRepository extends EntityRepository
    public function findFilters(\DateTime $start, \DateTime $end)
    {
         return $this->createQueryBuilder('job')
-            ->Select('job.spooler_name,job.app,job.env,job.job_class')
+            ->Select('job.spooler_name,job.app,job.env,job.jobClass')
             ->distinct(true)                
             ->where('job.last_execution >= :start')
             ->andWhere('job.last_execution <= :end')    
-            ->orderBy('job.spooler_name,job.app,job.env,job.job_class')
+            ->orderBy('job.spooler_name,job.app,job.env,job.jobClass')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()
@@ -212,7 +212,7 @@ class JOBRepository extends EntityRepository
    }
    
    // Liste des jobs
-   public function findJobs($start,$end,$env='*',$app='*',$job_class='*')
+   public function findJobs($start,$end,$env='*',$app='*',$jobClass='*')
    {
         $qb = $this->createQueryBuilder('job')
             ->Select('job')
@@ -228,9 +228,9 @@ class JOBRepository extends EntityRepository
         if ($env!='*')
             $qb->andWhere('job.env = :env')
                  ->setParameter('env', $env);        
-        if ($job_class!='*')
-            $qb->andWhere('job.job_class = :job_class')
-                 ->setParameter('job_class', $job_class);
+        if ($jobClass!='*')
+            $qb->andWhere('job.jobClass = :jobClass')
+                 ->setParameter('jobClass', $jobClass);
         
         return $qb->getQuery()
                 ->getResult();
@@ -339,7 +339,7 @@ class JOBRepository extends EntityRepository
         $orModule = $qb->expr()->orx();
         $orModule->add($qb->expr()->isNull('job.app'));
         $orModule->add($qb->expr()->isNull('job.env'));
-        $orModule->add($qb->expr()->isNull('job.job_class'));
+        $orModule->add($qb->expr()->isNull('job.jobClass'));
 
         $q = $qb->select('job')
             ->where($orModule)

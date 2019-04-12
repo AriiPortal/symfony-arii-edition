@@ -56,6 +56,7 @@ class AriiPortal
     public function getTimeZone() {      
         return new \DateTimeZone(ini_get('date.timezone'));
     }
+    
     /**************************************
      * Utilisateur connecté
      * 
@@ -373,11 +374,11 @@ class AriiPortal
      **************************************/    
     public function getColors($filter=['domain'=>'color'])
     {
-        if ($this->session->get('Colors')!='') 
-            return $this->session->get('Colors');
+//        if ($this->session->get('Colors')!='') 
+//            return $this->session->get('Colors');
         
-        $Colors = $this->em->getRepository("AriiCoreBundle:Parameter")->findBy($filter,[ 'name'=>'ASC' ]);
-        if (!$Colors) 
+//        $Colors = $this->em->getRepository("AriiCoreBundle:Parameter")->findBy($filter,[ 'name'=>'ASC' ]);
+//        if (!$Colors) 
             $Colors = $this->getDefaultColors();
 
         // Tableau 
@@ -420,12 +421,18 @@ Gris    #f2f2f2
             'OK'  => '#ccebc5',
         // TRANSFERTS
             'TRANSFERT_ABORTED' =>   '#ff66cc',
+        // SERVEURS
+            'EP_SHUTDOWN' => '#000000',
+        // AGENTS
+            'MACHINE_UNAVAILABLE' => '#ff928c',
         // JOBS
             'REFUSED' => '#fbb4ae',
             'SUCCESS'  => '#ccebc5',
             'STARTING' => '#00ff33',
             'RUNNING' => '#ffffcc',
             'FAILURE' => '#fbb4ae',
+            'JOBFAILURE' => '#fbb4ae',
+            'MAX_RETRYS' => '#ff0000',
             'STOPPED' => '#FF0000',
             'ERROR' => '#FF0000/yellow',
             'TERMINATED' => '#ff66cc',
@@ -440,6 +447,8 @@ Gris    #f2f2f2
             'JOB_ON_HOLD' => '#3333ff',
             'ON_HOLD' => '#ccffff',
             'QUEUED' => '#ccffff',
+            'MAXRUNALARM' => '#ff',
+            'MINRUNALARM' => '#fed9a6',
         // CHAINES
             "SUSPENDED" => "red",
             "CHAIN STOP." => "red",
@@ -1064,6 +1073,84 @@ Gris    #f2f2f2
         }
         return $Options;
     }
+
+    /**************************************
+     * Repos
+     **************************************/     
+    public function getRepoById($id) {
+        $Repo = $this->em->getRepository("AriiCoreBundle:Repo")->findOneBy($id);
+        if (!$Repo)
+            return;
+        return $this->getRepoByName($Repo->getName()) ;
+    }
+    
+    public function getRepoByName($name) {
+        $Repos = $this->getRepos();
+        if (isset($Repos[$name]))
+            return $Repos[$name];
+        return;
+    }
+
+    public function getReposByType($type='') {
+        $Repos = $this->getRepos();
+        $Filtered = [];
+        $type = strtolower($type);
+        foreach ($Repos as $k=>$Repo) {
+            if ($Repo['type']==$type)
+                array_push($Filtered,$Repo);
+        }
+        return $Filtered;
+    }
+    
+    public function getRepos($filter=[])
+    { 
+        if ($this->session->get('Repos')!='') 
+            return $this->session->get('Repos');
+
+        $Repos = $this->em->getRepository("AriiCoreBundle:Repo")->findBy($filter,[ 'title'=>'ASC','name'=>'ASC' ]);
+        if (!$Repos) 
+            $Repos = $this->getDefaultRepos();
+        
+        $Result = array();
+        foreach ($Repos as $Repo) {
+            $name = $Repo->getName();
+            $Result[$name] =  array( 
+                'id' => $Repo->getId(),
+                'name' =>  $name,
+                'title' => $Repo->getTitle(),
+                'type' =>  $Repo->getType(),
+                'description' => $Repo->getDescription()
+            );
+        }
+        
+        return $this->session->set('Repos', $Result);
+    }
+
+    public function resetRepos($force=false) {                    
+        $this->session->set('Repos', '');
+        if ($force) $this->getDefaultRepos();
+        return $this->getRepos();
+    }
+        
+    public function setRepos() {
+        $this->session->set('Repos','');         
+        return $this->getRepos();
+    }
+    
+    public function getDefaultRepos() {
+        $Repo = $this->em->getRepository("AriiCoreBundle:Repo")->findOneBy(['name' => 'ojs_db']);
+        if (!$Repo) {
+            $Repo = new \Arii\CoreBundle\Entity\Repo();
+            $Repo->setName('ojs_db');
+            $Repo->setTitle('DB JobScheduler');
+            $Repo->setDescription('DB JobScheduler');
+            $Repo->setType('ojs');
+            $this->em->persist($Repo);        
+        }
+        $this->em->flush();        
+        return array($Repo);
+    }
+    
     /**************************************
      * Sites
      **************************************/     
@@ -2450,39 +2537,41 @@ Gris    #f2f2f2
         $Time = localtime(time(),true);
 
         // Date de reference 
-        $ref_date = sprintf("%04d-%02d-%02d %02d:%02d:%02d", $Time['tm_year']+1900, $Time['tm_mon']+1, $Time['tm_mday'], $Time['tm_hour'], $Time['tm_min'], $Time['tm_sec']);
+        $refDate = sprintf("%04d-%02d-%02d %02d:%02d:%02d", $Time['tm_year']+1900, $Time['tm_mon']+1, $Time['tm_mday'], $Time['tm_hour'], $Time['tm_min'], $Time['tm_sec']);
 
         $User['day'] = $Time['tm_mday'];
         $User['month'] = $Time['tm_mon']+1;
         $User['year'] = $Time['tm_year']+1900;
                 
-        $User['date'] = new \DateTime($ref_date);        
+        $User['date'] = new \DateTime($refDate);        
         $User['timestamp'] = time();
         
         // Pour la partie exploitation
-        $User['ref_past'] = -1;
-        $User['ref_future'] = 1;
+        $User['refPast'] = -1;
+        $User['refFuture'] = 1;
 
         // Pour la majorité des bundles, juste le dernier jour
-        $User['day_past'] = -1;
-        $User['day_future'] = 30;
+        $User['dayPast'] = -1;
+        $User['dayFuture'] = 30;
         
-        $User['past'] = $this->CalcDate($ref_date, $User['ref_past'] );
-        $User['future'] = $this->CalcDate( $ref_date, $User['ref_future'] );
+        $User['past'] = $this->CalcDate($refDate, $User['refPast'] );
+        $User['future'] = $this->CalcDate( $refDate, $User['refFuture'] );
 
-        $User['date_past'] =   new \DateTime( $User['past'] );
-        $User['date_future'] = new \DateTime( $User['future'] );
+        $User['datePast'] =   new \DateTime( $User['past'] );
+        $User['dateFuture'] = new \DateTime( $User['future'] );
         
         $User['refresh'] = 30;
-        $User['refresh_pause'] = 0;
+        $User['refreshPause'] = 0;
         
+        $User['maxResults'] = 1000;
+
         $User['env'] = 'P';
         $User['app'] = '*';
         $User['class'] = '*';
         
         // Compatibilité ascendante
-        $User['ref_date'] = clone $User['date'];
-        $User['ref_timestamp'] = $User['timestamp'];
+        $User['refDate'] = clone $User['date'];
+        $User['refTimestamp'] = $User['timestamp'];
         
         return $this->session->set('UserInterface',$User);
     }    
@@ -2490,25 +2579,25 @@ Gris    #f2f2f2
     public function setRefDate($date)
     {
         $User = $this->getUserInterface();
-        $User['ref_date'] = $date;        
-        $User['past'] = $this->CalcDate( $date, $User['ref_past'] );
-        $User['future'] = $this->CalcDate( $date, $User['ref_future'] );
+        $User['refDate'] = $date;        
+        $User['past'] = $this->CalcDate( $date, $User['refPast'] );
+        $User['future'] = $this->CalcDate( $date, $User['refFuture'] );
         return $this->session->set('UserInterface',$User);        
     }
 
     public function setRefPast($hours)
     {
         $User = $this->getUserInterface();
-        $User['ref_past'] = $hours;
-        $User['past'] = $this->CalcDate( $User['ref_date'], $hours );
+        $User['refPast'] = $hours;
+        $User['past'] = $this->CalcDate( $User['refDate'], $hours );
         return $this->session->set('UserInterface',$User);
     }
     
     public function setRefFuture($hours)
     {
         $User = $this->getUserInterface();
-        $User['ref_future'] = $hours;
-        $User['future'] = $this->CalcDate( $User['ref_future'], $hours );
+        $User['refFuture'] = $hours;
+        $User['future'] = $this->CalcDate( $User['refFuture'], $hours );
         return $this->session->set('UserInterface',$User);
     }
 
@@ -2522,7 +2611,7 @@ Gris    #f2f2f2
     public function setRefreshPause($pause)
     {
         $User = $this->getUserInterface();        
-        $User['refresh_pause'] = $pause;                
+        $User['refreshPause'] = $pause;                
         return $this->session->set('UserInterface',$User);
     }
     
@@ -2547,10 +2636,10 @@ Gris    #f2f2f2
         return $this->session->set('UserInterface',$User);
     }
 
-    public function setJobClass($job_class)
+    public function setJobClass($jobClass)
     {
         $User = $this->getUserInterface();        
-        $User['job_class'] = $job_class;                
+        $User['jobClass'] = $jobClass;                
         return $this->session->set('UserInterface',$User);
     }
     

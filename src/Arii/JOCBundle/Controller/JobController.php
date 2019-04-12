@@ -112,7 +112,7 @@ class JobController extends Controller {
         return $data->render_sql($qry,'id','NAME,VALUE');
     }
 
-    public function tasksAction($ordered = 0, $only_warning = 1)
+    public function tasksAction($ordered = 0, $onlyWarning = 1)
     {
         $request = Request::createFromGlobals();
         $id = $request->get('id');
@@ -131,7 +131,7 @@ class JobController extends Controller {
         </head>';    
         foreach ($Tasks as $k=>$task) {
             $state = $task['STATE'];
-            if ($only_warning and ($state=='pending')) continue;
+            if ($onlyWarning and ($state=='pending')) continue;
             
             if (isset($this->ColorStatus[$state])) 
                 $color = $this->ColorStatus[$state];

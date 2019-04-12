@@ -2,88 +2,29 @@
 {% block body %}
 <script language="javascript">
 function Init() {
+    myAccordion.cells( "status" ).open(false); 
+
     globalLayout.cells("b").setText("{{ "Alarms" | trans }}");
     
     myLayout = globalLayout.cells("b").attachLayout("2E");
     myLayout.cells("a").hideHeader();
     myLayout.cells("b").setText("{{ "Detail" | trans }}");
     
-    myGridMenu = new dhtmlXMenuObject(null);
-    myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
-    myGridMenu.renderAsContextMenu();
-    myGridMenu.loadStruct("{{ url('xml_ATS_alarms_grid_menu') }}");
-
     myGrid = myLayout.cells("a").attachGrid();
     myGrid.selMultiRows = true;
     myGrid.setImagePath( "{{ asset('/images/') }}");
 
-    myGrid.setHeader("{{ "Date" | trans }},{{ "Job name" | trans }},{{ "Alarm" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "User" | trans }},{{ "Comment" | trans }},#,joid");
+    myGrid.setHeader("{{ "Date" | trans }},{{ "Alarm" | trans }},{{ "Job name" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "User" | trans }},{{ "Comment" | trans }},#,joid");
     myGrid.attachHeader("#text_filter,#select_filter,#select_filter,#select_filter,#select_filter,#select_filter,#text_filter,#numeric_filter,#numeric_filter");
-    myGrid.setInitWidths("150,220,140,80,150,150,*,60,50");
+    myGrid.setInitWidths("150,140,220,80,150,150,*,60,0");
     myGrid.setColAlign("left,left,left,left,left,left,left,left,left");
     myGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
     myGrid.setColSorting("date,str,str,str,str,str,str,int,int");
-    myGrid.enableContextMenu(myGridMenu);    
     myGrid.enableAlterCss("","");
     myGrid.init();
 
-    myGridMenu.attachEvent("onClick", function (menuitemId, type) {
-        var data = myGrid.contextID.split("_");
-        //rowInd_colInd;
-        var rId = data[0];
-        var cInd = data[1];
-        switch (menuitemId) {
-            case "doc":
-                window.open('{{ url('arii_JID_job_doc') }}?id='+rId,'arii_doc');
-                break;
-            default:
-                alert("inconnu ! "+menuitemId);    
-        }
-        return true;
-    });
-
-    myGrid.load( "{{ url('xml_ATS_alarms_grid') }}");
     myGrid.attachEvent("onRowDblClicked", Detail );
 
-    myGridToolbar = myLayout.cells("a").attachToolbar();
-    myGridToolbar.setIconsPath("{{ asset('/images/') }}");
-    myGridToolbar.loadStruct( "{{ url('xml_ATS_alarms_grid_toolbar') }}");
-    myGridToolbar.attachEvent("onClick",function(itemid){
-         switch (itemid) {
-            case 'refresh':
-                globalLayout.cells("b").progressOn();
-                GlobalRefresh();
-                break;
-            case "print":
-                myGrid.printView();
-                break;
-            default:
-                alert(itemid);
-                break;
-        }
-    });
-    myGridToolbar.attachEvent("onStateChange",function(itemid, state){
-         switch (itemid) {
-            case 'location':
-                myGrid.setColumnHidden(0,!state);      
-                myGrid.setColumnHidden(1,!state);      
-                break;
-            case 'execution':
-                myGrid.setColumnHidden(8,!state);  
-                myGrid.setColumnHidden(9,!state);  
-                myGrid.setColumnHidden(10,!state);  
-                myGrid.setColumnHidden(11,!state);  
-                break;
-            case 'variable':
-                myGrid.setColumnHidden(12,!state);  
-                myGrid.setColumnHidden(13,!state);  
-                break;
-            default:
-                alert(itemid);
-                break;
-        }
-    });
-    
     myTabbar = myLayout.cells("b").attachTabbar();
     myTabbar.addTab("detail","{{ "Detail" | trans }}","100px", null, true);
     myTabbar.addTab("history","{{ "History" | trans }}","100px");
@@ -115,26 +56,10 @@ function Init() {
     myDetail.init();
 
     myLayout.cells("b").collapse();
-    
-}
-
-function PageRefresh() {
-    GridRefresh();
 }
 
 function GridRefresh() {
-    var currentTime = new Date();
-    var hours = currentTime.getHours();
-    var minutes = currentTime.getMinutes();
-    var seconds = currentTime.getSeconds();
-    if (minutes < 10){
-    minutes = "0" + minutes;
-    }
-    if (seconds < 10){
-    seconds = "0" + seconds;
-    }
-    myRibbon.setItemText( "refresh", hours + ":" + minutes + ":" +  seconds );
-    myGrid.load("{{ url('xml_ATS_alarms_grid') }}?time="+seconds+"&history="+max_history+"&chained="+chained+"&only_warning="+only_warning, function(){    
+    myGrid.load("{{ url('api_ATS_alarms_list') }}?repoId="+db+"&outputFormat=dhtmlx", function(){    
         myGrid.refreshFilters();
         myGrid.filterByAll();
     });    
@@ -142,8 +67,9 @@ function GridRefresh() {
 
 function Detail(id) {    
     myLayout.cells("b").expand();    
-    myTabbar.cells("detail").progressOn();    
-    myFormDetail.load("{{ url('xml_ATS_alarms_detail') }}?id="+id, function(){
+    myTabbar.cells("detail").progressOn();
+    var url = "{{ url('api_ATS_alarms_get', { 'eventId': 'eventId' } ) }}";
+    myFormDetail.load(url.replace('eventId',id), function(){
         myTabbar.cells("detail").progressOff();
     });    
 }

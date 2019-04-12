@@ -188,7 +188,7 @@ dhtmlxEvent(window,"load",function(){
     myDetailToolbar = myDetailLayout.cells("a").attachToolbar();
     myDetailToolbar.setIconsPath("{{ asset('/images/') }}");
     myDetailToolbar.loadStruct( "{{ url('xml_JID_jobs_form_toolbar') }}" , function(){
-        GBCalendar = new dhtmlXCalendarObject(myDetailToolbar.getInput('ref_date'));
+        GBCalendar = new dhtmlXCalendarObject(myDetailToolbar.getInput('refDate'));
         GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
         GBCalendar.setWeekStartDay(1);
     });

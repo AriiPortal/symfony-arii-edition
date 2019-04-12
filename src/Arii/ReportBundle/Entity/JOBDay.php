@@ -38,9 +38,9 @@ class JOBDay
     /**
      * @var string
      *
-     * @ORM\Column(name="job_class", type="string", length=12, nullable=true)
+     * @ORM\Column(name="jobClass", type="string", length=12, nullable=true)
      */
-    private $job_class;
+    private $jobClass;
     
     /**
      * @var datetime
@@ -250,25 +250,25 @@ class JOBDay
    
 
     /**
-     * Set job_class
+     * Set jobClass
      *
      * @param string $jobClass
      * @return JOBDay
      */
     public function setJobClass($jobClass)
     {
-        $this->job_class = $jobClass;
+        $this->jobClass = $jobClass;
 
         return $this;
     }
 
     /**
-     * Get job_class
+     * Get jobClass
      *
      * @return string 
      */
     public function getJobClass()
     {
-        return $this->job_class;
+        return $this->jobClass;
     }
 }

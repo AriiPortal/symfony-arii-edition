@@ -15,7 +15,7 @@ class UjoAlarmRepository extends EntityRepository
     // Pour la synchronisation des historique
     public function findOpenIssues() { 
         $q = $this->createQueryBuilder('e')
-        ->select('e.eoid,e.joid,e.alarm,e.alarmTime,e.state,e.stateTime,e.response,e.theUser,e.eventComment,j.jobName,j.description,j.status')
+        ->select('e.eoid as id,e.joid,e.alarm,e.alarmTime,e.state,e.stateTime,e.response,e.theUser,e.eventComment,j.jobName,j.description,j.status')
         ->leftjoin('AriiATSBundle:UjoJobst','j',\Doctrine\ORM\Query\Expr\Join::WITH,'e.joid = j.joid')
         ->where('e.state < 45')
         ->orderBy('e.eoid','desc')
@@ -26,7 +26,7 @@ class UjoAlarmRepository extends EntityRepository
     
     public function findAlarm($eoid) { 
         $q = $this->createQueryBuilder('e')
-        ->select('e.eoid,e.joid,e.alarm,e.alarmTime,e.state,e.stateTime,e.response,e.theUser,e.eventComment,j.jobName,j.description,j.status')
+        ->select('e.eoid as id,e.joid,e.alarm,e.alarmTime,e.state,e.stateTime,e.response,e.theUser,e.eventComment,j.jobName,j.description,j.status')
         ->leftjoin('AriiATSBundle:UjoJobst','j',\Doctrine\ORM\Query\Expr\Join::WITH,'e.joid = j.joid')
         ->where('e.eoid = :eoid')
         ->setParameter('eoid',$eoid)

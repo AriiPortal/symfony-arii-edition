@@ -1,0 +1,55 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    myAccordion.cells( "components" ).open(false); 
+    
+    myServersLayout = globalLayout.cells("b").attachLayout('2E');
+    myServersLayout.cells('a').setText("{{ "Application servers" | trans }}");
+    myServersLayout.cells('b').hideHeader();
+    myServersLayout.cells('b').setHeight(160);
+
+    myServersChart = myServersLayout.cells('a').attachChart({
+            view:         "donut",
+            value:        "1",
+            label:        "",
+            tooltip:      "#data2#",
+            color: function (obj) {
+                if (obj.data2==="1") 
+                    return "green";
+                else
+                    return "red";
+            },
+            border:false,
+            pieInnerText: "#data0#",
+            shadow: 0,
+            legend:{
+                width: 200,
+                template: "#data0#",
+                valign:"top",
+                align:"left"
+            } 
+    });
+
+    myServersGrid = myServersLayout.cells('b').attachGrid();
+    myServersGrid.selMultiRows = true;
+    myServersGrid.setImagePath( "{{ asset('/images/') }}");
+    myServersGrid.setHeader("{{ "Id" | trans }},{{ "Host" | trans }},{{ "Status" | trans }},{{ "Time" | trans }},{{ "PID" | trans }}");
+    myServersGrid.setInitWidths("200,*,100,150,100");
+    myServersGrid.setColAlign("left,left,center,left,right");
+    myServersGrid.setColTypes("ro,ro,ch,ro,ro");
+    myServersGrid.setColSorting("str,str,int,date,str");
+    myServersGrid.enableAlterCss("","");
+    myServersGrid.init();
+
+}
+
+function GridRefresh() {
+    myServersGrid.load( "{{ url('api_ATS_appservers_list') }}?outputFormat=dhtmlxGrid", function() {        
+        myServersChart.clearAll();
+        myServersChart.parse( myServersGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

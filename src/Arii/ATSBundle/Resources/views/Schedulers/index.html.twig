@@ -1,0 +1,56 @@
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    myAccordion.cells( "components" ).open(false); 
+    
+    myServersLayout = globalLayout.cells("b").attachLayout('2E');
+    myServersLayout.cells('a').setText("{{ "Schedulers" | trans }}");
+    myServersLayout.cells('b').hideHeader();
+    myServersLayout.cells('b').setHeight(160);
+
+    myServersChart = myServersLayout.cells('a').attachChart({
+            view:         "donut",
+            value:        "1",
+            label:        "#data0#",
+            tooltip:      "#data2#",
+            color: function (obj) {
+                if (obj.data2==='ALIVE') 
+                    return "green";
+                else if (obj.data2==='DELAYED') 
+                    return "orange";
+                else
+                    return "red";
+            },
+            border:false,
+            pieInnerText: "#data1#",
+            shadow: 0,
+            legend:{
+                width: 200,
+                template: "#data0#",
+                valign:"top",
+                align:"left"
+            } 
+    });
+
+    myServersGrid = myServersLayout.cells('b').attachGrid();
+    myServersGrid.selMultiRows = true;
+    myServersGrid.setImagePath( "{{ asset('/images/') }}");
+    myServersGrid.setHeader("{{ "Role" | trans }},{{ "Host" | trans }},{{ "Status" | trans }},{{ "Time" | trans }},{{ "PID" | trans }}");
+    myServersGrid.setInitWidths("120,*,100,150,100");
+    myServersGrid.setColAlign("left,left,center,left,right");
+    myServersGrid.setColTypes("ro,ro,ro,ro,ro");
+    myServersGrid.setColSorting("str,str,int,date,str");
+    myServersGrid.enableAlterCss("","");
+    myServersGrid.init();
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_ATS_schedulers_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myServersGrid.load( url.replace('REPOID',db), function() {        
+        myServersChart.clearAll();
+        myServersChart.parse( myServersGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

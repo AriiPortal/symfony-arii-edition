@@ -1,22 +1,24 @@
 <script language="javascript"> 
+// Mode console
+const DEBUG = true;
 {% if app.session.get('UserInterface').refresh is defined %}
 var update        = {{ app.session.get('UserInterface').refresh }};
-var refresh_pause = {{ app.session.get('UserInterface').refresh_pause }};
-var day_past      = {{ app.session.get('UserInterface').day_past }};
+var refreshPause = {{ app.session.get('UserInterface').refreshPause }};
+var dayPast      = {{ app.session.get('UserInterface').dayPast }};
 // Dates de reference
 var startTime = new Date ("{{ app.session.get('UserInterface').past   | date('Y-m-d H:i:s') }}");
-var endTime =   new Date ("{{ app.session.get('UserInterface').ref_date | date('Y-m-d H:i:s') }}");
+var endTime =   new Date ("{{ app.session.get('UserInterface').refDate | date('Y-m-d H:i:s') }}");
 {% else %}
 var update        = 30;
-var refresh_pause = 0;
-var day_past      = -1;
+var refreshPause = 0;
+var dayPast      = -1;
 // Dates de reference
 var startTime = new Date ();
 var endTime =   new Date ();
 {% endif %}
 
 var autorefresh;
-var refresh_next;
+var refreshNext;
 var nextTime = new Date();
 
 function AriiLayout(bundle,activated,size) {
@@ -29,7 +31,9 @@ function AriiLayout(bundle,activated,size) {
     myRibbon.setIconPath( "{{ asset('/images/') }}" );
     myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle+"&activated="+activated, function() {
         NextRefresh(update);
-        myRibbon.setItemText("date_now", day_past);
+        // repo en cours ?        
+        myRibbon.setItemText("db", myRibbon.getItemOptionText('db', 'db.'+db));
+        myRibbon.setItemText("dateNow", dayPast);
     });
 
     myRibbon.attachEvent("onClick", function (itemid,state) {
@@ -38,11 +42,11 @@ function AriiLayout(bundle,activated,size) {
             case 'date':
                 // date de tout de suite
                 endTime = new Date();
-                myRibbon.setValue( "date_end", endTime.Format() );
+                myRibbon.setValue( "dateEnd", endTime.Format() );
                 
                 // On recalcule la date de début
-                startTime = endTime.addDays(day_past);
-                myRibbon.setValue( "date_start", startTime.Format() );
+                startTime = endTime.addDays(dayPast);
+                myRibbon.setValue( "dateStart", startTime.Format() );
                 break;
             case 'main':
                 window.location = '{{ path('arii_homepage') }}';
@@ -85,54 +89,67 @@ function AriiLayout(bundle,activated,size) {
                         break;                    
                 }
                 break;
-            case 'filter':
-            case 'save':
-                dhx4.ajax.post( "{{ url('arii_session_update') }}?refresh="+update, function() {
-                    
-                });
-                break;
             case 'refresh':
                 switch(id[1]) {
                     case 'seconds':
                         update = id[2];
-                        dhx4.ajax.get( "{{ url('arii_session_update') }}?refresh="+update, function() {
-                            // Affiche la nouvelle periode
-                            var textUpdate;
-                            switch(update) {
-                                case '5':
-                                    textUpdate= "5s";
-                                    break;
-                                case '30':
-                                    textUpdate= "30s";
-                                    break;
-                                case '60':
-                                    textUpdate= "1min";
-                                    break;
-                                case '300':
-                                    textUpdate= "5min";
-                                    break;
-                                case '900':
-                                    textUpdate= "15min";
-                                    break;
-                                case '1800':
-                                    textUpdate= "30min";
-                                    break;
-                                case '3600':
-                                    textUpdate= "1h";
-                                    break;
-                                default:
-                                    textUpdate= "?";
-                                    break;
+                        sendRequest( 
+                            "PATCH",
+                            "{{ url('api_Core_session_update') }}",
+                            { "refresh": update },
+                            function(){
+                                // Affiche la nouvelle periode
+                                var textUpdate;
+                                switch(update) {
+                                    case '5':
+                                        textUpdate= "5s";
+                                        break;
+                                    case '30':
+                                        textUpdate= "30s";
+                                        break;
+                                    case '60':
+                                        textUpdate= "1min";
+                                        break;
+                                    case '300':
+                                        textUpdate= "5min";
+                                        break;
+                                    case '900':
+                                        textUpdate= "15min";
+                                        break;
+                                    case '1800':
+                                        textUpdate= "30min";
+                                        break;
+                                    case '3600':
+                                        textUpdate= "1h";
+                                        break;
+                                    default:
+                                        textUpdate= "?";
+                                        break;
+                                }
+                                myRibbon.setItemText( "refreshUpdate",textUpdate);
+                                // Calcul du prochain refresh
+                                NextRefresh();
                             }
-                            myRibbon.setItemText( "refresh_update",textUpdate);
-                            // Calcul du prochain refresh
-                            NextRefresh();
-                        });
+                        );
                         break;
                 }
                 break;
             default:
-                alert('CLICK '+id[0]);
+                if (itemid.substr(0,3)==='db.') {
+                    db = itemid.substr(3);
+                    sendRequest( 
+                        "PATCH",
+                        "{{ url('api_Core_session_update') }}",
+                        { "database": db },
+                        function(){
+                            myRibbon.setItemText("db", myRibbon.getItemOptionText('db', 'db.'+db));
+                            GlobalRefresh();
+                        }
+                    );                     
+                }
+                else {
+                    alert('CLICK '+id[0]);
+                }
                 break;
         }
     });
@@ -144,9 +161,9 @@ function AriiLayout(bundle,activated,size) {
                     case 'start':
                         startTime = new Date(value); 
                         // on met a jour le slider
-                        day_past = Math.round((startTime - endTime)/86400000);
-                        myRibbon.setItemText("date_now", day_past);
-                        myRibbon.setValue("date_days",day_past*-1);
+                        dayPast = Math.round((startTime - endTime)/86400000);
+                        myRibbon.setItemText("dateNow", dayPast);
+                        myRibbon.setValue("dateDays",dayPast*-1);
                         break
                     case 'end':
                         endTime = new Date(value);
@@ -163,17 +180,22 @@ function AriiLayout(bundle,activated,size) {
     myRibbon.attachEvent("onStateChange", function(itemid,state) {
         var id = itemid.split('_');
         switch(id[0]) {        
-            case 'refresh':
-                refresh_pause = (state?1:0);
-                dhx4.ajax.get( "{{ url('arii_session_update') }}?refresh_pause="+refresh_pause, function() {
-                    if (refresh_pause==1) {
-                        myRibbon.setItemText( "refresh_next", '00:00:00');
-                        myRibbon.setItemText( "refresh_pause", update);
+            case 'refreshPause':
+                update = (state?1:0);
+                sendRequest( 
+                    "PATCH",
+                    "{{ url('api_Core_session_update') }}",
+                    { refreshPause: update },
+                    function () {
+                        if (refreshPause==1) {
+                            myRibbon.setItemText( "refreshNext", '00:00:00');
+                            myRibbon.setItemText( "refreshPause", update);
+                        }
+                        else {
+                            NextRefresh();
+                        }
                     }
-                    else {
-                        NextRefresh();
-                    }
-                });
+                ); 
                 break;        
             default:
                 alert('STATE '+itemid);
@@ -192,7 +214,7 @@ function AriiLayout(bundle,activated,size) {
                         data = xml.getElementsByTagName("title")[0];
                         if (typeof data !== 'undefined')
                             myRibbon.setItemText("current_filter",data.childNodes[0].nodeValue);
-                        var Fields = [ "job_chain", "job_name", "trigger_job", "folder" ];                        
+                        var Fields = [ "jobChain", "jobName", "triggerJob", "folder" ];                        
                         Fields.forEach(function(f) {
                             data = xml.getElementsByTagName(f)[0];
                             if (typeof data !== 'undefined') 
@@ -215,26 +237,34 @@ function AriiLayout(bundle,activated,size) {
         var id = itemid.split('_');
         switch(id[0]) { 
             case 'date':
-                if (day_past*-1===value)
+                if (dayPast*-1===value)
                     return true;
-                day_past=value*-1; 
+                dayPast=value*-1; 
                 // Changement
-                myRibbon.setValue("date_days",value);
-                myRibbon.setItemText("date_now", day_past);
+                myRibbon.setValue("dateDays",value);
+                myRibbon.setItemText("dateNow", dayPast);
                 
                 startTime = new Date(endTime.valueOf());
-                startTime.addDays(day_past);
-                myRibbon.setValue( "date_start", startTime.Format() );
+                startTime.addDays(dayPast);
+                myRibbon.setValue( "dateStart", startTime.Format() );
                 // Mise a jour
-                dhx4.ajax.get( "{{ url('arii_session_update') }}?day_past="+day_past, function() {
-                    
-                });                
+                sendRequest( 
+                    "PATCH",
+                    "{{ url('api_Core_session_update') }}",
+                    { "refreshPause": update },
+                    function() { }
+                );
                 break;
-            case 'limit':
-                dhx4.ajax.get( "{{ url('arii_session_update') }}?limit="+value, function() {                    
-                });                
-                myRibbon.setItemText("limit", value);
-                myRibbon.setValue("limit",value);
+            case 'maxResult':
+                sendRequest( 
+                    "PATCH",
+                    "{{ url('api_Core_session_update') }}",
+                    { "maxResult": update },
+                    function(){
+                        myRibbon.setItemText("maxResult", value);
+                        myRibbon.setValue("maxResult",value);
+                    }
+                );
                 break;
             default:
                 alert('VALUE '+itemid);
@@ -245,18 +275,63 @@ function AriiLayout(bundle,activated,size) {
     autorefresh = setInterval( "GlobalRefresh()",update*1000);    
 }
 
+function sendRequest(method,url,data,callback) {
+	var req = createXMLHTTPObject();
+	if (!req) return;
+
+        req.open(method,url,true);
+        var json = null;
+	if (data) {
+            json = JSON.stringify(data);
+            req.setRequestHeader('Content-type','application/json');
+        }
+	req.onreadystatechange = function () {
+            if (req.readyState != 4) return;
+            if (req.status != 200 && req.status != 304) {             
+                console.error(url+' '+req.status);
+                return;
+            }
+            if (DEBUG)
+                console.log(req.responseText);
+            callback(req);
+	}
+	if (req.readyState == 4) return;
+	req.send(json);
+}
+
+var XMLHttpFactories = [
+    function () {return new XMLHttpRequest()},
+    function () {return new ActiveXObject("Msxml2.XMLHTTP")},
+    function () {return new ActiveXObject("Msxml3.XMLHTTP")},
+    function () {return new ActiveXObject("Microsoft.XMLHTTP")}
+];
+
+function createXMLHTTPObject() {
+    var xmlhttp = false;
+    for (var i=0;i<XMLHttpFactories.length;i++) {
+        try {
+            xmlhttp = XMLHttpFactories[i]();
+        }
+        catch (e) {
+            continue;
+        }
+        break;
+    }
+return xmlhttp;
+}
+
 function WaitRefresh() {
-    if (refresh_pause==1)
+    if (refreshPause==1)
         return true; 
     
     var currentTime = new Date();
-    myRibbon.setItemText( "refresh_pause", Math.round((nextTime - currentTime)/1000) );
+    myRibbon.setItemText( "refreshPause", Math.round((nextTime - currentTime)/1000) );
 }
 
 function GlobalRefresh() {
-    if (refresh_pause==1)
+    if (refreshPause==1)
         return true; 
-    refresh_pause=0;    
+    refreshPause=0;    
     if (typeof PageRefresh === "function") { 
         PageRefresh();
     }    
@@ -264,12 +339,12 @@ function GlobalRefresh() {
 }
 
 function NextRefresh() {
-    if (refresh_pause==1)
+    if (refreshPause==1)
         return true; 
     
     nextTime = new Date();
     nextTime.setSeconds(nextTime.getSeconds() + update);
-    myRibbon.setItemText( "refresh_next", ((nextTime.getHours() < 10)?"0":"") + nextTime.getHours() + ":" + ((nextTime.getMinutes() < 10)?"0":"") + nextTime.getMinutes() + ":" +  ((nextTime.getSeconds() < 10)?"0":"") + nextTime.getSeconds() );
+    myRibbon.setItemText( "refreshNext", ((nextTime.getHours() < 10)?"0":"") + nextTime.getHours() + ":" + ((nextTime.getMinutes() < 10)?"0":"") + nextTime.getMinutes() + ":" +  ((nextTime.getSeconds() < 10)?"0":"") + nextTime.getSeconds() );
     WaitRefresh();
 }
 

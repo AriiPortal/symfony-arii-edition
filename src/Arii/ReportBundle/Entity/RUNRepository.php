@@ -72,10 +72,10 @@ class RUNRepository extends EntityRepository
    {
        // Ne pas prendre le ack_time car les acquittements ne sont pas traités la nuit.
         return $this->createQueryBuilder('run')
-            ->Select('run.ack','job.spooler_name','job.app','job.env','job.job_class','min(run.ack_time) as date','count(run) as nb')
+            ->Select('run.ack','job.spooler_name','job.app','job.env','job.jobClass','min(run.ack_time) as date','count(run) as nb')
             ->leftJoin('Arii\ReportBundle\Entity\JOB','job',\Doctrine\ORM\Query\Expr\Join::WITH,'run.job = job.id')
             ->Where('run.ack is not null')
-            ->groupBy('run.ack','job.spooler_name','job.app','job.env','job.job_class')
+            ->groupBy('run.ack','job.spooler_name','job.app','job.env','job.jobClass')
             ->getQuery()
             ->getResult();
    }   
@@ -86,21 +86,21 @@ class RUNRepository extends EntityRepository
         switch ($driver) {
             case 'oci8':
                 $sql = "SELECT TRUNC(run.start_time) as start_date,EXTRACT(HOUR from run.start_time) as start_hour,run.spooler_name,run.status,count(run.status) as executions,count(run.alarm) as alarms,count(run.ack) as acks,
-                            job.env,job.app,job.job_class
+                            job.env,job.app,job.jobClass
                         FROM REPORT_RUN run    
                         LEFT JOIN REPORT_JOB job 
                         ON run.job_id = job.id
                         WHERE run.start_time >= :from
                         AND run.start_time <= :to
-                        GROUP BY TRUNC(run.start_time),EXTRACT(HOUR from run.start_time),run.spooler_name,job.env,job.app,job.job_class,run.status
-                        ORDER BY TRUNC(run.start_time),EXTRACT(HOUR from run.start_time),run.spooler_name,job.env,job.app,job.job_class,run.status";
+                        GROUP BY TRUNC(run.start_time),EXTRACT(HOUR from run.start_time),run.spooler_name,job.env,job.app,job.jobClass,run.status
+                        ORDER BY TRUNC(run.start_time),EXTRACT(HOUR from run.start_time),run.spooler_name,job.env,job.app,job.jobClass,run.status";
 
                 $rsm = new ResultSetMapping();
                 $rsm->addScalarResult('START_DATE', 'start_date');
                 $rsm->addScalarResult('START_HOUR', 'start_hour');
                 $rsm->addScalarResult('ENV', 'env');
                 $rsm->addScalarResult('APP', 'app');
-                $rsm->addScalarResult('JOB_CLASS', 'job_class');
+                $rsm->addScalarResult('jobClass', 'jobClass');
                 $rsm->addScalarResult('SPOOLER_NAME', 'spooler_name');
                 $rsm->addScalarResult('STATUS', 'status');
                 $rsm->addScalarResult('EXECUTIONS', 'executions');
@@ -117,7 +117,7 @@ class RUNRepository extends EntityRepository
                 return $query->getResult();
                 break;
             default:
-                // a aligner avec Oracle (jointure avec job et ajout du job_class)
+                // a aligner avec Oracle (jointure avec job et ajout du jobClass)
                 return $this->createQueryBuilder('run')
                     ->Select('DATE(run.start_time) as start_date,HOUR(run.start_time) as start_hour,run.env,run.app,run.spooler_name,run.alarm,count(run) as executions,count(run.alarm) as alarms,count(run.ack) as acks')
                     ->where('run.start_time >= :from')
@@ -148,12 +148,12 @@ class RUNRepository extends EntityRepository
         $driver = $this->_em->getConnection()->getDriver()->getName();
         switch ($driver) {
             case 'oci8':
-                $sql = "SELECT TO_CHAR(run.end_time,'YYYY-MM-DD HH') as start_date,run.spooler_name,run.alarm,job.env,job.app,job.job_class as \"class\",count(run) as executions,count(run.alarm) as alarms,count(run.ack) as acks
+                $sql = "SELECT TO_CHAR(run.end_time,'YYYY-MM-DD HH') as start_date,run.spooler_name,run.alarm,job.env,job.app,job.jobClass as \"class\",count(run) as executions,count(run.alarm) as alarms,count(run.ack) as acks
                         FROM REPORT_RUN run 
                         LEFT JOIN REPORT_JOB job 
                         ON run.job_id = job.id
                         WHERE run.end_time >= :time
-                        GROUP BY TO_CHAR(run.end_time,'YYYY-MM-DD HH'),run.spooler_name,run.alarm,job.env,job.app,job.job_class";
+                        GROUP BY TO_CHAR(run.end_time,'YYYY-MM-DD HH'),run.spooler_name,run.alarm,job.env,job.app,job.jobClass";
 
                 $rsm = new ResultSetMapping();
                 $rsm->addScalarResult('START_DATE', 'start_date');
@@ -170,7 +170,7 @@ class RUNRepository extends EntityRepository
                 break;
             default:
                 return $this->createQueryBuilder('run')
-                    ->Select('MONTH(run.start_time) as mois,job.app,job.env,job.job_class as class,run.alarm,run.ack,count(run) as nb')
+                    ->Select('MONTH(run.start_time) as mois,job.app,job.env,job.jobClass as class,run.alarm,run.ack,count(run) as nb')
                     ->leftJoin('Arii\ReportBundle\Entity\JOB','job',\Doctrine\ORM\Query\Expr\Join::WITH,'run.job = job.id')
                     ->where('run.start_time > :time')
                     ->groupBy('mois,run.app,run.env,run.alarm,run.ack')
@@ -184,7 +184,7 @@ class RUNRepository extends EntityRepository
    public function findExecutionsByAppAndDay($start,$end,$app,$env='*',$class='*')
    {
         $query = $this->createQueryBuilder('run')
-            ->Select('job.job_name,job.env,job.job_type,job.job_class as class,run.start_time,run.end_time,run.status,run.alarm,run.alarm_time,run.ack')
+            ->Select('job.job_name,job.env,job.job_type,job.jobClass as class,run.start_time,run.end_time,run.status,run.alarm,run.alarm_time,run.ack')
             ->leftJoin('Arii\ReportBundle\Entity\JOB','job',\Doctrine\ORM\Query\Expr\Join::WITH,'run.job = job.id')
             ->where('run.end_time >= :start')
             ->andWhere('run.end_time <= :end')
@@ -199,7 +199,7 @@ class RUNRepository extends EntityRepository
                 ->setParameter('env', $env);
 
         if ($class != '*')
-            $query->andWhere('job.job_class = :class')
+            $query->andWhere('job.jobClass = :class')
                 ->setParameter('class', $class);
                 
         return $query->getQuery()
@@ -368,7 +368,7 @@ class RUNRepository extends EntityRepository
         $orModule->add($qb->expr()->isNull('run.app'));
         $orModule->add($qb->expr()->isNull('run.env'));
         $orModule->add($qb->expr()->isNull('run.job_type'));
-        $orModule->add($qb->expr()->isNull('run.job_class'));
+        $orModule->add($qb->expr()->isNull('run.jobClass'));
 
         $q = $qb->update('Arii\ReportBundle\Entity\RUN','run')
             ->set('run.env',$qb->expr()->literal($env))

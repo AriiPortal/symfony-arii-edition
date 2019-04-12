@@ -1,0 +1,58 @@
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+
+    myInstancesLayout = globalLayout.cells("b").attachLayout('2E');
+    myInstancesLayout.cells('a').setText("{{ "Instances" | trans }}");
+    myInstancesLayout.cells('b').hideHeader();
+    
+    myInstancesChart =  myInstancesLayout.cells("a").attachChart ({
+            view:"donut",
+            container:"bar_container",
+            value:"1",
+            label:"#data1#:#data2#",
+            tooltip: "#data1#:#data2#",
+            fill:true,
+            color: function (obj) {
+                if (obj.data9===1) 
+                    return "green";
+                else if (obj.data10===1) 
+                    return "orange";
+                else
+                    return "red";
+            },
+            border:false,
+            shadow: 0,
+            legend:{
+                width: 200,
+                template: "#data1#:#data2#",
+                valign:"top",
+                align:"left"
+            } 
+    });
+    
+    myInstancesGrid = myInstancesLayout.cells('b').attachGrid();
+    myInstancesGrid.selMultiRows = true;
+    myInstancesGrid.setImagePath( "{{ asset('/images/') }}"); 13
+    myInstancesGrid.setHeader("{{ "Scheduler" | trans }},{{ "Hostname" | trans }},{{ "Port" | trans }},{{ "Supervisor" | trans }},{{ "Start time" | trans }},{{ "End time" | trans }},{{ "Release" | trans }},{{ "DB Name" | trans }},{{ "Serv." | trans }},{{ "Run." | trans }},{{ "Paus." | trans }},{{ "isCluster" | trans }},{{ "isAgent" | trans }}");
+    myInstancesGrid.attachHeader("#select_filter,#text_filter,#select_filter,#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myInstancesGrid.setInitWidths("*,*,100,150,150,150,100,*,70,70,70,70,0");
+    myInstancesGrid.setColAlign("left,left,right,left,right,right,right,right,right,right,right,right,right");
+    myInstancesGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro,ch,ch,ch,ro");
+    myInstancesGrid.setColSorting("str,str,int,str,date,date,str,str,int,int,int,int,int");
+    myInstancesGrid.enableAlterCss("","");
+    myInstancesGrid.init();
+    GridRefresh();
+}
+function GridRefresh() {
+    var url = "{{ url('api_JID_instances_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myInstancesGrid.load( url.replace('REPOID',db), function() {        
+        myInstancesGrid.refreshFilters();
+        myInstancesGrid.filterByAll();
+        myInstancesChart.clearAll();
+        myInstancesChart.parse( myInstancesGrid, "dhtmlxgrid");
+    });
+}
+</script>
+{% endblock %}

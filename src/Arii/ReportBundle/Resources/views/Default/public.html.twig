@@ -9,7 +9,7 @@ var app="{{ appl }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
-    day_past={{ day_past }};
+    dayPast={{ dayPast }};
 
 dhtmlxEvent(window,"load",function(){     
     globalLayout = new dhtmlXLayoutObject(document.body,"1C");
@@ -20,7 +20,7 @@ dhtmlxEvent(window,"load",function(){
     myToolbar.loadStruct("{{ url('xml_Report_toolbar') }}?app="+app+"&env="+env+"&month="+month, function() {
         this.setItemText("APP",this.getListOptionText("APP",this.getListOptionSelected("APP")));
         this.setItemText("ENV",this.getListOptionText("ENV",this.getListOptionSelected("ENV")));
-        this.setItemText("DAY_PAST",this.getListOptionText("DAY_PAST",this.getListOptionSelected("DAY_PAST")));
+        this.setItemText("dayPast",this.getListOptionText("dayPast",this.getListOptionSelected("dayPast")));
         this.setItemText("MONTH",this.getListOptionText("MONTH",this.getListOptionSelected("MONTH")));
     });
     myToolbar.attachEvent( "onClick", function(id, value) {
@@ -41,9 +41,9 @@ dhtmlxEvent(window,"load",function(){
                 month = id;
                 GlobalRefresh();
                 break;
-            case "DAY_PAST":
-                this.setItemText("DAY_PAST",this.getListOptionText("DAY_PAST",this.getListOptionSelected("DAY_PAST")));
-                day_past = id;
+            case "dayPast":
+                this.setItemText("dayPast",this.getListOptionText("dayPast",this.getListOptionSelected("dayPast")));
+                dayPast = id;
                 GlobalRefresh();
                 break;
             case "YEAR":
@@ -60,7 +60,7 @@ dhtmlxEvent(window,"load",function(){
 });
 
 function GlobalRefresh() {
-    globalLayout.cells("a").attachURL( "{{url('html_Report_dashboard') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&day_past="+day_past );                      
+    globalLayout.cells("a").attachURL( "{{url('html_Report_dashboard') }}?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast );                      
 };
 </script>
 {% endblock %}

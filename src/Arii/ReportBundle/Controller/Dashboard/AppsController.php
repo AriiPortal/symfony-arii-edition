@@ -60,7 +60,7 @@ class AppsController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
-        $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class'],false);
+        $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],false);
 
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();
@@ -99,7 +99,7 @@ class AppsController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
-        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class']);
+        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass']);
         
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();
@@ -133,7 +133,7 @@ class AppsController extends Controller
         $Filters = $this->container->get('report.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
-        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['job_class']);
+        $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass']);
         
         $portal = $this->container->get('arii_core.portal');
         $App = $portal->getApplications();

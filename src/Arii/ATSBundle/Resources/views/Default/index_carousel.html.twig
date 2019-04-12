@@ -1,0 +1,82 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiATSBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+function Init() {
+    myCarousel  = globalLayout.cells("b").attachCarousel({
+         effect: "cards"
+    });
+
+    Carousel=[];                        
+    Carousel[0] = myCarousel.addCell();
+    myLayout1   = myCarousel.cells(Carousel[0]).attachLayout("2E");
+    
+    myServers = myLayout1.cells("a").attachChart({
+            view:"donut",
+            value:"#PROCESSES#",
+            label:"",
+            tooltip: "#STATUS#",
+            color: "#COLOR#",
+            border:false,
+            pieInnerText: "#PROCESSES#",
+            shadow: 0,
+            legend:{
+                width: 0,
+                template: "#STATUS#",
+                valign:"top",
+                align:"left"
+            } 
+    });    
+    ServersTitle = myCarousel.cells(Carousel[0]).attachStatusBar({
+        // status bar config here, optional
+        text:   "{{ "Servers" | trans }}",   // status bar text
+        height: 50                 // custom height
+    });
+    
+
+    Carousel[1] = myCarousel.addCell();
+    myAlarms =  myCarousel.cells(Carousel[1]).attachChart({
+            view:"donut",
+            container:"pie_chart_container",
+            value:"#JOBS#",
+            label:"",
+            tooltip: "#STATUS#",
+            color: "#COLOR#",
+            border:false,
+            pieInnerText: "#JOBS#",
+            shadow: 0,
+            legend:{
+                width: 0,
+                template: "#STATUS#",
+                valign:"top",
+                align:"left"
+            } 
+    });
+    AlarmsTitle = myCarousel.cells(Carousel[1]).attachStatusBar({
+        // status bar config here, optional
+        text:   "{{ "Alarms" | trans }}",   // status bar text
+        height: 50                 // custom height
+    });
+}
+
+function GridRefresh() {
+    if (myCarousel.getActiveIndex() >= 2)
+        myCarousel.goFirst();
+    else
+        myCarousel.goNext();      
+    
+    myServers.load( "{{ url('api_ATS_schedulers_list') }}", function() {
+    });
+
+    myAlarms.load( "{{ url('api_ATS_alarms_list') }}", function() {
+/*        
+        val = myAlarms.get("OPEN");
+        if (val["JOBS"]>0)
+            mySidebar.cells().setBubble(val["JOBS"]);
+        else
+            mySidebar.cells(1).clearBubble();
+*/
+    });
+}
+</script>
+{% endblock %}

@@ -1,6 +1,10 @@
 # --------------------------------------------------------------------------
 # PAGES PRINCIPALES
 # --------------------------------------------------------------------------
+arii_ATS_index:
+    path:  /
+    defaults: { _controller: AriiATSBundle:Default:index }
+
 arii_ATS_readme:
     path:  /readme
     defaults: { _controller: AriiATSBundle:Default:readme }
@@ -77,39 +81,103 @@ xml_ATS_nodes_grid:
 arii_ATS_flowchart:
     path:  /flowchart
     defaults: { _controller: AriiATSBundle:Flowchart:generate }
-    
+
 # --------------------------------------------------------------------------
-# base de données définie
+# ACTIONS
 # --------------------------------------------------------------------------
-arii_ATS_index:
-    path:  /{db}
-    defaults: { _controller: AriiATSBundle:Default:index, db: ats_db }
+arii_ATS_actions:
+    path:  /actions
+    defaults: { _controller: AriiATSBundle:Actions:index }
+
+# --------------------------------------------------------------------------
+# AGENTS
+# --------------------------------------------------------------------------
+arii_ATS_agents:
+    path:  /agents
+    defaults: { _controller: AriiATSBundle:Agents:index }
+
+# --------------------------------------------------------------------------
+# ALARMS
+# --------------------------------------------------------------------------
+arii_ATS_alarms:
+    path:  /alarms
+    defaults: { _controller: AriiATSBundle:Alarms:index }
+
+# --------------------------------------------------------------------------
+# AUDIT
+# --------------------------------------------------------------------------
+arii_ATS_audit:
+    path:  /audit
+    defaults: { _controller: AriiATSBundle:Audit:index }
+
+# --------------------------------------------------------------------------
+# CHANGES
+# --------------------------------------------------------------------------
+arii_ATS_changes:
+    path:  /changes
+    defaults: { _controller: AriiATSBundle:Changes:index }
+
+# --------------------------------------------------------------------------
+# SCHEDULERS
+# --------------------------------------------------------------------------
+arii_ATS_schedulers:
+    path:  /schedulers
+    defaults: { _controller: AriiATSBundle:Schedulers:index }
+
+# --------------------------------------------------------------------------
+# APPSERVERS
+# --------------------------------------------------------------------------
+arii_ATS_appservers:
+    path:  /appservers
+    defaults: { _controller: AriiATSBundle:AppServers:index }
+
+# --------------------------------------------------------------------------
+# PROCESSES
+# --------------------------------------------------------------------------
+arii_ATS_processes:
+    path:  /processes
+    defaults: { _controller: AriiATSBundle:Processes:index }
+
+xml_ATS_processes_toolbar:
+    path:  /processes/toolbar.xml
+    defaults: { _controller: AriiATSBundle:Processes:toolbar }
+
+xml_ATS_processes_pie:
+    path:  /processes/pie.xml
+    defaults: { _controller: AriiATSBundle:Processes:pie }
+
+# --------------------------------------------------------------------------
+# QUEUES
+# --------------------------------------------------------------------------
+arii_ATS_queues:
+    path:  /queues
+    defaults: { _controller: AriiATSBundle:Queues:index }
 
 #--------------------------------------------------------------------
 # Templates
 #--------------------------------------------------------------------
 arii_ATS_report:
-    path:  /db/{db}/report
-    defaults: { _controller: AriiATSBundle:Report:index, db: ats_db }
+    path:  /report
+    defaults: { _controller: AriiATSBundle:Report:index }
 
 html_ATS_pivot:
-    path:  /db/{db}/pivot
-    defaults: { _controller: AriiATSBundle:Report:pivot, db: ats_db }
+    path:  /pivot
+    defaults: { _controller: AriiATSBundle:Report:pivot }
 
 json_ATS_report:
-    path:  /db/{db}/report.json
-    defaults: { _controller: AriiATSBundle:Report:json, db: ats_db }
+    path:  /report.json
+    defaults: { _controller: AriiATSBundle:Report:json }
 
 #--------------------------------------------------------------------
 # Templates
 #--------------------------------------------------------------------
 arii_ATS_templates:
-    path:  /db/{db}/templates
-    defaults: { _controller: AriiATSBundle:Templates:index, db: ats_db }
+    path:  /templates
+    defaults: { _controller: AriiATSBundle:Templates:index }
 
 arii_ATS_template_diff:
-    path:  /db/{db}/template/diff
-    defaults: { _controller: AriiATSBundle:Templates:diff, db: ats_db }
+    path:  /template/diff
+    defaults: { _controller: AriiATSBundle:Templates:diff }
 
 xml_ATS_templates_tree:
     path:  /templates/tree.xml
@@ -140,17 +208,6 @@ xml_ATS_templates_mep_toolbar:
     defaults: { _controller: AriiATSBundle:Templates:toolbar }
 
     
-# --------------------------------------------------------------------------
-# Config
-# --------------------------------------------------------------------------
-arii_ATS_config:
-    path:  /config
-    defaults: { _controller: AriiATSBundle:Config:index }
-
-html_ATS_config:
-    path:  /config.html
-    defaults: { _controller: AriiATSBundle:Config:config }
-
 # --------------------------------------------------------------------------
 # JOBS
 # --------------------------------------------------------------------------
@@ -297,51 +354,6 @@ xml_ATS_events_grid_toolbar:
     defaults: { _controller: AriiATSBundle:Events:toolbar }
 
 # --------------------------------------------------------------------------
-# SERVERS
-# --------------------------------------------------------------------------
-arii_ATS_servers:
-    path:  /servers
-    defaults: { _controller: AriiATSBundle:Servers:index }
-
-xml_ATS_servers_pie:
-    path:  /servers/pie.xml
-    defaults: { _controller: AriiATSBundle:Servers:pie }
-
-xml_ATS_servers_grid:
-    path:  /servers/grid.xml
-    defaults: { _controller: AriiATSBundle:Servers:grid }
-
-xml_ATS_servers2_grid:
-    path:  /servers/grid2.xml
-    defaults: { _controller: AriiATSBundle:Servers:grid2 }
-
-xml_ATS_servers_grid_toolbar:
-    path:  /servers/toolbar.xml
-    defaults: { _controller: AriiATSBundle:Servers:toolbar }
-
-xml_ATS_processes_pie:
-    path:  /servers/pie.xml
-    defaults: { _controller: AriiATSBundle:Servers:pie }    
-
-# AGENTS
-
-arii_ATS_agents:
-    path:  /agents
-    defaults: { _controller: AriiATSBundle:Agents:index }
-
-xml_ATS_agents_grid:
-    path:  /agents/grid.xml
-    defaults: { _controller: AriiATSBundle:Agents:agents }
-
-xml_ATS_agents_pie:
-    path:  /agents/pie.xml
-    defaults: { _controller: AriiATSBundle:Agents:pie }
-
-xml_ATS_agents_pie:
-    path:  /agents/pie.xml
-    defaults: { _controller: AriiATSBundle:Agents:pie }
-
-# --------------------------------------------------------------------------
 # PROCESSED
 # --------------------------------------------------------------------------
 arii_ATS_processed:
@@ -359,60 +371,6 @@ xml_ATS_processed_grid:
 xml_ATS_processed_grid_toolbar:
     path:  /processed/toolbar.xml
     defaults: { _controller: AriiATSBundle:Processed:toolbar }
-
-# --------------------------------------------------------------------------
-# AUDIT
-# --------------------------------------------------------------------------
-arii_ATS_audit:
-    path:  /db/{db}/audit
-    defaults: { _controller: AriiATSBundle:Audit:index, db: ats_db }
-
-xml_ATS_audit_grid:
-    path:  /db/{db}/audit/grid.xml
-    defaults: { _controller: AriiATSBundle:Audit:grid, db: ats_db }
-
-xml_ATS_audit_jobs:
-    path:  /db/{db}/audit/jobs.xml
-    defaults: { _controller: AriiATSBundle:Audit:jobs, db: ats_db }
-
-xml_ATS_audit_job:
-    path:  /db/{db}/audit/job.xml
-    defaults: { _controller: AriiATSBundle:Audit:detail, db: ats_db }
-
-xml_ATS_audit_pie:
-    path:  /db/{db}/audit/pie.xml
-    defaults: { _controller: AriiATSBundle:Audit:pie, db: ats_db }
-
-xml_ATS_audit_grid_toolbar:
-    path:  /audit/toolbar.xml
-    defaults: { _controller: AriiATSBundle:Audit:toolbar }
-
-# --------------------------------------------------------------------------
-# ALARMS
-# --------------------------------------------------------------------------
-arii_ATS_alarms:
-    path:  /db/{db}/alarms
-    defaults: { _controller: AriiATSBundle:Alarms:index, db: ats_db }
-
-xml_ATS_alarms_grid:
-    path:  /db/{db}/alarms/grid.xml
-    defaults: { _controller: AriiATSBundle:Alarms:grid, db: ats_db }
-
-xml_ATS_alarms_pie:
-    path:  /db/{db}/alarms/pie.xml
-    defaults: { _controller: AriiATSBundle:Alarms:pie, db: ats_db }
-
-xml_ATS_alarms_detail:
-    path:  /db/{db}/alarms/detail.xml
-    defaults: { _controller: AriiATSBundle:Alarms:detail, db: ats_db }
-
-xml_ATS_alarms_grid_toolbar:
-    path:  /db/{db}/alarms/toolbar.xml
-    defaults: { _controller: AriiATSBundle:Alarms:toolbar, db: ats_db }
-
-xml_ATS_alarms_grid_menu:
-    path:  /db/{db}/alarms/grid_menu.xml
-    defaults: { _controller: AriiATSBundle:Alarms:grid_menu, db: ats_db }
 
 # --------------------------------------------------------------------------
 # ERRORS

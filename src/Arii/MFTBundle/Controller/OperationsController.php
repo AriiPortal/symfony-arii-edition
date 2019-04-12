@@ -30,17 +30,17 @@ class OperationsController extends Controller
         return $this->render('AriiMFTBundle:Operations:form.xml.twig',array(), $response );
     }
 
-    public function pieAction( $history_max=0, $only_warning=1 )
+    public function pieAction( $history_max=0, $onlyWarning=1 )
     {
         $request = Request::createFromGlobals();
         if ($request->get('history')>0) {
             $history_max = $request->get('history');
         }
-        if ($request->get('only_warning')!='')
-            $only_warning = $request->get('only_warning');
+        if ($request->get('onlyWarning')!='')
+            $onlyWarning = $request->get('onlyWarning');
 
         $history = $this->container->get('arii_mft.history');
-        $Operations = $history->Operations($history_max, $only_warning);
+        $Operations = $history->Operations($history_max, $onlyWarning);
        
         $Status['success']=$Status['error']=$Status['running']=0;
         foreach ($Operations as $k=>$Transfer) {
@@ -54,7 +54,7 @@ class OperationsController extends Controller
         }
         
         $pie = '<data>';
-        if ($only_warning==0)
+        if ($onlyWarning==0)
             $pie .= '<item id="success"><STATUS>success</STATUS><JOBS>'.$Status['success'].'</JOBS><COLOR>#ccebc5</COLOR></item>';
         $pie .= '<item id="error"><STATUS>error</STATUS><JOBS>'.$Status['error'].'</JOBS><COLOR>#fbb4ae</COLOR></item>';
 //        $pie .= '<item id="RUNNING"><STATUS>RUNNING</STATUS><JOBS>'.$Status['running'].'</JOBS><COLOR>#ffffcc</COLOR></item>';

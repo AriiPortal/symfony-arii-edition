@@ -26,6 +26,10 @@ arii_JOC_readme:
     path:  /readme
     defaults: { _controller: AriiJOCBundle:Default:readme }
 
+arii_JOC_swagger:
+    path:  /swagger
+    defaults: { _controller: AriiJIDBundle:Default:swagger }
+
 json_JOC_ribbon:
     path:  /ribbon.json
     defaults: { _controller: AriiJOCBundle:Default:ribbon }

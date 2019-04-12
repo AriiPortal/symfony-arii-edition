@@ -31,7 +31,7 @@ class RUNDayRepository extends EntityRepository
                  ->setParameter('env', $env);
 
         if ($class!='*')
-            $qb->andWhere('run.job_class = :class')
+            $qb->andWhere('run.jobClass = :class')
                  ->setParameter('class', $class);        
 
         return $qb->getQuery()
@@ -44,18 +44,18 @@ class RUNDayRepository extends EntityRepository
         $driver = $this->_em->getConnection()->getDriver()->getName();
         switch ($driver) {
             case 'oci8':
-                $sql = "SELECT EXTRACT(YEAR FROM run.run_date) as run_year,EXTRACT(MONTH FROM run.run_date) as run_month,run.app,run.env,run.job_class,run.spooler_name,run.job_class,sum(run.executions) as runs,sum(run.warnings) as warnings,sum(run.alarms) as alarms,sum(run.acks) as acks
+                $sql = "SELECT EXTRACT(YEAR FROM run.run_date) as run_year,EXTRACT(MONTH FROM run.run_date) as run_month,run.app,run.env,run.jobClass,run.spooler_name,run.jobClass,sum(run.executions) as runs,sum(run.warnings) as warnings,sum(run.alarms) as alarms,sum(run.acks) as acks
                         FROM REPORT_RUN_DAY run
                         WHERE run.run_date >= :from
                         AND run.run_date <= :to
-                        GROUP BY EXTRACT(YEAR FROM run.run_date),EXTRACT(MONTH FROM run.run_date),run.app,run.env,run.spooler_name,run.job_class";
+                        GROUP BY EXTRACT(YEAR FROM run.run_date),EXTRACT(MONTH FROM run.run_date),run.app,run.env,run.spooler_name,run.jobClass";
 
                 $rsm = new ResultSetMapping();
                 $rsm->addScalarResult('RUN_YEAR', 'run_year');
                 $rsm->addScalarResult('RUN_MONTH', 'run_month');                
                 $rsm->addScalarResult('APP', 'app');
                 $rsm->addScalarResult('ENV', 'env');
-                $rsm->addScalarResult('JOB_CLASS', 'job_class');
+                $rsm->addScalarResult('jobClass', 'jobClass');
                 $rsm->addScalarResult('SPOOLER_NAME', 'spooler_name');
                 $rsm->addScalarResult('RUNS', 'runs');
                 $rsm->addScalarResult('WARNINGS', 'warnings');                
@@ -92,7 +92,7 @@ class RUNDayRepository extends EntityRepository
        if ($env!='*')
            $g .= ',run.env';
        if ($class!='*')
-           $g .= ',run.job_class';
+           $g .= ',run.jobClass';
 
         $qb = $this->createQueryBuilder('run')
             ->Select('run.date,'.$f.'sum(run.executions) as runs,sum(run.alarms) as alarms,sum(run.acks) as acks')
@@ -110,7 +110,7 @@ class RUNDayRepository extends EntityRepository
             $qb->andWhere('run.app = :app')
                  ->setParameter('app', $app);
         if ($class!='*')
-            $qb->andWhere('run.job_class = :class')
+            $qb->andWhere('run.jobClass = :class')
                  ->setParameter('class', $class);
 /*        
     $query = $qb->getQuery();

@@ -113,12 +113,12 @@ class RUNController extends Controller
                 
             $app    = $run['app'];
             $env    = $run['env'];
-            $job_class  = $run['job_class'];
+            $jobClass  = $run['jobClass'];
             $spooler_name  = $run['spooler_name'];
             
             $date = substr(str_replace('-','',$run['start_date']),0,8);
             $hour = $run['start_hour'];
-            $id = "$spooler_name:$app:$env:$job_class:$date:$hour";
+            $id = "$spooler_name:$app:$env:$jobClass:$date:$hour";
 
             if (!isset($Run[$id])) {
                 $Run[$id]['executions'] = 0;
@@ -133,7 +133,7 @@ class RUNController extends Controller
             $Run[$id]['app'] = $run['app'];
             $Run[$id]['spooler_name'] = $run['spooler_name'];
             $Run[$id]['env'] = $run['env'];
-            $Run[$id]['job_class'] = $run['job_class'];
+            $Run[$id]['jobClass'] = $run['jobClass'];
             
             switch ($run['status']) {
                 case 'SUCCESS':
@@ -161,13 +161,13 @@ class RUNController extends Controller
                 array(  'spooler_name' => $run['spooler_name'],
                         'app'  => $run['app'], 
                         'env' => $run['env'], 
-                        'job_class' => $run['job_class'], 
+                        'jobClass' => $run['jobClass'], 
                         'date' => $date, 
                         'hour' => $hour ));
             if (!$Agg) {
                 $Agg = new \Arii\ReportBundle\Entity\RUNHour();
                 if ($html>0) {
-                    print $run['spooler_name']." ".$run['app']." ".$run['env']." ".$run['job_class']." ".$run['date']." ".$run['hour']."<br/>" ;
+                    print $run['spooler_name']." ".$run['app']." ".$run['env']." ".$run['jobClass']." ".$run['date']." ".$run['hour']."<br/>" ;
                 }
                 $new++;
             }
@@ -178,7 +178,7 @@ class RUNController extends Controller
             $Agg->setDate($date);
             $Agg->setHour($hour);
             $Agg->setEnv($run['env']);
-            $Agg->setJobClass($run['job_class']);      
+            $Agg->setJobClass($run['jobClass']);      
             $Agg->setApp($run['app']);
 
             if ($run['executions']=='') $run['executions']=0;
@@ -229,7 +229,7 @@ class RUNController extends Controller
                 $run['spooler_name'], 
                 $run['app'],
                 $run['env'],
-                $run['job_class'],
+                $run['jobClass'],
                 $date,
                 $hour ] );
             
@@ -250,13 +250,13 @@ class RUNController extends Controller
             $spooler_name = $run->getSpoolerName();
             $app = $run->getApp();
             $env = $run->getEnv();
-            $job_class = $run->getJobClass();
+            $jobClass = $run->getJobClass();
             
             $id = implode(':', [ 
                 $spooler_name, 
                 $app,
                 $env,
-                $job_class,
+                $jobClass,
                 $date,
                 $hour ] );
             
@@ -282,13 +282,13 @@ class RUNController extends Controller
         $new = 0;
         foreach ($Issues as $k=>$v) {
             if ($v==0) continue;
-            list( $spooler_name, $app, $env, $job_class,$d,$hour ) = explode(':',$k);
+            list( $spooler_name, $app, $env, $jobClass,$d,$hour ) = explode(':',$k);
             $date = new \DateTime($d);
             $run = $em->getRepository("AriiReportBundle:RUNHour")->findOneBy([
                         'spooler_name' => $spooler_name, 
                         'app' => $app, 
                         'env' => $env, 
-                        'job_class' => $job_class,
+                        'jobClass' => $jobClass,
                         'date' => $date,
                         'hour' => $hour
                     ]);
@@ -299,7 +299,7 @@ class RUNController extends Controller
                 $run->setSpoolerName($spooler_name);
                 $run->setApp($app);
                 $run->setEnv($env);
-                $run->setJobClass($job_class);                
+                $run->setJobClass($jobClass);                
                 $run->setExecutions(0);                
             }
             
@@ -362,7 +362,7 @@ class RUNController extends Controller
                 array(  'date' => $run['date'], 
                         'app'=> $run['app'] , 
                         'env' => $run['env'], 
-                        'job_class' => $run['job_class'], 
+                        'jobClass' => $run['jobClass'], 
                         'spooler_name' => $run['spooler_name'] ) 
             );
             if (!$Agg) {
@@ -376,7 +376,7 @@ class RUNController extends Controller
             $Agg->setEnv($run['env']);
             $Agg->setApp($run['app']);
             $Agg->setSpoolerName($run['spooler_name']);
-            $Agg->setJobClass($run['job_class']);
+            $Agg->setJobClass($run['jobClass']);
             
             // doit etre inutile.
             if ($run['executions']=='') $run['executions']=0;
@@ -430,7 +430,7 @@ class RUNController extends Controller
         foreach ($Runs as $Run) {
             $app = $Run['app'];
             $env = $Run['env'];
-            $job_class = $Run['job_class'];
+            $jobClass = $Run['jobClass'];
             $month = $Run['run_month'];
             $year = $Run['run_year'];
             $spooler_name = $Run['spooler_name'];
@@ -458,7 +458,7 @@ class RUNController extends Controller
             
             $RunMonth->setApp($app);            
             $RunMonth->setEnv($env);
-            $RunMonth->setJobClass($job_class);
+            $RunMonth->setJobClass($jobClass);
             $RunMonth->setMonth($month);
             $RunMonth->setYear($year);
             

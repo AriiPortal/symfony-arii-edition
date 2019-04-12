@@ -27,8 +27,7 @@ class DefaultController extends Controller
 
     public function indexAction()   
     {
-        
-        return $this->render('AriiJOCBundle:Default:index.html.twig');
+        return $this->render('AriiJOCBundle:Default:index.html.twig' );
     }
 
     public function readmeAction()
@@ -36,32 +35,12 @@ class DefaultController extends Controller
         return $this->render('AriiJOCBundle:Default:readme.html.twig');
     }
 
-    public function ribbonAction()
+    public function swaggerAction()
     {
-        // On recupère les requetes
-        $yaml = new Parser();
-        $lang = $this->getRequest()->getLocale();
-        $basedir = '../src/Arii/JOCBundle/Resources/views/Requests/'.$lang;
-        $Requests = array();
-        if ($dh = @opendir($basedir)) {
-            while (($file = readdir($dh)) !== false) {
-                if (substr($file,-4) == '.yml') {
-                    $content = file_get_contents("$basedir/$file");
-                    $v = $yaml->parse($content);
-                    $v['id']=substr($file,0,strlen($file)-4);
-                    if (!isset($v['icon'])) $v['icon']='cross';
-                    if (!isset($v['title'])) $v['title']='?';
-                    array_push($Requests, $v);
-                }
-            }
-        }
-        
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        
-        return $this->render('AriiJOCBundle:Default:ribbon.json.twig',array( 'Requests' => $Requests ), $response );
+        $portal = $this->container->get('arii_core.portal');
+        return $this->render('AriiJIDBundle:Default:swagger.html.twig', [ 'db' => $portal->getDatabase() ]);
     }
-
+        
     public function menuAction() {
         
         // Etat actuel des spoolers

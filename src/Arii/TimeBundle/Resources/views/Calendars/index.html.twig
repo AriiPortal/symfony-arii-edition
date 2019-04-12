@@ -51,9 +51,9 @@
 <script charset="utf-8">
 function Init() {
 
-    myLayout = globalLayout.cells("b").attachLayout("1C");
+    myLayout = globalLayout.cells("b").attachLayout("3U");
     
-    dhxGrid = globalLayout.cells("a").attachGrid();
+    dhxGrid = myLayout.cells("a").attachGrid();
     dhxGrid.setImagePath( "{{ asset('/images/') }}");
     dhxGrid.setHeader("{{ "Name" | trans }},{{ "Description" | trans }}");
     dhxGrid.attachHeader("#text_filter,#text_filter");
@@ -65,7 +65,7 @@ function Init() {
     dhxGrid.load("{{ url('xml_Time_calendars') }}");
     dhxGrid.attachEvent("onRowDblClicked", Detail );
     
-    dhxGrid = globalLayout.cells("b").attachGrid();
+    dhxGrid = myLayout.cells("b").attachGrid();
     dhxGrid.setImagePath( "{{ asset('/images/') }}");
     dhxGrid.setHeader("{{ "ISO" | trans }},#cspan,{{ "Name" | trans }},{{ "Local name" | trans }}");
     dhxGrid.attachHeader("#text_filter,#cspan,#text_filter,#text_filter");
@@ -76,15 +76,15 @@ function Init() {
     dhxGrid.init();
     dhxGrid.load("{{ url('xml_Time_zones') }}");
     
-    var myLayout = globalLayout.cells("b").attachLayout("2U");
-    myLayout.cells("a").setHeight(300); 
-    myLayout.cells("b").setWidth(350); 
-    myLayout.cells("a").hideHeader();     
-    myLayout.cells("b").hideHeader();
+    var detailLayout = myLayout.cells("b").attachLayout("2U");
+    detailLayout.cells("a").setHeight(300); 
+    detailLayout.cells("b").setWidth(350); 
+    detailLayout.cells("a").hideHeader();     
+    detailLayout.cells("b").hideHeader();
     // myTab.addTab("reference","{{ "Reference" | trans }}","100px", null, true);
     // myTab.addTab("rules","{{ "Rules" | trans }}","100px");
 
-    myGridToolbar = myLayout.cells("a").attachToolbar();
+    myGridToolbar = detailLayout.cells("a").attachToolbar();
     myGridToolbar.setIconsPath("{{ asset('/images/') }}");
     myGridToolbar.loadStruct( "{{ url('xml_Time_calendars_toolbar') }}");
 
@@ -107,9 +107,9 @@ function Init() {
           label: "{{ "Description"| trans }}"
         }
     ];
-    myForm = myLayout.cells("a").attachForm(formData);
+    myForm = detailLayout.cells("a").attachForm(formData);
 
-    dhxTest = myLayout.cells("b").attachGrid();
+    dhxTest = detailLayout.cells("b").attachGrid();
     dhxTest.setImagePath( "{{ asset('/images/') }}");
     dhxTest.setHeader("{{ "Name" | trans }}");
     dhxTest.attachHeader("#text_filter");
@@ -154,7 +154,7 @@ function Init() {
     scheduler.init('scheduler_here',null, "month");	
 
 //    scheduler.load( "{ { url('xml_Time_calendar') }}" );
-    timeline  = globalLayout.cells("c").attachScheduler( new Date() , 'year', 'scheduler_here', scheduler);
+    timeline  = myLayout.cells("c").attachScheduler( new Date() , 'year', 'scheduler_here', scheduler);
 
     scheduler.attachEvent("onClick",function(id, value){
         alert(id);
@@ -178,12 +178,12 @@ function Init() {
 }
 
 function Detail(id) {
-    globalLayout.cells("b").progressOn();
+    myLayout.cells("b").progressOn();
     myForm.load("{{ url('xml_Time_calendars_form') }}?id="+id, function(){    
         dhxTest.clearAndLoad("{{ url('xml_Time_calendar_test') }}?rule="+ encodeURIComponent(myForm.getItemValue('RULE')), function () {
             scheduler.clearAll();
             scheduler.load("{{ url('xml_Time_calendar_test_schedule') }}?rule="+ encodeURIComponent(myForm.getItemValue('RULE')));
-            globalLayout.cells("b").progressOff();
+            myLayout.cells("b").progressOff();
         });
     });    
 }

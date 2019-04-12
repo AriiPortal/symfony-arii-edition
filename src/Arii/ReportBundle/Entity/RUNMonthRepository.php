@@ -20,7 +20,7 @@ class RUNMonthRepository extends EntityRepository
         if ($env=='*')
             array_push($Filter,'run.env');
         if ($class=='*')
-            array_push($Filter,'run.job_class');
+            array_push($Filter,'run.jobClass');
 */        
         $f = implode(',',$Filter);
         $qb = $this->createQueryBuilder('run')
@@ -36,7 +36,7 @@ class RUNMonthRepository extends EntityRepository
             $qb->andWhere('run.env = :env')
                  ->setParameter('env', $env);        
         if ($class!='*')
-            $qb->andWhere('run.job_class = :class')
+            $qb->andWhere('run.jobClass = :class')
                  ->setParameter('class', $class);
         
         return $qb->getQuery()

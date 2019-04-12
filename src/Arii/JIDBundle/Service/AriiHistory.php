@@ -105,7 +105,7 @@ class AriiHistory
     public function Orders($em) {
 
         // On se base sur l'historique
-        $History = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findOrders();
+        $History = $em->getRepository("AriiJIDBundle:Orders")->findOrders();
         $Orders = [];
         $Done = [];
         foreach ($History as $k=>$Order) {    

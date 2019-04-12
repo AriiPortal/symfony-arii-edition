@@ -1,0 +1,83 @@
+# --------------------------------------------------------------------------
+# Clusters
+# --------------------------------------------------------------------------
+api_JOC_clusters_list:
+    path:  /clusters
+    defaults: { _controller: AriiJOCBundle:API\Clusters:list }
+    methods: [GET]
+
+api_JOC_clusters_get:
+    path:  /clusters/{schedulerId}/members
+    defaults: { _controller: AriiJOCBundle:API\Clusters:get }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Instances
+# --------------------------------------------------------------------------
+api_JOC_instances_list:
+    path:  /instances
+    defaults: { _controller: AriiJOCBundle:API\Instances:list }
+    methods: [GET]
+
+api_JOC_inventory_instances_list:
+    path:  /inventory_instances
+    defaults: { _controller: AriiJOCBundle:API\Inventory\Instances:list }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Spoolers
+# --------------------------------------------------------------------------
+api_JOC_spoolers_list:
+    path:  /spoolers
+    defaults: { _controller: AriiJOCBundle:API\Spoolers:list }
+    methods: [GET]
+
+api_JOC_repos_create:
+    path:  /spoolers
+    defaults: { _controller: AriiJOCBundle:API\Spoolers:create }
+    methods: [POST]
+
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+api_JOC_orders_list:
+    path:  /orders
+    defaults: { _controller: AriiJOCBundle:API\Orders:list }
+    methods: [GET]
+
+api_JOC_orders_get:
+    path:  /orders/{orderId}
+    defaults: { _controller: AriiJOCBundle:API\Orders:get }
+    methods: [GET]
+
+api_JOC_orders_steps:
+    path:  /orders/{orderId}/steps
+    defaults: { _controller: AriiJOCBundle:API\Orders:steps }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Jobs
+# --------------------------------------------------------------------------
+api_JOC_jobs_list:
+    path:  /jobs
+    defaults: { _controller: AriiJOCBundle:API\Repos:list }
+    methods: [GET]
+
+api_JOC_jobs_create:
+    path:  /jobs
+    defaults: { _controller: AriiJOCBundle:API\Repos:create }
+    methods: [POST]
+
+# --------------------------------------------------------------------------
+# Runs
+# --------------------------------------------------------------------------
+api_JOC_runs_list:
+    path:  /runs
+    defaults: { _controller: AriiJOCBundle:API\Runs:list }
+    methods: [GET]
+
+api_JOC_runs_create:
+    path:  /runs
+    defaults: { _controller: AriiJOCBundle:API\Runs:create }
+    methods: [POST]
+

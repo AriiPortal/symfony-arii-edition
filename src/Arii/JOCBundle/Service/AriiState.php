@@ -23,9 +23,63 @@ class AriiState
         $this->date = $date;
     }
 
-/*********************************************************************
- * Informations de connexions
+ /*********************************************************************
+ * Orders
  *********************************************************************/
+    public function Orders() {
+
+        // On se base sur l'historique
+        $History = $this->em->getRepository("AriiJOCBundle:Orders")->findOrders();
+        $Orders = [];
+        foreach ($History as $k=>$Order) {    
+            $Orders[$k] = $Order;
+            // $endTime = time() - $this->TZoffset;
+            $endTime = time();
+            if ($Order['start_time']) {
+                $Orders[$k]['runtime'] = $endTime - $Order['start_time']->getTimestamp();            
+            }
+            else {
+                $Orders[$k]['runtime'] = '';            
+            }
+            // $Order['start_time']->modify($this->TZoffset." second");
+            // Couleur
+            if ($Order['state']==='SUCCESS') {
+                $Orders[$k]['status'] = 'SUCCESS';
+            }
+            elseif (substr($Order['state'],0,1)==='!') {
+                $Orders[$k]['status'] = 'FAILURE';                
+            }
+            else {
+                $Orders[$k]['status'] = 'RUNNING';                                
+            }
+        }
+        return $Orders;
+    }
+
+    public function Order($em,$orderId) {
+
+        // On se base sur l'historique
+        $Orders = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findOrder($orderId);
+        $Order = array_pop($Orders);
+        if ($Order['endTime']) {
+            $endTime = $Order['endTime']->getTimestamp();
+            $Order['endTime']->modify($this->TZoffset." second");
+        }
+        else {
+            $endTime = time() - $this->TZoffset;
+        }
+        $Order['runtime'] = $endTime - $Order['startTime']->getTimestamp();
+        $Order['startTime']->modify($this->TZoffset." second");
+        return $Order;
+    }
+    
+    
+    
+    
+    
+    
+    
+
    public function Jobs($ordered = false, $onlyWarning= true) {   
         $date = $this->date;        
         $sql = $this->sql;
@@ -168,7 +222,7 @@ class AriiState
         return $RemoteSchedulers;
    }
    
-   public function Orders( $nested=0, $onlyWarning= true, $sort='last', $id=-1) {
+   public function OrdersOLD( $nested=0, $onlyWarning= true, $sort='last', $id=-1) {
         $date = $this->date;
         $sql = $this->sql;
         $db = $this->db;

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * state_orders
  *
  * @ORM\Table(name="JOC_ORDERS")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Arii\JOCBundle\Entity\OrdersRepository")
  */
 class Orders
 {

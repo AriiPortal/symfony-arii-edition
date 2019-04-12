@@ -158,6 +158,10 @@ arii_JOC:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_JOC_API:
+    resource: "@AriiJOCBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/joc
+        
 # ========================================
 # Report
 # ----------------------------------------

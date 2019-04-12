@@ -11,7 +11,7 @@
       "email" : "arii@sos-paris.com"
     } 
   },
-  "host": "localhost/app_dev.php/api/v1/bundles/jid",  
+  "host": "localhost/app_dev.php/api/v1/bundles/joc",  
   "consumes" : [ "application/json" ],
   "produces" : [ "application/json" ],
   "servers" : [
@@ -29,38 +29,7 @@
     "https"
     ],
   "paths" : {
-    "/repos" : {
-      "get" : {
-        "summary" : "Get a list of all repos",
-        "tags" : [ "Repositories" ],
-        "parameters" : [  ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/repo"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/repos/{repoId}" : {    
-      "delete" : {
-        "deprecated": true,
-        "summary" : "Delete a repo",
-        "tags" : [ "Repositories" ],
-        "parameters" : [ ],
-        "responses" : {
-          "201" : {
-            "description" : "Status 201"
-          }
-        }
-      }
-    },        
-    "/repos/{repoId}/spoolers" : {
+    "/spoolers" : {
       "get" : {
         "summary" : "get a list of spoolers",
         "tags" : [ "Spoolers" ],
@@ -102,7 +71,7 @@
         }
       }
     },
-    "/repos/{repoId}/spooolers/{spoolerId}" : {    
+    "/spooolers/{spoolerId}" : {    
       "delete" : {
         "summary" : "Delete a spooler",
         "tags" : [ "Spoolers" ],
@@ -114,7 +83,45 @@
         }
       }
     },        
-    "/repos/{repoId}/chains" : {
+    "/orders" : {
+      "get" : {
+        "summary" : "get all orders",
+        "tags" : [ "Orders" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "activit" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{orderId}" : {
+      "get" : {
+        "summary" : "get all informnation about an order",
+        "tags" : [ "Orders" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "activityId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/chains" : {
       "get" : {
         "summary" : "get all job chains",
         "tags" : [ "Chains" ],
@@ -134,7 +141,7 @@
         }
       }
     },
-    "/repos/{repoId}/chains/{chainId}" : {
+    "/chains/{chainId}" : {
       "get" : {
         "summary" : "get all informnation about a job chain",
         "tags" : [ "Chains" ],
@@ -152,7 +159,7 @@
         "type" : "string"
       } ]
     },
-    "/repos/{repoId}/jobs" : {
+    "/jobs" : {
       "get" : {
         "summary" : "get a list of all jobs",
         "tags" : [ "Jobs" ],
@@ -204,7 +211,7 @@
         }
       }
     },
-    "/repos/{repoId}/jobs/{jobId}" : {
+    "/jobs/{jobId}" : {
       "get" : {
         "summary" : "get information for a job",
         "tags" : [ "Jobs" ],
@@ -253,7 +260,7 @@
         "type" : "string"
       } ]
     },
-    "/repos/{repoId}/jobs/{jobId}/runs" : {
+    "/jobs/{jobId}/runs" : {
       "get" : {
         "summary" : "Get all executions for a job",
         "tags" : [ "Jobs" ],
@@ -295,7 +302,7 @@
         "type" : "string"
       } ]
     },
-    "/repos/{repoId}/jobs/{jobId}/runs/{runId}" : {
+    "/jobs/{jobId}/runs/{runId}" : {
       "get" : {
         "summary" : "get information for a run",
         "tags" : [ "Jobs" ],
@@ -350,17 +357,11 @@
         "type" : "string"
       } ]
     },
-    "/repos/{repoId}/runs" : {
+    "/runs" : {
       "get" : {
         "summary" : "get a list of all runs",
         "tags" : [ "Runs" ],
-        "parameters" : [ {
-          "name" : "repoId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string",
-          "default" : "ojs_db"
-        },
+        "parameters" : [ 
         {
           "name" : "from",
           "in" : "query",
@@ -401,7 +402,7 @@
         }
       }
     },
-    "/repos/{repoId}/runs/{runId}" : {
+    "/runs/{runId}" : {
       "delete" : {
         "summary" : "Delete a run",
         "tags" : [ "Runs" ],
@@ -419,18 +420,11 @@
         }
       }
     },
-    "/repos/{repoId}/archive/orders" : {
+    "/archive/orders" : {
       "get" : {
         "summary" : "get a list of all runs",
         "tags" : [ "Archive" ],
         "parameters" : [ {
-          "name" : "repoId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string",
-          "default" : "ojs_db"
-        },
-        {
           "name" : "from",
           "in" : "query",
           "required" : false,
@@ -470,17 +464,11 @@
         }
       }
     },
-    "/repos/{repoId}/archive/runs" : {
+    "/archive/runs" : {
       "get" : {
         "summary" : "get a list of all runs",
         "tags" : [ "Archive" ],
-        "parameters" : [ {
-          "name" : "repoId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string",
-          "default" : "ojs_db"
-        },
+        "parameters" : [ 
         {
           "name" : "limit",
           "in" : "query",                        
@@ -567,11 +555,6 @@
       },
       "description" : "A list of entity validation problems"
     },
-    "repo" : {
-      "type" : "object",
-      "properties" : {
-      }
-    },
     "spooler" : {
       "type" : "object",
       "properties" : {
@@ -640,10 +623,6 @@
     "run" : {
       "type" : "object",
       "properties" : {
-        "repoId" : {
-          "type" : "string",
-          "description" : "Database alias"
-        },
         "taskId" : {
           "type" : "integer",
           "description" : "Id in jobscheduler database"

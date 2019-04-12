@@ -12,4 +12,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class OrdersRepository extends EntityRepository
 {
+    
+    public function findOrders() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.id,e.id_order,e.spooler_id,e.job_chain_id,e.state,e.name,e.path,e.title,e.state_text,e.next_start_time,e.setback,e.setback_count,e.initial_state,e.end_state,e.priority,e.start_time,e.suspended,e.running,e.history_id,e.task_id,e.schedule,e.in_process_since,e.touched,e.on_blacklist,e.last_write_time,e.updated')
+        ->orderBy('e.spooler_id,e.path,e.id_order')
+        ->setMaxResults(1000)
+        ->getQuery();
+        return $q->getResult();
+    }
+    
 }

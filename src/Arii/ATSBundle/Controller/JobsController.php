@@ -8,15 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class JobsController extends Controller
 {
-    protected $images;
-    protected $autosys; 
-    
-    public function __construct( )
-    {
-          $request = Request::createFromGlobals();
-          $this->images = $request->getUriForPath('/../bundles/ariicore/images/wa');          
-    }
-
     public function indexAction()
     {
         return $this->render('AriiATSBundle:Jobs:index.html.twig');

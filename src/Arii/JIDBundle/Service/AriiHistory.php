@@ -100,12 +100,58 @@ class AriiHistory
     }
 
  /*********************************************************************
+ * Jobs
+ *********************************************************************/
+    public function Jobs($em) {        
+        // On se base sur l'historique
+        $Jobs = $em->getRepository("AriiJIDBundle:SchedulerJobs")->findJobs();
+        foreach ($Jobs as $k=>$Job) {
+            if ($Job['stopped']>0)
+                $Jobs[$k]['status'] = 'STOPPED';
+            else
+                $Jobs[$k]['status'] = 'ACTIVATED';
+        }
+        return $Jobs;
+    }
+
+ /*********************************************************************
+ * Tasks
+ *********************************************************************/
+    public function Tasks($em) {        
+        // On se base sur l'historique
+        $Tasks = $em->getRepository("AriiJIDBundle:SchedulerTasks")->findTasks();
+        foreach ($Tasks as $k=>$Task) {
+            if ($Job['stopped']>0)
+                $Tasks[$k]['status'] = 'STOPPED';
+            else
+                $Tasks[$k]['status'] = 'ACTIVATED';
+        }
+        return $Tasks;
+    }
+    
+ /*********************************************************************
+ * Chains
+ *********************************************************************/
+    public function Chains($em) {        
+        // On se base sur l'historique
+        $Chains = $em->getRepository("AriiJIDBundle:SchedulerJobChains")->findChains();
+        foreach ($Chains as $k=>$Chain) {
+            if ($Chain['stopped']>0)
+                $Chains[$k]['status'] = 'STOPPED';
+            else
+                $Chains[$k]['status'] = 'ACTIVATED';
+        }
+        return $Chains;
+    }
+
+    
+ /*********************************************************************
  * Orders
  *********************************************************************/
-    public function Orders($em) {
+    public function HistoryOrders($em) {
 
         // On se base sur l'historique
-        $History = $em->getRepository("AriiJIDBundle:Orders")->findOrders();
+        $History = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findOrders();
         $Orders = [];
         $Done = [];
         foreach ($History as $k=>$Order) {    
@@ -136,7 +182,7 @@ class AriiHistory
         return $Orders;
     }
 
-    public function Order($em,$orderId) {
+    public function HistoryOrder($em,$orderId) {
 
         // On se base sur l'historique
         $Orders = $em->getRepository("AriiJIDBundle:SchedulerOrderHistory")->findOrder($orderId);
@@ -150,6 +196,72 @@ class AriiHistory
         }
         $Order['runtime'] = $endTime - $Order['startTime']->getTimestamp();
         $Order['startTime']->modify($this->TZoffset." second");
+        return $Order;
+    }
+
+    public function Orders($em) {        
+        // On se base sur l'historique
+        $Orders = $em->getRepository("AriiJIDBundle:SchedulerOrders")->findOrders();
+        foreach ($Orders as $k=>$Order) {
+            $Orders[$k] = $this->getOrder($Order);            
+        }
+        return $Orders;
+    }
+
+    public function Order($em,$spoolerId,$jobChain,$orderId) {
+
+        // On se base sur l'historique
+        $Orders = $em->getRepository("AriiJIDBundle:SchedulerOrders")->findOrder($spoolerId,$jobChain,$orderId);
+        if (!$Orders) return [];
+        $Order = array_pop($Orders);
+        return $this->getOrder($Order);
+    }
+
+    private function getOrder ($Order) {
+        if ($Order['createdTime'])
+            $Order['createdTime']->modify($this->TZoffset." second");
+        
+        if ($Order['modTime'])
+            $Order['modTime']->modify($this->TZoffset." second");
+
+        $order_xml = $this->tools->xml2array($Order['orderXml']);
+        $setback = 0; $setback_time = '';
+        $order_status = 'WAIT';
+        $next_time = '';
+        if (isset($order_xml['order_attr']['start_time'])) {
+            $next_time = $order_xml['order_attr']['start_time'];
+            // $next_time->modify($this->TZoffset." second");
+        }
+        $at = '';
+        if (isset($order_xml['order_attr']['at'])) {
+            $order_status = 'PLANNED';
+            $at = new \DateTime($order_xml['order_attr']['at']);
+            $at->modify($this->TZoffset." second");
+        }
+        if (isset($order_xml['order_attr']['suspended']) && $order_xml['order_attr']['suspended'] == "yes")
+        {
+            $order_status = "SUSPENDED";
+        }
+        elseif (isset($order_xml['order_attr']['setback_count']))
+        {
+            $order_status = "SETBACK";
+            $setback = $order_xml['order_attr']['setback_count'];
+            $setback_time = $order_xml['order_attr']['setback'];
+        }
+        $hid = 0;
+        if (isset($order_xml['order_attr']['history_id'])) {
+            $hid = $order_xml['order_attr']['history_id'];
+        }
+        
+        $log = '';
+        if (isset($order_xml['order']['log']))
+            $log = $order_xml['order']['log'];
+        $Order['status'] = $order_status;
+        $Order['nextTime'] = $next_time;
+        $Order['history'] = $hid;
+        $Order['at'] = $at;
+        $Order['orderId'] = $Order['id'];
+        $Order['log'] = $log;
         return $Order;
     }
     
@@ -195,14 +307,12 @@ class AriiHistory
         foreach ($History as $H) {
             $spooler = $H['spoolerId'];
             $member = $H['clusterMemberId'];
-            if (!isset($Spoolers[$spooler])) {
-                $Spoolers[$spooler][$members] = [
+            if (!isset($Spoolers[$spooler][$member])) {
+                $Spoolers[$spooler][$member] = [
                     'Runs' => $H['Runs']
                 ];
             }
         }
-        print_r($Spoolers);
-        exit();
         return $Spoolers;
     }
 
@@ -392,7 +502,7 @@ class AriiHistory
     }
 
    //ajout de la variable bool pour dissocier les jobs avec ou sans chaines
-   public function Jobs($history_max=0,$ordered = 0,$onlyWarning= 1,$next=1, $name="", $spooler="") {
+   public function HistoryJobs($history_max=0,$ordered = 0,$onlyWarning= 1,$next=1, $name="", $spooler="") {
 
      $data = $this->db->Connector('data');
 

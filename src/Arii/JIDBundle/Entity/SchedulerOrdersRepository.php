@@ -12,6 +12,30 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrdersRepository extends EntityRepository
 {   
+    public function findOrders() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.id,e.jobChain,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId')
+        ->orderBy('e.modTime','desc')
+        ->setMaxResults(1000)
+        ->getQuery();
+        return $q->getResult();
+    }
+
+    public function findOrder($spooler,$chain,$order) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.id,e.jobChain,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId')
+        ->orderBy('e.modTime','desc')
+        ->where("e.spoolerId = :spooler")
+        ->andWhere("e.jobChain = :chain")
+        ->andWhere("e.id = :order")
+        ->setParameter("spooler", $spooler)
+        ->setParameter("chain", $chain)
+        ->setParameter("order", $order)
+        ->setMaxResults(1000)
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     // Pour la synchronisation des historique
     public function findStates() { 
         $q = $this->createQueryBuilder('e')
@@ -20,5 +44,4 @@ class SchedulerOrdersRepository extends EntityRepository
         ->getQuery();
         return $q->getResult();
     }
-    
 }

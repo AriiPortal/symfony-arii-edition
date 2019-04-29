@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * DailyPlan
  *
  * @ORM\Table(name="daily_plan", uniqueConstraints={@ORM\UniqueConstraint(name="DAILY_PLAN_UNIQUE", columns={"SCHEDULER_ID", "JOB", "JOB_CHAIN", "ORDER_ID", "PLANNED_START"})})
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\JIDBundle\Entity\DailyPlanRepository")
  */
 class DailyPlan
 {

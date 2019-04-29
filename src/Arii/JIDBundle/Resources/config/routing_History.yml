@@ -1,0 +1,16 @@
+# ==========================================================================
+# HISTORY
+# ==========================================================================
+    
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+arii_JID_history_orders:
+    path:  /orders
+    defaults: { _controller: AriiJIDBundle:History\Orders:index }
+
+xml_JID_history_orders_menu:
+    path:  /orders/menu.xml
+    defaults: { _controller: AriiJIDBundle:History\Orders:menu }
+
+

@@ -1,0 +1,39 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<body>
+<script language="javascript">
+var lastid=0;    
+var urlChains = "{{ url('api_JID_chains_list', { "repoId": "REPOID", "chainId": "ORDERID" } ) }}";
+function Init() {
+    myAccordion.cells( "status" ).open(false);
+
+    myLayout = globalLayout.cells("b").attachLayout("1C");
+    myLayout.cells("a").setText("{{ "Chains" | trans }}");
+    
+    myChainsGrid = myLayout.cells("a").attachGrid();
+    myChainsGrid.setImagePath( "{{ asset('/images/') }}");
+    myChainsGrid.setHeader("{{ "Spooler" | trans }},{{ "Cluster member" | trans }},{{ "Path" | trans }},{{ "Status" | trans }}");
+    myChainsGrid.attachHeader("#select_filter,#text_filter,#text_filter,#numeric_filter");
+    myChainsGrid.setInitWidths("180,*,200,160");
+    myChainsGrid.setColAlign("left,left,left,left");
+    myChainsGrid.setColTypes("ro,ro,ro,ro");
+    myChainsGrid.setColSorting("str,str,str,str");
+    myChainsGrid.enableAlterCss("","");
+    myChainsGrid.init();
+
+    GridRefresh();
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_JID_chains_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myChainsGrid.load( url.replace('REPOID',db), function() {  
+        myLayout.cells("a").progressOff();
+        myChainsGrid.refreshFilters();
+        myChainsGrid.filterByAll();
+/*        if (lastid>0)
+            Detail(lastid);
+*/    });
+}
+</script>
+{% endblock %}

@@ -106,6 +106,18 @@ arii_jid:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_jid_history:
+    resource: "@AriiJIDBundle/Resources/config/routing_History.yml"
+    prefix:   /{_locale}/jid/history
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_jid_plan:
+    resource: "@AriiJIDBundle/Resources/config/routing_Plan.yml"
+    prefix:   /{_locale}/jid/plan
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
 arii_jid_inventory:
     resource: "@AriiJIDBundle/Resources/config/routing_Inventory.yml"
     prefix:   /{_locale}/jid/inventory
@@ -122,15 +134,6 @@ arii_jid_API:
     resource: "@AriiJIDBundle/Resources/config/routing_api.yml"
     prefix:   /api/v1/bundles/jid
         
-# ========================================
-# DS 
-# ----------------------------------------
-arii_ds:
-    resource: "@AriiDSBundle/Resources/config/routing.yml"
-    prefix:   /{_locale}/ds
-    requirements:
-        _locale: en|fr|es|de|cn|ar|ru|jp 
-
 # ========================================
 # MFT 
 # ----------------------------------------

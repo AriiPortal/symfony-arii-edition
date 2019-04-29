@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * SchedulerTasks
  *
  * @ORM\Table(name="scheduler_tasks")
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\JIDBundle\Entity\SchedulerTasksRepository")
  */
 class SchedulerTasks
 {

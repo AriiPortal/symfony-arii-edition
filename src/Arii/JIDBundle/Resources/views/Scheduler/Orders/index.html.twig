@@ -1,0 +1,142 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<body>
+<script language="javascript">
+var lastid=0;    
+var urlOrders = "{{ url('api_JID_orders_list', { "repoId": "REPOID", "orderId": "ORDERID" } ) }}";
+var urlOrder  = "{{ url('api_JID_orders_detail',   { "repoId": "REPOID" } ) }}";    
+var urlPayload  = "{{ url('api_JID_orders_payload',   { "repoId": "REPOID" } ) }}";    
+function Init() {
+    myAccordion.cells( "status" ).open(false);
+
+    myLayout = globalLayout.cells("b").attachLayout("2E");
+    myLayout.cells("a").setText("{{ "Orders" | trans }}");
+    
+    myOrdersGrid = myLayout.cells("a").attachGrid();
+    myOrdersGrid.setImagePath( "{{ asset('/images/') }}");
+    myOrdersGrid.setHeader("{{ "Spooler" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "Status" | trans }},{{ "Next Start" | trans }},{{ "Title" | trans }},{{ "State" | trans }},{{ "Message" | trans }},{{ "Time" | trans }}");
+    myOrdersGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myOrdersGrid.setInitWidths("180,*,200,160,150,*,140,*,150");
+    myOrdersGrid.setColAlign("left,left,left,left,left,left,left,left,right");
+    myOrdersGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myOrdersGrid.setColSorting("str,str,str,str,str,str,str,str,date");
+    myOrdersGrid.enableAlterCss("","");
+    myOrdersGrid.init();
+    myOrdersGrid.attachEvent("onRowDblClicked", Detail );
+    
+    myOrderLayout = myLayout.cells("b").attachLayout("2U");
+    myOrderLayout.cells("a").setText("{{ "Detail" | trans }}");
+    
+    formData = [
+        {   type:"settings",
+            position: "label-left", 
+            labelAlign:"right", 
+            labelWidth:"80",
+            inputWidth:"300" },
+        {type:"input",  name: "spoolerId", label:"{{ "Spooler" | trans}}" },
+        {   type:"input",
+                name: "jobChain", 
+                label:"{{ "Chain" | trans}}",
+                inputWidth:"300" 
+        },
+        {   type:"input",    
+                name: "orderId", 
+                label:"{{ "Order" | trans}}", 
+                inputWidth:"300"  
+        },
+        {type:"input",  name: "createdTime", label:"{{ "Created time" | trans}}"},
+        {type:"input",  name: "modTime", label:"{{ "Mod. time" | trans}}"},
+        {type:"hidden",  name: "runTime", label:"{{ "Run time" | trans}}", rows: 4 },
+        {type:"input",  name: "state", label:"{{ "State" | trans}}"},
+        {type:"input",  name: "initialState", label:"{{ "Initial state" | trans}}"},
+        {type:"hidden", name: "id" },
+        {type:"newcolumn"},
+        {   type:"input",    
+                name: "title", 
+                label:"{{ "Title" | trans}}",
+                inputWidth:"300"  
+        },
+        {   type:"input",    
+                name: "stateText", 
+                label:"{{ "Message" | trans}}", 
+                inputWidth:"300",
+                rows: 4
+        },
+        {   type:"input",
+                name: "orderXml", 
+                label:"{{ "Order" | trans}}",
+                inputWidth:"300",
+                rows: 5 
+        },
+        {type:"input",  name: "priority", label:"{{ "Priority" | trans}}"},
+        {type:"input",  name: "ordering", label:"{{ "Ordering" | trans}}"},
+        {   type:"hidden",
+                name: "payload", 
+                label:"{{ "Payload" | trans}}",
+                inputWidth:"300",
+                rows: 5
+        },
+        {type:"input",  name: "distributedNextTime", label:"{{ "Distributed next time" | trans}}"},
+        {type:"input",  name: "occupyingClusterMemberId", label:"{{ "Occupying Cluster Member Id" | trans}}"},
+        {   type:"hidden", name: "log" }
+    ];
+    myOrderForm = myOrderLayout.cells("a").attachForm(formData);
+    
+    myOrderTab = myOrderLayout.cells("b").attachTabbar();
+    myOrderTab.addTab("log","{{ "Log" | trans }}","150px",null,true);
+    myOrderTab.addTab("payload","{{ "Payload" | trans }}","150px");
+    myOrderTab.addTab("runtime","{{ "Run time" | trans }}","150px");
+    myOrderTab.addTab("xml","{{ "XML" | trans }}","150px");
+
+    myPayloadGrid = myOrderTab.cells("payload").attachGrid();
+    myPayloadGrid.setImagePath( "{{ asset('/images/') }}");
+    myPayloadGrid.setHeader("{{ "Name" | trans }},{{ "Value" | trans }}");
+    myPayloadGrid.attachHeader("#text_filter,#text_filter");
+    myPayloadGrid.setColAlign("left,left");
+    myPayloadGrid.setColTypes("ro,ro");
+    myPayloadGrid.setColSorting("str,str");
+    myPayloadGrid.enableAlterCss("","");
+    myPayloadGrid.init();
+
+    myLayout.cells("a").progressOn();
+    myLayout.cells("b").collapse();
+    
+    GridRefresh();
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_JID_orders_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myOrdersGrid.load( url.replace('REPOID',db), function() {  
+        myLayout.cells("a").progressOff();
+        myOrdersGrid.refreshFilters();
+        myOrdersGrid.filterByAll();
+/*        if (lastid>0)
+            Detail(lastid);
+*/    });
+}
+
+function Detail(id) {
+    lastid = id;
+    myLayout.cells("b").expand();
+    var spooler = myOrdersGrid.cells(id, 0 ).getValue();
+    var chain   = myOrdersGrid.cells(id, 1 ).getValue();
+    var order   = myOrdersGrid.cells(id, 2 ).getValue();
+    myLayout.cells("b").progressOn();
+    myOrderForm.load( urlOrder.replace('REPOID',db)+"?outputFormat=dhtmlxForm"
+            +"&spooler="+spooler
+            +"&jobChain="+chain
+            +"&orderId="+order, function () {
+        myOrderTab.cells("log").attachHTMLString('<pre>'+myOrderForm.getItemValue('log',true)+'</pre>');
+        myOrderTab.cells("runtime").attachHTMLString('<pre>'+myOrderForm.getItemValue('runTime',true).replace('<','&lt;')+'</pre>');
+        myOrderTab.cells("xml").attachHTMLString('<pre>'+myOrderForm.getItemValue('orderXml',true).replace('<','&lt;')+'</pre>');
+        myPayloadGrid.load( urlPayload.replace('REPOID',db)+"?outputFormat=dhtmlxGrid"
+                    +"&spooler="+spooler
+                    +"&jobChain="+chain
+                    +"&orderId="+order, function () {
+            myLayout.cells("b").progressOff();
+        });
+    });
+}
+</script>
+{% endblock %}

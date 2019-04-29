@@ -1,0 +1,150 @@
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<script type="text/javascript">
+var lastid=0;
+var urlOrders = "{{ url('api_JID_orders_steps', { "repoId": "REPOID", "orderId": "ORDERID" } ) }}";
+var urlOrder  = "{{ url('api_JID_orders_get',   { "repoId": "REPOID", "orderId": "ORDERID" } ) }}";
+function Init(){
+    myAccordion.cells( "status" ).open(false); 
+
+    myOrdersLayout = globalLayout.cells("b").attachLayout('2U');
+    myOrdersLayout.cells("a").setText("{{ "Orders" | trans }}");
+
+    myGridMenu = new dhtmlXMenuObject(null);
+    myGridMenu.setIconsPath( "{{ asset('/images/') }}" );
+    myGridMenu.renderAsContextMenu();
+    myGridMenu.loadStruct("{{ url('xml_JID_orders_menu') }}");
+    
+    myOrdersGrid = myOrdersLayout.cells('a').attachGrid();
+    myOrdersGrid.selMultiRows = true;
+    myOrdersGrid.setImagePath( "{{ asset('/images/') }}"); 
+    myOrdersGrid.setHeader("{{ "Scheduler" | trans }},{{ "Order" | trans }},{{ "Chain" | trans }},{{ "State" | trans }},{{ "End time" | trans }},{{ "Runtime" | trans }}");
+    myOrdersGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#numeric_filter");
+    myOrdersGrid.setInitWidths("150,150,*,100,150,100");
+    myOrdersGrid.setColAlign("left,left,left,center,left,right");
+    myOrdersGrid.setColTypes("ro,ro,ro,ro,ro,ro");
+    myOrdersGrid.setColSorting("str,str,str,date,date,int");
+    myOrdersGrid.enableAlterCss("","");
+    myOrdersGrid.enableContextMenu(myGridMenu);
+    myOrdersGrid.attachEvent("onBeforeContextMenu", onShowMenu );
+    myOrdersGrid.init();
+
+    myOrdersGrid.attachEvent("onRowDblClicked", Detail );
+    myGridMenu.attachEvent("onClick", function (menuitemId, type) {
+        var data = myOrdersGrid.contextID.split("_");
+        var rId = data[0];
+        var cInd = data[1];
+        spooler = myOrdersGrid.cells(rId,0).getValue();
+        switch (menuitemId) {
+           case "spooler_go":
+                window.open('/js/'+spooler+'/', spooler);
+                break;
+           case "order_history":
+                document.location.href = "{{ url('arii_JID_order_history') }}?id="+rId;
+                break;
+            case "suspend_order":
+                XMLCommand(rId,menuitemId);
+                break;
+            default:
+                alert("inconnu ! "+menuitemId);    
+        }
+        return true;
+    });
+    
+    myLayout = myOrdersLayout.cells("b").attachLayout('4E');
+    
+    myLayout.cells("a").setText("{{ "Order" | trans }}");
+    myLayout.cells("b").setText("{{ "Log" | trans }}");
+    myLayout.cells("c").setText("{{ "Chain" | trans }}");
+    myLayout.cells("d").setText("{{ "Jobs" | trans }}");
+
+    formData = [
+        {type:"settings",
+            position: "label-left", 
+            labelAlign:"right", 
+            labelWidth:"80",
+            inputWidth:"140" },
+        {type:"input", name: "spoolerId", label:"{{ "Spooler" | trans}}" },
+        {type:"input",    name: "startTime", label:"{{ "Start" | trans}}"},
+        {type:"input",    name: "endTime", label:"{{ "End" | trans}}"},
+        {type:"input",    name: "state", label:"{{ "State" | trans}}"},
+        {type:"hidden",    name: "id" },
+        {type:"newcolumn"},
+      {   type:"input",    
+                name: "jobChain", 
+                label:"{{ "Chain" | trans}}",
+                inputWidth:"300" 
+        },
+        {   type:"input",    
+                name: "orderId", 
+                label:"{{ "Order" | trans}}", 
+                inputWidth:"300"  
+        },
+        {   type:"input",    
+                name: "title", 
+                label:"{{ "Title" | trans}}",
+                inputWidth:"300"  
+        },
+        {   type:"input",    
+                name: "stateText", 
+                label:"{{ "Output" | trans}}", 
+                inputWidth:"300",
+                rows: 4
+        }
+    ];
+    myOrderForm = myLayout.cells("a").attachForm(formData);
+    
+    myOrdersLayout.cells("a").progressOn();
+    myOrdersLayout.cells("b").collapse();
+    
+    myStepsGrid = myLayout.cells('d').attachGrid();
+    myStepsGrid.selMultiRows = true;
+    myStepsGrid.setImagePath( "{{ asset('/images/') }}"); 
+    myStepsGrid.setHeader("{{ "Step" | trans }},{{ "State" | trans }},{{ "Start time" | trans }},{{ "End time" | trans }},{{ "Error" | trans }},{{ "Error code" | trans }},{{ "Error text" | trans }}");
+    myStepsGrid.attachHeader("#numeric_filter,#text_filter,#text_filter,#text_filter,#select_filter,#select_filter,#text_filter");
+    myStepsGrid.setInitWidths("60,*,150,150,0,150,*");
+    myStepsGrid.setColAlign("left,left,left,left,right,right,left");
+    myStepsGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro");
+    myStepsGrid.setColSorting("int,str,date,date,int,str,str");
+    myStepsGrid.enableAlterCss("","");
+    myStepsGrid.init();
+        
+    GridRefresh();
+}
+    
+function GridRefresh() { 
+    var url = "{{ url('api_JID_orders_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myOrdersGrid.load( url.replace('REPOID',db), function() {  
+        myOrdersLayout.cells("a").progressOff();
+        myOrdersGrid.refreshFilters();
+        myOrdersGrid.filterByAll();
+/*        if (lastid>0)
+            Detail(lastid);
+*/    });
+}
+
+function Detail(id) {    
+    lastid = id;
+    myOrdersLayout.cells("b").expand();
+    if (id !== lastid)
+        myOrdersLayout.cells("b").progressOn();
+    myOrderForm.load( urlOrder.replace('REPOID',db).replace('ORDERID',id)+"?outputFormat=dhtmlxForm", function () {
+        myLayout.cells("b").attachURL("{{ url('html_JID_order_log') }}?id="+id);
+        myLayout.cells("c").attachURL(urlOrders.replace('REPOID',db).replace('ORDERID',id)+"?outputFormat=svg");
+        myStepsGrid.load( urlOrders.replace('REPOID',db).replace('ORDERID',id)+"?outputFormat=dhtmlxGrid", function() {  
+            myOrdersLayout.cells("b").progressOff();
+            myStepsGrid.refreshFilters();
+            myStepsGrid.filterByAll();
+        });    
+    });
+}
+
+function onShowMenu(rowId, celInd, grid) {
+    var status = grid.cells(rowId, 3 ).getValue();
+ return true;
+}
+
+
+</script>
+
+{% endblock %}

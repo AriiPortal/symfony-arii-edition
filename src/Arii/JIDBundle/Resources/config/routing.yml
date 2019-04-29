@@ -37,26 +37,114 @@ xml_JID_nodes_grid:
     path:  /nodes.xml
     defaults: { _controller: AriiJIDBundle:Default:nodes }
 
-arii_JID_config:
-    path:  /config
-    defaults: { _controller: AriiJIDBundle:Config:index }
-
-html_JID_config:
-    path:  /config.html
-    defaults: { _controller: AriiJIDBundle:Config:config }
-
-
-# --------------------------------------------------------------------------
-# Vue consolidee
-# --------------------------------------------------------------------------
+# ==========================================================================
+# STATUS
+# ==========================================================================
 arii_JID_index:
     path:  /
-    defaults: { _controller: AriiJIDBundle:Global:index }
+    defaults: { _controller: AriiJIDBundle:Scheduler\Global:index }
 
-xml_JID_global_orders_grid:
-    path:  /global/orders/grid.xml
-    defaults: { _controller: AriiJIDBundle:Global:orders }
-    
+arii_JID_global:
+    path:  /scheduler/global
+    defaults: { _controller: AriiJIDBundle:Scheduler\Global:index }
+
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+arii_JID_orders:
+    path:  /scheduler/orders
+    defaults: { _controller: AriiJIDBundle:Scheduler\Orders:index }
+
+xml_JID_orders_menu:
+    path:  /scheduler/orders/menu.xml
+    defaults: { _controller: AriiJIDBundle:Scheduler\Orders:menu }
+
+# --------------------------------------------------------------------------
+# Chains
+# --------------------------------------------------------------------------
+arii_JID_chains:
+    path:  /scheduler/chains
+    defaults: { _controller: AriiJIDBundle:Scheduler\Chains:index }
+
+xml_JID_chains_menu:
+    path:  /scheduler/chains/menu.xml
+    defaults: { _controller: AriiJIDBundle:Scheduler\Chains:menu }
+
+# --------------------------------------------------------------------------
+# Jobs
+# --------------------------------------------------------------------------
+arii_JID_jobs:
+    path:  /scheduler/jobs
+    defaults: { _controller: AriiJIDBundle:Scheduler\Jobs:index }
+
+xml_JID_orders_menu:
+    path:  /scheduler/jobs/menu.xml
+    defaults: { _controller: AriiJIDBundle:Scheduler\Jobs:menu }
+
+# --------------------------------------------------------------------------
+# Tasks
+# --------------------------------------------------------------------------
+arii_JID_tasks:
+    path:  /scheduler/tasks
+    defaults: { _controller: AriiJIDBundle:Scheduler\Tasks:index }
+
+
+# ==========================================================================
+# COMPONENTS
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# Instances
+# --------------------------------------------------------------------------
+arii_JID_instances:
+    path:  /components/instances
+    defaults: { _controller: AriiJIDBundle:Components\Instances:index}
+
+# --------------------------------------------------------------------------
+# Spoolers
+# --------------------------------------------------------------------------
+arii_JID_spoolers:
+    path:  /components/spoolers
+    defaults: { _controller: AriiJIDBundle:Components\Spoolers:index}
+
+# --------------------------------------------------------------------------
+# Clusters
+# --------------------------------------------------------------------------
+arii_JID_clusters:
+    path:  /components/clusters
+    defaults: { _controller: AriiJIDBundle:Components\Clusters:index }
+
+
+
+xml_JID_clusters_list:
+    path:  /clusters/list.xml
+    defaults: { _controller: AriiJIDBundle:Components\Clusters:list_xml }
+
+xml_JID_clusters_toolbar:
+    path:  /clusters/toolbar.xml
+    defaults: { _controller: AriiJIDBundle:Components\Clusters:toolbar }
+
+
+# --------------------------------------------------------------------------
+# Config
+# --------------------------------------------------------------------------
+arii_JID_config:
+    path:  /components/config
+    defaults: { _controller: AriiJIDBundle:Components\Config:index }
+
+html_JID_config:
+    path:  /components/config.html
+    defaults: { _controller: AriiJIDBundle:Components\Config:config }
+
+
+
+
+# ==========================================================================
+# TOOLS
+# ==========================================================================
+
+
+
 #--------------------------------------------------------------------
 # Outils communs aux modules JobScheduler
 #--------------------------------------------------------------------
@@ -65,19 +153,10 @@ arii_XML_Command:
     path:  /XML/command
     defaults: { _controller: AriiJIDBundle:SOS:XMLCommand }
 
-# --------------------------------------------------------------------------
-# Instances
-# --------------------------------------------------------------------------
-arii_JID_instances:
-    path:  /instances
-    defaults: { _controller: AriiJIDBundle:Instances:index}
 
-# --------------------------------------------------------------------------
-# Spoolers
-# --------------------------------------------------------------------------
-arii_JID_spoolers:
-    path:  /spoolers
-    defaults: { _controller: AriiJIDBundle:Spoolers:index}
+
+
+
 
 arii_JID_spoolers_list:
     path:  /spoolers/list
@@ -122,10 +201,6 @@ xml_JID_spoolers_menu:
 # --------------------------------------------------------------------------
 # Jobs
 # --------------------------------------------------------------------------
-arii_JID_jobs:
-    path:  /db/{db}/jobs
-    defaults: { _controller: AriiJIDBundle:Jobs:index, db: ojs_db }
-
 xml_JID_jobs_tree:
     path:  /jobs/tree.xml
     defaults: { _controller: AriiJIDBundle:Jobs:tree }
@@ -243,17 +318,6 @@ arii_JID_history_job:
     path:  /history/job
     defaults: { _controller: AriiJIDBundle:History:job }
     
-# --------------------------------------------------------------------------
-# Orders
-# --------------------------------------------------------------------------
-arii_JID_orders:
-    path:  /orders
-    defaults: { _controller: AriiJIDBundle:Orders:index }
-
-xml_JID_orders_menu:
-    path:  /orders/menu.xml
-    defaults: { _controller: AriiJIDBundle:Orders:menu }
-
 
 # A trier ?
 
@@ -284,14 +348,6 @@ xml_JID_orders_form_toolbar:
 xml_JID_orders_chain_toolbar:
     path:  /orders/chain_toolbar.xml
     defaults: { _controller: AriiJIDBundle:Orders:chain_toolbar }
-
-arii_JID_toolbar_purge_job:
-    path:  /toolbar/purge_job
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_purge_job }
-
-arii_JID_toolbar_job_why:
-    path:  /toolbar/job_why
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_job_why }
 
 arii_JID_orders_treegrid:
     path:  /orders/treegrid
@@ -380,25 +436,9 @@ xml_JID_orders_last:
     path:  /orders/activities.xml
     defaults: { _controller: AriiJIDBundle:Orders:last }
 
-arii_JID_order_log:
-    path:  /order/log
-    defaults: { _controller: AriiJIDBundle:Detail:order_log}
-
-arii_JID_order_log_upload:
-    path:  /order/log/upload
-    defaults: { _controller: AriiJIDBundle:Detail:order_log_upload }
-
-arii_JID_toolbar_start_order:
-    path:  /toolbar/start_order
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_start_order}
-
 xml_JID_start_order_parameters:
     path:  /start_order/parameters
     defaults: { _controller: AriiJIDBundle:Orders:start_order_parameters}
-
-xml_JID_toolbar_order_param:
-    path:  /orders/param.xml
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_order_param }
 
 xml_JID_toolbar_orders:
     path:  /orders/toolbar
@@ -411,10 +451,6 @@ arii_JID_order_doc:
 arii_JID_order_purge:
     path:  /order/purge
     defaults: { _controller: AriiJIDBundle:Orders:purge }
-
-arii_JID_toolbar_purge_order:
-    path:  /order/purge/toolbar
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_purge_order }
 
 arii_JID_orders_toolbar_timeline:
     path:  /orders/timeline/toolbar.xml
@@ -456,29 +492,9 @@ xml_JID_last:
     path:  /activities/list.xml
     defaults: { _controller: AriiJIDBundle:Default:last_xml }
 
-arii_JID_toolbar:
-    path:  /toolbar
-    defaults: { _controller: AriiJIDBundle:Toolbar:default }
-
-arii_JID_toolbar_footer:
-    path:  /toolbar/footer
-    defaults: { _controller: AriiJIDBundle:Toolbar:footer }
-
-arii_JID_toolbar_add_order:
-    path:  /toolbar/add_order
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_add_order }
-
-arii_JID_toolbar_start_orders:
-    path:  /toolbar/start_orders
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_start_orders}
-
 arii_JID_orders_selected_orders:
     path:  /orders/selected_orders
     defaults: { _controller: AriiJIDBundle:Orders:selected_orders }
-
-xml_JID_toolbar_global:
-    path:  /toolbar/global
-    defaults: { _controller: AriiJIDBundle:Toolbar:global }
 
 arii_JID_timeline_toolbar:
     path:  /timeline/toolbar.xml
@@ -578,10 +594,6 @@ xml_JID_chains_tree:
     path:  /chains/tree.xml
     defaults: { _controller: AriiJIDBundle:Chains:tree }
 
-arii_JID_toolbar_start_chains:
-    path:  /toolbar/start_chains
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_start_chains}
-
 # --------------------------------------------------------------------------
 # Internes
 # --------------------------------------------------------------------------
@@ -596,14 +608,6 @@ arii_JID_process_graphviz:
 xml_JID_toolbar_process:
     path:  /process/toolbar
     defaults: { _controller: AriiJIDBundle:Process:toolbar }
-
-arii_JID_detail_future_job:
-    path:  /job/next
-    defaults: { _controller: AriiJIDBundle:Detail:next_job }
-
-arii_JID_detail_future_order:
-    path:  /order/next
-    defaults: { _controller: AriiJIDBundle:Detail:next_order }
 
 # --------------------------------------------------------------------------
 # History
@@ -627,10 +631,6 @@ xml_JID_history_list:
 xml_JID_history_history:
     path:  /history/history.xml
     defaults: { _controller: AriiJIDBundle:History:list_xml, history: 100 }
-
-xml_JID_job_list:
-    path:  /job_list
-    defaults: { _controller: AriiJIDBundle:Toolbar:job_list}
 
 arii_JID_history_timeline:
     path:  /history/timeline
@@ -752,22 +752,6 @@ ical_JID_planned:
     defaults: { _controller: AriiJIDBundle:Planned:ical }
 
 # --------------------------------------------------------------------------
-# Clusters
-# --------------------------------------------------------------------------
-arii_JID_clusters:
-    path:  /clusters
-    defaults: { _controller: AriiJIDBundle:Clusters:index }
-
-xml_JID_clusters_list:
-    path:  /clusters/list.xml
-    defaults: { _controller: AriiJIDBundle:Clusters:list_xml }
-
-xml_JID_clusters_toolbar:
-    path:  /clusters/toolbar.xml
-    defaults: { _controller: AriiJIDBundle:Clusters:toolbar }
-
-
-# --------------------------------------------------------------------------
 # Events
 # --------------------------------------------------------------------------
 arii_JID_events:
@@ -845,94 +829,8 @@ xml_JID_message:
     defaults: { _controller: AriiJIDBundle:Messages:message }
 
 # --------------------------------------------------------------------------
-# PAGES PRINCIPALES
-# --------------------------------------------------------------------------
-
-arii_JID_detail_order:
-    path:  /order/detail
-    defaults: { _controller: AriiJIDBundle:Detail:order}
-
-# planifie mais sans historique
-arii_JID_detail_order_plan:
-    path:  /order/plan
-    defaults: { _controller: AriiJIDBundle:Detail:plan}
-
-arii_JID_detail_job:
-    path:  /job/detail
-    defaults: { _controller: AriiJIDBundle:Detail:job }
-
-arii_JID_job_log:
-    path:  /job/log
-    defaults: { _controller: AriiJIDBundle:Detail:job_log }
-
-arii_JID_job_log_upload:
-    path:  /job/log/upload
-    defaults: { _controller: AriiJIDBundle:Detail:job_log_upload }
-
-arii_JID_start_job:
-    path:  /job/start
-    defaults: { _controller: AriiJIDBundle:Cmd:startjob }
-
-# --------------------------------------------------------------------------
-# Internes
-# --------------------------------------------------------------------------
-
-arii_JID_db_daysschedule:
-    path:  /db/daysschedule
-    defaults: { _controller: AriiJIDBundle:DB:days_schedule }
-
-arii_JID_db_reorg:
-    path:  /db/reorg
-    defaults: { _controller: AriiJIDBundle:DB:reorg }
-
-# --------------------------------------------------------------------------
 # DHTMLX
 # --------------------------------------------------------------------------
-arii_JID_form_start_job:
-    path:  /dhtmlx/start_job
-    defaults: { _controller: AriiJIDBundle:Form:start_job }
-
-arii_JID_form_start_order:
-    path:  /dhtmlx/start_order
-    defaults: { _controller: AriiJIDBundle:Form:start_order }
-
-arii_JID_form_add_order:
-    path:  /dhtmlx/add_order
-    defaults: { _controller: AriiJIDBundle:Form:add_order }
-
-arii_JID_select_start_state:
-    path:  /dhtmlx/select_start_state
-    defaults: { _controller: AriiJIDBundle:Form:select_start_state }
-
-arii_JID_select_end_state:
-    path:  /dhtmlx/select_end_state
-    defaults: { _controller: AriiJIDBundle:Form:select_end_state }
-
-
-arii_JID_form_kill_job:
-    path:  /dhtmlx/kill_job
-    defaults: { _controller: AriiJIDBundle:Form:kill_job }
-
-arii_JID_form_stop_job:
-    path:  /dhtmlx/stop_job
-    defaults: { _controller: AriiJIDBundle:Form:stop_job }
-
-arii_JID_form_unstop_job:
-    path:  /dhtmlx/unstop_job
-    defaults: { _controller: AriiJIDBundle:Form:unstop_job }
-
-arii_JID_grid_history_job:
-    path:  /dhtmlx/grid_history
-    defaults: { _controller: AriiJIDBundle:Detail:grid_history }
-
-arii_JID_grid_history_order:
-    path:  /dhtmlx/grid_order_history
-    defaults: { _controller: AriiJIDBundle:Detail:grid_order_history }
-
-arii_JID_chart_history_job:
-    path:  /dhtmlx/chart_history
-    defaults: { _controller: AriiJIDBundle:Detail:chart_history }
-
 arii_JID_timeline_history:
     path:  /timeline/history
     defaults: { _controller: AriiJIDBundle:DBGraph:timeline_history }
@@ -976,30 +874,6 @@ arii_JID_pie_messages:
 arii_JID_menu_history:
     path:  /menu/history
     defaults: { _controller: AriiJIDBundle:History:menu }
-
-arii_JID_menu_planned:
-    path:  /menu/planned
-    defaults: { _controller: AriiJIDBundle:Menu:planned }
-
-arii_JID_menu_messages:
-    path:  /menu/orders
-    defaults: { _controller: AriiJIDBundle:Menu:messages }
-
-arii_JID_toolbar_job_list:
-    path:  /toolbar/job_list
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_job_list }
-
-arii_JID_toolbar_refresh:
-    path:  /toolbar/refresh
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_refresh }
-
-arii_JID_toolbar_schedule_list:
-    path:  /toolbar/schedule_list
-    defaults: { _controller: AriiJIDBundle:Toolbar:toolbar_schedule_list }
-
-arii_JID_select_state:
-    path:  /dhtmlx/select_state
-    defaults: { _controller: AriiJIDBundle:Form:select_state }
 
 # --------------------------------------------------------------------------
 # DOC
@@ -1169,4 +1043,4 @@ rss_JID_history_orders:
 arii_JID_public_request:
     path:  /public/{db}/{req}.html
     defaults: { _controller: AriiJIDBundle:Requests:result }
-    
+

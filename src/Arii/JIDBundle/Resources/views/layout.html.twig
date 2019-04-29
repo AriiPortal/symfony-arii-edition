@@ -9,6 +9,7 @@
 <script language="javascript">
 var size=180;
 var db="{{ db }}";
+if (db === '') db = 'ojs_db';
 var max_history = 0; // pas d'historique
 var chained = 0; // que des chaines normales
 var only_warning = 0;
@@ -26,6 +27,8 @@ dhtmlxEvent(window,"load",function(){
 
     myAccordion = menuLayout.cells("a").attachAccordion();
     myAccordion.addItem( "status", "{{ "Status" | trans }}", true); 
+    myAccordion.addItem( "history", "{{ "History" | trans }}"); 
+    myAccordion.addItem( "daily_plan", "{{ "Plan" | trans }}"); 
     myAccordion.addItem( "components", "{{ "Components" | trans }}"); 
     myAccordion.addItem( "config", "{{ "Config" | trans }}"); 
     myAccordion.cells("config").attachURL("{{ url('html_JID_config') }}");
@@ -36,11 +39,15 @@ dhtmlxEvent(window,"load",function(){
         width: size,
         items:
         [
+            { id:"global", text: "{{ "Global" | trans }}", icon: "view.png" },
             { id:"orders", text: "{{ "Orders" | trans }}", icon: "order.png" },
+            { id:"chains", text: "{{ "Chains" | trans }}", icon: "job_chain.png" },
+            { id:"jobs", text: "{{ "Jobs" | trans }}", icon: "job.png" },
+            { id:"tasks", text: "{{ "Queues" | trans }}", icon: "queue.png" }
 // Admins            
-            { id:"sep5",      type: "separator" },
+/*          { id:"sep5",      type: "separator" },
             { id:"sync",   text: "{{ "Synchronisation" | trans }}",    icon: "refresh.png" }
-        ]
+*/        ]
     });
     mySidebar.attachEvent("onBubbleClick", function(id, value){
         // bubble clicked, your code here
@@ -49,11 +56,48 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });    
     mySidebar.attachEvent("onSelect", function(id, value){
-        document.location.href = "{{ url('arii_JID_index') }}"+id;
+        document.location.href = "{{ url('arii_JID_index') }}scheduler/"+id;
         return true;
     });
 
-    mySidebar2 = myAccordion.cells("components").attachSidebar({
+    mySidebar2 = myAccordion.cells("history").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:"orders", text: "{{ "Orders" | trans }}", icon: "order.png" },
+            { id:"chains", text: "{{ "Chains" | trans }}", icon: "job_chain.png" },
+            { id:"jobs",   text: "{{ "Jobs" | trans }}", icon: "job.png" }
+        ]
+    });
+    mySidebar2.attachEvent("onBubbleClick", function(id, value){
+        return true;
+    });    
+    mySidebar2.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_JID_index') }}history/"+id;
+        return true;
+    });
+
+    mySidebar3 = myAccordion.cells("daily_plan").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:"orders", text: "{{ "Orders" | trans }}", icon: "order.png" },
+            { id:"jobs", text: "{{ "jobs" | trans }}", icon: "job.png" }
+        ]
+    });
+    mySidebar3.attachEvent("onBubbleClick", function(id, value){
+        return true;
+    });    
+    mySidebar3.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_JID_index') }}plan/"+id;
+        return true;
+    });
+
+    mySidebar4 = myAccordion.cells("components").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
         width: size,
@@ -63,14 +107,11 @@ dhtmlxEvent(window,"load",function(){
             { id:"clusters", text: "{{ "Clusters" | trans }}", icon: "cluster.png" },
         ]
     });
-    mySidebar2.attachEvent("onBubbleClick", function(id, value){
-        // bubble clicked, your code here
-        // 'return true' means item allowed to be selected
-        // false - otherwise
+    mySidebar4.attachEvent("onBubbleClick", function(id, value){
         return true;
     });    
-    mySidebar2.attachEvent("onSelect", function(id, value){
-        document.location.href = "{{ url('arii_JID_index') }}"+id;
+    mySidebar4.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_JID_index') }}components/"+id;
         return true;
     });
 
@@ -127,370 +168,6 @@ function PageRefresh() {
         lastdb = db;
     }
     GridRefresh();
-}
-    
-function Chain(id,command,message,chain)
-{
-    dhtmlx.message({
-        type: "Notice",
-        text: message
-    });
-    dhtmlxAjax.get("{{ url('arii_XML_Command') }}?command="+command+"&id="+id+"&chain="+chain,function(loader){
-        dhtmlx.message({
-        type: "Notice",
-        expire: 10000,
-        width: "500px",
-        text: loader.xmlDoc.responseText
-        });
-        PageRefresh();
-    });
-}
-
-function Node(id,nid,command,message,chain)
-{
-    dhtmlx.message({
-        type: "Notice",
-        text: message
-    });
-    // alert("{{ url('arii_XML_Command') }}?command="+command+"&node_id="+nid+"&id="+id);
-    dhtmlxAjax.get("{{ url('arii_XML_Command') }}?command="+command+"&node_id="+nid+"&id="+id+"&chain="+chain,function(loader){
-        dhtmlx.message({
-        type: "Notice",
-        expire: 10000,
-        width: "500px",
-        text: loader.xmlDoc.responseText
-        });
-        PageRefresh();
-    });
-}
-
-var dhxCalendar;
-var msg;
-
-function ShowWhy( id ) {
-    largeur = 900;
-    var dhxWins = new dhtmlXWindows();
-
-    msg = dhxWins.createWindow( "msgwin" ,  (document.body.offsetWidth-largeur)/2, 50, largeur, 550 );
-    msg.setText("{{ "Diagnostic" | trans }} ");
-
-    winLayout = msg.attachURL("{{ url('arii_XML_Command') }}?command=why_job&job_id="+id);
-}
-
-
-function PurgeJob( id ) {
-    var largeur = 600;
-        msg = dhxWins.createWindow( "msgwin" ,  (document.getElementById("wrapper").offsetWidth-largeur)/2, 200, largeur, 400 );
-        msg.setText("{{ "Purge job" | trans }} "+id);
-
-    var winLayout;
-    winLayout = msg.attachLayout("1C");
-    winLayout.cells("a").hideHeader();
-    winLayout.cells("a").attachURL("{{ url('arii_JID_detail_job') }}?id="+id,true);
-
-    var toolbar;
-    toolbar = winLayout.cells("a").attachToolbar();
-    toolbar.setIconsPath("{{ asset('/images/') }}");
-    toolbar.loadStruct("{{ url('arii_JID_toolbar_purge_job') }}");
-
-    toolbar.attachEvent("onClick",function(itemid){
-        switch (itemid) {
-            case "stop":
-                msg.progressOn();
-                dhtmlx.message({
-                type: "Notice",
-                text: "{{ "Purge job" | trans }} <strong>"+id+"</strong>" });
-                msg.close();
-                dhtmlxAjax.post("{{ url('arii_JID_history_purge') }}","job_id="+id,function(loader,response){
-                    dhtmlx.message({
-                    type: "Notice",
-                    expire: 10000,
-                    width: "500px",
-                    text: loader.xmlDoc.responseText });
-                    PageRefresh();
-                });
-                break;
-            case "cancel":
-                msg.close();
-                break;
-            default:
-                break;
-        }
-        return true;
-    });
-
-return true;
-}
-
-function Order( Command, id, Text, Toolbar, Time, chain )
-{
-    var largeur = 640;
-        msg = dhxWins.createWindow( "msgwin" ,  (document.getElementById("wrapper").offsetWidth-largeur)/2, 50, largeur, 400 );
-        msg.setText(Text);
-
-    var winLayout;
-    winLayout = msg.attachLayout("1C");
-    winLayout.cells("a").hideHeader();
-
-    var winbar = winLayout.cells("a").attachTabbar();
-    // tabbar.setImagePath("{{asset("arii/dhtmlx/dhtmlxTabbar/codebase/imgs/")}}");
-    winbar.setSkin("dhx_skyblue");
-    winbar.addTab("b1","{{ "Detail" | trans }}","100px", null, true);
-    winbar.addTab("b2","{{ "Parameters" | trans }}","100px");
-
-    var toolbar;
-    toolbar = winLayout.cells('a').attachToolbar();
-    toolbar.setIconsPath("{{ asset('/images/') }}");
-
-    toolbar.loadStruct(Toolbar,function(){
-        if (Time) {
-            GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
-            GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
-            GBCalendar.setWeekStartDay(1);
-        }
-    });
-
-    var toolbar2;
-    toolbar2 = winbar.cells("b2").attachToolbar();
-    toolbar2.setIconsPath("{{ asset('/images/') }}");
-    toolbar2.loadStruct("{{ url('xml_JID_order_toolbar_params') }}");
-
-    var dhxgrid = winbar.cells("b2").attachGrid();
-    dhxgrid.selMultiRows = true;
-    dhxgrid.setHeader("{{ "Name" | trans }},{{ "Value" | trans }}");
-    dhxgrid.setColTypes("ed,ed");
-    dhxgrid.setInitWidths("*,*");
-    dhxgrid.init();
-
-    dhxForm = winbar.cells("b1").attachForm();
-    winbar.cells("b1").progressOn();
-    dhxForm.loadStruct("{ { url('json_JID_order_form') }}?id="+id, function(){
-        winbar.cells("b1").progressOff();
-        dhxgrid.load("{{ url('xml_JID_order_params') }}?id="+id);
-    });
-
-    toolbar.attachEvent("onClick",function(itemid){
-        switch(itemid) {
-            case "new":
-                dhxgrid.addRow(dhxgrid.getRowsNum()+1,"");
-                break;
-            case "execute":
-                var params = new Array();
-                dhxgrid.forEachRow(function(id){
-                    var param = dhxgrid.cells(id,0).getValue() + "=" + encodeURIComponent(dhxgrid.cells(id,1).getValue());
-                    params.push(param);
-                });
-                var paramsStr = params.join(",");
-                var start_time = '';
-                if (Time)
-                    start_time = toolbar.getValue("refDate");
-                dhtmlx.message({
-                    type: "Notice",
-                    text: Text
-                });
-                winLayout.cells("a").progressOn();
-                dhxForm.send("{{ url('arii_XML_Command') }}?command="+Command+"&chain="+chain+"&id="+id+"&paramsStr="+encodeURIComponent(paramsStr),"POST",function(loader,response){
-                    dhtmlx.message({
-                        type: "Notice",
-                        expire: 10000,
-                        width: "500px",
-                        text: loader.xmlDoc.responseText
-                    });
-                    PageRefresh();
-                    winLayout.cells("a").progressOff();
-                    msg.close();
-                });
-                break;
-            case "cancel":
-                msg.close();
-                break;
-            default:
-                alert(itemid);
-                break;
-        }
-        return true;
-    });
-
-    toolbar2.attachEvent("onClick",function(itemid){
-        switch(itemid) {
-            case "new":
-                dhxgrid.addRow(dhxgrid.getRowsNum()+1,"");
-                break;
-            default:
-                break;
-        }
-        return true;
-    });
-
-    dhtmlXCalendarObject.prototype.langData["fr"] = {
-            monthesFNames: ["Janvier","Février","Маrs","Аvril","Маi","Juin","Juillet","Аoût","Septembre","Оctobre","Novembre","Décembre"],
-            monthesSNames: ["Jan.","Fév.","Маrs","Аvr","Маi","Juin","Jui.","Août","Sep.","Оct.","Nov.","Déc."],
-            daysFNames: ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"],
-            daysSNames: ["Di","Lu","Ma","Me","Je","Ve","Sa"],
-            weekstart: 1
-    };
-    dhxCalendar = new dhtmlXCalendarObject(dhxForm.getInput("at"));
-    dhxCalendar.loadUserLanguage("fr");
-    dhxCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
-    dhxCalendar.showTime();
-
-    return true;
-
-}
-
-function ViewOrder( Command, id, Text, Toolbar, Time ) {
-var largeur = 600;
-
-    msg = dhxWins.createWindow( "msgwin" ,  (document.getElementById("wrapper").offsetWidth-largeur)/2, 50, largeur, 500 );
-    msg.setText(Text+' '+id);
-
-    var winLayout;
-    winLayout = msg.attachLayout("1C");
-    winLayout.cells("a").hideHeader();
-    winLayout.cells("a").setHeight(300);
-
-     var winbar = winLayout.cells("a").attachTabbar();
-    // tabbar.setImagePath("{{asset("arii/dhtmlx/dhtmlxTabbar/codebase/imgs/")}}");
-    winbar.setSkin("dhx_skyblue");
-    winbar.addTab("b1","{{ "Detail" | trans }}","100px", null, true);
-    winbar.addTab("b2","{{ "Parameters" | trans }}","100px");
-    winbar.cells("b1").attachURL("{{ url('arii_JID_detail_order') }}?id="+encodeURIComponent(id),true);
-
-    var toolbar = winLayout.cells("a").attachToolbar();
-    toolbar.setIconsPath("{{ asset('/images/') }}");
-    toolbar.loadStruct(Toolbar ,function(){
-        GBCalendar = new dhtmlXCalendarObject(toolbar.getInput('refDate'));
-        GBCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
-        GBCalendar.setWeekStartDay(1);
-    });
-
-    var toolbar2;
-    toolbar2 = winbar.cells("b2").attachToolbar();
-    toolbar2.setIconsPath("{{ asset('/images/') }}");
-    toolbar2.load("{{ url('xml_JID_toolbar_order_param') }}");
-
-    toolbar.attachEvent("onClick",function(itemid){
-        switch(itemid) {
-            case "modify_job":
-                msg.progressOn();
-                var params = new Array();
-                dhxgrid.forEachRow(function(id){
-                    var param = dhxgrid.cells(id,0).getValue() + "=" + encodeURIComponent(dhxgrid.cells(id,1).getValue());
-                    params.push(param);
-                });
-                var paramsStr = params.join(",");
-                var start_time = '';
-                if (Time)
-                    start_time = toolbar.getValue("refDate");
-                dhtmlx.message({
-                type: "Notice",
-                text: "{{ "Start order" | trans }} <strong>"+id+"</strong>" });
-
-                winLayout.cells("a").progressOn();
-                dhtmlxAjax.post("{{ url('arii_XML_Command') }}","command=start_order&params="+encodeURIComponent(params)+"&time="+start_time+"&plan=yes&order_id="+encodeURIComponent(id),function(loader,response){
-                    dhtmlx.message({
-                    type: "Notice",
-                    expire: 10000,
-                    width: "500px",
-                    text: loader.xmlDoc.responseText });
-                    PageRefresh();
-                    winLayout.cells("a").progressOff();
-                    msg.close();
-                });
-                break;
-            case "cancel":
-                msg.close();
-                break;
-            default:
-                break;
-        }
-        return true;
-    });
-
-    var dhxgrid = winbar.cells("b2").attachGrid();
-    dhxgrid.selMultiRows = true;
-    dhxgrid.setHeader("{{ "Name" | trans }},{{ "Value" | trans }}");
-    dhxgrid.setColTypes("ed,ed");
-    dhxgrid.setInitWidths("*,*");
-    dhxgrid.init();
-    dhxgrid.load("{{ url('xml_JID_start_order_parameters') }}?id="+encodeURIComponent(id));
-
-    toolbar.attachEvent("onClick",function(itemid){
-        switch(itemid) {
-            case "new":
-                dhxgrid.addRow(dhxgrid.getRowsNum()+1,"");
-                break;
-            default:
-                break;
-        }
-        return true;
-    });
-
-    return true;
-}
-
-// Fonctions
-function CheckSpooler(spooler)
-{
-    dhx4.ajax.get("{{ url('arii_JID_spooler_update') }}?spooler="+spooler,function(loader,response){
-        dhtmlx.message({
-            type: "Notice",
-            expire: 10000,
-            width: "500px",
-            text: loader.xmlDoc.responseText
-        });
-        PageRefresh();
-    });
-return true;
-}
-
-function CheckSpoolerId(rid)
-{
-    dhx4.ajax.get("{{ url('arii_JID_spooler_update') }}?id="+rid,function(loader,response){
-        dhtmlx.message({
-            type: "Notice",
-            expire: 10000,
-            width: "500px",
-            text: loader.xmlDoc.responseText
-        });
-        PageRefresh();
-    });
-return true;
-}
-
-function Spooler(url,rid)
-{
-    globalLayout.cells("a").progressOn();
-    dhtmlxAjax.get(url+"="+rid,function(loader,response){
-        globalLayout.cells("a").progressOff();
-        dhtmlx.message({
-            type: "Notice",
-            expire: 10000,
-            width: "500px",
-            text: loader.xmlDoc.responseText
-        });
-        CheckSpooler(rid);
-    });
-    return true;
-}
-
-function XMLCommand(id,Command)
-{
-    dhtmlx.message({
-    type: "Notice",
-    text: "{{ "Execution" | trans }} <strong>"+id+"</strong>" });
-    globalLayout.cells("a").progressOn();
-    dhtmlxAjax.get("{{ url('arii_XML_Command') }}?command="+Command+"&id="+id,function(loader,response){
-        dhtmlx.message({
-            type: "Notice",
-            expire: 10000,
-            width: "500px",
-            text: loader.xmlDoc.responseText
-        });
-        PageRefresh();
-        globalLayout.cells("a").progressOff();
-        msg.close();
-    });
 }
 </script>
 {% include "AriiCoreBundle:Common:ribbon.js.twig" %}

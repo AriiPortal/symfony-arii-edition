@@ -1,0 +1,39 @@
+{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
+{% extends "AriiJIDBundle::layout.html.twig" %}
+{% block body %}
+<body>
+<script language="javascript">
+var lastid=0;    
+var urlTasks = "{{ url('api_JID_tasks_list', { "repoId": "REPOID", "taskId": "ORDERID" } ) }}";
+function Init() {
+    myAccordion.cells( "status" ).open(false);
+
+    myLayout = globalLayout.cells("b").attachLayout("1C");
+    myLayout.cells("a").setText("{{ "Tasks" | trans }}");
+    
+    myTasksGrid = myLayout.cells("a").attachGrid();
+    myTasksGrid.setImagePath( "{{ asset('/images/') }}");
+    myTasksGrid.setHeader("{{ "Spooler" | trans }},{{ "Cluster member" | trans }},{{ "Jobname" | trans }},{{ "Enqueued" | trans }},{{ "Start at Time" | trans }}");
+    myTasksGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
+    myTasksGrid.setInitWidths("*,*,*,160,180");
+    myTasksGrid.setColAlign("left,left,left,left,right");
+    myTasksGrid.setColTypes("ro,ro,ro,ro,ro");
+    myTasksGrid.setColSorting("str,str,str,str,date");
+    myTasksGrid.enableAlterCss("","");
+    myTasksGrid.init();
+
+    GridRefresh();
+}
+
+function GridRefresh() {
+    var url = "{{ url('api_JID_tasks_list', { "repoId": "REPOID" } ) }}?outputFormat=dhtmlxGrid";
+    myTasksGrid.load( url.replace('REPOID',db), function() {  
+        myLayout.cells("a").progressOff();
+        myTasksGrid.refreshFilters();
+        myTasksGrid.filterByAll();
+/*        if (lastid>0)
+            Detail(lastid);
+*/    });
+}
+</script>
+{% endblock %}

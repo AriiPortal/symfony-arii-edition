@@ -12,6 +12,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerJobChainsRepository extends EntityRepository
 {
+    // Pour la synchronisation des historique
+    public function findChains() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.clusterMemberId,e.path,e.stopped')
+        ->getQuery();
+        return $q->getResult();
+    }
        
     // Pour la synchronisation des historique
     public function findStopped() { 

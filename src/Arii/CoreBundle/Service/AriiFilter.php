@@ -40,6 +40,8 @@ class AriiFilter
             'bundle' => '',   // Bundle en cours
             'repoId' => 'local', // repo en cours
             'machine' => null, // machine en cours
+            'orderId' => null, // Ordre
+            'jobChain' => null // Chain
         ];
         
         $request = Request::createFromGlobals();

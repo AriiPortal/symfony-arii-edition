@@ -13,8 +13,6 @@ class AlarmsController extends Controller
     public function listAction($repoId='ats_db')
     {
         $Filters = $this->container->get('arii.filter')->getRequestFilter();        
-        if (isset($Filters['repoId'])) 
-            $repoId = $Filters['repoId'];
 
         $em = $this->getDoctrine()->getManager($repoId);        
         $state = $this->container->get('arii_ats.state2');        
@@ -72,13 +70,12 @@ class AlarmsController extends Controller
     public function infosAction($repoId='ats_db')
     {
         $Filters = $this->container->get('arii.filter')->getRequestFilter();        
-        if (isset($Filters['repoId'])) 
-            $repoId = $Filters['repoId'];
 
         $em = $this->getDoctrine()->getManager($repoId);        
         $state = $this->container->get('arii_ats.state2');        
         $Alarms = $state->Alarms($em);
 
+        $state = $status = '';
         // Aggregations
         foreach ($Alarms as $Alarm) {
             $state = $Alarm['state'];
@@ -102,8 +99,8 @@ class AlarmsController extends Controller
         }
         $data = $this->get('jms_serializer')->serialize( 
         [
-            'state'  => $State,
-            'status' => $Status
+            'state'  => $state,
+            'status' => $status
         ], 'json', SerializationContext::create()->setGroups(array('list')));
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');

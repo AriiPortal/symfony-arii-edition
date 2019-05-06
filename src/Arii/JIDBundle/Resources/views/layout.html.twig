@@ -35,7 +35,6 @@ dhtmlxEvent(window,"load",function(){
     
     mySidebar = myAccordion.cells("status").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
-        // template: "tiles",
         width: size,
         items:
         [
@@ -121,10 +120,10 @@ dhtmlxEvent(window,"load",function(){
             color:   "#color#",
             tooltip: "#nb#",
             legend:{
-                    width:    0,
-                    align:    "left",
-                    valign:   "bottom",
-                    template: "#id#"
+                width:    0,
+                align:    "left",
+                valign:   "bottom",
+                template: "#id#"
             },
             pieInnerText: "#nb#",
             shadow:false

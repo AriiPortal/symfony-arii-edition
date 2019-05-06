@@ -1,0 +1,213 @@
+{% extends "AriiAdminBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+    
+    myLayout = globalLayout.cells("b").attachLayout("2E");  
+    myLayout.cells("a").setText("{{ "Categories" | trans }}");
+        
+    myRepos = myLayout.cells("a").attachGrid();
+    myRepos.setImagePath("{{ asset('/images/') }}");
+    
+    myRepos.setHeader("{{ "Name"| trans }},{{ "Title"| trans }},{{ "Description"| trans }}");
+    myRepos.attachHeader("#text_filter,#text_filter,#text_filter,#text_filter,#master_checkbox");
+    myRepos.setInitWidths("100,200,*");
+    myRepos.setColAlign("left,left,left");
+    myRepos.setColTypes("ro,ro,ro");
+    myRepos.init();
+    myRepos.attachEvent("onRowDblClicked", function (rid) {
+        Edit(rid);
+    });
+
+    formData = [
+        { type: "settings", position: "label-left", labelWidth: 150, inputWidth: 300,labelAlign: "right" },
+        { type: "hidden",
+          name: "id"
+        },         
+        {  
+            type: "input",
+            name: "name",
+            label: "{{ "Name" | trans }}",
+            required: true
+        },
+        {  
+            type: "input",
+            name: "title",
+            label: "{{ "Title" | trans }}"
+        },
+         {  type: "input",
+            name: "description",
+            label: "{{ "Description"| trans }}",
+            rows: 5
+         },
+         {type: "newcolumn"},
+         {  type: "input",
+            name: "driver",
+            label: "{{ "Driver"| trans }}",
+            readonly: true
+         },
+         {  type: "input",
+            name: "host",
+            label: "{{ "Host"| trans }}",
+            readonly: true
+         },
+         {  type: "input",
+            name: "port",
+            label: "{{ "Port"| trans }}",
+            readonly: true
+         },
+         {  type: "input",
+            name: "user",
+            label: "{{ "User"| trans }}",
+            readonly: true
+         },
+         {  type: "input",
+            name: "dbname",
+            label: "{{ "DB Name"| trans }}",
+            readonly: true
+         },
+         {  type: "input",
+            name: "servicename",
+            label: "{{ "Service name"| trans }}",
+            readonly: true
+         },
+         {  type: "input",
+            name: "charset",
+            label: "{{ "Charset"| trans }}",
+            readonly: true
+         }
+    ];
+    myForm = myLayout.cells("b").attachForm(formData);
+    myForm.enableLiveValidation(true);
+    
+    myToolbar = myLayout.cells("b").attachToolbar();
+    myToolbar.setIconsPath("{{ asset('/images/') }}");
+    myToolbar.loadStruct("{{ url('xml_Admin_domains_toolbar') }}", function () {
+        myToolbar.hideItem("delete");
+    });
+    myToolbar.attachEvent("onClick", function (id){
+        switch (id){
+            case "add":
+                New();
+                break;
+            case "delete":
+                id = myForm.getItemValue("id");
+                Delete(id);
+                break;
+            case "copy":
+                myForm.setItemValue("id",'');
+                dhtmlx.message({
+                        title:"Copy",
+                        type: "Notice",
+                        lifetime: "60000",
+                        text: "{{ "Copy" | trans }}"
+                     });
+
+                break;
+            case "save":
+                if(!myForm.validate())
+                {
+                    dhtmlx.message({
+                        title:"Error",
+                        type: "error",
+                        lifetime: "60000",
+                        text: "{{ "Please type in all the required fields!" | trans }}"
+                     });
+                    return;
+                }
+                myLayout.cells("a").progressOn();
+                myForm.send("{{ url('xml_Admin_domain_save') }}","POST",function(loader,response){
+                    myLayout.cells("a").progressOff();
+                    if(response === "success")
+                   {
+                     dhtmlx.message({
+                        title:"Save",
+                        type: "Notice",
+                        lifetime: "60000",
+                        text: "Saved"
+                     });
+                     myForm.setItemFocus("title");
+                     GridRefresh();
+                   }
+                   else 
+                   {
+                       alert(response);
+                   }               
+                });
+            break;
+            default:
+                alert(id);
+                break;
+        }
+    });
+    myLayout.cells("b").hideHeader();  
+    GridRefresh();
+}
+
+function GridRefresh()
+{
+    myRepos.clearAll();
+    myRepos.load("{{ url('api_Core_repos_list') }}?outputFormat=dhtmlxGrid");
+}
+
+function New() {
+    myForm.clear();
+    myForm.setItemFocus("name");
+    myToolbar.hideItem("delete");
+}
+
+function Edit(id) {
+    myLayout.cells("b").progressOn();
+    myToolbar.showItem("delete");
+    myForm.clear();
+    var url = "{{ url('api_Core_repos_get', { 'repoId': 'REPOID'} )}}?outputFormat=dhtmlxForm";
+    var name= myRepos.cells(id,0).getValue();
+    myForm.load(url.replace('REPOID',name), function () {
+        myLayout.cells("b").progressOff();
+    });
+}
+
+function Delete(id) {
+    // On edite pour sauvegarder
+    myForm.load("{{ url('xml_Admin_domain_form') }}?id="+id, function () {
+        dhtmlx.confirm({
+            title: "{{ "Delete parameter" | trans }}",
+            type: "confirm-error",
+            text: '{{ "Do you confirm the suppression ?" | trans }}',
+            callback: function(answer) { if (answer) {
+                    
+                      myForm.send("{{ url('xml_Admin_domain_delete') }}","POST",function(loader,response){
+                      if(response === "success")
+                      {
+                        dhtmlx.message({
+                           title:"{{ "Delete" | trans }}",
+                           type: "Notice",
+                           lifetime: "60000",
+                           text: "{{ "Domain deleted" | trans }}"
+                        });
+                           myRepos.deleteRow(id);
+                         myLayout.cells("a").progressOff();
+                      }
+                      else 
+                      {
+                        dhtmlx.message({
+                           title:"{{ "Delete" | trans }}",
+                           type: "error",
+                           lifetime: "60000",
+                           text: response
+                        });
+                      }
+                       })
+               }
+           },
+            cancel: "{{ "No" | trans }}",
+            ok: "{{ "Yes" | trans }}" 
+        });
+    });
+
+ }
+
+function GlobalRefresh() {};
+</script>
+
+{% endblock %}

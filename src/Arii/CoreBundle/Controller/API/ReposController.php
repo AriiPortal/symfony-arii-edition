@@ -17,29 +17,51 @@ class ReposController extends Controller
 {
     public function listAction(Request $request)
     {
-        // Filtre par type ?
-        if ($request->get('type')) 
-            $Repos = $this->getDoctrine()->getRepository('AriiCoreBundle:Repo')->findBy([ "type" => $request->get('type')], [ 'title' => 'ASC']);
-        else 
-            $Repos = $this->getDoctrine()->getRepository('AriiCoreBundle:Repo')->findBy([], [ 'title' => 'ASC']);
-            
-        $data = $this->get('jms_serializer')->serialize($Repos, 'json');
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;    
+        if ($request->get('type')) 
+            $filter = [ "type" => $request->get('type')];
+        else 
+            $filter = [];
+        
+        $portal = $this->container->get('arii_core.portal'); 
+        $Repos = $portal->getRepos($filter);
+
+        switch ($Filters['outputFormat']) {
+            case 'dhtmlxGrid':
+                $data = $this->container->get('arii_core.render'); 
+                return $data->grid($Repos,'name,title,description,type');        
+                break;
+            case 'xml':
+                $data = $this->get('jms_serializer')->serialize($Repos, 'xml', SerializationContext::create()->setGroups(array('default')));
+                $response = new Response($data);
+                $response->headers->set('Content-Type', 'application/xml');
+                break;
+            default:
+                $data = $this->get('jms_serializer')->serialize($Repos, 'json', SerializationContext::create()->setGroups(array('list')));
+                $response = new Response($data);
+                $response->headers->set('Content-Type', 'application/json');
+                break;                
+        }
+        return $response;
     }
 
     public function getAction($repoId, Request $request)
     {
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
+
+        $portal = $this->container->get('arii_core.portal'); 
+        $Repo = $portal->getRepoByName($repoId);
+
         // Filtre par type ?
+/*            
         $DB = $this->getDoctrine()->getRepository('AriiCoreBundle:Repo')->findOneBy(['name' => $repoId ]);
         $Repo = [];
         if ($DB)
             $Repo['name'] = $DB->getName();
         else
             $Repo['name'] = $repoId;
-        
+*/      
         // On complete avec les infos 
         $em = $this->getDoctrine()->getManager($repoId);
         $Params = $em->getConnection()->getParams();
@@ -47,9 +69,22 @@ class ReposController extends Controller
             if (isset($Params[$k])) 
                 $Repo[$k] = $Params[$k];
         } 
-        $data = $this->get('jms_serializer')->serialize($Repo, 'json');
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/json');
+        switch ($Filters['outputFormat']) {
+            case 'dhtmlxForm':
+                $data = $this->container->get('arii_core.render'); 
+                return $data->form($Repo);        
+                break;
+            case 'xml':
+                $data = $this->get('jms_serializer')->serialize($Repo, 'xml', SerializationContext::create()->setGroups(array('default')));
+                $response = new Response($data);
+                $response->headers->set('Content-Type', 'application/xml');
+                break;
+            default:
+                $data = $this->get('jms_serializer')->serialize($Repo, 'json', SerializationContext::create()->setGroups(array('list')));
+                $response = new Response($data);
+                $response->headers->set('Content-Type', 'application/json');
+                break;                
+        }
         return $response;    
     }
     

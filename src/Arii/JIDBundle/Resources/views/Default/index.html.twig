@@ -7,13 +7,15 @@ var lastid=0;
 var urlOrders = "{{ url('api_JID_orders_list', { "repoId": "REPOID" } ) }}";
 function Init() {
     myAccordion.cells( "status" ).open(false);
-    
+    mySidebar.items("global").setActive();
+
     myLayout = globalLayout.cells("b").attachLayout("3W");
-    myLayout.cells("a").setText("{{ "Orders" | trans }}");
-    myLayout.cells("b").setText("{{ "Chains" | trans }}");
-    myLayout.cells("c").setText("{{ "Jobs" | trans }}");
     
-    myOrderChart =  myLayout.cells("a").attachChart({
+    myOrdersLayout = myLayout.cells("a").attachLayout("2E");    
+    myOrdersLayout.cells("a").setText("{{ "Orders" | trans }}");
+    myOrdersLayout.cells("b").setText("{{ "Suspended orders" | trans }}");
+    
+    myOrderChart =  myOrdersLayout.cells("a").attachChart({
             view:"donut",
             value:"#nb#",
             label:"",
@@ -37,12 +39,40 @@ function Init() {
                 template: "#status#"
             }
     });
+
+    myOrdersGrid = myOrdersLayout.cells("b").attachGrid();
+    myOrdersGrid.setImagePath( "{{ asset('/images/') }}");
+    myOrdersGrid.setHeader("{{ "Spooler" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "Status" | trans }},{{ "Next Start" | trans }},{{ "Title" | trans }},{{ "State" | trans }},{{ "Message" | trans }},{{ "Time" | trans }}");
+    myOrdersGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter");
+    myOrdersGrid.setInitWidths("180,*,0,0,0,0,0,0,0");
+    myOrdersGrid.setColAlign("left,left,left,left,left,left,left,left,right");
+    myOrdersGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myOrdersGrid.setColSorting("str,str,str,str,str,str,str,str,date");
+    myOrdersGrid.enableAlterCss("","");
+    myOrdersGrid.init();
+    myOrdersGrid.attachEvent("onRowDblClicked", function () {
+        
+    });
+    
+    myChainsLayout = myLayout.cells("b").attachLayout("2E");    
+    myChainsLayout.cells("a").setText("{{ "Chains" | trans }}");
+    myChainsLayout.cells("b").setText("{{ "Stopped chains" | trans }}");
+    
+    myJobsLayout = myLayout.cells("c").attachLayout("2E");    
+    myChainsLayout.cells("a").setText("{{ "Chains" | trans }}");
+    myChainsLayout.cells("b").setText("{{ "Stopped chains" | trans }}");
+    
+    
     GridRefresh();
 }
 
 function GridRefresh() {
     myOrderChart.load( urlOrders.replace('REPOID',db)+"?outputFormat=dhtmlxPie","json" , function () {
-        
+        myOrdersGrid.load( urlOrders.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
+            myLayout.cells("a").progressOff();
+            myOrdersGrid.refreshFilters();
+            myOrdersGrid.filterByAll();
+        });
     });  
 }
 

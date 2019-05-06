@@ -31,8 +31,10 @@ function AriiLayout(bundle,activated,size) {
     myRibbon.setIconPath( "{{ asset('/images/') }}" );
     myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle+"&activated="+activated, function() {
         NextRefresh(update);
-        // repo en cours ?        
-        myRibbon.setItemText("db", myRibbon.getItemOptionText('db', 'db.'+db));
+        // repo en cours ? 
+        if (typeof db !== 'undefined') {
+            myRibbon.setItemText("db", myRibbon.getItemOptionText('db', 'db.'+db));
+        }
         myRibbon.setItemText("dateNow", dayPast);
     });
 

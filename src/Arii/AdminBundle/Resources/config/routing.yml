@@ -295,6 +295,21 @@ xml_Admin_category_dragdrop:
     defaults: { _controller: AriiAdminBundle:Categories:dragdrop}
 
 #============================================================
+# Repos
+#------------------------------------------------------------
+arii_Admin_repos:
+    path:  /repos
+    defaults: { _controller: AriiAdminBundle:Repos:index}
+    
+xml_Admin_repos_grid:
+    path:  /repos/grid.xml
+    defaults: { _controller: AriiAdminBundle:Repos:grid}
+
+xml_Admin_repos_toolbar:
+    path:  /repos/toolbar.xml
+    defaults: { _controller: AriiAdminBundle:Repos:toolbar}
+
+#============================================================
 # Connections
 #------------------------------------------------------------
 arii_Admin_connections:

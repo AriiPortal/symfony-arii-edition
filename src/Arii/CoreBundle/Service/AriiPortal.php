@@ -847,7 +847,8 @@ Gris    #f2f2f2
         if ($force) $this->getDefaultRules();
         return $this->getRules();
     }
-    
+
+       
     /**************************************
      * Domains
      * Remplacé par les tags
@@ -1121,8 +1122,7 @@ Gris    #f2f2f2
                 'type' =>  $Repo->getType(),
                 'description' => $Repo->getDescription()
             );
-        }
-        
+        }        
         return $this->session->set('Repos', $Result);
     }
 

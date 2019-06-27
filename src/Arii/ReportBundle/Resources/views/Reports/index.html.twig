@@ -1,38 +1,12 @@
-{# src/Arii/JIDBundle/Resources/views/Default/history.html.twig #}
 {% extends "AriiReportBundle::layout.html.twig" %}
 {% block body %}
 <script language="javascript">
-var app="{{ appl }}",
-    env="{{ env }}",
-    job_class="{{ job_class }}",
-    category="{{ category }}",
-    day = {{ day }},
-    month={{ month }},
-    year={{ year }},
-    dayPast={{ dayPast }};
+function Init() {
 
-dhtmlxEvent(window,"load",function(){     
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");
-    globalLayout.cells("a").setWidth(345);
+//    { % include "AriiReportBundle:Default:toolbar.js.twig" %}    
+
+    myLayout = globalLayout.cells("b").attachLayout("3E");
     
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Report_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-    
-    globalLayout.cells("a").hideHeader();
-    
-    {% include "AriiReportBundle:Default:tree.js.twig" %}    
-    {% include "AriiReportBundle:Default:toolbar.js.twig" %}    
-
-    myLayout = globalLayout.cells("b").attachLayout("3E");    
     myLayoutUp = myLayout.cells("a").attachLayout("4W");
     myLayoutMiddle = myLayout.cells("b").attachLayout("4W");
     myLayoutDown = myLayout.cells("c").attachLayout("4W");
@@ -57,7 +31,7 @@ dhtmlxEvent(window,"load",function(){
     envChart.attachEvent("onItemClick",function(id){ 
         env = id;
         myToolbar.setItemText("ENV",myToolbar.getListOptionText("ENV",'e'+env));
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?env="+env, function() {
+        dhx4.ajax.get( "{{ url('api_Core_session_update') }}?env="+env, function() {
             GlobalRefresh();
         });
     });    
@@ -82,10 +56,10 @@ dhtmlxEvent(window,"load",function(){
     domChart.attachEvent("onItemClick",function(id){ 
         category = id;
         myToolbar.setItemText("CAT",myToolbar.getListOptionText("CAT",'c'+category));
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?category="+category, function() {
+        dhx4.ajax.get( "{{ url('api_Core_session_update') }}?category="+category, function() {
             myToolbar.setItemText("APP",'{{ "All applications" | trans }}');
             app = '*';
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?app="+app, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?app="+app, function() {
                 RefreshToolbar();
                 GlobalRefresh();
             });    
@@ -98,20 +72,20 @@ dhtmlxEvent(window,"load",function(){
             value: "#count#",
             label:"",
             gradient: true,
-            tooltip: "#job_class#: #count#",
+            tooltip: "#jobClass#: #count#",
             border:false,
             pieInnerText: "",
             shadow: 0,
             legend:{
                 width: 0,
-                template: "#job_class#",
+                template: "#jobClass#",
                 layout:"x"
             } 
     });
     jclChart.attachEvent("onItemClick",function(id){ 
-        job_class = id;
-        myToolbar.setItemText("JOB_CLASS",myToolbar.getListOptionText("JOB_CLASS",job_class ));
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?job_class="+job_class, function() {
+        jobClass = id;
+        myToolbar.setItemText("jobClass",myToolbar.getListOptionText("jobClass",jobClass ));
+        dhx4.ajax.get( "{{ url('api_Core_session_update') }}?jobClass="+jobClass, function() {
             GlobalRefresh();
         });
     });    
@@ -445,12 +419,12 @@ dhtmlxEvent(window,"load",function(){
     myCals.setColSorting("str,date,int");
     myCals.init();
     GlobalRefresh();
-});
+}
 
 function GlobalRefresh() {
     myLayoutUp.cells("a").progressOn();
     envChart.clearAll();
-    envChart.load( "{{ url('xml_Report_reports_env') }}?job_class="+job_class, function() {
+    envChart.load( "{{ url('xml_Report_reports_env') }}?jobClass="+jobClass, function() {
         myLayoutUp.cells("a").progressOff();
         myLayoutUp.cells("b").progressOn();
         domChart.clearAll();

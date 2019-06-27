@@ -11,7 +11,7 @@ class AppsController extends Controller
 
     public function indexAction()
     {          
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Dashboard\Apps:index.html.twig', $Filters );
     }
 
@@ -57,7 +57,7 @@ class AppsController extends Controller
     // Nombre de jobs par applications
     public function jobsAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],false);
@@ -96,7 +96,7 @@ class AppsController extends Controller
     // Nombre d'exécution par applications
     public function runsAction ()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
         $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass']);
@@ -130,7 +130,7 @@ class AppsController extends Controller
     // Nombre d'exécution par applications
     public function alertsAction ()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
         $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass']);

@@ -1,25 +1,9 @@
 {% extends "AriiReportBundle::layout.html.twig" %}
 {% block body %}
 <script type="text/javascript">
-var job_name = "{{job_name}}";
-dhtmlxEvent(window,"load",function(){     
-var size=345;
-
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(size); 
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
-
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Report_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
+function Init() {
+    myLayout = globalLayout.attachLayout("3L");
+    
     formData = [
        { type: "settings", position: "label-left", labelWidth: 100, inputWidth: size-50, labelAlign: "left", position: "label-left" },
         {type: "hidden", name: 'id' },
@@ -36,10 +20,10 @@ var size=345;
         }
     ];
     
-    myForm = globalLayout.cells("a").attachForm(formData);
+    myForm = myLayout.cells("a").attachForm(formData);
     myForm.enableLiveValidation(true);
-    globalLayout.cells("b").hideHeader();
-    myGrid = globalLayout.cells("b").attachGrid();
+    myLayout.cells("b").hideHeader();
+    myGrid = myLayout.cells("b").attachGrid();
     myGrid.selMultiRows = true;
     myGrid.setImagePath( "{{ asset('/images/') }}");
     myGrid.setHeader("{{ "Job" | trans }},{{ "Description" | trans }},{{ "Command" | trans }}");
@@ -49,12 +33,12 @@ var size=345;
     myGrid.setColTypes("ro,ro,ro");
     myGrid.setColSorting("str,str,str");
     myGrid.init();    
-/*    globalLayout.cells("b").progressOn();
+/*    myLayout.cells("b").progressOn();
     myGrid.load("{{ url('xml_Report_search_grid') }}?job_name="+encodeURIComponent(job_name),function(){
-        globalLayout.cells("b").progressOff();
+        myLayout.cells("b").progressOff();
     });
 */        
-    myToolbar = globalLayout.cells("b").attachToolbar();
+    myToolbar = myLayout.cells("b").attachToolbar();
     myToolbar.setIconsPath("{{ asset('/images/') }}");
     myToolbar.loadStruct("{{ url('xml_Report_search_toolbar') }}", function() {
     });
@@ -63,16 +47,16 @@ var size=345;
 
     myForm.attachEvent("onButtonClick", function(id){
         if (id!= 'submit') return true;
-        globalLayout.cells("b").progressOn();
+        myLayout.cells("b").progressOn();
         myGrid.load("{{ url('xml_Report_search_grid') }}"
                 +"?job_name="+encodeURIComponent(this.getItemValue('name'))
                 +"&description="+encodeURIComponent(this.getItemValue('description'))
                 +"&command="+encodeURIComponent(this.getItemValue('command')), function(){
-            globalLayout.cells("b").progressOff();
+            myLayout.cells("b").progressOff();
         });  
     });
 
-    myTabbar = globalLayout.cells("c").attachTabbar();
+    myTabbar = myLayout.cells("c").attachTabbar();
     myTabbar.addTab("history","{{ "Historique" | trans }}","120px",null,true);
     myTabbar.addTab("definition","{{ "Definition" | trans }}","120px");      
 
@@ -81,7 +65,7 @@ var size=345;
     historyLayout.cells("a").setText("{{ "Data" | trans }}");    
     historyLayout.cells("b").setText("{{ "Graph" | trans }}");
     historyLayout.cells("a").setWidth(450);
-    globalLayout.cells("c").collapse();
+    myLayout.cells("c").collapse();
     
     myData = historyLayout.cells("a").attachGrid();
     myData.setImagePath( "{{ asset('/images/') }}");
@@ -130,7 +114,7 @@ var size=345;
         last = id;
         historyLayout.cells("a").progressOn();
         historyLayout.cells("b").progressOn();
-        globalLayout.cells("c").expand();
+        myLayout.cells("c").expand();
         myData.load("{{ url('xml_Report_search_history') }}?id="+id,function() {     
             myChart.clearAll();
             // myChart.parse(myData,"dhtmlxgrid"); Impossible de recuperer les ids
@@ -142,6 +126,6 @@ var size=345;
     });
 
     
-});
+};
 </script>
 {% endblock %}

@@ -22,7 +22,7 @@ class DashboardController extends Controller
         if ($request->query->get('header')!='') 
             $header = $request->query->get('header');
         
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get('env'),
             $request->query->get('app'),

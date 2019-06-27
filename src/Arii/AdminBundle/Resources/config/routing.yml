@@ -925,3 +925,14 @@ html_Admin_notify_import:
 arii_Admin_public:
     path:  /public/{req}.{output}
     defaults: { _controller: AriiAdminBundle:Requests:result }
+
+#============================================================
+# Oracle
+#------------------------------------------------------------
+arii_Admin_oracle:
+    path:  /oracle
+    defaults: { _controller: AriiAdminBundle:Oracle:index}
+    
+xml_Admin_oracle_toolbar:
+    path:  /oracle/toolbar.xml
+    defaults: { _controller: AriiAdminBundle:Oracle:toolbar }

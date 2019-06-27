@@ -10,14 +10,14 @@ class JobsController extends Controller
 {
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();        
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();        
         return $this->render('AriiReportBundle:Dashboard\Jobs:index.html.twig', $Filters );
     }
 
     // Jobs par jours
     public function dayAction()
     {       
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // on recalcule la date temporaire
         $month = substr($Filters['monthday'],0,2);
@@ -52,7 +52,7 @@ class JobsController extends Controller
     
     public function chartAction($mode="dashboard")
     {        
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // on recule d'un mois pour le delta des changements
         $start = $Filters['start'];
@@ -167,7 +167,7 @@ class JobsController extends Controller
     public function gridAction($month=1,$year=2016)
     {    
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         $scope = $request->query->get( 'scope' );        
         if ($scope!='') {
             list($app,$env,$date) = explode(':', $scope);
@@ -261,7 +261,7 @@ class JobsController extends Controller
     public function exportAction($month=1,$year=2016)
     {    
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         $scope = $request->query->get( 'scope' );
         if ($scope!='') {
             list($app,$env,$date) = explode(':', $scope);
@@ -348,7 +348,7 @@ $month = 2;
     public function scatterAction($month=1,$year=2016)
     {    
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -419,7 +419,7 @@ $month = 2;
     public function Applications_MonthAction($app='',$env='',$mode='dashboard')
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -504,7 +504,7 @@ $month = 2;
     public function creationChartAction()
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),

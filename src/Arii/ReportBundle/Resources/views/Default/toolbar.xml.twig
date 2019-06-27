@@ -25,12 +25,12 @@
 {% endfor %}        
     </item>
     <item type="separator" id="sep0"/>
-    <item type="buttonSelect" id="JOB_CLASS" text="{{ job_class }}" img="cog.png">
-        <item type="button" id="_JCL_" text="{{ "All types" | trans }}"{% if job_class=='*'%} selected="true"{% endif %}/>
+    <item type="buttonSelect" id="jobClass" text="{{ jobClass }}" img="cog.png">
+        <item type="button" id="_JCL_" text="{{ "All types" | trans }}"{% if jobClass=='*'%} selected="true"{% endif %}/>
         <item type="separator" id="sep3"/>
         {% for jcl in Classes %}
             {% set jcl_text =  "class." ~ jcl %}
-            <item type="button" id="{{ jcl }}" text="{{ jcl_text | trans }}"{% if job_class==jcl%} selected="true"{% endif %}/>
+            <item type="button" id="{{ jcl }}" text="{{ jcl_text | trans }}"{% if jobClass==jcl%} selected="true"{% endif %}/>
         {% endfor %}        
     </item>
     <item type="separator" id="sep4"/>    

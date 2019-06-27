@@ -15,7 +15,7 @@ class CheckController extends Controller
     
     public function RunHourAction($force=1,$html=0)
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         set_time_limit(3600);
         ini_set('memory_limit', '-1');        

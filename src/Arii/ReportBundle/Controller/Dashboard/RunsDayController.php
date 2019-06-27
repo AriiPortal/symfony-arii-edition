@@ -11,13 +11,13 @@ class RunsDayController extends Controller
     
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Dashboard\Runs:day.html.twig', $Filters );
     }
 
     public function gridAction($limit=999)
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         // date fixe pour les jours
         $date = new \DateTime(sprintf("%04d-%02d-%02d",$Filters['year'],$Filters['month'],$Filters['day']));
@@ -55,7 +55,7 @@ class RunsDayController extends Controller
 
     public function jobsAction($application='%',$env='P')
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         // date fixe pour les jours

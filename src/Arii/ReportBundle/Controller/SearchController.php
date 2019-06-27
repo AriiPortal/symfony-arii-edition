@@ -40,7 +40,7 @@ class SearchController extends Controller
 
     public function historyAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 

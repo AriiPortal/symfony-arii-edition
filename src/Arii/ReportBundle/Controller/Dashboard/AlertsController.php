@@ -10,13 +10,13 @@ class AlertsController extends Controller
 {
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Dashboard\Alerts:index.html.twig', $Filters );
     }
     
     public function gridAction($app='*',$env='P')
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $Runs = $em->getRepository("AriiReportBundle:RUNHour")->findAlerts($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass']);        

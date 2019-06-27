@@ -9,32 +9,19 @@
 <script language="javascript">
 var app="{{ appl }}",
     env="{{ env }}",
-    job_class="{{ job_class }}",
+    jobClass="{{ jobClass }}",
     category="{{ category }}",
     day = {{ day }},
     month={{ month }},
     year={{ year }},
     dayPast={{ dayPast }},
-    bundle = 'Report';
+    bundle = 'Report',
+    size=180;
     
 dhtmlxEvent(window,"load",function(){    
-var size=180;
+    AriiLayout(bundle,'refresh,help',size);
     
-    globalLayout = new dhtmlXLayoutObject(document.body,"3T");
-    globalLayout.cells("a").setHeight(120);
-    globalLayout.cells("b").setWidth(size);
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("b").hideHeader();
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );    
-    myRibbon.loadStruct("{{ url('json_ARII_ribbon') }}?bundle="+bundle, function() {});
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    globalLayout.cells("b").setText("{{ "Menu" | trans }}");
-    
-    mySidebar = globalLayout.cells("b").attachSidebar({
+    mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
         // template: "tiles",
         width: size,
@@ -80,6 +67,7 @@ function ClickRibbon (itemid,state) {
 }
 
 </script>
+{% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}
 
             

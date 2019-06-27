@@ -12,7 +12,7 @@
 <script language="javascript">
 dhtmlxEvent(window,"load",function(){   
     var size=200;
-    AriiLayout('Admin','',size);
+    AriiLayout('Admin','refresh,help',size);
     
     mySidebar = globalLayout.cells("a").attachSidebar({
         icons_path: "{{ asset('/images/') }}",
@@ -58,9 +58,25 @@ dhtmlxEvent(window,"load",function(){
         return true;
     });
     Init();
+    PageRefresh();    
 });
 </script>
 {% endblock onload %}
 {% block script %}
+<script language="javascript">
+function PageRefresh() {
+    var currentTime = new Date();
+    var hours = currentTime.getHours();
+    var minutes = currentTime.getMinutes();
+    var seconds = currentTime.getSeconds();
+    if (minutes < 10){
+    minutes = "0" + minutes;
+    }
+    if (seconds < 10){
+    seconds = "0" + seconds;
+    }
+    GridRefresh();
+}
+</script>
 {% include "AriiCoreBundle:Common:ribbon.js.twig" %}
 {% endblock script %}

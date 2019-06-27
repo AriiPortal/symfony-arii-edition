@@ -10,7 +10,7 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();        
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();        
         return $this->render('AriiReportBundle:Reports:index.html.twig', $Filters );
     }
 
@@ -43,7 +43,7 @@ class DefaultController extends Controller
     
     public function envsAction()
     {        
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
@@ -68,7 +68,7 @@ class DefaultController extends Controller
 
     public function domsAction()
     {        
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
@@ -93,7 +93,7 @@ class DefaultController extends Controller
 
     public function appsAction()
     {        
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
@@ -118,7 +118,7 @@ class DefaultController extends Controller
 
     public function jclsAction()
     {        
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
@@ -143,7 +143,7 @@ class DefaultController extends Controller
 
     public function spoolersAction()
     {        
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // tous les jobs non supprimés dans la période
         $em = $this->getDoctrine()->getManager(); 
@@ -168,7 +168,7 @@ class DefaultController extends Controller
     // Nombre de jobs par applications
     public function jobsAction() 
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $end = clone $Filters['start'];
@@ -217,7 +217,7 @@ class DefaultController extends Controller
     // Nombre d'exécution par applications
     public function runsAction ()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],'runs','DESC');
@@ -252,7 +252,7 @@ class DefaultController extends Controller
     // Pour radar
     public function alarmsAction ($radar=false)
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $DBRuns = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass'],'alarms','DESC');
@@ -313,7 +313,7 @@ class DefaultController extends Controller
     // Taux d'erreurs
     public function errorsAction ()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
         $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],'rate','DESC');
@@ -362,7 +362,7 @@ class DefaultController extends Controller
     // Changements
     public function changesAction() 
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $DBJobs = $em->getRepository("AriiReportBundle:JOBDay")->findApps($Filters['start'],$Filters['end'],$Filters['env'],$Filters['jobClass'],false,'created','DESC');
@@ -401,7 +401,7 @@ class DefaultController extends Controller
     // Nombre d'exécution par jours
     public function evolutionAction ()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
         $DBRuns = $em->getRepository("AriiReportBundle:RUNDay")->findByDay($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass'],false);

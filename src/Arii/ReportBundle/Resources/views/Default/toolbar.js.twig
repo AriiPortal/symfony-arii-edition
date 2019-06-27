@@ -1,10 +1,10 @@
 myToolbar = myLayout.cells("b").attachToolbar();
 myToolbar.setIconsPath("{{ asset('/images/') }}");
-myToolbar.loadStruct("{{ url('xml_Report_toolbar') }}?env="+env+"&category="+category+"&app="+app+"&joib_class="+job_class+"&dayPast="+dayPast, function() {
+myToolbar.loadStruct("{{ url('xml_Report_toolbar') }}?env="+env+"&category="+category+"&app="+app+"&joib_class="+jobClass+"&dayPast="+dayPast, function() {
     this.setItemText("CAT",this.getListOptionText("CAT",this.getListOptionSelected("CAT")));
     this.setItemText("APP",this.getListOptionText("APP",this.getListOptionSelected("APP")));
     this.setItemText("ENV",this.getListOptionText("ENV",this.getListOptionSelected("ENV")));
-    this.setItemText("JOB_CLASS",this.getListOptionText("JOB_CLASS",this.getListOptionSelected("JOB_CLASS")));
+    this.setItemText("jobClass",this.getListOptionText("jobClass",this.getListOptionSelected("jobClass")));
     this.setItemText("dayPast",this.getListOptionText("dayPast",this.getListOptionSelected("dayPast")));
     this.setItemText("DAY",this.getListOptionText("DAY",this.getListOptionSelected("DAY")));
     this.setItemText("MONTH",this.getListOptionText("MONTH",this.getListOptionSelected("MONTH")));
@@ -43,7 +43,7 @@ myToolbar.attachEvent( "onClick", function(id, value) {
                 this.setItemText("CAT",this.getListOptionText("CAT",this.getListOptionSelected("CAT")));
                 category = id.substr(1);
             }
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?category="+category, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?category="+category, function() {
             });
             id = '_APP_';
         case "APP":
@@ -56,7 +56,7 @@ myToolbar.attachEvent( "onClick", function(id, value) {
                 app = id.substr(1);
                 // window.location = "{{ url('arii_Report_index') }}application?app="+app+"&env="+env+"&month="+month+"&year="+year+"&dayPast="+dayPast;
             }
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?app="+app, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?app="+app, function() {
                 RefreshToolbar();
                 GlobalRefresh();
             });            
@@ -70,48 +70,48 @@ myToolbar.attachEvent( "onClick", function(id, value) {
                 this.setItemText("ENV",this.getListOptionText("ENV",this.getListOptionSelected("ENV")));
                 env = id.substr(1);
             }
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?env="+env, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?env="+env, function() {
                 GlobalRefresh();
             });
             break;
-        case "JOB_CLASS":
+        case "jobClass":
             if (id=='_JCL_') {
-                this.setItemText("JOB_CLASS",'{{ "All types" | trans }}');
-                job_class = '*';
+                this.setItemText("jobClass",'{{ "All types" | trans }}');
+                jobClass = '*';
             }
             else {
-                this.setItemText("JOB_CLASS",this.getListOptionText("JOB_CLASS",this.getListOptionSelected("JOB_CLASS")));
-                job_class = id;
+                this.setItemText("jobClass",this.getListOptionText("jobClass",this.getListOptionSelected("jobClass")));
+                jobClass = id;
             }
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?job_class="+job_class, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?jobClass="+jobClass, function() {
                 GlobalRefresh();
             });
             break;
         case "DAY":
             day = id.substr(1);
             this.setItemText("DAY",this.getListOptionText("DAY",this.getListOptionSelected("DAY")));
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?day="+day, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?day="+day, function() {
                 GlobalRefresh();
             });
             break;
         case "MONTH":
             this.setItemText("MONTH",this.getListOptionText("MONTH",this.getListOptionSelected("MONTH")));
             month = id.substr(1);
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?month="+month, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?month="+month, function() {
                 GlobalRefresh();
             });
             break;
         case "YEAR":
             this.setItemText("YEAR",this.getListOptionText("YEAR",this.getListOptionSelected("YEAR")));
             year = id;
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?year="+year, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?year="+year, function() {
                 GlobalRefresh();
             });
             break;
         case "dayPast":
             this.setItemText("dayPast",this.getListOptionText("dayPast",this.getListOptionSelected("dayPast")));
             dayPast = id;
-            dhx4.ajax.get( "{{ url('arii_session_update') }}?ref_past="+dayPast, function() {
+            dhx4.ajax.get( "{{ url('api_Core_session_update') }}?ref_past="+dayPast, function() {
                 GlobalRefresh();
             });
             break;

@@ -4,7 +4,7 @@
 <script language="javascript">
 var app="{{ appl }}",
     env="{{ env }}",
-    job_class="{{ job_class }}",
+    jobClass="{{ jobClass }}",
     category="{{ category }}",
     day = {{ day }},
     month={{ month }},
@@ -156,7 +156,7 @@ dhtmlxEvent(window,"load",function(){
     myLayoutJobs.cells("d").collapse();
 
     jobsChart.attachEvent("onItemClick",function(id){ 
-        dhx4.ajax.get( "{{ url('arii_session_update') }}?app="+app, function() {
+        dhx4.ajax.get( "{{ url('api_Core_session_update') }}?app="+app, function() {
             myLayoutJobs.cells("d").expand();
             myJobs.load("{{ url('xml_Report_jobs_day') }}?monthday="+id, function () {
                 myLayoutJobs.cells("d").showHeader();
@@ -170,7 +170,7 @@ dhtmlxEvent(window,"load",function(){
 function GlobalRefresh() {
     myTabbar.cells("jobs").progressOn();
     jobsChart.clearAll();
-    jobsChart.load( "{{ url('xml_Report_app_jobs') }}?app="+app+"&env="+env+"&job_class="+job_class, function() {
+    jobsChart.load( "{{ url('xml_Report_app_jobs') }}?app="+app+"&env="+env+"&jobClass="+jobClass, function() {
         jobsChartEvol.clearAll();
         jobsChartEvol.load( "{{ url('xml_Report_app_jobs') }}?app="+app+"&env="+env, function() {
             myTabbar.cells("jobs").progressOff();

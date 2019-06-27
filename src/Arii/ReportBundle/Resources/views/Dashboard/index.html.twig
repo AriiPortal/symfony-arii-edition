@@ -2,35 +2,10 @@
 {% extends "AriiReportBundle::layout.html.twig" %}
 {% block body %}
 <script language="javascript">
-var app="{{ appl }}",
-    env="{{ env }}",
-    job_class="{{ job_class }}",
-    category="{{ category }}",
-    day = {{ day }},
-    month={{ month }},
-    year={{ year }},
-    dayPast={{ dayPast }};
+function Init() {
+    mylayout = globalLayout.cells("b").attachLayout("2U");
     
-dhtmlxEvent(window,"load",function(){    
-size=345
-
-    globalLayout = new dhtmlXLayoutObject(document.body,"2U");
-    globalLayout.cells("a").setWidth(size);
-    globalLayout.cells("a").setText("{{ "Dashboards" | trans }}");
-    globalLayout.cells("b").hideHeader();
-        
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Report_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-    
-    {% include "AriiReportBundle:Default:toolbar.js.twig" %}    
-    view = globalLayout.cells("a").attachDataView({
+    view = mylayout.cells("a").attachDataView({
         container:"data_container",
         type:{
             template:"<b>#Dashboard#</b><p>#Description#<br/><i>Version #Version#</i></p>",
@@ -44,10 +19,10 @@ size=345
     });
 
     GlobalRefresh();
-});
+};
 
 function GlobalRefresh() {
-    globalLayout.cells("b").attachURL( "{{url('html_Report_dashboard') }}" );                      
+    mylayout.cells("b").attachURL( "{{url('html_Report_dashboard') }}" );                      
 };
 </script>
 {% endblock %}

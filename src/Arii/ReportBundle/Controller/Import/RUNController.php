@@ -93,7 +93,7 @@ class RUNController extends Controller
         }
         // a travers l'interface
         else {
-            $Filters = $this->container->get('report.filter')->getRequestFilter();
+            $Filters = $this->container->get('arii.filter')->getRequestFilter();
             $end = $Filters['end'];
             $start = $Filters['start'];
         }
@@ -342,7 +342,7 @@ class RUNController extends Controller
         }
         // a travers l'interface
         else {
-            $Filters = $this->container->get('report.filter')->getRequestFilter();
+            $Filters = $this->container->get('arii.filter')->getRequestFilter();
             $end = $Filters['end'];
             $start = $Filters['start'];
         }
@@ -411,7 +411,7 @@ class RUNController extends Controller
             $start->modify('-10 days');
         }
         else {
-            $Filters = $this->container->get('report.filter')->getRequestFilter();
+            $Filters = $this->container->get('arii.filter')->getRequestFilter();
             $end = $Filters['end'];
             $start = $Filters['start'];            
         }

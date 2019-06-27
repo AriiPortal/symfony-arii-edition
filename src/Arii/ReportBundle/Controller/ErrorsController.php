@@ -9,7 +9,7 @@ class ErrorsController extends Controller{
 
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Errors:index.html.twig', $FIlters );
     }
 

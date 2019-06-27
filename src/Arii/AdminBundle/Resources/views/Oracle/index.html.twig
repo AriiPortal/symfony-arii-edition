@@ -1,0 +1,97 @@
+{% extends "AriiAdminBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+var db="ats_db"; // par defaut 
+
+function Init() {
+    
+    myLayout = globalLayout.cells("b").attachLayout("3T");  
+    myLayout.cells("a").setText("{{ "Oracle sessions" | trans }}");
+
+    myToolbar = myLayout.cells("a").attachToolbar();
+    myToolbar.setIconsPath("{{ asset('/images/') }}");
+    myToolbar.loadStruct("{{ url('xml_Admin_oracle_toolbar') }}");
+    
+    myToolbar.attachEvent("onClick", function(id){           
+        var db_text='';
+        db = id;
+        myToolbar.setItemText('database',myToolbar.getListOptionText('database',id));
+        myChart.clearAll();
+        globalLayout.cells("b").progressOn();
+        GridRefresh();        
+    });
+    
+    myChart = myLayout.cells('a').attachChart({
+        view:         "barH",
+        value:        "#nb#",
+        label:        "#nb#",
+        tooltip:      "#id#",
+        border:false,
+        pieInnerText: "#id#",
+        shadow: 0,
+        legend:{
+            width: 200,
+            template: "#id#",
+            valign:"top",
+            align:"left"
+        } 
+    });
+        
+    myOracle = myLayout.cells("b").attachGrid();
+    myOracle.setImagePath("{{ asset('/images/') }}");
+
+    myStatus = myLayout.cells("b").attachStatusBar({
+        text:   "",   // status bar text
+        height: 35                  // custom height
+    });
+
+    myOracle.setHeader("{{ "Logon time"| trans }},{{ "OS User"| trans }},{{ "Machine"| trans }},{{ "Username"| trans }},{{ "Program"| trans }},{{ "Process"| trans }},{{ "Status"| trans }},{{ "Event"| trans }}");
+    myOracle.attachHeader("#text_filter,#select_filter,#select_filter,#select_filter,#text_filter,#text_filter,#select_filter,#select_filter");
+    myOracle.setInitWidths("140,150,200,150,*,100,100,*");
+    myOracle.setColAlign("right,left,left,left,left,right,center,left");
+    myOracle.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro");
+    myOracle.init();
+    myOracle.attachEvent("onRowDblClicked", function (rid) {
+        Edit(rid);
+    });
+
+    formData = [
+        { type: "settings", position: "label-left", labelWidth: 150, inputWidth: 300,labelAlign: "right" },
+        { type: "hidden",
+          name: "id"
+        },         
+        {  
+            type: "input",
+            name: "name",
+            label: "{{ "Name" | trans }}",
+            required: true
+        },
+    ];
+    myForm = myLayout.cells("c").attachForm(formData);
+    myForm.enableLiveValidation(true);
+    
+    myLayout.cells("b").hideHeader();  
+    myLayout.cells("c").collapse(); 
+    
+    myChart.attachEvent("onItemClick",function(id, value){
+        myOracle.filterBy(3, id);
+    });
+    
+    GridRefresh();
+}
+
+function GridRefresh()
+{
+    myChart.load("{{ url('api_Core_oracle_list') }}?outputFormat=dhtmlxPie&db="+db,"json" , function() {
+        myChart.refresh();        
+        myOracle.load("{{ url('api_Core_oracle_list') }}?outputFormat=dhtmlxGrid&db="+db, function () {
+            myOracle.refreshFilters();
+            myOracle.filterByAll();
+            globalLayout.cells("b").progressOff();
+            myStatus.setText("{{ "Sessions" | trans }}"+": "+myOracle.getRowsNum());         
+        });
+    });
+}
+</script>
+
+{% endblock %}

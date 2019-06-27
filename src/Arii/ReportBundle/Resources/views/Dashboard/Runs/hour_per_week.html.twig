@@ -4,7 +4,7 @@
 <script language="javascript">
 var app="{{ appl }}",
     env="{{ env }}",
-    job_class="{{ job_class }}",
+    jobClass="{{ jobClass }}",
     category="{{ category }}",
     day = {{ day }},
     month={{ month }},
@@ -163,7 +163,7 @@ function GlobalRefresh() {
     // esthetique
     myChart.setColumnHidden(3,env!='*');
     myChart.setColumnHidden(4,app!='*');
-    myChart.setColumnHidden(5,job_class!='*');
+    myChart.setColumnHidden(5,jobClass!='*');
     myChart.load("{{ url('xml_Report_runs_hour_status')}}?app="+app+"&env="+env+"&day="+day+"&month="+month+"&year="+year+"&dayPast="+dayPast,function(){
         scatterChart.clearAll();
         scatterChart.parse(myChart,"dhtmlxgrid");

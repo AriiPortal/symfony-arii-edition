@@ -13,27 +13,20 @@ use Doctrine\ORM\Mapping as ORM;
 class SchedulerOrderStepHistory
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
-     * @ORM\Id
+     * @ORM\OneToOne(targetEntity="Arii\JIDBundle\Entity\SchedulerHistory")
+     * @ORM\JoinColumn(name="TASK_ID", referencedColumnName="ID", nullable=true)
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Id
+     *
      */
-    private $id;
-    
+    private $task;
+
     /**
      * @ORM\ManyToOne(targetEntity="Arii\JIDBundle\Entity\SchedulerOrderHistory")
      * @ORM\JoinColumn(name="HISTORY_ID", referencedColumnName="HISTORY_ID", nullable=true)
      * 
      */
     private $history;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Arii\JIDBundle\Entity\SchedulerHistory")
-     * @ORM\JoinColumn(name="TASK_ID", referencedColumnName="ID", nullable=true)
-     *      
-     */
-    private $task;
 
     /**
      * @var integer

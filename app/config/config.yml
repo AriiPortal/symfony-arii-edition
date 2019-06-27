@@ -100,6 +100,17 @@ doctrine:
                 # Pour l'import
 # PRIMARY KEY   schema_filter: /^UJO_(ALARM|JOB|JOB_STATUS|JOB_RUNS|JOB_TREE|MACHINE|SCHED_INFO|COMMAND_JOB|FILE_WATCH_JOB|WORKFLOW|CRED|ALAMODE|CALENDAR)$/
                 schema_filter: /^UJO_(ALAMODE|ALARM|AVG_JOB_RUNS|CALENDAR|CHASE|COMMAND_JOB|CRED|CYCLE|EVENT|EVENT2|EXT_CALENDAR|FILE_WATCH_JOB|GLOB|GLOBBLOB|HA_PROCESS|I5_JOB|INTCODES|JOB|JOBBLOB|JOBTYPE|JOB_COND|JOB_RESOURCE_DEP|JOB_RUNS|JOB_STATUS|JOB_TREE|KEYMASTER|LAST_EOID_COUNTER|MA_PROCESS|MACHINE|META_ENUMERATIONS|META_PROPERTIES|META_RULES|META_TYPES|MONBRO|MSG_ACK|NEXT_OID|PATCH|PROC_EVENT|REAL_RESOURCE|REP_DAILY|REP_HOURLY|REP_MONTHLY|REP_WEEKLY|RESWAIT_QUE|SCHED_INFO|SYS_HA_STATE|TIMEZONES|VIRT_RESOURCE|VIRT_RESOURCE_LOOKUP|VIRT_RESOURCE_STATUS|WAIT_QUE|WORKFLOW)$/
+            ats_db3:
+                driver:   "%database_ats3_driver%"
+                host:     "%database_ats3_host%"
+                port:     "%database_ats3_port%"
+                dbname:   "%database_ats3_name%"
+                user:     "%database_ats3_user%"
+                password: "%database_ats3_password%"
+                charset:  UTF8
+                # Pour l'import
+# PRIMARY KEY   schema_filter: /^UJO_(ALARM|JOB|JOB_STATUS|JOB_RUNS|JOB_TREE|MACHINE|SCHED_INFO|COMMAND_JOB|FILE_WATCH_JOB|WORKFLOW|CRED|ALAMODE|CALENDAR)$/
+                schema_filter: /^UJO_(ALAMODE|ALARM|AVG_JOB_RUNS|CALENDAR|CHASE|COMMAND_JOB|CRED|CYCLE|EVENT|EVENT2|EXT_CALENDAR|FILE_WATCH_JOB|GLOB|GLOBBLOB|HA_PROCESS|I5_JOB|INTCODES|JOB|JOBBLOB|JOBTYPE|JOB_COND|JOB_RESOURCE_DEP|JOB_RUNS|JOB_STATUS|JOB_TREE|KEYMASTER|LAST_EOID_COUNTER|MA_PROCESS|MACHINE|META_ENUMERATIONS|META_PROPERTIES|META_RULES|META_TYPES|MONBRO|MSG_ACK|NEXT_OID|PATCH|PROC_EVENT|REAL_RESOURCE|REP_DAILY|REP_HOURLY|REP_MONTHLY|REP_WEEKLY|RESWAIT_QUE|SCHED_INFO|SYS_HA_STATE|TIMEZONES|VIRT_RESOURCE|VIRT_RESOURCE_LOOKUP|VIRT_RESOURCE_STATUS|WAIT_QUE|WORKFLOW)$/
             ojs_db2:
                 driver:   "%database_ojs2_driver%"
                 host:     "%database_ojs2_host%"
@@ -107,14 +118,6 @@ doctrine:
                 dbname:   "%database_ojs2_name%"
                 user:     "%database_ojs2_user%"
                 password: "%database_ojs2_password%"
-                charset:  UTF8                
-            ojs_db3:
-                driver:   "%database_ojs3_driver%"
-                host:     "%database_ojs3_host%"
-                port:     "%database_ojs3_port%"
-                dbname:   "%database_ojs3_name%"
-                user:     "%database_ojs3_user%"
-                password: "%database_ojs3_password%"
                 charset:  UTF8                
                 
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
@@ -176,26 +179,26 @@ doctrine:
                     AriiATSBundle: ~
                 dql:
                     datetime_functions:
-                        Hour:  Arii\CoreBundle\DQL\%database_ats_driver%\Hour
-                        Date:  Arii\CoreBundle\DQL\%database_ats_driver%\Date
+                        Hour:  Arii\CoreBundle\DQL\%database_ats2_driver%\Hour
+                        Date:  Arii\CoreBundle\DQL\%database_ats2_driver%\Date
+                        Trunc: Arii\CoreBundle\DQL\Trunc
+                        Month: Arii\CoreBundle\DQL\Month
+                        Year:  Arii\CoreBundle\DQL\Year
+                        Cast:  Arii\CoreBundle\DQL\Cast
+            ats_db3:
+                connection: ats_db3
+                mappings:
+                    AriiATSBundle: ~
+                dql:
+                    datetime_functions:
+                        Hour:  Arii\CoreBundle\DQL\%database_ats3_driver%\Hour
+                        Date:  Arii\CoreBundle\DQL\%database_ats3_driver%\Date
                         Trunc: Arii\CoreBundle\DQL\Trunc
                         Month: Arii\CoreBundle\DQL\Month
                         Year:  Arii\CoreBundle\DQL\Year
                         Cast:  Arii\CoreBundle\DQL\Cast
             ojs_db2:
                 connection: ojs_db2
-                mappings:
-                    AriiJIDBundle: ~
-                dql:
-                    datetime_functions:
-                        Hour:  Arii\CoreBundle\DQL\%database_ojs_driver%\Hour
-                        Date:  Arii\CoreBundle\DQL\%database_ojs_driver%\Date
-                        Trunc: Arii\CoreBundle\DQL\Trunc
-                        Month: Arii\CoreBundle\DQL\Month
-                        Year:  Arii\CoreBundle\DQL\Year
-                        Cast:  Arii\CoreBundle\DQL\Cast
-            ojs_db3:
-                connection: ojs_db3
                 mappings:
                     AriiJIDBundle: ~
                 dql:
@@ -266,6 +269,11 @@ parameters:
     
 services:
     # Oracle
+    default.oracle.listener:
+        class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
+        tags:
+            - { name: doctrine.event_listener, event: postConnect, connection: default }
+            
     ojs.oracle.listener:
         class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
         tags:
@@ -274,10 +282,6 @@ services:
         class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
         tags:
             - { name: doctrine.event_listener, event: postConnect, connection: ojs_db2 }
-    ojs3.oracle.listener:
-        class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
-        tags:
-            - { name: doctrine.event_listener, event: postConnect, connection: ojs_db3 }
     ats.oracle.listener:
         class: Doctrine\DBAL\Event\Listeners\OracleSessionInit
         tags:

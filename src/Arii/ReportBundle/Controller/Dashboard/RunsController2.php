@@ -12,7 +12,7 @@ class RunsController extends Controller
     public function indexAction()
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -35,7 +35,7 @@ class RunsController extends Controller
 
     public function gridAction()
     {
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$application,$start) = $filter->getAll();
 
         $em = $this->getDoctrine()->getManager();
@@ -58,7 +58,7 @@ class RunsController extends Controller
     public function executionsChartAction($limit=5)
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -96,7 +96,7 @@ class RunsController extends Controller
     public function alarmsChartAction($limit=5)
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -133,7 +133,7 @@ class RunsController extends Controller
     public function applicationsChartAction($limit=1000)
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$application,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -169,7 +169,7 @@ class RunsController extends Controller
      public function StatusChartAction($app='',$env='',$mode='dashboard')
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -203,7 +203,7 @@ class RunsController extends Controller
     public function jobsAction($application='%',$env='P')
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         $scope = $request->query->get( 'scope' );
         list($app,$env,$date) = explode(':', $scope);
         list($year,$month) = explode('-', $date);
@@ -253,7 +253,7 @@ class RunsController extends Controller
 
      public function StatusPerHourChartAction($app='',$env='',$mode='dashboard')
     {
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         $Params = $filter->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();

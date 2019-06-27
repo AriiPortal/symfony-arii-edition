@@ -11,13 +11,13 @@ class RunsController extends Controller
     
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Dashboard\Runs:index.html.twig', $Filters );
     }
 
     public function gridAction()
     {
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$application,$start) = $filter->getAll();
 
         $em = $this->getDoctrine()->getManager();
@@ -39,7 +39,7 @@ class RunsController extends Controller
     
     public function executionsChartAction($limit=10)
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $Runs = $em->getRepository("AriiReportBundle:RUNMonth")->findApplicationsExecutions($year*1,$month*1,$env);
@@ -72,7 +72,7 @@ class RunsController extends Controller
 
     public function alarmsChartAction($limit=10)
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $Runs = $em->getRepository("AriiReportBundle:RUNMonth")->findApplicationsAlarms($year,$month,$env);
@@ -100,7 +100,7 @@ class RunsController extends Controller
      
      public function StatusChartAction($app='',$env='',$mode='dashboard')
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         $em = $this->getDoctrine()->getManager();
         $Runs = $em->getRepository("AriiReportBundle:RUNMonth")->findExecutionsByMonth($start->format('Y')*100+$start->format('m'),$end->format('Y')*100+$end->format('m'),$env,$app);
@@ -126,7 +126,7 @@ class RunsController extends Controller
     // bloqué sur 3 mois
     public function ApplicationsChartAction($app='',$env='',$mode='dashboard')
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
         $Runs = $em->getRepository("AriiReportBundle:RUNMonth")->findApplicationsByMonths($start->format('Y')*100+$start->format('m'),$end->format('Y')*100+$end->format('m'),$env,$app);
@@ -214,7 +214,7 @@ class RunsController extends Controller
     public function jobsAction($application='%',$env='P')
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         $scope = $request->query->get( 'scope' );
         list($app,$env,$date) = explode(':', $scope);
         list($year,$month) = explode('-', $date);
@@ -261,7 +261,7 @@ class RunsController extends Controller
 
      public function StatusPerHourChartAction($app='*',$env='P',$mode='dashboard')
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         
         $em = $this->getDoctrine()->getManager();
         $R = $em->getRepository("AriiReportBundle:RUNHour")->findRuns($Filters['start'],$Filters['end'],$Filters['env'],$Filters['appl'],$Filters['jobClass']);

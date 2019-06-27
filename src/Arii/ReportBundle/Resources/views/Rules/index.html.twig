@@ -1,39 +1,10 @@
 {% extends "AriiReportBundle::layout.html.twig" %}
 {% block body %}
 <script language="javascript">
-var app="{{ appl }}",
-    env="{{ env }}",
-    job_class="{{ job_class }}",
-    category="{{ category }}",
-    day = {{ day }},
-    month={{ month }},
-    year={{ year }},
-    dayPast={{ dayPast }};
-
-dhtmlxEvent(window,"load",function(){  
-var size=300;
-
-    globalLayout = new dhtmlXLayoutObject(document.body,"3L");  
-    globalLayout.cells("a").setWidth(size); 
-    globalLayout.cells("b").setText("{{ "Category" | trans }}"); 
-    globalLayout.cells("c").setText("{{ "Detail" | trans }}"); 
-    globalLayout.cells("c").setHeight(250); 
+function Init() {
+    myLayout = globalLayout.cells("b").attachLayout("3L"); 
     
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Report_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );    
-
-    {% include "AriiReportBundle:Default:tree.js.twig" %}    
-    {% include "AriiReportBundle:Default:toolbar.js.twig" %}    
-    globalLayout.cells("a").hideHeader(); 
-    
-    myApps = globalLayout.cells("b").attachGrid();
+    myApps = myLayout.cells("a").attachGrid();
     myApps.setImagePath("{{ asset('/images/') }}");
     myApps.setHeader("{{ "Priority"| trans }},{{ "Input"| trans }},{{ "Output"| trans }},{{ "Description"| trans }}");
     myApps.attachHeader("#numeric_filter,#text_filter,#text_filter,#text_filter");
@@ -41,7 +12,7 @@ var size=300;
     myApps.setInitWidths( "80,*,*,*" );    
     myApps.setColTypes("ro,ro,ro,ro");
     myApps.setColSorting("int,str,str,str");
-    myStatus = globalLayout.cells("b").attachStatusBar();
+    myStatus = myLayout.cells("a").attachStatusBar();
     myApps.load("{{ url('xml_Report_rules_grid') }}", function () {
         myStatus.setText("{{ "Rules" | trans }}"+": "+myApps.getRowsNum());
     });
@@ -81,10 +52,10 @@ var size=300;
             inputWidth: 400
         }
     ];
-    myForm = globalLayout.cells("c").attachForm(formData);
+    myForm = myLayout.cells("b").attachForm(formData);
     myForm.enableLiveValidation(true);
     
-    myToolbar = globalLayout.cells("c").attachToolbar();
+    myToolbar = myLayout.cells("b").attachToolbar();
     myToolbar.setIconsPath("{{ asset('/images/') }}");
     myToolbar.loadStruct("{{ url('xml_Report_rules_toolbar') }}", function () {
         myToolbar.hideItem("delete");
@@ -119,9 +90,9 @@ var size=300;
                      });
                     return;
                 }
-                globalLayout.cells("b").progressOn();
+                myLayout.cells("a").progressOn();
                 myForm.send("{{ url('xml_Report_rule_save') }}","POST",function(loader,response){
-                    globalLayout.cells("b").progressOff();
+                    myLayout.cells("a").progressOff();
                     if(response === "success")
                    {
                      dhtmlx.message({
@@ -144,10 +115,10 @@ var size=300;
                 break;
         }
     });
-    globalLayout.cells("a").hideHeader(); 
-    globalLayout.cells("b").hideHeader(); 
+    myLayout.cells("a").hideHeader(); 
+    myLayout.cells("a").hideHeader(); 
 
-});
+};
 
 function GridRefresh()
 {
@@ -162,11 +133,11 @@ function New() {
 }
 
 function Edit(id) {
-    globalLayout.cells("c").progressOn();
+    myLayout.cells("b").progressOn();
     myToolbar.showItem("delete");
     myForm.clear();
     myForm.load("{{ url('xml_Report_rule_form') }}?id="+id, function () {
-        globalLayout.cells("c").progressOff();
+        myLayout.cells("b").progressOff();
     });
 }
 
@@ -189,7 +160,7 @@ function Delete(id) {
                            text: "{{ "Rule deleted" | trans }}"
                         });
                            myApps.deleteRow(id);
-                         globalLayout.cells("b").progressOff();
+                         myLayout.cells("a").progressOff();
                       }
                       else 
                       {

@@ -9,7 +9,7 @@ arii_Core_index:
 # Core
 # --------------------------------------------------------------------------
 arii_Core_swagger:
-    path:  /core/swagger
+    path:  /swagger
     defaults: { _controller: AriiCoreBundle:Default:swagger }
 
 # --------------------------------------------------------------------------

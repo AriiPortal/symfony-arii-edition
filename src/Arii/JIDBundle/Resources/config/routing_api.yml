@@ -147,3 +147,24 @@ api_JID_repos_create:
     defaults: { _controller: AriiJIDBundle:API\Components\Spoolers:create, repoId: ojs_db }
     methods: [POST]
 
+# ==========================================================================
+# MAINTENANCE
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+api_JID_archive_orders:
+    path:  /repos/{repoId}/archive/orders
+    defaults: { _controller: AriiJIDBundle:API\Maintenance\Archive:orders, repoId: ojs_db }
+    methods: [GET]
+
+api_JID_clean_steps:
+    path:  /repos/{repoId}/purge/steps
+    defaults: { _controller: AriiJIDBundle:API\Maintenance\Purge:steps, repoId: ojs_db }
+    methods: [GET]
+    
+api_JID_clean_orders:
+    path:  /repos/{repoId}/purge/orders
+    defaults: { _controller: AriiJIDBundle:API\Maintenance\Purge:orders, repoId: ojs_db }
+    methods: [GET]

@@ -22,6 +22,31 @@ class SchedulerOrderStepHistoryRepository extends EntityRepository
         return $q->getResult();
     }
     
+    public function findByOrder($id) {
+        $q = $this->createQueryBuilder('s')
+        ->select('IDENTITY(s.task) as taskId,s.step,s.state,s.startTime,s.endTime,s.error,s.errorCode,s.errorText,'
+                . 'h.jobName,h.clusterMemberId,h.steps,h.exitCode')
+        ->leftjoin('AriiJIDBundle:SchedulerHistory','h',\Doctrine\ORM\Query\Expr\Join::WITH,'s.task = h.id')                
+        ->where('IDENTITY(s.history) = :id')
+        ->setParameter('id',$id)
+        ->orderBy('s.step')
+        ->getQuery();
+        // print $q->getSQL();
+        return $q->getResult();
+    }
+    
+    // Crashs database
+    public function findStepsWithoutHistory($limit=1000) {
+        $q = $this->createQueryBuilder('s')
+        ->select('s')
+        ->leftjoin('AriiJIDBundle:SchedulerHistory','h',\Doctrine\ORM\Query\Expr\Join::WITH,'s.task = h.id')
+        ->where('h.id is null')
+        ->orderBy('s.task')
+        ->setMaxResults($limit)              
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     public function firstId() {
         $q = $this->createQueryBuilder('s')
         ->select('min(s.task)')
@@ -36,6 +61,7 @@ class SchedulerOrderStepHistoryRepository extends EntityRepository
         return $q->getSingleScalarResult();
     }
     
+    // pour le module Report
     public function synchro($id,$limit) {
         $q = $this->createQueryBuilder('s')
         ->select('(s.history) as idOrder,(s.task) as idHistory,s.step,s.state,s.error,s.errorCode,s.errorText')
@@ -49,23 +75,4 @@ class SchedulerOrderStepHistoryRepository extends EntityRepository
         return $q->getResult();
     }
 
-    // Pour la synchronisation des historique
-    // TROP GOURMAND
-    public function synchroOrderSteps($id,$limit) { 
-        $q = $this->createQueryBuilder('s')
-        ->select('s')
-        ->select('o.jobChain,o.orderId,o.spoolerId,o.title,o.state,o.stateText,o.startTime,o.endTime,o.log,'
-                . 's.step,s.state,s.startTime as step_start_time,s.endTime as step_end_time,s.error,s.errorCode,s.errorText,'
-                . '(s.history) as idOrder,(s.task) as idHistory,'
-                . 'h.clusterMemberId,h.jobName,h.exitCode,h.parameters,h.log as job_log,h.pid')
-        ->leftjoin('AriiJIDBundle:SchedulerOrderHistory','o',\Doctrine\ORM\Query\Expr\Join::WITH,'s.history = o.history')
-        ->leftjoin('AriiJIDBundle:SchedulerHistory','h',\Doctrine\ORM\Query\Expr\Join::WITH,'s.task = h.id')
-        ->where('s.task > :id')
-        ->orderBy('s.task')
-        ->setParameter('id', $id)
-        ->setMaxResults($limit)
-        ->getQuery();
-        return $q->getResult();
-    }
-    
 }

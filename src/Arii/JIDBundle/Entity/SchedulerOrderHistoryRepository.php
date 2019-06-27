@@ -49,7 +49,7 @@ class SchedulerOrderHistoryRepository extends EntityRepository
         }    
         return $q->getQuery()
                 ->getResult();
-    }    
+    }
     
    public function findSpoolers()
    {
@@ -93,6 +93,43 @@ class SchedulerOrderHistoryRepository extends EntityRepository
                 ->getQuery()
                 ->getResult();
     }
+
+    
+    // Les ordres les plus vieux
+    public function findLatestOrders($endtime,$limit=100)
+    {
+        $q = $this->createQueryBuilder('o')
+            ->Select('o.history,o.jobChain,o.spoolerId,o.state,o.stateText,o.orderId,o.title,o.startTime,o.endTime')
+            ->Where('o.endTime <= :endTime')
+            ->orderBy('o.history')
+            ->setParameter('endTime', $endtime)
+            ->setMaxResults($limit);
+        return $q->getQuery()
+                ->getResult();
+    }
+    
+    public function findLatestOrdersOLD($endtime,$limit=1000) { 
+        return $this->createQueryBuilder('e')
+        ->select()
+        ->where('e.endTime < :endtime')
+        ->setParameter('endtime', $endtime)
+        ->orderBy('e.history')
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+    }
+    
+    // Crashs database
+    public function findOrdersWithoutSteps($limit=1000) {
+        $q = $this->createQueryBuilder('o')
+        ->select('o')
+        ->leftjoin('AriiJIDBundle:SchedulerOrderStepHistory','s',\Doctrine\ORM\Query\Expr\Join::WITH,'o.history = s.history')
+        ->where('s.history is null')
+        ->orderBy('o.history')
+        ->setMaxResults($limit)              
+        ->getQuery();
+        return $q->getResult();
+    }
     
     // Pour la synchronisation des acquittements
     // 4 jours en arriere
@@ -113,5 +150,5 @@ class SchedulerOrderHistoryRepository extends EntityRepository
         ->getQuery();
         return $q->getResult();
     }
-    
+
 }

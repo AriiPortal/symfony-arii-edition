@@ -7,40 +7,14 @@
 {% endblock dhtmlx_plus %}
 {% block body %}
 <script>
-var app="{{ appl }}",
-    env="{{ env }}",
-    job_class="{{ job_class }}",
-    category="{{ category }}",
-    day = {{ day }},
-    month={{ month }},
-    year={{ year }},
-    dayPast={{ dayPast }};
-
-dhtmlxEvent(window,"load",function(){ 
-var size=345;
-
-    globalLayout = new dhtmlXLayoutObject(document.body,"3W");
-    globalLayout.cells("a").hideHeader();
-    globalLayout.cells("a").setWidth(size);
-    globalLayout.cells("c").hideHeader();
-    globalLayout.cells("b").setWidth(600); 
-    globalLayout.cells("b").setText("{{ "Workspace" | trans }}");
+function Init() {
+    myLayout = globalLayout.cells("b").attachLayout("3U");
     
-    globalMenu = globalLayout.cells("a").attachMenu();
-    globalMenu.setIconsPath( "{{ asset('/images/') }}" );
-    globalMenu.loadStruct("{{ url('xml_menu') }}?route={{ app.request.attributes.get('_route') }}");
-
-    myRibbon = globalLayout.cells("a").attachRibbon(); 
-    myRibbon.setIconPath( "{{ asset('/images/') }}" );
-    myRibbon.loadStruct("{{ url('json_Report_ribbon') }}");
-    myRibbon.attachEvent("onStateChange", StateRibbon );
-    myRibbon.attachEvent("onClick", ClickRibbon );
-
-    MyDocsTree = globalLayout.cells("a").attachTree();
+    MyDocsTree = myLayout.cells("a").attachTree();
     MyDocsTree.setImagesPath("{{ asset('/images/') }}");
     MyDocsTree.load( "{{ url('xml_Report_snapshots_tree') }}");        
     
-    myGrid = globalLayout.cells("b").attachGrid();
+    myGrid = myLayout.cells("b").attachGrid();
     myGrid.setHeader("{{ "File" | trans }},{{ "Type" | trans }},{{ "Date" | trans }},{{ "Size" | trans }}");
     myGrid.attachHeader("#text_filter,#select_filter,#text_filter,#numeric_filter");
     myGrid.setInitWidths("*,0,180,100");
@@ -53,7 +27,7 @@ var size=345;
  
     // Clic sur l'arbre => Liste les fichiers    
     MyDocsTree.attachEvent("onClick",function(id){
-        globalLayout.cells("b").progressOn();
+        myLayout.cells("b").progressOn();
         myGrid.load("{{ url('xml_Report_snapshots_grid') }}?path="+id, function() {
             globalLayout.cells("c").attachHTMLString('');
             globalLayout.cells("b").progressOff();            
@@ -62,9 +36,9 @@ var size=345;
     
     // Clic sur le fichier => Vue
     myGrid.attachEvent("onRowDblClicked", function(id) {
-        globalLayout.cells("c").attachURL("{{ url('html_Report_snapshots_view') }}?file="+encodeURIComponent(id),false)
+        myLayout.cells("c").attachURL("{{ url('html_Report_snapshots_view') }}?file="+encodeURIComponent(id),false)
     });
-});
+};
 
 function GlobalRefresh() {
 }

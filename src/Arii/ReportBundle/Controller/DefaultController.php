@@ -11,14 +11,14 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         $Filters['header']=$Filters['footer']=0;
         return $this->render('AriiReportBundle:Default:index.html.twig', $Filters ); 
     }
 
     public function publicAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Default:public.html.twig', $Filters );
     }
     
@@ -54,7 +54,7 @@ class DefaultController extends Controller
 
     public function toolbarAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
 
         // Récuperer les applications
         $Applications = [];

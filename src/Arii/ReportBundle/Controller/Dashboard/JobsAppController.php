@@ -11,7 +11,7 @@ class JobsAppController extends Controller
     public function indexAction()
     {
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),
@@ -37,7 +37,7 @@ class JobsAppController extends Controller
     public function gridAction($app='*')
     {    
         $request = Request::createFromGlobals();
-        $filter = $this->container->get('report.filter');
+        $filter = $this->container->get('arii.filter');
         list($env,$app,$dayPast,$day,$month,$year,$start,$end) = $filter->getFilter(
             $request->query->get( 'env' ),
             $request->query->get( 'app' ),

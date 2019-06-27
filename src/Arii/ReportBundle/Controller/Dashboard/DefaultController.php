@@ -11,7 +11,7 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         $Filters['header']=$Filters['footer']=0;
         return $this->render('AriiReportBundle:Dashboard:index.html.twig', $Filters ); 
     }

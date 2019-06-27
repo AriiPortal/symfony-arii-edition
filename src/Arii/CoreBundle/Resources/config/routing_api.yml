@@ -43,3 +43,17 @@ api_Core_repos_update:
     path:  /repos/{repoId}
     defaults: { _controller: AriiCoreBundle:API\Repos:update, repoId: ojs_db }
     methods: [PUT,PATCH]
+
+# --------------------------------------------------------------------------
+# Oracle
+# --------------------------------------------------------------------------
+api_Core_oracle_list:
+    path:  /oracle
+    defaults: { _controller: AriiCoreBundle:API\Oracle:list }
+    methods: [GET]
+
+api_Core_oracle_get:
+    path:  /oracle/{repoId}
+    defaults: { _controller: AriiCoreBundle:API\Oracle:get, repoId: default }
+    methods: [GET]
+

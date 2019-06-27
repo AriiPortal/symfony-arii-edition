@@ -11,13 +11,13 @@ class AppController extends Controller
 
     public function indexAction()
     {          
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         return $this->render('AriiReportBundle:Dashboard\App:index.html.twig', $Filters );
     }
 
     public function jobsAction()
     {     
-        $Filters = $this->container->get('report.filter')->getRequestFilter();
+        $Filters = $this->container->get('arii.filter')->getRequestFilter();
         $Parameters = [
             'repository' => "AriiReportBundle:JOBDay",
             'start'      => $Filters['start']->format('Y-m-d H:i:s'),

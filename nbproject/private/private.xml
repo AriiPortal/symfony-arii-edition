@@ -17,20 +17,23 @@
             <file>file:/C:/xampp56/arii/src/Arii/ACKBundle/Resources/views/Hosts/index.html.old.twig</file>
         </group>
         <group>
-            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Resources/config/routing.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Service/AriiPortal.php</file>
-            <file>file:/C:/Arii/Symfony/app/config/config.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/AdminBundle/Controller/ReposController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/BlocklyBundle/Resources/views/layout.html.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Resources/config/routing_api.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/BlocklyBundle/Resources/views/simple.html.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/BlocklyBundle/Resources/views/Default/toolbar.xml.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/BlocklyBundle/Resources/views/Default/toolbar_check.xml.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/AdminBundle/Resources/views/Repos/index.html.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/BlocklyBundle/Resources/views/Default/index.html.twig</file>
-            <file>file:/C:/Arii/Symfony/app/config/site.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Controller/API/ReposController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/BlocklyBundle/Resources/views/Default/autosys.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/API/Status/ErrorsController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/config/routing.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/History/OrdersController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Service/AriiStatus.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Entity/SchedulerOrderHistoryRepository.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/Scheduler/GlobalController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Entity/InventoryInstances.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/config/routing_api.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/API/Inventory/InstancesController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/config/routing_Inventory.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/views/layout.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/Inventory/InstancesController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Service/AriiInventory.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/views/History/Chains/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/views/Inventory/Instances/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/Scheduler/OrdersController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Entity/InventoryInstancesRepository.php</file>
         </group>
     </open-files>
 </project-private>

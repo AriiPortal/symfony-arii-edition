@@ -12,7 +12,25 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerJobChainNodesRepository extends EntityRepository
 {
-       
+
+    public function findStoppedNodes() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.clusterMemberId,e.jobChain,e.orderState,e.action')
+        ->where("e.action='stop'")
+        ->orderBy('e.spoolerId,e.jobChain,e.orderState')
+        ->getQuery();
+        return $q->getResult();
+    }
+    
+    public function findSkippedNodes() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.clusterMemberId,e.jobChain,e.orderState,e.action')
+        ->where("e.action='skipped'")
+        ->orderBy('e.spoolerId,e.jobChain,e.orderState')
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     // Pour la synchronisation des historique
     public function findStopped() { 
         $q = $this->createQueryBuilder('e')

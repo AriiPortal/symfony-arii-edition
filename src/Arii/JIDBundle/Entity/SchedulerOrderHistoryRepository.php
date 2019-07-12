@@ -12,11 +12,22 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrderHistoryRepository extends EntityRepository
 {
+    public function findLastErrors() { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.history as id,e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
+        ->orderBy('e.history','desc')
+        ->where("e.state like '!%'")
+        ->orderBy('e.endTime','desc')
+        ->setMaxResults(100)
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     public function findOrders() { 
         $q = $this->createQueryBuilder('e')
         ->select('e.history as id,e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
         ->orderBy('e.history','desc')
-        ->setMaxResults(1000)
+        ->setMaxResults(5000)
         ->getQuery();
         return $q->getResult();
     }

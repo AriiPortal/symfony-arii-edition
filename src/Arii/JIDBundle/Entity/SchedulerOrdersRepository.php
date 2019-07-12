@@ -12,6 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrdersRepository extends EntityRepository
 {   
+    public function findSuspendedOrders() {
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId,e.jobChain,e.id as orderId,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId,e.orderXml')
+        ->where("e.orderXml like '%suspended=\"yes\"%'")
+        ->orderBy('e.modTime','desc')                
+        ->setMaxResults(1000)
+        ->getQuery();
+        return $q->getResult();
+    }
+    
     public function findOrders() { 
         $q = $this->createQueryBuilder('e')
         ->select('e.spoolerId,e.id,e.jobChain,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId')

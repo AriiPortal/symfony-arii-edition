@@ -15,6 +15,10 @@ services:
         class: Arii\JIDBundle\Service\AriiPlan
         arguments: [ "@arii_core.portal", "@arii_core.tools"]
 
+    arii_jid.Status:
+        class: Arii\JIDBundle\Service\AriiStatus
+        arguments: [ "@arii_core.portal", "@arii_core.tools"]
+
     arii_jid.History:
         class: Arii\JIDBundle\Service\AriiHistory
         arguments: [ "@arii_core.portal", "@arii_core.tools"]

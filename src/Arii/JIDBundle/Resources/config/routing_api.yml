@@ -57,6 +57,49 @@ api_JID_plan_orders_list:
     methods: [GET]
 
 # ==========================================================================
+# STATUS
+# ==========================================================================
+# --------------------------------------------------------------------------
+# Errors
+# --------------------------------------------------------------------------
+api_JID_status_errors_list:
+    path:  /repos/{repoId}/status/errors
+    defaults: { _controller: AriiJIDBundle:API\Status\Errors:list, repoId: ojs_db }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+api_JID_status_orders_list:
+    path:  /repos/{repoId}/status/orders
+    defaults: { _controller: AriiJIDBundle:API\Status\Orders:list, repoId: ojs_db }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Chains
+# --------------------------------------------------------------------------
+api_JID_status_chains_list:
+    path:  /repos/{repoId}/status/chains
+    defaults: { _controller: AriiJIDBundle:API\Status\Chains:list, repoId: ojs_db }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Jobs
+# --------------------------------------------------------------------------
+api_JID_status_jobs_list:
+    path:  /repos/{repoId}/status/jobs
+    defaults: { _controller: AriiJIDBundle:API\Status\Jobs:list, repoId: ojs_db }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Nodes
+# --------------------------------------------------------------------------
+api_JID_status_nodes_list:
+    path:  /repos/{repoId}/status/nodes
+    defaults: { _controller: AriiJIDBundle:API\Status\Nodes:list, repoId: ojs_db }
+    methods: [GET]
+
+# ==========================================================================
 # HISTORY
 # ==========================================================================
 
@@ -129,9 +172,13 @@ api_JID_instances_list:
     defaults: { _controller: AriiJIDBundle:API\Components\Instances:list, repoId: ojs_db }
     methods: [GET]
 
+# ==========================================================================
+# COMPONENTS
+# ==========================================================================
+
 api_JID_inventory_instances_list:
-    path:  /repos/{repoId}/inventory_instances
-    defaults: { _controller: AriiJIDBundle:API\Components\Inventory\Instances:list, repoId: ojs_db }
+    path:  /repos/{repoId}/inventory/instances
+    defaults: { _controller: AriiJIDBundle:API\Inventory\Instances:list, repoId: ojs_db }
     methods: [GET]
 
 # --------------------------------------------------------------------------

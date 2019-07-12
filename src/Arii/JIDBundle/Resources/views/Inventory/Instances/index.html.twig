@@ -2,6 +2,7 @@
 {% block body %}
 <script language="javascript">
 function Init() {
+    myAccordion.cells( "inventory" ).open(false); 
 
     myInstancesLayout = globalLayout.cells("b").attachLayout('2E');
     myInstancesLayout.cells('a').setText("{{ "Instances" | trans }}");

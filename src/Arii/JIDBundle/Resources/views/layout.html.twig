@@ -29,6 +29,7 @@ dhtmlxEvent(window,"load",function(){
     myAccordion.addItem( "status", "{{ "Status" | trans }}", true); 
     myAccordion.addItem( "history", "{{ "History" | trans }}"); 
     myAccordion.addItem( "daily_plan", "{{ "Plan" | trans }}"); 
+    myAccordion.addItem( "inventory", "{{ "Inventory" | trans }}"); 
     myAccordion.addItem( "components", "{{ "Components" | trans }}"); 
     myAccordion.addItem( "maintenance", "{{ "Maintenance" | trans }}"); 
     myAccordion.addItem( "config", "{{ "Config" | trans }}"); 
@@ -130,6 +131,23 @@ dhtmlxEvent(window,"load",function(){
     });    
     mySidebar5.attachEvent("onSelect", function(id, value){
         document.location.href = "{{ url('arii_JID_index') }}maintenance/"+id;
+        return true;
+    });
+
+    mySidebar6 = myAccordion.cells("inventory").attachSidebar({
+        icons_path: "{{ asset('/images/') }}",
+        // template: "tiles",
+        width: size,
+        items:
+        [
+            { id:"instances", text: "{{ "Instances" | trans }}", icon: "spooler.png" },
+        ]
+    });
+    mySidebar6.attachEvent("onBubbleClick", function(id, value){
+        return true;
+    });    
+    mySidebar6.attachEvent("onSelect", function(id, value){
+        document.location.href = "{{ url('arii_JID_index') }}inventory/"+id;
         return true;
     });
 

@@ -4,18 +4,21 @@
 <body>
 <script language="javascript">
 var lastid=0;    
-var urlOrders = "{{ url('api_JID_orders_list', { "repoId": "REPOID" } ) }}";
+var urlHistoryOrders = "{{ url('api_JID_orders_list', { "repoId": "REPOID" } ) }}";
+var urlStatusOrders  = "{{ url('api_JID_status_orders_list', { "repoId": "REPOID" } ) }}";
+var urlStatusChains  = "{{ url('api_JID_status_chains_list', { "repoId": "REPOID" } ) }}";
+var urlStatusJobs    = "{{ url('api_JID_status_jobs_list', { "repoId": "REPOID" } ) }}";
+var urlStatusNodes   = "{{ url('api_JID_status_nodes_list', { "repoId": "REPOID" } ) }}";
+var urlStatusErrors  = "{{ url('api_JID_status_errors_list', { "repoId": "REPOID" } ) }}";
 function Init() {
     myAccordion.cells( "status" ).open(false);
     mySidebar.items("global").setActive();
 
-    myLayout = globalLayout.cells("b").attachLayout("3W");
+    myLayout = globalLayout.cells("b").attachLayout("4U");
     
-    myOrdersLayout = myLayout.cells("a").attachLayout("2E");    
-    myOrdersLayout.cells("a").setText("{{ "Orders" | trans }}");
-    myOrdersLayout.cells("b").setText("{{ "Suspended orders" | trans }}");
-    
-    myOrderChart =  myOrdersLayout.cells("a").attachChart({
+    myLayout.cells("a").setText("{{ "Orders" | trans }}");
+    myLayout.cells("a").progressOn();
+    myOrderChart =  myLayout.cells("a").attachChart({
             view:"donut",
             value:"#nb#",
             label:"",
@@ -40,40 +43,132 @@ function Init() {
             }
     });
 
-    myOrdersGrid = myOrdersLayout.cells("b").attachGrid();
+    myLayout.cells("b").setText("{{ "Chains" | trans }}");
+
+    myLayout.cells("c").setText("{{ "Jobs" | trans }}");
+    
+    myLayout.cells("d").hideHeader();
+    myTabbar = myLayout.cells("d").attachTabbar();
+    myTabbar.addTab("errors","{{ "Last errors" | trans }}",null,null,true);
+    myTabbar.addTab("orders","{{ "Suspended orders" | trans }}");
+    myTabbar.addTab("chains","{{ "Stopped chains" | trans }}","250px");
+    myTabbar.addTab("jobs","{{ "Stopped jobs" | trans }}","250px");
+    myTabbar.addTab("nodes","{{ "Stopped nodes" | trans }}","200px");
+
+    myTabbar.cells("orders").progressOn();
+    myErrorsGrid = myTabbar.cells("errors").attachGrid();
+    myErrorsGrid.setImagePath( "{{ asset('/images/') }}");
+    myErrorsGrid.setHeader("{{ "Spooler" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "State" | trans }},{{ "Message" | trans }},{{ "Start time" | trans }},{{ "End time" | trans }}");
+    myErrorsGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter");
+    myErrorsGrid.setInitWidths("180,*,*,120,*,140,140");
+    myErrorsGrid.setColAlign("left,left,left,left,left,left,left");
+    myErrorsGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro");
+    myErrorsGrid.setColSorting("str,str,str,str,str,date,date");
+    myErrorsGrid.enableAlterCss("","");
+    myErrorsGrid.init();
+    myErrorsGrid.attachEvent("onRowDblClicked", function () {
+    });
+    
+    myTabbar.cells("orders").progressOn();
+    myOrdersGrid = myTabbar.cells("orders").attachGrid();
     myOrdersGrid.setImagePath( "{{ asset('/images/') }}");
-    myOrdersGrid.setHeader("{{ "Spooler" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "Status" | trans }},{{ "Next Start" | trans }},{{ "Title" | trans }},{{ "State" | trans }},{{ "Message" | trans }},{{ "Time" | trans }}");
-    myOrdersGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter,#text_filter,#text_filter,#text_filter");
-    myOrdersGrid.setInitWidths("180,*,0,0,0,0,0,0,0");
-    myOrdersGrid.setColAlign("left,left,left,left,left,left,left,left,right");
-    myOrdersGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
-    myOrdersGrid.setColSorting("str,str,str,str,str,str,str,str,date");
+    myOrdersGrid.setHeader("{{ "Spooler" | trans }},{{ "Chain" | trans }},{{ "Order" | trans }},{{ "State" | trans }},{{ "State text" | trans }},{{ "Mod. time" | trans }}");
+    myOrdersGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter,#text_filter");
+    myOrdersGrid.setInitWidths("180,*,*,120,*,140");
+    myOrdersGrid.setColAlign("left,left,left,left,left,left");
+    myOrdersGrid.setColTypes("ro,ro,ro,ro,ro,ro");
+    myOrdersGrid.setColSorting("str,str,str,str,str,date");
     myOrdersGrid.enableAlterCss("","");
     myOrdersGrid.init();
     myOrdersGrid.attachEvent("onRowDblClicked", function () {
-        
     });
     
-    myChainsLayout = myLayout.cells("b").attachLayout("2E");    
-    myChainsLayout.cells("a").setText("{{ "Chains" | trans }}");
-    myChainsLayout.cells("b").setText("{{ "Stopped chains" | trans }}");
+    myTabbar.cells("chains").progressOn();
+    myChainsGrid = myTabbar.cells("chains").attachGrid();
+    myChainsGrid.setImagePath( "{{ asset('/images/') }}");
+    myChainsGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "Member" | trans }}");
+    myChainsGrid.attachHeader("#select_filter,#text_filter,#text_filter");
+    myChainsGrid.setInitWidths("180,*,250");
+    myChainsGrid.setColAlign("left,left,left");
+    myChainsGrid.setColTypes("ro,ro,ro");
+    myChainsGrid.setColSorting("str,str,str");
+    myChainsGrid.enableAlterCss("","");
+    myChainsGrid.init();
+    myChainsGrid.attachEvent("onRowDblClicked", function () {
+    });
+
+    myTabbar.cells("jobs").progressOn();
+    myJobsGrid = myTabbar.cells("jobs").attachGrid();
+    myJobsGrid.setImagePath( "{{ asset('/images/') }}");
+    myJobsGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "Member" | trans }}");
+    myJobsGrid.attachHeader("#select_filter,#text_filter,#text_filter");
+    myJobsGrid.setInitWidths("180,*,250");
+    myJobsGrid.setColAlign("left,left,left");
+    myJobsGrid.setColTypes("ro,ro,ro");
+    myJobsGrid.setColSorting("str,str,str");
+    myJobsGrid.enableAlterCss("","");
+    myJobsGrid.init();
+    myJobsGrid.attachEvent("onRowDblClicked", function () {
+    });
     
-    myJobsLayout = myLayout.cells("c").attachLayout("2E");    
-    myChainsLayout.cells("a").setText("{{ "Chains" | trans }}");
-    myChainsLayout.cells("b").setText("{{ "Stopped chains" | trans }}");
-    
+    myTabbar.cells("nodes").progressOn();
+    myNodesGrid = myTabbar.cells("nodes").attachGrid();
+    myNodesGrid.setImagePath( "{{ asset('/images/') }}");
+    myNodesGrid.setHeader("{{ "Spooler" | trans }},{{ "Path" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "Member" | trans }}");
+    myNodesGrid.attachHeader("#select_filter,#text_filter,#text_filter,#select_filter,#text_filter");
+    myNodesGrid.setInitWidths("180,*,150,150,250");
+    myNodesGrid.setColAlign("left,left,left,left,left");
+    myNodesGrid.setColTypes("ro,ro,ro,ro,ro");
+    myNodesGrid.setColSorting("str,str,str,str,str");
+    myNodesGrid.enableAlterCss("","");
+    myNodesGrid.init();
+    myNodesGrid.attachEvent("onRowDblClicked", function () {
+    });
     
     GridRefresh();
 }
 
+function WriteTabText(rows,tab,text) {
+    if (rows>0)
+        myTabbar.cells(tab).setText(text+" ("+rows+")");
+    else 
+        myTabbar.cells(tab).setText(text);
+}
+
 function GridRefresh() {
-    myOrderChart.load( urlOrders.replace('REPOID',db)+"?outputFormat=dhtmlxPie","json" , function () {
-        myOrdersGrid.load( urlOrders.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
-            myLayout.cells("a").progressOff();
+    myOrderChart.load( urlHistoryOrders.replace('REPOID',db)+"?outputFormat=dhtmlxPie","json" , function () {
+        myLayout.cells("a").progressOff();
+    });
+    myErrorsGrid.load( urlStatusErrors.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
+        WriteTabText(myErrorsGrid.getRowsNum(),"errors","{{ "Last errors" | trans }}");
+        myTabbar.cells("errors").progressOff();
+        myErrorsGrid.refreshFilters();
+        myErrorsGrid.filterByAll();
+        myOrdersGrid.load( urlStatusOrders.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
+            WriteTabText(myOrdersGrid.getRowsNum(),"orders","{{ "Suspended orders" | trans }}");
+            myTabbar.cells("orders").progressOff();
             myOrdersGrid.refreshFilters();
             myOrdersGrid.filterByAll();
+            myChainsGrid.load( urlStatusChains.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
+                WriteTabText(myChainsGrid.getRowsNum(),"chains","{{ "Stopped chains" | trans }}");
+                myTabbar.cells("chains").progressOff();
+                myChainsGrid.refreshFilters();
+                myChainsGrid.filterByAll();
+                myJobsGrid.load( urlStatusJobs.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
+                    WriteTabText(myJobsGrid.getRowsNum(),"jobs","{{ "Stopped jobs" | trans }}");
+                    myTabbar.cells("jobs").progressOff();
+                    myJobsGrid.refreshFilters();
+                    myJobsGrid.filterByAll();
+                    myNodesGrid.load( urlStatusNodes.replace('REPOID',db)+"?outputFormat=dhtmlxGrid", function() {  
+                        WriteTabText(myNodesGrid.getRowsNum(),"nodes","{{ "Stopped nodes" | trans }}");
+                        myTabbar.cells("nodes").progressOff();
+                        myNodesGrid.refreshFilters();
+                        myNodesGrid.filterByAll();
+                    });
+                });
+            });
         });
-    });  
+    });
 }
 
 function Detail(id) {

@@ -153,7 +153,7 @@ function PageRefresh() {
         }
         pieChart.refresh();
         var url = "{{ url('api_ATS_alarms_infos', { "repoId": "REPOID" } ) }}";
-        dhx4.ajax.get( "{{ url('api_ATS_alarms_infos') }}" ,function(r1) {  
+        dhx4.ajax.get( url.replace('REPOID',db) ,function(r1) {  
             t = dhx4.s2j(r1.xmlDoc.responseText);
             if (t['state']['NOT_CLOSED']>0) 
                 mySidebar.cells("alarms").setBubble(t['state']['NOT_CLOSED']);

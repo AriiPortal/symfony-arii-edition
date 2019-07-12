@@ -11,7 +11,7 @@ class GlobalController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('AriiJIDBundle:Scheduler\Global:index.html.twig', [ 'db' => 'ojs_db' ]);
+        return $this->render('AriiJIDBundle:Default:index.html.twig', [ 'db' => 'ojs_db' ]);
     }
         
 }

@@ -45,6 +45,34 @@ api_Core_repos_update:
     methods: [PUT,PATCH]
 
 # --------------------------------------------------------------------------
+# Applications
+# --------------------------------------------------------------------------
+api_Core_applications_list:
+    path:  /applications{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Applications:list, outputFormat: ~ }
+    methods: [GET]
+
+api_Core_applications_new:
+    path:  /applications{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Applications:new, outputFormat: ~ }
+    methods: [POST]
+
+api_Core_applications_get:
+    path:  /applications/{appName}{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Applications:get, outputFormat: ~ }
+    methods: [GET]
+
+api_Core_applications_update:
+    path:  /applications/{appName}
+    defaults: { _controller: AriiCoreBundle:API\Applications:update }
+    methods: [PUT]
+    
+api_Core_applications_delete:
+    path:  /applications/{appName}
+    defaults: { _controller: AriiCoreBundle:API\Applications:delete }
+    methods: [DELETE]
+
+# --------------------------------------------------------------------------
 # Oracle
 # --------------------------------------------------------------------------
 api_Core_oracle_list:

@@ -10,6 +10,26 @@ services:
         class: Arii\MFTBundle\Service\AriiMFT
         arguments: ["@arii_core.portal", "@arii_core.db", "@arii_core.sql", "@arii_core.date", %database_driver% ]
         
+    arii_mft.Partners:
+        class: Arii\MFTBundle\Service\AriiPartners
+        arguments: ["@arii_core.portal" ]
+        
+    arii_mft.Summaries:
+        class: Arii\MFTBundle\Service\AriiSummaries
+        arguments: [ ]
+        
+    arii_mft.Transfers:
+        class: Arii\MFTBundle\Service\AriiTransfers
+        arguments: ["@arii_core.portal" ]
+        
+    arii_mft.Operations:
+        class: Arii\MFTBundle\Service\AriiOperations
+        arguments: ["@arii_core.portal" ]
+        
+    arii_mft.Deliveries:
+        class: Arii\MFTBundle\Service\AriiDeliveries
+        arguments: ["@arii_core.portal" ]
+        
     arii_mft.history:
         class: Arii\MFTBundle\Service\AriiHistory
         arguments: ["@arii_core.dhtmlx", "@arii_core.sql", "@arii_core.date", "@arii_core.tools"]

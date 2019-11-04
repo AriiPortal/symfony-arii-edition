@@ -46,7 +46,7 @@ arii_core:
 
 arii_core_REST:
     resource: "@AriiCoreBundle/Resources/config/routing_api.yml"
-    prefix:   /api/v1
+    prefix:   /api/v1/core
 
 # ========================================
 # Admin 
@@ -143,6 +143,10 @@ arii_mft:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_MFT_API:
+    resource: "@AriiMFTBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/mft
+
 # ========================================
 # Graphviz
 # ----------------------------------------
@@ -174,7 +178,10 @@ arii_Report:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
-
+arii_Report_API:
+    resource: "@AriiReportBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/report
+        
 arii_Report_import:
     resource: "@AriiReportBundle/Resources/config/routing_import.yml"
     prefix:   /import/report

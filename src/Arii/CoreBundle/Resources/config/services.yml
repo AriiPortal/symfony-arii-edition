@@ -18,9 +18,21 @@ services:
         class: Arii\CoreBundle\Service\AriiSession
         arguments: ["@session", "@doctrine.orm.default_entity_manager", "@service_container" ]
 
+    arii_core.CRUD:
+        class: Arii\CoreBundle\Service\AriiCRUD
+        arguments: [ "@doctrine.orm.default_entity_manager" ]
+
     arii_core.portal:
         class: Arii\CoreBundle\Service\AriiPortal
         arguments: [ "@arii_core.session", "@fos_user.user_manager", "@doctrine.orm.default_entity_manager", @translator, @router, @kernel ]
+
+    arii_core.http:
+        class: Arii\CoreBundle\Service\AriiHTTP
+        arguments: [ ]
+
+    arii_core.output:
+        class: Arii\CoreBundle\Service\AriiOutput
+        arguments: [ ]
 
     arii_core.sql:
         class: Arii\CoreBundle\Service\AriiSQL

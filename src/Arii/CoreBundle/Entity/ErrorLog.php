@@ -39,7 +39,7 @@ class ErrorLog
     /**
      * @var string
      *
-     * @ORM\Column(name="ip", type="string", length=15)
+     * @ORM\Column(name="ip", type="string", length=64)
      */
     private $ip;
 

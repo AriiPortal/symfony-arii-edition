@@ -161,5 +161,11 @@ class DefaultController extends Controller
         return $response;
     }
 
+    public function swaggerAction()
+    {
+        $portal = $this->container->get('arii_core.portal');
+        return $this->render('AriiMFTBundle:Default:swagger.html.twig', [ 'db' => $portal->getDatabase() ]);
+    }
+    
 }
 

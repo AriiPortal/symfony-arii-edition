@@ -13,16 +13,33 @@ use Doctrine\ORM\EntityRepository;
 class SchedulerClustersRepository extends EntityRepository
 {
 
-   public function findClusters()
+   public function findClusters($Filter)
    {
         $q = $this->createQueryBuilder('e') // 
-        ->select('e.schedulerId,max(e.lastHeartBeat) as lastHeartBeat,count(e.active) as active,count(e.dead) as dead')
-        ->groupBy('e.schedulerId');
-        return $q->orderBy('e.schedulerId')
-                ->setMaxResults(1000)
-                ->getQuery()
-                ->getResult();
-       
+        ->select('e.schedulerId as spoolerName,e.lastHeartBeat,e.nextHeartBeat,e.active as isActive,e.dead as isDead,e.command,e.httpUrl,e.deactivatingMemberId,e.xml')
+        ->orderBy('e.schedulerId')
+        ->setMaxResults(1000);
+
+        # Filtrage
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['spooler_name']))
+            $q->andWhere('e.schedulerId like :spooler_name')
+                ->setParameter('spooler_name',$Filter['spooler_name']);           
+        if (isset($Filter['isService']))
+            $q->andWhere('e.isService = :isService')
+                ->setParameter('isService',($Filter['isService']=='true'?1:0));  
+        if (isset($Filter['isRunning']))
+            $q->andWhere('e.isRunning = :isRunning')
+                ->setParameter('isRunning',($Filter['isRunning']=='true'?1:0));  
+        if (isset($Filter['isPaused']))
+            $q->andWhere('e.isPaused = :isPaused')
+                ->setParameter('isPaused',($Filter['isPaused']=='true'?1:0));  
+        if (isset($Filter['isCluster']))
+            $q->andWhere('e.isCluster = :isCluster')
+                ->setParameter('isCluster',($Filter['isCluster']=='true'?1:0));  
+        
+        return $q->getQuery()->getResult();
    }
 
    public function findMembers($schedulerId)

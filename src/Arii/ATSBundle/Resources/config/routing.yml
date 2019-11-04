@@ -5,6 +5,10 @@ arii_ATS_index:
     path:  /
     defaults: { _controller: AriiATSBundle:Default:index }
 
+arii_ATS_dashboard:
+    path:  /dashboard
+    defaults: { _controller: AriiATSBundle:Default:index }
+
 arii_ATS_readme:
     path:  /readme
     defaults: { _controller: AriiATSBundle:Default:readme }

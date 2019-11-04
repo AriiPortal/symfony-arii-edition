@@ -41,12 +41,13 @@ class AriiFilter
             'repoId' => 'local', // repo en cours
             'machine' => null, // machine en cours
             'orderId' => null, // Ordre
-            'jobChain' => null // Chain
+            'jobChain' => null, // Chain
+            'accept' => 'application/json'
         ];
         
         $request = Request::createFromGlobals();
+        
         $User = $this->portal->getUserInterface();    
-
         // le jour est la reference
         $User['dayPast'] = $User['refPast'];
         
@@ -117,6 +118,16 @@ class AriiFilter
         foreach ([ 'id', 'job_id', 'job_name'] as $f)  {
             $Filters[$f] = $request->query->get($f);
         }
+
+        // passage des infos par header
+        $Header = $request->headers->all();
+        if (isset($Header['accept'])) {
+            // le premier
+            list($Filters['accept']) = $Header['accept'];
+            // Plus simple
+            $Filters['outputFormat'] = substr($Filters['accept'],strpos($Filters['accept'],'/')+1);
+        }
+                
         return $Filters;
     }
         

@@ -12,12 +12,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerTasksRepository extends EntityRepository
 {   
-    public function findTasks() { 
+    public function findTasks($Filter=[]) { 
         $q = $this->createQueryBuilder('e')
-        ->select('e.spoolerId,e.taskId,e.clusterMemberId,e.jobName,e.enqueueTime,e.startAtTime,e.parameters,e.taskXml')
-        ->orderBy('e.taskId','desc')
-        ->setMaxResults(1000)
-        ->getQuery();
-        return $q->getResult();
+        ->select('e.spoolerId as spoolerName,e.taskId,e.clusterMemberId,e.jobName,e.enqueueTime,e.startAtTime,e.parameters,e.taskXml')
+        ->orderBy('e.spoolerId,e.taskId')
+        ->setMaxResults(1000);
+        # Filtrage
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        return $q->getQuery()->getResult();
     }
 }

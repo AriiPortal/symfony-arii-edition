@@ -14,16 +14,8 @@ class ReposController extends Controller
     {
         // Peu importe la configuration, on ne récupère que les informations fonctionnelle
         $portal = $this->container->get('arii_core.portal');
-        $Databases = $portal->getDatabases();
-        $Repos = [];
-        foreach ($Databases as $k=>$v) {
-            if (substr($k,0,6)=='ats_db') {
-                $Repos[$k] = [
-                    'title' => $Databases[$k]['title'],
-                    'description' => $Databases[$k]['description']
-                ];
-            }
-        }
+        $Repos = $portal->getRepos([ 'type' => 'ats']);
+        
         $data = $this->get('jms_serializer')->serialize($Repos, 'json', SerializationContext::create()->setGroups(array('list')));
 
         $response = new Response($data);

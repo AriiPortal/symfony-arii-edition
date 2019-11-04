@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['sankey']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'From');
+        data.addColumn('string', 'To');
+        data.addColumn('number', 'Jobs');
+        data.addRows([
+          [ 'VA1', 'P', 41 ],  
+          [ 'VA1', 'T', 10 ],  
+          [ 'P', 'Autosys', 20 ],
+          [ 'P', 'AIA v2', 11],
+          [ 'P', 'AIA v31', 10],
+          [ 'Autosys', 'SUCCESS', 5 ],
+          [ 'AIA v2',  'SUCCESS', 2 ],
+          [  'AIA v31', 'SUCCESS',3 ],
+          [ 'Autosys', 'FAILURE', 6 ],
+          [  'AIA v2', 'FAILURE', 2 ],
+          [  'AIA v31', 'FAILURE',6 ],
+          [ 'Autosys',  'RUNNING',9 ],
+          [  'AIA v2', 'RUNNING', 7 ],
+          [ 'AIA v31', 'RUNNING', 1 ],
+          [ 'T', 'Autosys', 10 ],
+          [ 'Autosys', 'SUCCESS', 10 ],
+        ]);
+
+        // Sets chart options.
+        var options = {
+            width: 600,
+            height: 400,
+            sankey: {
+              node: {
+                colors: [ 'grey', 'green', 'grey',  'red', 'grey',  'orange' ]
+              }
+            }
+        };
+
+        // Instantiates and draws our chart, passing in some options.
+        var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="sankey_basic" style="width: 900px; height: 300px;"></div>
+  </body>
+</html>

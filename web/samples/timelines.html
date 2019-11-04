@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['timeline'], 'language': 'fr'});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var container = document.getElementById('timeline');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'President' });
+        dataTable.addColumn({ type: 'date', id: 'Start' });
+        dataTable.addColumn({ type: 'date', id: 'End' });
+        dataTable.addRows([
+          [ 'Washington', new Date(2019, 9, 11, 10, 15, 10), new Date(2019, 9, 11, 10, 15, 45) ],
+          [ 'Adams',      new Date(2019, 9, 11, 11, 30),  new Date(2019, 9, 11, 12, 45) ],
+          [ 'Jefferson',  new Date(2019, 9, 11, 12, 00),  new Date(2019, 9, 11, 14, 00) ]]);
+      
+          var options = {
+      colors: ['red', 'red', 'green']
+          };
+        chart.draw(dataTable, options);
+        
+      }
+    </script>
+  </head>
+  <body>
+    <div id="timeline" style="height: 180px;"></div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+# --------------------------------------------------------------------------
+# Runs
+# --------------------------------------------------------------------------
+api_Report_runs_get:
+    path:  /runs{outputFormat}
+    defaults: { _controller: AriiReportBundle:API\Runs:get, outputFormat: ~  }

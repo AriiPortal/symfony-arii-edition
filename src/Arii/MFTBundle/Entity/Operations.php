@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Operations
  *
  * @ORM\Table(name="MFT_OPERATIONS")
- * @ORM\Entity()
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\MFTBundle\Entity\OperationsRepository")
  */
 class Operations
 {
@@ -52,7 +52,7 @@ class Operations
      * @var integer
      *
      * @ORM\Column(name="ordering", type="integer", nullable=true )
-     */        
+     */
     private $ordering;
 
     /**

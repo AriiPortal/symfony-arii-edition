@@ -73,9 +73,6 @@ class CommonController extends Controller
         // Heure locale à revoir
         $tz = array();
 
-        // Informations utilisateur
-        $repos = $portal->getReposByType($bundle);
-           
         $userInfos = $portal->getUserInfo();
         $userInterface = $portal->getUserInterface();
         $userFilters = $portal->getUserFilters();
@@ -95,6 +92,18 @@ class CommonController extends Controller
             $Activated[$act] = 1;
         }
 
+        // Base de donmées par défaut si l'administrateur en l'a pas défini
+        $repos = $portal->getReposByType($bundle);
+        if (empty($repos))  {
+            $repos = 
+                [ 'ats_db' => 
+                    [   'name' => 'ats_db',
+                        'title' => 'Default'
+                    ]
+                ];
+            
+        }
+        
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');   
         return $this->render('AriiCoreBundle:Common:ribbon.json.twig',

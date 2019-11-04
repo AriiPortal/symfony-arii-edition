@@ -16,50 +16,21 @@ class AlarmsController extends Controller
 
         $em = $this->getDoctrine()->getManager($repoId);        
         $state = $this->container->get('arii_ats.state2');        
-        $Alarms = $state->Alarms($em);
+        $Jobs = $state->Jobs($em,$Filters);
 
-        $time = time();
         switch ($Filters['outputFormat']) {
             case 'dhtmlx':
                 $type = 'xml';
                 $dhtmlx = $this->container->get('arii_core.render'); 
-                return $dhtmlx->grid($Alarms,'alarmTime,alarm,jobName,stateGrid,status,theUser,eventComment,nb,stateTime,state,firstTime,description','state');        
+                return $dhtmlx->grid($Jobs,'alarmTime,alarm,jobName,stateGrid,status,theUser,eventComment,nb,stateTime,state,firstTime,description','state');        
                 break;
             case 'xml':
-                $data = $this->get('jms_serializer')->serialize($Alarms, 'xml', SerializationContext::create()->setGroups(array('default')));
+                $data = $this->get('jms_serializer')->serialize($Jobs, 'xml', SerializationContext::create()->setGroups(array('default')));
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/xml');
                 break;
-            case 'dhtmlxPie':
-                // Aggregation
-                $Agg = [];
-                foreach ($Alarms as $Alarm) {
-                    $state = $Alarm['status'];
-                    $nb    = $Alarm['nb'];
-                    $id = $Alarm['alarm'];
-                    if (!isset($Agg[$id])) {
-                        $Agg[$id] = [
-                            "id"    => $id,
-                            "state" => $state,
-                            "nb"    => 1,
-                            "color" => $Alarm['color'],
-                            "timestamp" => $time
-                        ];
-                    }
-                    else {
-                        $Agg[$id]['nb']++;                        
-                    }
-                }
-                $Pie = [];
-                foreach ($Agg as $k=>$A ) {
-                    array_push($Pie,$A);
-                }
-                $data = $this->get('jms_serializer')->serialize($Pie, 'json', SerializationContext::create()->setGroups(array('list')));
-                $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/json');
-                break;                
             default:
-                $data = $this->get('jms_serializer')->serialize($Alarms, 'json', SerializationContext::create()->setGroups(array('list')));
+                $data = $this->get('jms_serializer')->serialize($Jobs, 'json', SerializationContext::create()->setGroups(array('list')));
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/json');
                 break;                

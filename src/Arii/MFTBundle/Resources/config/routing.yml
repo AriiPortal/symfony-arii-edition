@@ -7,6 +7,10 @@ arii_MFT_readme:
     path:  /readme
     defaults: { _controller: AriiMFTBundle:Default:readme }
 
+arii_MFT_swagger:
+    path:  /swagger
+    defaults: { _controller: AriiMFTBundle:Default:swagger }
+
 json_MFT_ribbon:
     path:  /ribbon.json
     defaults: { _controller: AriiMFTBundle:Default:ribbon }

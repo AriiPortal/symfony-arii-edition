@@ -12,6 +12,23 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrderHistoryRepository extends EntityRepository
 {
+    public function findOrders($Filter) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.history as id,e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
+        ->orderBy('e.history','desc')
+        ->setMaxResults(1000);
+        # Filtrage
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['spooler_name']))
+            $q->andWhere('e.spoolerId like :spooler_name')
+                ->setParameter('spooler_name',$Filter['spooler_name']);           
+        if (isset($Filter['state']))
+            $q->andWhere('e.state like :state')
+                ->setParameter('state',$Filter['state']);           
+        return $q->getQuery()->getResult();
+    }
+
     public function findLastErrors() { 
         $q = $this->createQueryBuilder('e')
         ->select('e.history as id,e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
@@ -23,15 +40,6 @@ class SchedulerOrderHistoryRepository extends EntityRepository
         return $q->getResult();
     }
     
-    public function findOrders() { 
-        $q = $this->createQueryBuilder('e')
-        ->select('e.history as id,e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')
-        ->orderBy('e.history','desc')
-        ->setMaxResults(5000)
-        ->getQuery();
-        return $q->getResult();
-    }
-
     public function findOrder($orderId) { 
         $q = $this->createQueryBuilder('e')
         ->select('e.spoolerId,e.orderId,e.jobChain,e.title,e.state,e.stateText,e.startTime,e.endTime')

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * UjoJobRuns
  *
  * @ORM\Table(name="UJO_JOB_RUNS", indexes={@ORM\Index(name="xak2ujo_job_runs", columns={"JOID", "JOB_VER", "OVER_NUM"}), @ORM\Index(name="xak1ujo_job_runs", columns={"EVT_NUM"}), @ORM\Index(name="xak3ujo_job_runs", columns={"ENDTIME", "STARTIME", "STATUS", "SVCDESK_HANDLE"})})
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\ATSBundle\Entity\UjoJobRunsRepository")
  */
 class UjoJobRuns
 {

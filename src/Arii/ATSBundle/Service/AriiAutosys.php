@@ -6,8 +6,25 @@
 namespace Arii\ATSBundle\Service;
 
 class AriiAutosys
-{
+{    
     protected $ColorStatus;
+    protected $Status = array (
+            1 => 'RUNNING',
+            3 => 'STARTING',
+            4 => 'SUCCESS',
+            5 => 'FAILURE',
+            6 => 'TERMINATED',
+            7 => 'ON_ICE',
+            8 => 'INACTIVE',
+            9 => 'ACTIVATED',
+            10 => 'RESTART',
+            11 => 'ON_HOLD',
+            12 => 'QUEUE_WAIT',
+            13 => 'WAIT_REPLY',
+            14 => 'PEND_MACH',
+            15 => 'RES_WAIT',
+            16 => 'NO_EXEC'
+        );
     
     public function __construct (\Arii\CoreBundle\Service\AriiPortal $portal) {
         $this->ColorStatus = $portal->getColors();
@@ -118,28 +135,21 @@ class AriiAutosys
     }
     
     public function Status($status) {   
-        $Status = array (
-            1 => 'RUNNING',
-            3 => 'STARTING',
-            4 => 'SUCCESS',
-            5 => 'FAILURE',
-            6 => 'TERMINATED',
-            7 => 'ON_ICE',
-            8 => 'INACTIVE',
-            9 => 'ACTIVATED',
-            10 => 'RESTART',
-            11 => 'ON_HOLD',
-            12 => 'QUEUE_WAIT',
-            13 => 'WAIT_REPLY',
-            14 => 'PEND_MACH',
-            15 => 'RES_WAIT',
-            16 => 'NO_EXEC'
-        );
-        if (isset($Status[$status])) {
-            return $Status[$status];
+        if (isset($this->Status[$status])) {
+            return $this->Status[$status];
         }
         return $status;
-   }
+    }
+    
+    public function StatusToCodes($Status) {
+        $Codes = array_flip($this->Status);
+        $Result = [];
+        foreach ($Status as $s) {
+            if (isset($Codes[$s]))
+                array_push($Result,$Codes[$s]);
+        }
+        return $Result;
+    }
 
     public function ColorStatus($status) {
        if (!isset($this->ColorStatus[$status]))

@@ -4,6 +4,7 @@
  * Recupere les données et fournit un tableau pour les composants DHTMLx
  */ 
 namespace Arii\MFTBundle\Service;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AriiMFT
 {
@@ -36,7 +37,102 @@ class AriiMFT
             return $this->ColorStatus[$status]['bgcolor'];
         return $this->ColorStatus['unknown']['bgcolor'];
     }
-    
+
+    // les operations d'un transfert
+    public function TransferOperations($em,$transferId,$Filter=[]) {
+       
+        $Operations = $em->getRepository("AriiMFTBundle:Operations")->findOperationsByTransfer($transferId);
+        # On complete en conservant les connections (ce sont des allers et retours)
+        $Connections = [];
+        foreach ($Operations as $k=>$Operation) {
+            $sourceId = $Operation['source_id'];
+            if (isset($Connections[$sourceId]))
+                $Source = $Connections[$sourceId];
+            else 
+                $Source = $em->getRepository("AriiCoreBundle:Connection")->find($sourceId);
+            $Operations[$k]['source'] = $this->getConnectionInfo($Source);
+            $Connections[$sourceId] = $Source;
+            
+            $targetId = $Operation['target_id'];
+            if (isset($Connections[$targetId]))
+                $Target = $Connections[$targetId];
+            else 
+                $Target = $em->getRepository("AriiCoreBundle:Connection")->find($targetId);
+            $Operations[$k]['target'] = $this->getConnectionInfo($Target);
+            $Connections[$targetId] = $Target;
+            
+            // Parametres
+            $Parameters = $em->getRepository("AriiMFTBundle:Parameters")->find($Operation['parameters_id']);
+            $Operations[$k]['parameters'] = [
+                'name' => $Parameters->GetName(),
+                'title' =>  $Parameters->GetTitle(),
+                'description' =>  $Parameters->GetDescription(),
+                'recursive' =>  $Parameters->GetRecursive(),
+                'error_when_no_files' =>  $Parameters->GetErrorWhenNoFiles(),
+                'overwrite_files' =>  $Parameters->GetOverwriteFiles(),
+                'append_files' =>  $Parameters->GetAppendFiles(),
+                'transactional' =>  $Parameters->GetTransactional(),
+                'atomic_prefix' =>  $Parameters->GetAtomicPrefix(),
+                'atomic_suffix' =>  $Parameters->GetAtomicSuffix(),
+                'concurrent_transfer' =>  $Parameters->GetConcurrentTransfer(),
+                'max_concurrent_transfers' =>  $Parameters->GetMaxConcurrentTransfers(),
+                'zero_byte_transfer' =>  $Parameters->GetZeroByteTransfer(),
+                'force_files' =>  $Parameters->GetForceFiles(),
+                'remove_files' =>  $Parameters->GetRemoveFiles(),
+                'compress_files' =>  $Parameters->GetCompressFiles(),
+                'compressed_file_extension' =>  $Parameters->GetCompressedFileExtension(),
+                'source_replace' =>  $Parameters->GetSourceReplace(),
+                'source_replacing' =>  $Parameters->GetSourceReplacing(),
+                'source_replacement' =>  $Parameters->GetSourceReplacement(),
+                'target_replace' =>  $Parameters->GetTargetReplace(),
+                'target_replacing' =>  $Parameters->GetTargetReplacing(),
+                'target_replacement' =>  $Parameters->GetTargetReplacement(),
+                'pre_command' =>  $Parameters->GetPreCommand(),
+                'pre_command_str' =>  $Parameters->GetPreCommandStr(),
+                'post_command' =>  $Parameters->GetPostCommand(),
+                'post_command_str' =>  $Parameters->GetPostCommandStr(),
+                'polling' => [],
+                'mail' => []
+            ];
+            if ($Parameters->GetPolling()) {
+                $Operations[$k]['parameters']['polling'] = [
+                    'poll_interval' =>  $Parameters->GetPollInterval(),
+                    'poll_timeout' =>  $Parameters->GetPollTimeout()
+                ];
+            }
+            if ($Parameters->GetMailOnError() or $Parameters->GetMailOnSuccess() ) {
+                $Operations[$k]['parameters']['mail'] = [
+                    'on_error'   =>  [],
+                    'on_success' =>  []
+                ];
+                if ($Parameters->GetMailOnError() )
+                    $Operations[$k]['parameters']['mail']['on_error'] = [
+                        'to'        =>  $Parameters->GetMailOnErrorTo(),
+                        'subject'   =>  $Parameters->GetMailOnErrorSubject()
+                    ];
+                if ($Parameters->GetMailOnSuccess() )
+                    $Operations[$k]['parameters']['mail']['on_success'] = [
+                        'to'        =>  $Parameters->GetMailOnSuccessTo(),
+                        'subject'   =>  $Parameters->GetMailOnSuccessSubject()
+                    ];
+            }
+            
+        }
+        return $Operations;
+   }
+   
+   private function getConnectionInfo($Connection) {
+        $Infos = [
+            'id'       => $Connection->getId(),
+            'name'     => $Connection->getName(),
+            'title'    => $Connection->getTitle(),
+            'protocol' => $Connection->getProtocol(),
+            'host'     => $Connection->getHost(),
+            'port'     => $Connection->getPort()
+        ];
+        return $Infos;
+   }
+   
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
@@ -236,37 +332,6 @@ class AriiMFT
         return $Transfers;
    }
 
-   public function Partners($partner=-1) {   
-        $data = $this->db->Connector('data');
-        $sql = $this->sql;
-        
-        $Fields = array(
-        );        
-        if ($partner>0) {
-            $Fields['t.ID'] = $partner;
-        }
-        
-        $qry = $sql->Select(
-            array(  't.ID','t.TITLE', 't.DESCRIPTION',
-                    'c.NAME as CATEGORY'
-                )
-            ) 
-        .$sql->From(array('MFT_PARTNERS t'))
-        .$sql->LeftJoin('ARII_CATEGORY c',array('t.CATEGORY_ID','c.ID'))
-        .$sql->Where($Fields)
-        .$sql->OrderBy(array( 't.TITLE'));
-
-        $res = $data->sql->query( $qry );
-        $nb=0;
-        $Transfers = array();
-        while ($line = $data->sql->get_next($res)) {
-            $id=$line['ID'];
-            
-            $Transfers[$id] = $line;
-        }        
-        return $Transfers;
-   }
-   
    // toutes les livraisons d'un transfert
    public function TransferDeliveries($transfer=-1, $log=false) {   
         $data = $this->db->Connector('data');

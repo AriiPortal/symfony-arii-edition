@@ -12,20 +12,27 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerOrdersRepository extends EntityRepository
 {   
+    public function findOrders($Filter=[]) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.spoolerId as spoolerName,e.id as OrderName,e.jobChain,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId')
+        ->orderBy('e.modTime','desc')
+        ->setMaxResults(1000);
+        # Filtrage
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['isSuspended']) and $Filter['isSuspended']=='true')
+            $q->andWhere("e.orderXml like '%suspended=\"yes\"%'");
+        if (isset($Filter['state']))
+            $q->andWhere('e.state like :state')
+                ->setParameter('state',$Filter['state']);           
+        return $q->getQuery()->getResult();
+    }
+
     public function findSuspendedOrders() {
         $q = $this->createQueryBuilder('e')
         ->select('e.spoolerId,e.jobChain,e.id as orderId,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId,e.orderXml')
         ->where("e.orderXml like '%suspended=\"yes\"%'")
         ->orderBy('e.modTime','desc')                
-        ->setMaxResults(1000)
-        ->getQuery();
-        return $q->getResult();
-    }
-    
-    public function findOrders() { 
-        $q = $this->createQueryBuilder('e')
-        ->select('e.spoolerId,e.id,e.jobChain,e.title,e.priority,e.state,e.stateText,e.createdTime,e.modTime,e.ordering,e.payload,e.runTime,e.initialState,e.orderXml,e.distributedNextTime,e.occupyingClusterMemberId')
-        ->orderBy('e.modTime','desc')
         ->setMaxResults(1000)
         ->getQuery();
         return $q->getResult();

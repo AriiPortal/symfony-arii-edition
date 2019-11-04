@@ -12,19 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class SchedulerJobsRepository extends EntityRepository
 {
-    public function findStoppedJobs() { 
+    public function findJobs($Filter=[]) { 
         $q = $this->createQueryBuilder('e')
-        ->select('e.spoolerId,e.clusterMemberId,e.path')
-        ->where('e.stopped=1')
-        ->getQuery();
-        return $q->getResult();
-    }
-    
-    // Pour la synchronisation des historique
-    public function findJobs() { 
-        $q = $this->createQueryBuilder('e')
-        ->select('e.spoolerId,e.clusterMemberId,e.path,e.stopped,e.nextStartTime')
-        ->getQuery();
-        return $q->getResult();
+        ->select('e.spoolerId as spoolerName,e.clusterMemberId,e.path as jobName,e.stopped as isStopped,e.nextStartTime')
+        ->setMaxResults(1000);
+        # Filtrage
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['isStopped']))
+            $q->andWhere("e.stopped = ".($Filter['isStopped']=='true'?1:0));
+        return $q->getQuery()->getResult();
     }
 }

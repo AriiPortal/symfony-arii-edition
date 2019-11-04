@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Connections
  *
  * @ORM\Table(name="MFT_PARTNERS")
- * @ORM\Entity()
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\MFTBundle\Entity\PartnersRepository")
  */
 class Partners
 {

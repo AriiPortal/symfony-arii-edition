@@ -11,6 +11,7 @@ class AriiState2
     protected $autosys;    
     protected $tools;
     protected $TZ;
+    protected $offset;
 
     public function __construct (
             \Arii\CoreBundle\Service\AriiPortal $portal,
@@ -22,8 +23,24 @@ class AriiState2
         $this->autosys = $autosys;
         $this->tools = $tools;
         $this->TZ = $portal->getTimeZone();
+        $this->offset = timezone_offset_get( $this->TZ, new \DateTime() );
     }
 
+/*********************************************************************
+ * Simplification
+ *********************************************************************/
+    public function JobIdbyName($em,$jobId) {
+      
+        if (is_numeric($jobId))
+            return $jobId;
+        
+        // On complete avec les ordres stockés
+        $Job = $em->getRepository("AriiATSBundle:UjoJob")->findIdByName($jobId);
+        if (isset($Job[0]['joid']))
+            return $Job[0]['joid'];        
+        return;
+    }    
+    
 /*********************************************************************
  * Informations de connexions
  *********************************************************************/
@@ -116,6 +133,64 @@ class AriiState2
         return $Alarms;
     }
 
+    public function Jobs($em,$Filter) {
+      
+        $Jobs = $em->getRepository("AriiATSBundle:UjoJobst")->findJobs($Filter);
+        foreach ($Jobs as $k=>$Job) {
+            $Jobs[$k]['status'] = $this->autosys->Status($Job['status']);
+            foreach(array('statusTime','lastStart','lastEnd','nextStart') as $time) {
+                $Jobs[$k][$time] = new \DateTime('@'.$Job[$time]);
+                $Jobs[$k][$time]->setTimezone($this->TZ);
+            }
+            switch ($Job['jobType'] ) {
+                case 255:
+                    $Jobs[$k]['jobType'] = 'FW';
+                    break;
+                case 99:
+                    $Jobs[$k]['jobType'] = 'BOX';
+                    break;
+                case 98:
+                    $Jobs[$k]['jobType'] = 'CMD';
+                    break;
+                default:
+                    break;                    
+            }
+        }
+        return $Jobs;
+    }
+
+    public function JobRuns($em,$jobId,$Filter) {      
+        $JobRuns = $em->getRepository("AriiATSBundle:UjoJobRuns")->findJobRuns($jobId,$Filter);
+        foreach ($JobRuns as $k=>$JobRun) {
+            $JobRuns[$k]['status'] = $this->autosys->Status($JobRun['status']);
+            list($JobRuns[$k]['color'])  = $this->autosys->ColorStatus($JobRuns[$k]['status']);
+            if ($JobRuns[$k]['status']=='SUCCESS') 
+                $JobRuns[$k]['success']=1;
+            else 
+                $JobRuns[$k]['success']=0;
+            
+            $JobRuns[$k]['startTime'] = new \DateTime('@'.$JobRun['startime']);
+            $JobRuns[$k]['startTime']->setTimezone($this->TZ);
+            $JobRuns[$k]['endTime'] = new \DateTime('@'.$JobRun['endtime']);
+            $JobRuns[$k]['endTime']->setTimezone($this->TZ);
+            
+            $JobRuns[$k]['starttime'] = $JobRun['startime'] + $this->offset;
+            $JobRuns[$k]['endtime']   = $JobRun['endtime']  + $this->offset;
+            
+            // peut etre interessant de conserver une heure GMT quelque part 
+        }
+        return $JobRuns;
+    }
+    
+    // Les jobs d'une boite
+    public function BoxStatus($em,$jobId,$Filter) {     
+        $jobId = $this->JobIdbyName($em,$jobId);
+        $JobRuns = $em->getRepository("AriiATSBundle:UjoJobSt")->findBoxStatus($jobId,$Filter);
+        foreach ($JobRuns as $k=>$JobRun) {
+        }
+        return $JobRuns;
+    }
+    
     public function AuditSendevent($em) {
       
         // On regarde les chaines stoppés

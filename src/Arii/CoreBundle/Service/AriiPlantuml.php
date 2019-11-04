@@ -17,6 +17,7 @@ class AriiPlantuml
     {   
         $this->container = $container;
         $this->java =  $portal->getParameter('java');
+        $this->java = 'java';
         $this->dot =  $portal->getParameter('graphviz_dot');
         $this->plantuml =  $portal->getParameter('plantuml');
     }
@@ -31,16 +32,16 @@ class AriiPlantuml
                 .' -graphvizdot "'.$this->dot.'"'
                 .' -pipe '
                 .' -t'.$output; 
-        
+
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $cmd = str_replace('/','\\',$cmd);
         } else {
             $cmd = str_replace('\\','/',$cmd);
         }
         
-//        $cmd = '../vendor/jre/bin/java -version';
-
+//        $cmd = "java -jar";
         $out = $this->Exec($cmd, $graph );
+
         // les erreurs devraient être indiquées au format de sortie (ex: erreur en png si output=svg)
         $response = new Response();       
         if ($output == 'svg') {

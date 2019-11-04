@@ -1,0 +1,66 @@
+# --------------------------------------------------------------------------
+# PAGES PRINCIPALES
+# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# Summaries
+# --------------------------------------------------------------------------
+api_MFT_summaries_get:
+    path:  /summaries
+    defaults: { _controller: AriiMFTBundle:API\Summaries:get }
+
+
+# --------------------------------------------------------------------------
+# Partners
+# --------------------------------------------------------------------------
+api_MFT_partners_get:
+    path:  /partners
+    defaults: { _controller: AriiMFTBundle:API\Partners:get }
+    methods: [GET]
+
+api_MFT_partners_post:
+    path:  /partners
+    defaults: { _controller: AriiCoreBundle:API\Partners:post }
+    methods: [POST]
+
+# Partner
+api_MFT_partner_get:
+    path:  /partners/{partnerId}
+    defaults: { _controller: AriiMFTBundle:API\Partner:get }
+
+api_MFT_partner_transfers_list:
+    path:  /partners/{partnerId}/transfers
+    defaults: { _controller: AriiMFTBundle:API\Partner:transfers }
+
+api_MFT_partner_deliveries_list:
+    path:  /partners/{partnerId}/deliveries
+    defaults: { _controller: AriiMFTBundle:API\Partner:deliveries }
+
+# --------------------------------------------------------------------------
+# Transfers
+# --------------------------------------------------------------------------
+api_MFT_transfers_get:
+    path:  /transfers
+    defaults: { _controller: AriiMFTBundle:API\Transfers:get }
+
+api_MFT_transfers_get:
+    path:  /transfers/{transferId}
+    defaults: { _controller: AriiMFTBundle:API\Transfer:get }
+
+
+# --------------------------------------------------------------------------
+# Operations
+# --------------------------------------------------------------------------
+api_MFT_operations_get:
+    path:  /transfers/{transferId}/operations
+    defaults: { _controller: AriiMFTBundle:API\Operations:get }
+
+# --------------------------------------------------------------------------
+# Deliveries
+# --------------------------------------------------------------------------
+api_MFT_deliveries_get:
+    path:  /deliveries
+    defaults: { _controller: AriiMFTBundle:API\Deliveries:get }
+
+api_MFT_deliveries_flows_get:
+    path:  /flows{outputFormat}
+    defaults: { _controller: AriiMFTBundle:API\Deliveries:flows, outputFormat: ~ }

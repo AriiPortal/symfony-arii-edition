@@ -9,30 +9,32 @@ use Symfony\Component\HttpFoundation\Request;
 use JMS\Serializer\SerializationContext;
 
 class OrdersController extends Controller
-{
-    
-    public function listAction($repoId='ojs_db')
+{  
+    public function listAction($repoId='ojs_db', $outputFormat, Request $request)
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
-
         $em = $this->getDoctrine()->getManager($repoId);        
-        $history = $this->container->get('arii_jid.history');
-        $Orders = $history->Orders($em); 
-        switch ($Filters['outputFormat']) {
-            case 'dhtmlxGrid':
+        
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+        
+        $state = $this->container->get('arii_jid.History');        
+        $Runs = $state->HistoryOrders($em,$Filter);
+        
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            case 'dhtmlx':
                 $dhtmlx = $this->container->get('arii_core.render'); 
-                return $dhtmlx->grid($Orders,'spoolerId,orderId,jobChain,state,endTime,runtime','status');        
-                break;
+                return $dhtmlx->grid($Runs,'alarmTime,alarm,jobName,stateGrid,status,theUser,eventComment,nb,stateTime,state,firstTime,description','state');        
             case 'xml':
-                $data = $this->get('jms_serializer')->serialize($Orders, 'xml', SerializationContext::create()->setGroups(array('default')));
+                $data = $this->get('jms_serializer')->serialize($Runs, 'xml');
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/xml');
                 break;
             default:
-                $data = $this->get('jms_serializer')->serialize($Orders, 'json', SerializationContext::create()->setGroups(array('list')));
+                $data = $this->get('jms_serializer')->serialize($Runs, 'json', SerializationContext::create()->setGroups(array('list')));
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/json');
-                break;                
+                break;
         }
         return $response;
     }

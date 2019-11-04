@@ -5,9 +5,13 @@ services:
 #    arii_report.example:
 #        class: %arii_report.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    arii_report.Runs:
+        class: Arii\ReportBundle\Service\AriiRuns
+        arguments: [ @arii_core.portal ]
+
     report_import.ezv:
         class: Arii\ReportBundle\Service\ImportEZV
-        arguments: [  @doctrine.orm.entity_manager ]
+        arguments: [ @arii_core.portal ]
 
     report_import.ipam:
         class: Arii\ReportBundle\Service\ImportIPAM
@@ -28,4 +32,4 @@ services:
     report.my_functions:
         class: Arii\ReportBundle\Service\MyFunctions
         arguments: [ ]
-  
+

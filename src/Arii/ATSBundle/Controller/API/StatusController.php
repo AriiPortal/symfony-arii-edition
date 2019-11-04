@@ -10,15 +10,17 @@ use JMS\Serializer\SerializationContext;
 
 class StatusController extends Controller
 {
-    public function listAction($repoId='ats_db')
+    public function listAction($repoId='ats_db',$outputFormat, Request $request)
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();        
-
         $em = $this->getDoctrine()->getManager($repoId);        
-        $state = $this->container->get('arii_ats.state2');        
-        $Status = $state->Status($em);
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+        
+        $state = $this->container->get('arii_ats.Status');        
+        $Status = $state->Status($em,$Filter);
 
-        switch ($Filters['outputFormat']) {
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
             case 'dhtmlxGrid':
                 $dhtmlx = $this->container->get('arii_core.render'); 
                 return $dhtmlx->grid($Status,'role,hostname,haStatusId,statusTime,pid');        

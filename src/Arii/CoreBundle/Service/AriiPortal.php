@@ -1105,22 +1105,20 @@ Gris    #f2f2f2
     
     public function getRepos($filter=[])
     { 
-        if ($this->session->get('Repos')!='') 
-            return $this->session->get('Repos');
-
         $Repos = $this->em->getRepository("AriiCoreBundle:Repo")->findBy($filter,[ 'title'=>'ASC','name'=>'ASC' ]);
         if (!$Repos) 
-            $Repos = $this->getDefaultRepos();
+            return [];
         
         $Result = array();
         foreach ($Repos as $Repo) {
-            $name = $Repo->getName();
-            $Result[$name] =  array( 
-                'id' => $Repo->getId(),
-                'name' =>  $name,
-                'title' => $Repo->getTitle(),
-                'type' =>  $Repo->getType(),
-                'description' => $Repo->getDescription()
+            array_push( $Result,
+                [
+                    'id' =>     $Repo->getId(),
+                    'name' =>   $Repo->getName(),
+                    'title' =>  $Repo->getTitle(),
+                    'type' =>   $Repo->getType(),
+                    'description' => $Repo->getDescription()
+                ]
             );
         }        
         return $this->session->set('Repos', $Result);
@@ -1135,20 +1133,6 @@ Gris    #f2f2f2
     public function setRepos() {
         $this->session->set('Repos','');         
         return $this->getRepos();
-    }
-    
-    public function getDefaultRepos() {
-        $Repo = $this->em->getRepository("AriiCoreBundle:Repo")->findOneBy(['name' => 'ojs_db']);
-        if (!$Repo) {
-            $Repo = new \Arii\CoreBundle\Entity\Repo();
-            $Repo->setName('ojs_db');
-            $Repo->setTitle('DB JobScheduler');
-            $Repo->setDescription('DB JobScheduler');
-            $Repo->setType('ojs');
-            $this->em->persist($Repo);        
-        }
-        $this->em->flush();        
-        return array($Repo);
     }
     
     /**************************************
@@ -2361,24 +2345,21 @@ Gris    #f2f2f2
      * Database
      **************************************/    
     public function getDatabases() {
-
         if ($this->session->get('Databases')!='')
             return $this->session->get('Databases');
-
         $Databases = array();
         $Connections = $this->getConnections();
         foreach ($Connections as $name=>$Data) {
             if ($Data['domain']=='database')
                 $Databases[$name] = $Data;
         }
-        
         return $this->session->set('Databases',$Databases);
     }
     
     public function getDatabase($name='') {
         if ($this->session->get('Database')!='')
             return $this->session->get('Database');
-        $Databases = $this->getDatabases();        
+        $Databases = $this->getDatabases();  
         if (isset($Databases[$name])) {
             return $this->session->set('Database',$Databases[$name]);
         }

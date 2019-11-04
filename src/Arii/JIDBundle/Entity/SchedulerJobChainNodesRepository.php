@@ -13,31 +13,19 @@ use Doctrine\ORM\EntityRepository;
 class SchedulerJobChainNodesRepository extends EntityRepository
 {
 
-    public function findStoppedNodes() { 
+    public function findNodes($Filter=[]) { 
         $q = $this->createQueryBuilder('e')
-        ->select('e.spoolerId,e.clusterMemberId,e.jobChain,e.orderState,e.action')
-        ->where("e.action='stop'")
+        ->select('e.spoolerId as spoolerName,e.clusterMemberId,e.jobChain,e.orderState,e.action')
         ->orderBy('e.spoolerId,e.jobChain,e.orderState')
-        ->getQuery();
-        return $q->getResult();
-    }
-    
-    public function findSkippedNodes() { 
-        $q = $this->createQueryBuilder('e')
-        ->select('e.spoolerId,e.clusterMemberId,e.jobChain,e.orderState,e.action')
-        ->where("e.action='skipped'")
-        ->orderBy('e.spoolerId,e.jobChain,e.orderState')
-        ->getQuery();
-        return $q->getResult();
-    }
-    
-    // Pour la synchronisation des historique
-    public function findStopped() { 
-        $q = $this->createQueryBuilder('e')
-        ->select('e')
-        ->where('e.action is not null')
-        ->getQuery();
-        return $q->getResult();
+        ->setMaxResults(1000);
+        # Filtrage
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['isStopped']) and ($Filter['isStopped']=='true'))
+            $q->andWhere("e.action = 'stop'");
+        if (isset($Filter['isSkipped']) and ($Filter['isSkipped']=='true'))
+            $q->andWhere("e.action = 'next_state'");
+        return $q->getQuery()->getResult();
     }
     
 }

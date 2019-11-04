@@ -295,8 +295,12 @@ class DefaultController extends Controller
             }
         }
         
+        // choix localhost ? non, on s cale sur l'url d'appel
+        $host = $_SERVER['HTTP_HOST'];
+        $url  = "http://$host/swagger/$bundle.json";
+
         return $this->render('AriiCoreBundle:Templates:swagger.html.twig', array(
-            'url' => "http://localhost/swagger/$bundle.json"
+            'url' => $url
         ));
     }    
 

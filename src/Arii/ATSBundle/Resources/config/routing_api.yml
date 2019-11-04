@@ -35,13 +35,6 @@ api_ATS_alarms_get:
     defaults: { _controller: AriiATSBundle:API\Alarms:get, repoId: ats_db }
 
 # --------------------------------------------------------------------------
-# Boxes
-# --------------------------------------------------------------------------
-api_ATS_boxes_list:
-    path:  /repos/{repoId}/boxes
-    defaults: { _controller: AriiATSBundle:API\Boxes:list, repoId: ats_db }
-
-# --------------------------------------------------------------------------
 # Changes
 # --------------------------------------------------------------------------
 api_ATS_changes_list:
@@ -56,12 +49,23 @@ api_ATS_changes_get:
 # Boxes
 # --------------------------------------------------------------------------
 api_ATS_boxes_list:
-    path:  /repos/{repoId}/jobs
+    path:  /repos/{repoId}/boxes
     defaults: { _controller: AriiATSBundle:API\Boxes:list, repoId: ats_db }
 
 api_ATS_boxes_get:
     path:  /repos/{repoId}/boxes/{jobId}
     defaults: { _controller: AriiATSBundle:API\Boxes:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Box
+# --------------------------------------------------------------------------
+api_ATS_box_status:
+    path:  /repos/{repoId}/boxes/{jobId}/status{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Box:status, repoId: ats_db, outputFormat: ~ }
+
+api_ATS_box_googleGantt:
+    path:  /repos/{repoId}/boxes/{jobId}/gantt{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Box:googleGantt, repoId: ats_db, outputFormat: ~ }
 
 # --------------------------------------------------------------------------
 # Jobs
@@ -73,6 +77,21 @@ api_ATS_jobs_list:
 api_ATS_jobs_get:
     path:  /repos/{repoId}/jobs/{jobId}
     defaults: { _controller: AriiATSBundle:API\Jobs:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Job
+# --------------------------------------------------------------------------
+api_ATS_job_runs:
+    path:  /repos/{repoId}/jobs/{jobId}/runs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:runs, repoId: ats_db, outputFormat: ~ }
+
+api_ATS_job_graphs:
+    path:  /repos/{repoId}/jobs/{jobId}/graphs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:graphs, repoId: ats_db, outputFormat: ~ }
+
+api_ATS_job_graphs_generate:
+    path:  /repos/{repoId}/jobs/{jobId}/graphs/{graphId}/generate{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:generate, repoId: ats_db, jobId: 1, graphId: 1, outputFormat: ~ }
 
 # --------------------------------------------------------------------------
 # Machines
@@ -98,6 +117,24 @@ api_ATS_queues_list:
 api_ATS_queues_get:
     path:  /repos/{repoId}/queues/{queueName}
     defaults: { _controller: AriiATSBundle:API\Queues:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Runs
+# --------------------------------------------------------------------------
+api_ATS_runs_list:
+    path:  /repos/{repoId}/runs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Runs:list, repoId: ats_db, outputFormat: ~ }
+
+api_ATS_runs_get:
+    path:  /repos/{repoId}/runs/{runId}/get
+    defaults: { _controller: AriiATSBundle:API\Runs:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Status
+# --------------------------------------------------------------------------
+api_ATS_status_list:
+    path:  /repos/{repoId}/status{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Status:list, repoId: ats_db, outputFormat: ~ }
 
 # --------------------------------------------------------------------------
 # WaitQueues

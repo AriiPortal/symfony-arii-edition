@@ -17,23 +17,33 @@
             <file>file:/C:/xampp56/arii/src/Arii/ACKBundle/Resources/views/Hosts/index.html.old.twig</file>
         </group>
         <group>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/API/Status/ErrorsController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/config/routing.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/History/OrdersController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Service/AriiStatus.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Entity/SchedulerOrderHistoryRepository.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/Scheduler/GlobalController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Entity/InventoryInstances.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/config/routing_api.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/API/Inventory/InstancesController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/config/routing_Inventory.yml</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/views/layout.html.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/Inventory/InstancesController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Service/AriiInventory.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/views/History/Chains/index.html.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Resources/views/Inventory/Instances/index.html.twig</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Controller/Scheduler/OrdersController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/JIDBundle/Entity/InventoryInstancesRepository.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Transmissions.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Partners.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Status.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Schedules.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Controller/API/JobController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Transfers.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/RUNDay.php</file>
+            <file>file:/C:/Arii/Symfony/web/samples/calendar.html</file>
+            <file>file:/C:/Arii/Symfony/web/samples/gauge.html</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/JOB.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Resources/config/routing_api.yml</file>
+            <file>file:/C:/Arii/Symfony/web/samples/sankey.html</file>
+            <file>file:/C:/Arii/Symfony/web/samples/annotation.html</file>
+            <file>file:/C:/Arii/Symfony/web/samples/gantt.html</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Deliveries.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/JOBDay.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/RUN.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Service/AriiState2.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoEventvu.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoJobRepository.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/History.php</file>
+            <file>file:/C:/Arii/Symfony/web/swagger/ATS.json</file>
+            <file>file:/C:/Arii/Symfony/web/samples/timelines.html</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Summary.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Service/AriiGD.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Operations.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoEvent.php</file>
         </group>
     </open-files>
 </project-private>

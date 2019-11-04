@@ -11,6 +11,14 @@ services:
             - { name: twig.extension }
 
 # Couche DB Historique
+    arii_jid.Components:
+        class: Arii\JIDBundle\Service\AriiComponents
+        arguments: [ "@arii_core.portal", "@arii_core.tools"]
+
+    arii_jid.Scheduler:
+        class: Arii\JIDBundle\Service\AriiScheduler
+        arguments: [ "@arii_core.portal", "@arii_core.tools"]
+        
     arii_jid.Plan:
         class: Arii\JIDBundle\Service\AriiPlan
         arguments: [ "@arii_core.portal", "@arii_core.tools"]

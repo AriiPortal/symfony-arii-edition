@@ -3,12 +3,14 @@
 {% block body %}
 <script type="text/javascript">
 function Init() {
-    
-    var myTab = globalLayout.cells("b").attachTabbar();
+var sizeMenu=200;
+
+    myTab = globalLayout.cells("b").attachTabbar();
     myTab.addTab("schedulers","{{ "Schedulers" | trans }}","100px", null, true);
-    myTab.addTab("check","{{ "Auto Check" | trans }}","100px");
+    myTab.addTab("alarms","{{ "Alarms" | trans }}","100px" );
 
     myServersLayout = myTab.cells("schedulers").attachLayout('2E');
+    myServersLayout.cells('a').hideHeader();
     myServersLayout.cells('b').hideHeader();
     myServersLayout.cells('b').setHeight(160);
 
@@ -44,12 +46,62 @@ function Init() {
     myServersGrid.setColSorting("str,str,int,date,str");
     myServersGrid.enableAlterCss("","");
     myServersGrid.init();
+    
+    myAlarmsLayout = myTab.cells("alarms").attachLayout('2E');
+    myAlarmsLayout.cells('a').hideHeader();
+    myAlarmsLayout.cells('b').hideHeader();
+    myAlarmsLayout.cells('b').setHeight(160);
+
+    myAlarmsChart = myAlarmsLayout.cells('a').attachChart({
+            view:         "pie",
+            value:        "#nb#",
+            color: function (obj) {
+                if (obj.id=="ACK.") 
+                    return "orange";
+                else
+                    return "red";
+            },
+            border:false,
+            pieInnerText: "#id#",
+            shadow: 0,
+            legend:{
+                width: 200,
+                template: "#id#",
+                valign:"top",
+                align:"left"
+            },
+            group: {
+                by: "#data3#",
+                map:{
+                    nb: ["#data7#", "sum" ]
+                }
+            }
+    });
+
+    myAlarmsGrid = myAlarmsLayout.cells('b').attachGrid();
+    myAlarmsGrid.selMultiRows = true;
+    myAlarmsGrid.setImagePath( "{{ asset('/images/') }}");
+    myAlarmsGrid.setHeader("{{ "Date" | trans }},{{ "Alarm" | trans }},{{ "Job name" | trans }},{{ "State" | trans }},{{ "Status" | trans }},{{ "User" | trans }},{{ "Comment" | trans }},#,joid");
+    myAlarmsGrid.attachHeader("#text_filter,#select_filter,#select_filter,#select_filter,#select_filter,#select_filter,#text_filter,#numeric_filter,#numeric_filter");
+    myAlarmsGrid.setInitWidths("150,140,220,80,150,150,*,60,0");
+    myAlarmsGrid.setColAlign("left,left,left,left,left,left,left,left,left");
+    myAlarmsGrid.setColTypes("ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    myAlarmsGrid.setColSorting("date,str,str,str,str,str,str,int,int");
+    myAlarmsGrid.enableAlterCss("","");
+    myAlarmsGrid.init();
+   
 }
 
 function GridRefresh() {
     myServersGrid.load( "{{ url('api_ATS_schedulers_list') }}?outputFormat=dhtmlxGrid", function() {        
         myServersChart.clearAll();
         myServersChart.parse( myServersGrid, "dhtmlxgrid");
+        myAlarmsGrid.load( "{{ url('api_ATS_alarms_list') }}?repoId="+db+"&outputFormat=dhtmlx", function() {      
+            myAlarmsGrid.refreshFilters();
+            myAlarmsGrid.filterByAll();
+            myAlarmsChart.clearAll();
+            myAlarmsChart.parse( myAlarmsGrid, "dhtmlxgrid");
+        });
     });
 }
 </script>

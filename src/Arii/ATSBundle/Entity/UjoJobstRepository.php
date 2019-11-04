@@ -12,6 +12,41 @@ use Doctrine\ORM\EntityRepository;
  */
 class UjoJobstRepository extends EntityRepository
 {
+    public function findStatus($Filter) {
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.owner,e.permission,e.nRetrys,e.autoHold,e.command,e.dateConditions,e.daysOfWeek,e.runCalendar,e.excludeCalendar,e.startTimes,e.startMins,e.runWindow,e.termRunTime,e.boxTerminator,e.boxName,e.hasNotification,e.timezone,e.jobTerminator,e.watchFile,e.watchFileMinSize,e.watchInterval,e.maxRunAlarm,e.minRunAlarm,e.alarmIfFail,e.chkFiles,e.profile,e.heartbeatInterval,e.jobLoad,e.priority,e.autoDelete,e.numero,e.maxExitSuccess,e.jobVer,e.runPriority,e.nextPriority,e.pid,e.runPriority,e.timeOk')
+        # Filtrage 
+        ->where('e.isCurrver = 1');
+        if (isset($Filter['job_name']) and ($Filter['job_name']!='%') and ($Filter['job_name']!='ALL')) {
+            $q->andWhere('e.jobName like :jobName')
+            ->setParameter('jobName',$Filter['job_name']); 
+        }  
+        if (isset($Filter['status'])) {
+            $q->andWhere('e.status in ( :status )')
+            ->setParameter('status',$Filter['status']); 
+        }
+        return $q->orderBy('e.boxName,e.jobName')
+        ->getQuery()
+        ->setMaxResults(100)
+        ->getResult();
+    }
+    
+    public function findJobs($Filter) {
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.owner,e.permission,e.nRetrys,e.autoHold,e.command,e.dateConditions,e.daysOfWeek,e.runCalendar,e.excludeCalendar,e.startTimes,e.startMins,e.runWindow,e.termRunTime,e.boxTerminator,e.boxName,e.hasNotification,e.timezone,e.jobTerminator,e.watchFile,e.watchFileMinSize,e.watchInterval,e.maxRunAlarm,e.minRunAlarm,e.alarmIfFail,e.chkFiles,e.profile,e.heartbeatInterval,e.jobLoad,e.priority,e.autoDelete,e.numero,e.maxExitSuccess,e.jobVer,e.runPriority,e.nextPriority,e.pid,e.runPriority,e.timeOk');
+# Filtrage 
+        if (isset($Filter['job_name'])) {
+            $q->andWhere('e.jobName like :jobName')
+            ->setParameter('jobName',$Filter['job_name']); 
+        }        
+        return $q->orderBy('e.boxName,e.jobName')
+        ->getQuery()
+        ->setMaxResults(100)
+        ->getResult();
+    }
+
     public function findProcesses() {
         $q = $this
         ->createQueryBuilder('e')
@@ -29,6 +64,17 @@ class UjoJobstRepository extends EntityRepository
         ->createQueryBuilder('e')
         ->select('e.jobName,e.jobLoad,e.status')
         ->getQuery();
+        return $q->getResult();
+    }
+
+    public function findBoxStatus($joid,$Filter) {
+        $q = $this->createQueryBuilder('e')
+        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine')
+        ->where('e.joid = :joid')
+        ->orWhere('e.boxJoid = :joid')
+        ->setParameter('joid',$joid)
+        ->orderBy('e.lastStart')
+        ->getQuery();        
         return $q->getResult();
     }
     

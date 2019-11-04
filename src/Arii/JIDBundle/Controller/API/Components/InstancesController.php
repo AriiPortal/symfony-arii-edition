@@ -10,14 +10,17 @@ use JMS\Serializer\SerializationContext;
 
 class InstancesController extends Controller
 {
-    public function listAction($repoId='ojs_db')
+    public function listAction($repoId='ojs_db', $outputFormat, Request $request)
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
-        
         $em = $this->getDoctrine()->getManager($repoId);        
-        $history = $this->container->get('arii_jid.history');
-        $Instances = $history->Instances($em); 
-        switch ($Filters['outputFormat']) {
+        
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+        
+        $history = $this->container->get('arii_jid.Components');
+        $Instances = $history->Instances($em,$Filter); 
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
             case 'dhtmlxGrid':
                 $dhtmlx = $this->container->get('arii_core.render'); 
                 return $dhtmlx->grid($Instances,'schedulerId,hostname,tcpPort,supervisorHostname,startTime,stopTime,releaseNumber,dbName,isService,isRunning,isPaused,isCluster,isAgent');        

@@ -17,11 +17,14 @@ var sort="last";
 
 dhtmlxEvent(window,"load",function(){       
     AriiLayout('ATS','databases,filters_ats,history,refresh,help',size);
-    
-    menuLayout = globalLayout.cells("a").attachLayout("2E");
-    
+
+    menuLayout = globalLayout.cells("a").attachLayout("2E");    
     menuLayout.cells("a").setText("{{ "Menu" | trans }}");
-    
+/*
+    toolbarLayout = globalLayout.cells("a").attachToolbar();
+    toolbarLayout.setIconsPath("{{ asset('/images/') }}");
+    toolbarLayout.loadStruct( "{ { url('xml_ATS_jobs_grid_toolbar') }}");
+*/
     myAccordion = menuLayout.cells("a").attachAccordion();
     myAccordion.addItem( "status", "{{ "Status" | trans }}", true); 
     mySidebar = myAccordion.cells("status").attachSidebar({
@@ -30,6 +33,7 @@ dhtmlxEvent(window,"load",function(){
         width: size,
         items:
         [
+            { id:  "dashboard", text: "{{ "Dashboard" | trans }}", icon: "eye.png" },
             { id:  "alarms", text: "{{ "Alarms" | trans }}", icon: "error.png" },
             { id:  "processes", text: "{{ "Processes" | trans }}", icon: "process.png" }
         ]

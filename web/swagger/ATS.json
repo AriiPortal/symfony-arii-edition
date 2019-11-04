@@ -1,557 +1,671 @@
 {
-  "swagger" : "2.0",
-  "info" : {
-    "description" : "A Workload Automation API for Autosys",
-    "version" : "1.0.0",
-    "title" : "Autosys API",
-    "contact" : {
-      "name" : "Arii",
-      "url" : "https://localhost/api/v1/bundles/ats",
-      "email" : "arii@sos-paris.com"
-    }
-  },
-  "host": "localhost/app_dev.php/api/v1/bundles/ats",  
-  "consumes" : [ "application/json" ],
-  "produces" : [ "application/json" ],
-  "paths" : {
-    "/repos" : {
-      "get" : {
-        "summary" : "get a list of all repos",
-        "tags" : [ "Repos" ],
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/job"
-              }
-            }
-          }
+    "swagger" : "2.0",
+    "info" : {
+        "description" : "A Workload Automation API for Autosys",
+        "version" : "1.0.0",
+        "title" : "Autosys API",
+        "contact" : {
+            "name" : "Arii",
+            "url" : "https://localhost/api/v1/bundles/ats",
+            "email" : "arii@sos-paris.com"
         }
-      },
-      "post" : {
-        "summary" : "Add a new repo",
-        "tags" : [ "Repos" ],
-        "parameters" : [ ],
-        "responses" : {
-          "201" : {
-            "description" : "Status 201"
-          }
-        }
-      }
-    },        
-    "/repos/{repoId}/alarms" : {
-      "get" : {
-        "summary" : "get a list of alarms",
-        "tags" : [ "Alarms" ],
-        "parameters" : [ {
-          "name" : "repoId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string",
-          "default" : "ats_db"
+    },
+    "basePath": "/api/v1/bundles/ats",
+    "schemes": [
+        "http"
+    ],
+    "consumes" : [ 
+        "application/json",
+        "application/xml"
+    ],
+    "produces" : [ 
+        "application/json",
+        "application/xml"
+    ],
+    "parameters" : {
+        "alarmId" : {
+            "name" : "alarmId",
+            "in" : "path",
+            "required" : true,
+            "type" : "integer",
+            "description": "Id for an alarm.",
+            "default": "1"
         },
-        {
-          "name" : "outputFormat",
-          "in" : "query",
-          "required" : false,
-          "type" : "string",
-          "enum": [ "json", "xml" ],
-          "default" : "json"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/alarm"
-              }
-            }
-          }
-        }
-      }
-    }, 
-    "/repos/{repoId}/alarms/{alarmId}" : {
-      "get" : {
-        "summary" : "get an alarm",
-        "tags" : [ "Alarms" ],
-        "parameters" : [ {
-          "name" : "repoId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string",
-          "default" : "ats_db"
+        "graphId" : {
+            "name" : "graphId",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "description": "Id for a graph given by a list (Graph name is allowed).",
+            "default": "1"
         },
-        {
-          "name" : "alarmId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
+        "jobId" : {
+            "name" : "jobId",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "description": "Id for a job (for Autosys the job name is unique and can be used as Id).",
+            "default": "1"
         },
-        {
-          "name" : "outputFormat",
-          "in" : "query",
-          "required" : false,
-          "type" : "string",
-          "enum": [ "json", "xml" ],
-          "default" : "json"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/alarm"
-              }
-            }
-          }
+        "repoId" : {
+            "name" : "repoId",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "default" : "ats_db"
+        },
+        "job_name" : {
+            "name" : "job_name",
+            "in" : "query",
+            "description" : "Filtering by job name\n% is allowed\n'ALL' allows to get all jobs",
+            "type" : "string"
+        },
+        "box_name" : {
+            "name" : "box_name",
+            "in" : "query",
+            "description" : "Filtering by jobs inside a box",
+            "type" : "string"
+        },
+        "recursive" : {
+            "name" : "recursive",
+            "in" : "query",
+            "description" : "Deepth of the search",
+            "type" : "string"
+        },
+        "status" : {
+            "name" : "status",
+            "in" : "query",
+            "description" : "Filtering by status,\nAvailable status are RUNNING, STARTING, SUCCESS, FAILURE, TERMINATED, ON_ICE, INACTIVE, ACTIVATED, RESTART, ON_HOLD, QUEUE_WAIT, WAIT_REPLY, PEND_MACH, RES_WAIT, NO_EXEC\nMultiplALLe status can be provided with the pipe (|) as separator",
+            "type" : "string"
         }
-      }
-    }, 
-    "/jobs" : {
-      "get" : {
-        "summary" : "get a list of all jobs",
-        "parameters" : [ {
-          "name" : "jobName",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "applicationCode",
-          "in" : "query",
-          "required" : false,
-          "type" : "string",
-          "description" : "Application code",
-          "minLength" : 3,
-          "maxLength" : 3
-        }, {
-          "name" : "applicationName",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "environment",
-          "in" : "query",
-          "required" : false,
-          "type" : "string",
-          "x-example" : "T,P,D"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/job"
-              }
-            }
-          }
-        }
-      },
-      "post" : {
-        "summary" : "Add a new job",
-        "parameters" : [ ],
-        "responses" : {
-          "201" : {
-            "description" : "Status 201"
-          }
-        }
-      }
     },
-    "/jobs/{jobId}" : {
-      "get" : {
-        "summary" : "get information for a job",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "$ref" : "#/definitions/job"
+    "paths" : {
+        "/repos" : {
+            "get" : {
+                "summary" : "get a list of all repos",
+                "tags" : [ "Repos" ],
+                "parameters" : [ ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "id" : {
+                                    "type" : "integer",
+                                    "description": "internal Id",
+                                    "example": "1"
+                                },
+                                "type" : {
+                                    "type" : "string",
+                                    "description": "Always 'ats'",
+                                    "example": "ats"
+                                },
+                                "$ref" : "#/definitions/repo"
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add a new repo",
+                "tags" : [ "Repos" ],
+                "parameters" : [ {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Repo object used to add a new database.",
+                    "required": true,
+                    "schema": {
+                      "$ref" : "#/definitions/repo"
+                    }                    
+                } ],
+                "responses" : {
+                    "201" : {
+                        "description" : "Status 201"
+                    }
+                }
             }
-          }
-        }
-      },
-      "put" : {
-        "summary" : "Update a job",
-        "consumes" : [ ],
-        "parameters" : [ {
-          "name" : "body",
-          "in" : "body",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/job"
-          }
-        } ],
-        "responses" : {
-          "202" : {
-            "description" : "Status 202"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete a job",
-        "parameters" : [ ],
-        "responses" : {
-          "204" : {
-            "description" : "Status 204"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "jobId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/jobs/{jobId}/runs" : {
-      "get" : {
-        "summary" : "Get all executions for a job",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/run"
-              }
+        },        
+        "/repos/{repoId}/alarms" : {
+            "get" : {
+                "summary" : "get a list of alarms",
+                "tags" : [ "Alarms" ],
+                "parameters" : [ {
+                    "$ref" : "#/parameters/repoId"
+                } ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/alarm"
+                            }
+                        }
+                    }
+                }
             }
-          }
-        }
-      },
-      "post" : {
-        "summary" : "Add a new run",
-        "consumes" : [ ],
-        "parameters" : [ {
-          "name" : "body",
-          "in" : "body",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/run"
-          }
-        } ],
-        "responses" : {
-          "201" : {
-            "description" : "Status 201"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "jobId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/jobs/{jobId}/runs/{runId}" : {
-      "get" : {
-        "summary" : "get a run",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "$ref" : "#/definitions/run"
+        }, 
+        "/repos/{repoId}/alarms/{alarmId}" : {
+            "get" : {
+                "summary" : "get an alarm",
+                "tags" : [ "Alarms" ],
+                "parameters" : [ {
+                    "$ref" : "#/parameters/repoId"
+                },
+                {
+                    "$ref" : "#/parameters/alarmId"
+
+                } ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/alarm"
+                            }
+                        }
+                    }
+                }
             }
-          },
-          "404" : {
-            "description" : "The job does not exist"
-          },
-          "500" : {
-            "description" : "Status 500"
-          }
-        }
-      },
-      "put" : {
-        "summary" : "Update a run",
-        "parameters" : [ ],
-        "responses" : {
-          "202" : {
-            "description" : "Status 202"
-          },
-          "403" : {
-            "description" : "No permission to add a run"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete a run",
-        "parameters" : [ ],
-        "responses" : {
-          "204" : {
-            "description" : "Status 204"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "jobId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      }, {
-        "name" : "runId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/activities" : {
-      "get" : {
-        "summary" : "get all activities",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "type" : "object",
-              "properties" : {
-                "activit" : {
-                  "type" : "string"
+        }, 
+        "/repos/{repoId}/boxes" : {
+            "get" : {
+                "summary" : "get a list of the last executions",
+                "tags" : [ "Boxes" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoId"
+                    },
+                    {
+                        "$ref" : "#/parameters/jobId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the last executions.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }
+                }
+            }
+        }, 
+        "/repos/{repoId}/boxes/{jobId}/status" : {
+            "get" : {
+                "summary" : "get a list of status of the jobs in a box",
+                "tags" : [ "Boxes" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoId"
+                    },
+                    {
+                        "$ref" : "#/parameters/jobId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of status",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/status"
+                            }
+                        }
+                    }
+                }
+            }
+        }, 
+        "/repos/{repoId}/jobs" : {
+            "get" : {
+                "summary" : "get a list of all jobs",
+                "tags" : [ "Jobs" ],
+                "parameters" : [ {
+                    "$ref" : "#/parameters/repoId"
+                },
+                {
+                    "$ref" : "#/parameters/job_name"
+                },
+                {
+                    "$ref" : "#/parameters/status"
+                }
+            ],
+            "responses" : {
+              "200" : {
+                "description" : "OK",
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/job"
+                  }
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/activities/{activityId}/jobs" : {
-      "get" : {
-        "summary" : "get all jobs for an activity",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "activityId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/activities/{activityId}/tasks" : {
-      "get" : {
-        "summary" : "List of task for an activity",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200"
-          }
-        }
-      },
-      "parameters" : [ {
-        "name" : "activityId",
-        "in" : "path",
-        "required" : true,
-        "type" : "string"
-      } ]
-    },
-    "/transfers" : {
-      "get" : {
-        "summary" : "Get all transfers",
-        "parameters" : [ {
-          "name" : "partner",
-          "in" : "query",
-          "required" : false,
-          "type" : "string",
-          "description" : "Partner"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Status 200",
-            "schema" : {
-              "type" : "object",
-              "properties" : {
-                "name" : {
-                  "type" : "string"
-                },
-                "title" : {
-                  "type" : "string"
-                },
-                "description" : {
-                  "type" : "string"
-                },
-                "env" : {
-                  "type" : "string"
-                },
-                "steps" : {
-                  "type" : "string"
-                },
-                "step_start" : {
-                  "type" : "string"
-                },
-                "step_end" : {
-                  "type" : "string"
-                }
+          },
+          "post" : {
+            "summary" : "Add a new job",
+            "tags" : [ "Jobs" ],             
+            "parameters" : [ ],
+            "responses" : {
+              "201" : {
+                "description" : "Status 201"
               }
             }
           }
-        }
-      }
-    }
-  },
-  "definitions" : {
-    "Exception" : {
-      "type" : "object",
-      "required" : [ "message" ],
-      "properties" : {
-        "message" : {
-          "type" : "string"
         },
-        "stackTrace" : {
-          "type" : "string"
+        "/repos/{repoId}/jobs/{jobId}" : {
+            "delete" : {
+                "summary" : "Delete a job",
+                "tags" : [ "Jobs" ],                
+                "parameters" : [ ],
+                "responses" : {
+                    "201" : {
+                        "description" : "Status 201"
+                    }
+                }
+            }
         },
-        "innerException" : {
-          "$ref" : "#/definitions/Exception"
-        }
-      },
-      "description" : "A technical exception"
+        "/repos/{repoId}/jobs/{jobId}/graphs" : {
+            "get" : {
+                "summary" : "Get a list of available graphs",
+                "tags" : [ "Jobs" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the available graphs.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/graph"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repos/{repoId}/jobs/{jobId}/graphs/{graphId}/generate" : {
+            "get" : {
+                "summary" : "Get a graph",
+                "tags" : [ "Jobs" ],
+                "produces" : [ 
+                    "image/png",
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoId"
+                    },
+                    {
+                        "$ref" : "#/parameters/jobId"
+                    },
+                    {
+                        "$ref" : "#/parameters/graphId"
+                    },
+                    {
+                        "name" : "period",
+                        "in" : "query",
+                        "description" : "Period for aggregated status (by default: 6 hours means 6 periods for the day 00:00-05:59,06:00-11:59,12:00-17:59,18:00-23:59)",
+                        "default": 6,
+                        "type" : "float"
+                    },
+                    {
+                        "name" : "height",
+                        "in" : "query",
+                        "description" : "Height of the graph.",
+                        "default": 24,
+                        "type" : "integer"
+                    },
+                    {
+                        "name" : "col_width",
+                        "in" : "query",
+                        "description" : "Width of each column (a column represents a day).",
+                        "default": 10,
+                        "type" : "integer"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the last executions.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema" : {
+                                    "type" : "string",
+                                    "format" : "binary"    
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repos/{repoId}/jobs/{jobId}/runs" : {
+            "get" : {
+                "summary" : "get a list of the last executions",
+                "tags" : [ "Jobs" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoId"
+                    },
+                    {
+                        "$ref" : "#/parameters/jobId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the last executions.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/run"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repos/{repoId}/runs" : {
+            "get" : {
+                "summary" : "get a list of the last executions",
+                "tags" : [ "Runs" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml",
+                    "image/png"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoId"
+                    },
+                    {
+                        "$ref" : "#/parameters/job_name"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the last executions.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/run"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repos/{repoId}/status" : {
+            "get" : {
+                "summary" : "get the current status of the jobs",
+                "tags" : [ "Status" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoId"
+                    },
+                    {
+                        "$ref" : "#/parameters/job_name"
+                    },
+                    {
+                        "$ref" : "#/parameters/status"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the last status.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/status"
+                            }
+                        }
+                    }
+                }
+            }
+        }         
     },
-    "Error" : {
-      "type" : "object",
-      "required" : [ "code", "message" ],
-      "properties" : {
-        "message" : {
-          "type" : "string",
-          "description" : "A technical message"
+    "definitions" : {
+        "Exception" : {
+                "type" : "object",
+                "required" : [ "message" ],
+                "properties" : {
+                    "message" : {
+                        "type" : "string"
+                    },
+                    "stackTrace" : {
+                        "type" : "string"
+                    },
+                    "innerException" : {
+                        "$ref" : "#/definitions/Exception"
+                    }
+                },
+          "description" : "A technical exception"
         },
-        "display" : {
-          "type" : "string",
-          "description" : "A user friendly displayable message"
+        "Error" : {
+            "type" : "object",
+            "required" : [ "code", "message" ],
+            "properties" : {
+                "message" : {
+                    "type" : "string",
+                    "description" : "A technical message"
+                },
+                "display" : {
+                    "type" : "string",
+                    "description" : "A user friendly displayable message"
+                },
+                "code" : {
+                    "type" : "string",
+                    "description" : "An error code"
+                }
+            },
+            "description" : "A business error"
         },
-        "code" : {
-          "type" : "string",
-          "description" : "An error code"
-        }
-      },
-      "description" : "A business error"
-    },
-    "Validation" : {
-      "type" : "object",
-      "properties" : {
-        "validations" : {
-          "type" : "array",
-          "items" : {
+        "Validation" : {
             "type" : "object",
             "properties" : {
-              "display" : {
-                "type" : "string"
-              },
-              "code" : {
-                "type" : "string"
-              },
-              "fields" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
+                "validations" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "display" : {
+                                "type" : "string"
+                            },
+                            "code" : {
+                                "type" : "string"
+                            },
+                            "fields" : {
+                                "type" : "array",
+                                "items" : {
+                                    "type" : "string"
+                                }
+                            },
+                            "valParams" : {
+                                "type" : "object"
+                            }
+                        }
+                    }
                 }
-              },
-              "valParams" : {
-                "type" : "object"
-              }
-            }
-          }
-        }
-      },
-      "description" : "A list of entity validation problems"
-    },
-    "job" : {
-      "type" : "object",
-      "properties" : {
-        "jobName" : {
-          "type" : "string",
-          "description" : "Job name"
-        },
-        "jobType" : {
-          "type" : "string",
-          "description" : "Type of job (command, file_watcher, file transfer...)"
-        },
-        "Command" : {
-          "type" : "string",
-          "description" : "Command to execute"
-        },
-        "Machine" : {
-          "type" : "string"
-        }
-      }
-    },
-    "run" : {
-      "type" : "object",
-      "properties" : {
-        "start_time" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
-        "end_time" : {
-          "type" : "string",
-          "format" : "date-time"
-        },
-        "status" : {
-          "type" : "string"
-        }
-      }
-    },
-    "alarm" : {
-      "type" : "object",
-      "properties" : {
-        "eoid" : {
-          "type" : "string",
-          "description" : "Event id"
-        },
-        "joid" : {
-          "type" : "integer",
-          "format" : "date-time"
+            },
+            "description" : "A list of entity validation problems"
         },
         "alarm" : {
-          "type" : "string"
+            "type" : "object",
+            "properties" : {
+                "eoid" : {
+                    "type" : "string",
+                    "description" : "Event id"
+                },
+                "joid" : {
+                    "type" : "integer",
+                    "format" : "date-time"
+                },
+                "alarm" : {
+                    "type" : "string"
+                },
+                "alarmTime" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                },
+                "state" : {
+                    "type" : "string"
+                },
+                "stateTime" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                },
+                "response" : {
+                    "type" : "string"
+                },
+                "theUser" : {
+                    "type" : "string"
+                },
+                "jobName" : {
+                    "type" : "string"
+                },
+                "description" : {
+                    "type" : "string"
+                },
+                "status" : {
+                    "type" : "string"
+                },
+                "color" : {
+                    "type" : "string"
+                },
+                "stateGrid" : {
+                    "type" : "string"
+                },
+                "nb" : {
+                    "type" : "integer"
+                },
+                "firstTime" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                }
+            }
         },
-        "alarmTime" : {
-          "type" : "string",
-          "format" : "date-time"
+        "graph" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Internal Id",
+                    "example": "1"
+                },
+                "name" : {
+                    "type" : "integer",
+                    "description" : "name of the graph",
+                    "example": "StatusByPeriod"
+                },
+                "Description" : {
+                    "type" : "string",
+                    "description" : "Description of the graph",
+                    "example": "Give a status for a period of time"
+                }
+            }
         },
-        "state" : {
-          "type" : "string"
+        "job" : {
+            "type" : "object",
+            "properties" : {
+                "jobName" : {
+                    "type" : "string",
+                    "description" : "Name of the job"
+                },
+                "jobType" : {
+                    "type" : "string",
+                    "description" : "Type of job (BOX,CMD,FW)"
+                },
+                "Command" : {
+                    "type" : "string",
+                    "description" : "Command to execute"
+                },
+                "Machine" : {
+                    "type" : "string"
+                }
+            }
         },
-        "stateTime" : {
-          "type" : "string",
-          "format" : "date-time"
+        "run" : {
+            "type" : "object",
+            "properties" : {
+                "runNum" : {
+                    "type" : "integer",
+                    "description" : "Run number"
+                },
+                "start_time" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                },
+                "end_time" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                },
+                "status" : {
+                    "type" : "string"
+                }
+            }
         },
-        "response" : {
-          "type" : "string"
-        },
-        "theUser" : {
-          "type" : "string"
-        },
-        "jobName" : {
-          "type" : "string"
-        },
-        "description" : {
-          "type" : "string"
+        "repo" : {
+            "type" : "object",
+            "properties" : {
+                "name" : {
+                    "type" : "string",
+                    "description": "Unique name of the repo",
+                    "example": "ats_prod"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description": "Title of the repo",
+                    "example": "Autosys production"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description": "Description of the repo",
+                    "example": "Production database"
+                }
+            }
         },
         "status" : {
-          "type" : "string"
-        },
-        "color" : {
-          "type" : "string"
-        },
-        "stateGrid" : {
-          "type" : "string"
-        },
-        "nb" : {
-          "type" : "integer"
-        },
-        "firstTime" : {
-          "type" : "string",
-          "format" : "date-time"
+            "type" : "object",
+            "properties" : {
+                "start_time" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                },
+                "end_time" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                },
+                "status" : {
+                    "type" : "string"
+                }
+            }
         }
-      }
     }
-  }
 }

@@ -381,6 +381,34 @@ class AriiRequests
                                 }
                                 $val = '<pre>'.implode("<br/>",$New).'</pre>';
                             break;
+                            case 'stdout':
+                                switch ($driver) {
+                                    case 'oracle':
+                                        $Res = gzinflate ( substr( $line[$h], 10, -8) );
+                                        break;
+                                }
+                                // on ne prend que le batch
+                                $New = [];
+                                foreach (explode("\n",$Res) as $line) {
+                                    // print "($line)\n";
+                                    if (preg_match('/SCHEDULER-\d\d\d/',$line)) continue;
+                                    if (!preg_match('/\d\d\d\d-.*?\[(.*?)\]   (.*)/',$line,$Matches)) continue;
+                                    // print_r($Matches);
+                                    if ($Matches[1]=='ERROR') {
+                                        $before = '<font color="red">';
+                                        $after = '</font>';
+                                    }
+                                    elseif ($Matches[1]=='WARN') {
+                                        $before = '<font color="orange">';
+                                        $after = '</font>';
+                                    }
+                                    else {
+                                        $before = $after = '';
+                                    }
+                                    array_push($New,$before.preg_replace('/\d\d\d\d-.*?\[(.*?)\]   /','',$line).$after);                                    
+                                }
+                                $val = '<pre>'.implode("<br/>",$New).'</pre>';
+                            break;
                             default:
                                 if (strpos($Format[$h],':')>0) {                                    
                                     list($class,$function) = explode(':',$Format[$h]);

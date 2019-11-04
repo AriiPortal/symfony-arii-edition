@@ -1,0 +1,313 @@
+{
+    "swagger" : "2.0",
+    "info" : {
+        "description" : "## A Workload Automation API for Reporting\n",
+        "version" : "1.0.0",
+        "title" : "Report API",
+        "contact" : {
+            "name" : "Arii",
+            "url" : "https://localhost/api/v1/bundles/report",
+            "email" : "arii@sos-paris.com"
+        }
+    },
+    "basePath": "/api/v1/bundles/report",
+    "schemes": [
+        "http"
+    ],
+    "consumes" : [
+        "application/json",
+        "application/xml"
+    ],
+    "produces" : [ 
+        "application/json",
+        "application/xml"
+    ],
+    "parameters" : {
+        "jobId" : {
+            "name" : "jobId",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "description": "Id for a job, you can use the autosys job name as it is unique.",
+            "default": "1"
+        },        
+        "duration_min" : {
+            "name" : "duration_min",
+            "in" : "query",
+            "description" : "Give all jobs with a duration greater than this value in second",
+            "type" : "string"
+        },
+        "end_time" : {
+            "name" : "end_time",
+            "in" : "query",
+            "description" : "DateTime of the end of the run",
+            "type" : "string"
+        },
+        "environment" : {
+            "name" : "environment",
+            "in" : "query",
+            "description" : "Environnement (PROD,TEST,DEV,INT)",
+            "type" : "string",
+            "default": "prod"
+        },        
+        "exit_code_min" : {
+            "name" : "exit_code_min",
+            "in" : "query",
+            "description" : "Give all jobs with an exit greater or equal than the given value.",
+            "type" : "integer"
+        },
+        "exit_code_max" : {
+            "name" : "exit_code_max",
+            "in" : "query",
+            "description" : "Give all jobs with an exit lower or equal than the given value.",
+            "type" : "integer"
+        },
+        "job_name" : {
+            "name" : "job_name",
+            "in" : "query",
+            "description" : "Name of the job",
+            "type" : "string",
+            "default": "GP.CPTE.JOB.CtrtMod"
+        },        
+        "spooler_name" : {
+            "name" : "spooler_name",
+            "in" : "query",
+            "description" : "Name of the spooler",
+            "type" : "string"
+        },
+        "start_time" : {
+            "name" : "start_time",
+            "in" : "query",
+            "description" : "DateTime of the start of the run",
+            "type" : "string"
+        },
+        "status" : {
+            "name" : "status",
+            "in" : "query",
+            "description" : "Status of the start of the run",
+            "type" : "string"
+        }
+    },
+    "paths" : {
+        "/runs" : {
+            "get" : {
+                "summary" : "Get a list of runs",
+                "tags" : [ "Runs" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml",
+                    "text/csv",
+                    "image/png"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/spooler_name"
+                    },
+                    {
+                        "$ref" : "#/parameters/job_name"
+                    },
+                    {
+                        "$ref" : "#/parameters/start_time"
+                    },
+                    {
+                        "$ref" : "#/parameters/status"
+                    },
+                    {
+                        "$ref" : "#/parameters/exit_code_min"
+                    },
+                    {
+                        "$ref" : "#/parameters/exit_code_max"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "A list of partners has been returned.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/partner"
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description" : "Invalid Parameter",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/partner"
+                            }
+                        }
+                    }                    
+                }
+            }            
+        }  
+    },
+    "definitions" : {
+        "Exception" : {
+                "type" : "object",
+                "required" : [ "message" ],
+                "properties" : {
+                    "message" : {
+                        "type" : "string"
+                    },
+                    "stackTrace" : {
+                        "type" : "string"
+                    },
+                    "innerException" : {
+                        "$ref" : "#/definitions/Exception"
+                    }
+                },
+          "description" : "A technical exception"
+        },
+        "Error" : {
+            "type" : "object",
+            "required" : [ "code", "message" ],
+            "properties" : {
+                "message" : {
+                    "type" : "string",
+                    "description" : "A technical message"
+                },
+                "display" : {
+                    "type" : "string",
+                    "description" : "A user friendly displayable message"
+                },
+                "code" : {
+                    "type" : "string",
+                    "description" : "An error code"
+                }
+            },
+            "description" : "A business error"
+        },
+        "Validation" : {
+            "type" : "object",
+            "properties" : {
+                "validations" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "display" : {
+                                "type" : "string"
+                            },
+                            "code" : {
+                                "type" : "string"
+                            },
+                            "fields" : {
+                                "type" : "array",
+                                "items" : {
+                                    "type" : "string"
+                                }
+                            },
+                            "valParams" : {
+                                "type" : "object"
+                            }
+                        }
+                    }
+                }
+            },
+            "description" : "A list of entity validation problems"
+        },
+        "partner" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Id of the partner"
+                },
+                "name" : {
+                    "type" : "string",
+                    "description" : "Unique name for the partner",
+                    "example" : "myFavoritePartner"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description" : "The name for users",
+                    "example": "Favorite partner"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the partner",
+                    "example": "The partner whom I like exchange "
+                },
+                "category_id" : {
+                    "type" : "integer",
+                    "description" : "Internal Id for the category",
+                    "example": "1"
+                },
+                "category" : {
+                    "type" : "integer",
+                    "description" : "name of the category",
+                    "example": "Internal transfers"
+                }
+            }
+        },
+        "transfer" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Id of the transfer"
+                },
+                "name" : {
+                    "type" : "string",
+                    "description" : "Unique name for the transfer",
+                    "example" : "criticalTransfer"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description" : "The name for users",
+                    "example": "Critical transfer"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the partner",
+                    "example": "This transfer is critical !"
+                }
+            }
+        },
+        "operation" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Id of the operation"
+                },
+                "name" : {
+                    "type" : "string",
+                    "description" : "Unique name for the operation",
+                    "example" : "getPayementAck"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description" : "The name for users",
+                    "example": "Get payement acknowledgement"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the operation",
+                    "example": "This allows to confirm the payement is correctly received."
+                }
+            }
+        },
+        "graph" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Internal Id for the partner",
+                    "example": "1"
+                },
+                "name" : {
+                    "type" : "integer",
+                    "description" : "name of the graph",
+                    "example": "StatusByPeriod"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the graph",
+                    "example": "Give a status for a period of time"
+                }
+            }
+        }
+    }
+}

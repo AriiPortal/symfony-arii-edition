@@ -1,0 +1,900 @@
+{
+    "swagger" : "2.0",
+    "info" : {
+        "description" : "## A Workload Automation API for managed file transfers\n",
+        "version" : "1.0.0",
+        "title" : "MFT API",
+        "contact" : {
+            "name" : "Arii",
+            "url" : "https://localhost/api/v1/bundles/mft",
+            "email" : "eric@angenault.net"
+        }
+    },
+    "basePath": "/api/v1/bundles/mft",
+    "schemes": [
+        "http"
+    ],
+    "consumes" : [
+        "application/json",
+        "application/xml"
+    ],
+    "produces" : [ 
+        "application/json",
+        "application/xml"
+    ],
+    "parameters" : {
+        "partnerId" : {
+            "name" : "partnerId",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "description": "Id for a partner",
+            "default": "1"
+        },
+        "transferId" : {
+            "name" : "transferId",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "description": "Id of the transfer",
+            "default": "1"
+        },
+        "environment" : {
+            "name" : "environment",
+            "in" : "query",
+            "description" : "Filtering by env",
+            "type" : "string",
+            "default": "prod"
+        },
+        "status" : {
+            "name" : "status",
+            "in" : "query",
+            "description" : "Filtering by status",
+            "type" : "string"
+        },
+        "source_host" : {
+            "name" : "source_host",
+            "in" : "query",
+            "description" : "",
+            "type" : "string"
+        },
+        "target_host" : {
+            "name" : "target_host",
+            "in" : "query",
+            "description" : "",
+            "type" : "string"
+        }        
+    },
+    "paths" : {
+        "/partners" : {
+            "get" : {
+                "summary" : "Get a list of partners",
+                "tags" : [ "Partners" ],
+                "parameters" : [ ],
+                "responses" : {
+                    "200" : {
+                        "description" : "A list of partners has been returned.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/partner"
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description" : "Invalid Parameter",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/partner"
+                            }
+                        }
+                    }                    
+                }
+            },
+            "post" : {
+                "summary" : "Add a new partner",
+                "tags" : [ "Partners" ],
+                "consumes" : [
+                    "application/json"
+                ],
+                "parameters" : [
+                    {
+                        "in":   "body",
+                        "name": "body",
+                        "description": "Partner object that needs to be added.",
+                        "required": true,
+                        "schema" : {
+                            "$ref" : "#/definitions/partner"
+                        }
+                    }                                         
+                ],
+                "responses" : {
+                    "201" : {
+                        "description" : "A new partner is added.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/partner"
+                            }
+                        }
+                    }
+                }
+            }            
+        }, 
+        "/partners/{partnerId}" : {
+            "get" : {
+                "summary" : "Get details about a partner",
+                "tags" : [ "Partners" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/partnerId"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    }                     
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description" : "Partner not Found!",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/error"
+                            }
+                        }
+                    }                    
+                }
+            },
+            "put" : {
+                "summary" : "Update a partner",
+                "tags" : [ "Partners" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/partnerId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete" : {
+                "summary" : "Delete a partner only if it has no transfer.",
+                "tags" : [ "Partners" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/partnerId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }            
+        }, 
+        "/partners/{partnerId}/transfers" : {
+            "get" : {
+                "summary" : "Get the list of transfers for a partner",
+                "tags" : [ "Partners" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/partnerId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add a new transfer for a partner",
+                "tags" : [ "Partners" ],
+                "parameters" : [ ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/partners/{partnerId}/deliveries" : {
+            "get" : {
+                "summary" : "Get the list of deliveries for a partner",
+                "tags" : [ "Partners" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/partnerId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transfers" : {
+            "get" : {
+                "summary" : "get a list of defined transfers for a partner",
+                "tags" : [ "Transfers" ],
+                "parameters" : [ ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }
+        }, 
+        "/transfers/{transferId}" : {
+            "get" : {
+                "summary" : "Get all information about a transfer",
+                "tags" : [ "Transfers" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description" : "Transfer not Found!",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/error"
+                            }
+                        }
+                    }                    
+                }
+            },
+            "put" : {
+                "summary" : "Update a transfer for a partner",
+                "tags" : [ "Transfers" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete" : {
+                "summary" : "Delete a transfer",
+                "tags" : [ "Transfers" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    } 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }            
+        }, 
+        "/transfers/{transferId}/operations" : {
+            "get" : {
+                "summary" : "Get the list of operations or the schema",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "image/png",
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of operations.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema" : {
+                                    "type" : "string",
+                                    "format" : "binary"    
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add an operation",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "image/png",
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of operations.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema" : {
+                                    "type" : "string",
+                                    "format" : "binary"    
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
+        },
+        "/transfers/{transferId}/operations/{operationId}" : {
+            "put" : {
+                "summary" : "Update an operation",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "image/png",
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of operations.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema" : {
+                                    "type" : "string",
+                                    "format" : "binary"    
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete" : {
+                "summary" : "Add a new operation on the transfer",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "image/png",
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of operations.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/operation"
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema" : {
+                                    "type" : "string",
+                                    "format" : "binary"    
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
+        },
+        "/transfers/{transferId}/runs" : {
+            "get" : {
+                "summary" : "Get the list of runs",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of runs.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary" : "Add a new run",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of runs.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transfers/{transferId}/runs/{runId}" : {        
+            "put" : {
+                "summary" : "Update a run",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of runs.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete" : {
+                "summary" : "Update a run",
+                "tags" : [ "Transfers" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/transferId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of runs.",
+                        "content" : {
+                            "application/json": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            },
+                            "application/xml": {
+                                "schema" : {
+                                    "type" : "array",
+                                    "items" : {
+                                        "$ref" : "#/definitions/run"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/deliveries" : {
+            "get" : {
+                "summary" : "get a list of deliveries",
+                "tags" : [ "Deliveries" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/source_host"
+                    },
+                    {
+                        "$ref" : "#/parameters/target_host"
+                    }                                         
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/flows" : {
+            "get" : {
+                "summary" : "get a list of flows",
+                "tags" : [ "Flows" ],
+                "produces" : [ 
+                    "application/json",
+                    "application/xml",
+                    "text/csv"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/environment"
+                    },
+                    {
+                        "$ref" : "#/parameters/source_host"
+                    },
+                    {
+                        "$ref" : "#/parameters/target_host"
+                    }                                         
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
+                            }
+                        }
+                    }
+                }
+            }
+        }        
+    },
+    "definitions" : {
+        "Exception" : {
+                "type" : "object",
+                "required" : [ "message" ],
+                "properties" : {
+                    "message" : {
+                        "type" : "string"
+                    },
+                    "stackTrace" : {
+                        "type" : "string"
+                    },
+                    "innerException" : {
+                        "$ref" : "#/definitions/Exception"
+                    }
+                },
+          "description" : "A technical exception"
+        },
+        "Error" : {
+            "type" : "object",
+            "required" : [ "code", "message" ],
+            "properties" : {
+                "message" : {
+                    "type" : "string",
+                    "description" : "A technical message"
+                },
+                "display" : {
+                    "type" : "string",
+                    "description" : "A user friendly displayable message"
+                },
+                "code" : {
+                    "type" : "string",
+                    "description" : "An error code"
+                }
+            },
+            "description" : "A business error"
+        },
+        "Validation" : {
+            "type" : "object",
+            "properties" : {
+                "validations" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "display" : {
+                                "type" : "string"
+                            },
+                            "code" : {
+                                "type" : "string"
+                            },
+                            "fields" : {
+                                "type" : "array",
+                                "items" : {
+                                    "type" : "string"
+                                }
+                            },
+                            "valParams" : {
+                                "type" : "object"
+                            }
+                        }
+                    }
+                }
+            },
+            "description" : "A list of entity validation problems"
+        },
+        "partner" : {
+            "type" : "object",
+            "required": [
+                "name"
+            ],
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Id of the partner"
+                },
+                "name" : {
+                    "type" : "string",
+                    "description" : "Unique name for the partner",
+                    "example" : "myFavoritePartner"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description" : "The name for users",
+                    "example": "Favorite partner"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the partner",
+                    "example": "The partner whom I like exchange"
+                },
+                "category" : {
+                    "type" : "integer",
+                    "description" : "name of the category",
+                    "example": "Internal transfers"
+                }
+            }
+        },
+        "transfer" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Id of the transfer"
+                },
+                "name" : {
+                    "type" : "string",
+                    "description" : "Unique name for the transfer",
+                    "example" : "criticalTransfer"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description" : "The name for users",
+                    "example": "Critical transfer"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the partner",
+                    "example": "This transfer is critical !"
+                }
+            }
+        },
+        "operation" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Id of the operation"
+                },
+                "name" : {
+                    "type" : "string",
+                    "description" : "Unique name for the operation",
+                    "example" : "getPayementAck"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description" : "The name for users",
+                    "example": "Get payement acknowledgement"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the operation",
+                    "example": "This allows to confirm the payement is correctly received."
+                }
+            }
+        },
+        "graph" : {
+            "type" : "object",
+            "properties" : {
+                "id" : {
+                    "type" : "integer",
+                    "description" : "Internal Id for the partner",
+                    "example": "1"
+                },
+                "name" : {
+                    "type" : "integer",
+                    "description" : "name of the graph",
+                    "example": "StatusByPeriod"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Description of the graph",
+                    "example": "Give a status for a period of time"
+                }
+            }
+        }
+    }
+}

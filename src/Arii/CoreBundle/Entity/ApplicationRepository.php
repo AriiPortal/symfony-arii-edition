@@ -12,13 +12,33 @@ use Doctrine\ORM\EntityRepository;
  */
 class ApplicationRepository extends EntityRepository
 {
-   public function findApplications()
+   public function findApplications($Filter=[])
    {
-        return $this->createQueryBuilder('app')
-            ->Select('app.name,app.title,app.active')
+        $q = $this->createQueryBuilder('app')
+            ->Select('app.id as appId,app.name as appName,app.title,app.description,app.contact,app.created as creationDate,app.active as isActive')
             ->orderBy('app.title,app.name')
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(1000);
+        # Filtrag
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['appId']))
+            $q->andWhere("app.id = :id")
+                ->setParameter('appId',$Filter['appId']);
+        if (isset($Filter['appName']))
+            $q->andWhere("app.name like :appName")
+                ->setParameter('appName',$Filter['appName']);
+        if (isset($Filter['title']))
+            $q->andWhere("app.title like :title")
+                ->setParameter('title',$Filter['title']);
+        if (isset($Filter['description']))
+            $q->andWhere("app.description like :description")
+                ->setParameter('description',$Filter['description']);
+        if (isset($Filter['contact']))
+            $q->andWhere("app.contact like :contact")
+                ->setParameter('contact',$Filter['contact']);
+        if (isset($Filter['isActive']))
+            $q->andWhere("app.active = ".($Filter['isActive']=='true'?1:0));
+        return $q->getQuery()->getResult();
    }
 
    public function findActiveApplications()

@@ -7,6 +7,8 @@ namespace Arii\ATSBundle\Service;
 
 class AriiAutosys
 {    
+    protected $Portal;
+    protected $Config;
     protected $ColorStatus;
     protected $Status = array (
             1 => 'RUNNING',
@@ -25,59 +27,7 @@ class AriiAutosys
             15 => 'RES_WAIT',
             16 => 'NO_EXEC'
         );
-    
-    public function __construct (\Arii\CoreBundle\Service\AriiPortal $portal) {
-        $this->ColorStatus = $portal->getColors();
-    }
-    
-    public function Alarm($alarm) {   
-        $Alarms = array ( 
-            0 	=> '',
-            501 => 'FORKFAIL',
-            502 => 'MINRUNALARM',
-            503 => 'JOBFAILURE',
-            505 => 'MAX_RETRYS',
-            506 => 'STARTJOBFAIL',
-            507 => 'EVENT_HDLR_ERROR',
-            508 => 'EVENT_QUE_ERROR',
-            509 => 'JOBNOT_ONICEHOLD',
-            510 => 'MAXRUNALARM',
-            512 => 'RESOURCE',
-            513 => 'MISSING_HEARTBEAT',
-            514 => 'CHASE',
-            516 => 'DATABASE_COMM',
-            517 => 'APP_SERVER_COMM',
-            518 => 'VERSION_MISMATCH',
-            519 => 'DB_ROLLOVER',
-            520 => 'EP_ROLLOVER',
-            521 => 'EP_SHUTDOWN',
-            522 => 'EP_HIGH_AVAIL',
-            523 => 'DB_PROBLEM',
-            524 => 'DUPLICATE_EVENT',
-            525 => 'INSTANCE_UNAVAILABLE',
-            526 => 'AUTO_PING',
-            529 => 'EXTERN_DEPS_ERROR',
-            532 => 'MACHINE_UNAVAILABLE',
-            533 => 'SERVICEDESK_FAILURE',
-            534 => 'UNINOTIFY_FAILURE',
-            535 => 'CPI_JOBNAME_INVALID',
-            536 => 'CPI_UNAVAILABLE',
-            537 => 'MUST_START_ALARM',
-            538 => 'MUST_COMPLETE_ALARM',
-            539 => 'WAIT_REPLY_ALARM',
-            540 => 'KILLJOBFAIL',
-            541 => 'SENDSIGFAIL',
-            542 => 'REPLY_RESPONSE_FAIL',
-            543 => 'RETURN_RESOURCE_FAIL',
-            544 => 'RESTARTJOBF' );
-        if (isset($Alarms[$alarm])) {
-            return $Alarms[$alarm];
-        }
-        return $alarm;
-   }
-
-    public function Event($event) {   
-        $Events = array ( 
+    protected $Events = array ( 
             0 	=> '',
             101  => 'CHANGE_STATUS',
             103  => 'CHK_N_START',
@@ -117,12 +67,133 @@ class AriiAutosys
             141  => 'STATE_CHANGE',
             142  => 'MACH_PROVISION',
             143  => 'RESTARTJOB' );
-        if (isset($Events[$event])) {
-            return $Events[$event];
+    
+    protected $Alarms = array ( 
+            0 	=> '',
+            501 => 'FORKFAIL',
+            502 => 'MINRUNALARM',
+            503 => 'JOBFAILURE',
+            505 => 'MAX_RETRYS',
+            506 => 'STARTJOBFAIL',
+            507 => 'EVENT_HDLR_ERROR',
+            508 => 'EVENT_QUE_ERROR',
+            509 => 'JOBNOT_ONICEHOLD',
+            510 => 'MAXRUNALARM',
+            512 => 'RESOURCE',
+            513 => 'MISSING_HEARTBEAT',
+            514 => 'CHASE',
+            516 => 'DATABASE_COMM',
+            517 => 'APP_SERVER_COMM',
+            518 => 'VERSION_MISMATCH',
+            519 => 'DB_ROLLOVER',
+            520 => 'EP_ROLLOVER',
+            521 => 'EP_SHUTDOWN',
+            522 => 'EP_HIGH_AVAIL',
+            523 => 'DB_PROBLEM',
+            524 => 'DUPLICATE_EVENT',
+            525 => 'INSTANCE_UNAVAILABLE',
+            526 => 'AUTO_PING',
+            529 => 'EXTERN_DEPS_ERROR',
+            532 => 'MACHINE_UNAVAILABLE',
+            533 => 'SERVICEDESK_FAILURE',
+            534 => 'UNINOTIFY_FAILURE',
+            535 => 'CPI_JOBNAME_INVALID',
+            536 => 'CPI_UNAVAILABLE',
+            537 => 'MUST_START_ALARM',
+            538 => 'MUST_COMPLETE_ALARM',
+            539 => 'WAIT_REPLY_ALARM',
+            540 => 'KILLJOBFAIL',
+            541 => 'SENDSIGFAIL',
+            542 => 'REPLY_RESPONSE_FAIL',
+            543 => 'RETURN_RESOURCE_FAIL',
+            544 => 'RESTARTJOBF' );
+
+    protected $OpSys = array ( 
+            1 => 'aix',
+            2 => 'hpux',
+            3 => 'linux',
+            4 => 'openvms',
+            5 => 'i5os',
+            6 => 'solaris',
+            7 => 'tandem',
+            8 => 'windows',
+            9 => 'zos' );
+
+    protected $MachineStatus = array ( 
+            'o' => 'online',
+            'm' => 'offline'
+     );
+
+    public function __construct (
+        \Arii\CoreBundle\Service\AriiPortal $portal,
+        $Config ) {
+        $this->Config = $Config;
+        $this->Portal = $portal;
+        $this->ColorStatus = $portal->getColors();
+    }
+    
+    public function getRepo($instanceId) {
+        $instance = strtoupper($instanceId);
+        $repoId = $this->Config;
+        if (!isset($repoId['instances'][$instance]['event_servers'][0])) return;
+        return $repoId['instances'][$instance]['event_servers'][0];
+    }
+    
+    public function getTimeZone() {
+        return $this->Portal->getTimeZone();
+    }
+    
+    public function Alarm($alarm) {   
+        
+        if (isset($this->Alarms[$alarm])) {
+            return $this->Alarms[$alarm];
         }
         return $alarm;
-   }
+    }
 
+    public function opSys($op) {   
+        
+        if (isset($this->OpSys[$op])) {
+            return $this->OpSys[$op];
+        }
+        return $op;
+    }
+
+    public function MachineStatus($status) {   
+        
+        if (isset($this->MachineStatus[$status])) {
+            return $this->MachineStatus[$status];
+        }
+        return $status;
+    }
+
+    public function Event($event) {   
+        if (isset($this->Events[$event])) {
+            return $this->Events[$event];
+        }
+        return $event;
+    }
+
+    public function Status($status) {   
+        if (isset($this->Status[$status])) {
+            return $this->Status[$status];
+        }
+        return $status;
+    }
+
+    public function eventType($type) {   
+        $Types = array ( 
+            'C' => 'Calendar',
+            'S' => 'SendEvent',
+            'J' => 'Job',
+            'M' => 'Machine',
+            'O' => 'Override' );
+        if (isset($Types[$type])) {
+            return $Types[$type];
+        }
+        return $type;
+    }
+    
     public function AlarmState($state) {   
         $States = array ( 
             43 => 'OPEN',
@@ -134,14 +205,10 @@ class AriiAutosys
         return $state;
     }
     
-    public function Status($status) {   
-        if (isset($this->Status[$status])) {
-            return $this->Status[$status];
-        }
-        return $status;
-    }
-    
     public function StatusToCodes($Status) {
+        if (!is_array($Status)) {
+            $Status = explode(',',$Status);
+        }
         $Codes = array_flip($this->Status);
         $Result = [];
         foreach ($Status as $s) {
@@ -151,6 +218,20 @@ class AriiAutosys
         return $Result;
     }
 
+    public function EventsToCodes($Events) {
+        if (!is_array($Events)) {
+            $Events = explode(',',$Events);
+        }
+        $Codes = array_flip($this->Events);
+        $Result = [];
+        foreach ($Events as $e) {
+            if (isset($Codes[$e])) {
+                array_push($Result,$Codes[$e]);
+            }
+        }
+        return $Result;
+    }
+    
     public function ColorStatus($status) {
        if (!isset($this->ColorStatus[$status]))
             return array('black','#FF0000');
@@ -159,7 +240,7 @@ class AriiAutosys
         return array($bgcolor,$color);
    }
 
-    public function JobType($type) {   
+    public function CodeToJobType($type) {   
         $JobType = array (
             98 => 'BOX',
             99 => 'CMD',
@@ -172,5 +253,17 @@ class AriiAutosys
         return $type;
    }
 
+    public function JobTypeToCode($type) {   
+        $JobType = array (
+            'BOX' => 98,
+            'CMD' => 99,
+            'FW' => 102,
+            'I5' => 220 
+        );
+        if (isset($JobType[$type])) {
+            return $JobType[$type];
+        }
+        return $type;
+   }
  
 }

@@ -1,854 +1,567 @@
 {
-    "swagger" : "2.0",
-    "openapi" : "2.0",
-    "info" : {
-        "description" : "A Workload Automation API for Autosys",
-        "version" : "1.0.0",
-        "title" : "JobScheduler API",
-        "contact" : {
-            "name" : "Arii",
-            "url" : "https://localhost/api/v1/bundles/jid",
-            "email" : "arii@sos-paris.com"
-        } 
+  "swagger" : "2.0",
+  "openapi" : "2.0",
+  "info" : {
+    "description" : "A Workload Automation API for Autosys",
+    "version" : "1.0.0",
+    "title" : "JobScheduler API",
+    "contact" : {
+      "name" : "Arii",
+      "url" : "https://xxlicorne",
+      "email" : "arii@sos-paris.com"
+    } 
+  },
+  "host": "xxlicorne/app_dev.php/api/v1/bundles/jid",  
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "servers" : [
+    { 
+        "url": "https://api.example.com/v1",
+        "description": "Production server (uses live data)"
     },
-    "consumes" : [ "application/json" ],
-    "produces" : [ 
-        "application/json"
-    ],
-    "basePath": "/api/v1/bundles/jid",
-    "schemes": [
-        "http"
+    { 
+        "url": "https://xxlicorne/app_dev.php/api/v1",
+        "description": "Local server"
+    }    
+  ],
+  "schemes": [
+    "http",
+    "https"
     ],
   "paths" : {
-        "/repos" : {
-          "get" : {
-            "summary" : "Get a list of all repos",
-            "tags" : [ "Repositories" ],
-            "parameters" : [  ],
-            "responses" : {
-              "200" : {
-                "description" : "OK",
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/repo"
-                  }
-                }
+    "/repos" : {
+      "get" : {
+        "summary" : "Get a list of all repos",
+        "tags" : [ "Repositories" ],
+        "parameters" : [  ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/repo"
               }
             }
           }
-        },
-        "/repos/{repoId}/orders" : {
-            "get" : {
-                "summary" : "get all orders stored in database.",
-                "tags" : [ "States" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "orderName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "isSuspended",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "state",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "from",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "datetime"
-                    },
-                    {
-                        "name" : "to",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "datetime"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "A list of orders filtered.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/order"
-                            }
-                        }
-                    },
-                    "400" : {
-                        "description" : "Invalid Parameter",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/Error"
-                            }
-                        }
-                    }                    
-                }
-             }
-        },
-        "/repos/{repoId}/chains" : {
-            "get" : {
-                "summary" : "get all job-chains stored in database.",
-                "tags" : [ "States" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "orderName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "isStopped",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "A list of job chains filtered.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/order"
-                            }
-                        }
-                    },
-                    "400" : {
-                        "description" : "Invalid Parameter",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/Error"
-                            }
-                        }
-                    }                    
-                }
-             }
-        },
-        "/repos/{repoId}/nodes" : {
-            "get" : {
-                "summary" : "get all job chain nodes stored in database.",
-                "tags" : [ "States" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "chainName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "isSkipped",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isStopped",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "A list of job chains filtered.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/order"
-                            }
-                        }
-                    },
-                    "400" : {
-                        "description" : "Invalid Parameter",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/Error"
-                            }
-                        }
-                    }                    
-                }
-             }
-        },
-        "/repos/{repoId}/jobs" : {
-          "get" : {
-            "summary" : "get all jobs stored in database.",
-            "tags" : [ "States" ],
-            "parameters" : [ 
-                {
-                    "name" : "repoId",
-                    "in" : "path",
-                    "required" : true,
-                    "type" : "string",
-                    "default" : "ojs_db"
-                },
-                {
-                    "name" : "spoolerName",
-                    "in" : "query",
-                    "required" : false,
-                    "type" : "string"
-                },
-                {
-                    "name" : "isStopped",
-                    "in" : "query",
-                    "required" : false,
-                    "type" : "boolean"
-                }                
-            ],
-            "responses" : {
-              "200" : {
-                "description" : "Status 200",
-                "schema" : {
-                  "$ref" : "#/definitions/job"
-                }
-              }
-            }
-          },
-          "put" : {
-            "summary" : "Update a job",
-            "tags" : [ "Jobs" ],
-            "consumes" : [ ],
-            "parameters" : [ {
-              "name" : "body",
-              "in" : "body",
-              "required" : true,
-              "schema" : {
-                "$ref" : "#/definitions/job"
-              }
-            } ],
-            "responses" : {
-              "202" : {
-                "description" : "Status 202"
-              }
-            }
-          },
-          "delete" : {
-            "summary" : "Delete a job",
-            "tags" : [ "Jobs" ],
-            "parameters" : [ ],
-            "responses" : {
-              "204" : {
-                "description" : "Status 204"
+        }
+      }
+    },
+    "/repos/{repoId}" : {    
+      "delete" : {
+        "deprecated": true,
+        "summary" : "Delete a repo",
+        "tags" : [ "Repositories" ],
+        "parameters" : [ ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
+          }
+        }
+      }
+    },        
+    "/repos/{repoId}/spoolers" : {
+      "get" : {
+        "summary" : "get a list of spoolers",
+        "tags" : [ "Spoolers" ],
+        "parameters" : [ {
+          "name" : "jobName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "description" : "Application code",
+          "minLength" : 3,
+          "maxLength" : 3
+        }, {
+          "name" : "applicationName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "environment",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "x-example" : "T,P,D"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/spooler"
               }
             }
           }
-        },
-        "/repos/{repoId}/tasks" : {
-            "get" : {
-                "summary" : "get all running task.",
-                "tags" : [ "States" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "jobName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "A list of job chains filtered.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/order"
-                            }
-                        }
-                    },
-                    "400" : {
-                        "description" : "Invalid Parameter",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/Error"
-                            }
-                        }
-                    }                    
-                }
-             }
-        },
-        "/repos/{repoId}/spoolers" : {
-            "get" : {
-                "summary" : "get a list of spoolers",
-                "tags" : [ "Components" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    } 
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "OK",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/spooler"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/instances" : {
-            "get" : {
-                "summary" : "get a list of jobScheduler installations (a spooler could use several instances).",
-                "tags" : [ "Components" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "hostName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "isService",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isRunning",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isPaused",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isCluster",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "OK",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/instance"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/clusters" : {
-            "get" : {
-                "summary" : "get a list of clusters.",
-                "tags" : [ "Components" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "isActive",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isExclusive",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isDead",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    },
-                    {
-                        "name" : "isPaused",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "boolean"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "OK",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/cluster"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/history-orders" : {
-            "get" : {
-                "summary" : "get an history for all orders",
-                "tags" : [ "History" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "spoolerName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "orderName",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "state",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "string"
-                    },
-                    {
-                        "name" : "from",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "datetime"
-                    },
-                    {
-                        "name" : "to",
-                        "in" : "query",
-                        "required" : false,
-                        "type" : "datetime"
-                    },
-                    {
-                        "name" : "sort",
-                        "in" : "query",                        
-                        "required" : false,
-                        "default": "latest",
-                        "type" : "string",
-                        "example": [ "latest", "oldest" ]                      
-                    },
-                    {
-                      "name" : "limit",
-                      "in" : "query",                        
-                      "required" : false,
-                      "default": 10,
-                      "type" : "integer"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "A list of orders filtered.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/order"
-                            }
-                        }
-                    },
-                    "400" : {
-                        "description" : "Invalid Parameter",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/Error"
-                            }
-                        }
-                    }                    
-                }
-             }
-        },
-        "/repos/{repoId}/history-orders/{historyOrderId}" : {
-            "get" : {
-                "summary" : "get history for an order",
-                "tags" : [ "History" ],
-                "parameters" : [ 
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    },
-                    {
-                        "name" : "repoId",
-                        "in" : "path",
-                        "required" : true,
-                        "type" : "string",
-                        "default" : "ojs_db"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "All detail for an order.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/order"
-                            }
-                        }
-                    },
-                    "400" : {
-                        "description" : "Invalid Parameter",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/Error"
-                            }
-                        }
-                    }                    
-                }
-             }
-        },
-        "/repos/{repoId}/runs" : {
-            "get" : {
-                "summary" : "get a list of the last executions",
-                "tags" : [ "Runs" ],
-                "produces" : [ 
-                    "application/json",
-                    "application/xml",
-                    "image/png"
-                ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/job_name"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the last executions.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/run"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/jobs/{jobId}/runs" : {
-          "get" : {
-            "summary" : "Get all executions for a job",
-            "tags" : [ "Jobs" ],
-            "parameters" : [ ],
-            "responses" : {
-              "200" : {
-                "description" : "Status 200",
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/run"
-                  }
-                }
-              }
-            }
-          },
-          "post" : {
-            "summary" : "Add a new run",
-            "tags" : [ "Jobs" ],
-            "consumes" : [ ],
-            "parameters" : [ {
-              "name" : "body",
-              "in" : "body",
-              "required" : true,
-              "schema" : {
-                "$ref" : "#/definitions/run"
-              }
-            } ],
-            "responses" : {
-              "201" : {
-                "description" : "Status 201"
-              }
-            }
-          },
-          "parameters" : [ {
-            "name" : "jobId",
-            "in" : "path",
-            "required" : true,
-            "type" : "string"
-          } ]
-        },
-        "/repos/{repoId}/jobs/{jobId}/runs/{runId}" : {
-          "get" : {
-            "summary" : "get information for a run",
-            "tags" : [ "Jobs" ],
-            "parameters" : [ ],
-            "responses" : {
-              "200" : {
-                "description" : "Status 200",
-                "schema" : {
-                  "$ref" : "#/definitions/run"
-                }
-              },
-              "404" : {
-                "description" : "The job does not exist"
-              },
-              "500" : {
-                "description" : "Status 500"
-              }
-            }
-          },
-          "put" : {
-            "summary" : "Update a run",
-            "tags" : [ "Jobs" ],
-            "parameters" : [ ],
-            "responses" : {
-              "202" : {
-                "description" : "Status 202"
-              },
-              "403" : {
-                "description" : "No permission to add a run"
-              }
-            }
-          },
-          "delete" : {
-            "summary" : "Delete a run",
-            "tags" : [ "Jobs" ],
-            "parameters" : [ ],
-            "responses" : {
-              "204" : {
-                "description" : "Status 204"
-              }
-            }
-          },
-          "parameters" : [ {
-            "name" : "jobId",
-            "in" : "path",
-            "required" : true,
-            "type" : "string"
-          }, {
-            "name" : "runId",
-            "in" : "path",
-            "required" : true,
-            "type" : "string"
-          } ]
-        },
-        "/repos/{repoId}/runs/{runId}" : {
-          "delete" : {
-            "summary" : "Delete a run",
-            "tags" : [ "Runs" ],
-            "parameters" : [ 
-            {
-              "name" : "retentionDays",
-              "required" : false,
-              "type" : "integer"
-            }                
-            ],
-            "responses" : {
-              "204" : {
-                "description" : "Status 204"
-              }
-            }
+        }
+      }
+    },
+    "/repos/{repoId}/spooolers/{spoolerId}" : {    
+      "delete" : {
+        "summary" : "Delete a spooler",
+        "tags" : [ "Spoolers" ],
+        "parameters" : [ ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
           }
-        },
-        "/repos/{repoId}/archive/orders" : {
-          "get" : {
-            "summary" : "get a list of all runs",
-            "tags" : [ "Archive" ],
-            "parameters" : [ {
-              "name" : "repoId",
-              "in" : "path",
-              "required" : true,
-              "type" : "string",
-              "default" : "ojs_db"
-            },
-            {
-              "name" : "from",
-              "in" : "query",
-              "required" : false,
-              "type" : "datetime"
-            },
-            {
-              "name" : "to",
-              "in" : "query",
-              "required" : false,
-              "type" : "datetime"
-            },
-            {
-              "name" : "sort",
-              "in" : "query",                        
-              "required" : false,
-              "default": "latest",
-              "type" : "string",
-              "example": [ "latest", "oldest" ]                      
-            },
-            {
-              "name" : "limit",
-              "in" : "query",                        
-              "required" : false,
-              "default": 10,
-              "type" : "integer"
-            } ],
-            "responses" : {
-              "200" : {
-                "description" : "OK",
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/run"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "/repos/{repoId}/archive/runs" : {
-          "get" : {
-            "summary" : "get a list of all runs",
-            "tags" : [ "Archive" ],
-            "parameters" : [ {
-              "name" : "repoId",
-              "in" : "path",
-              "required" : true,
-              "type" : "string",
-              "default" : "ojs_db"
-            },
-            {
-              "name" : "limit",
-              "in" : "query",                        
-              "required" : false,
-              "default": 10,
-              "type" : "integer"
-            } ],
-            "responses" : {
-              "200" : {
-                "description" : "OK",
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/definitions/run"
-                  }
+        }
+      }
+    },        
+    "/repos/{repoId}/chains" : {
+      "get" : {
+        "summary" : "get all job chains",
+        "tags" : [ "Chains" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "activit" : {
+                  "type" : "string"
                 }
               }
             }
           }
         }
+      }
     },
-    "definitions" : {
-        "Exception" : {
-            "type" : "object",
-            "required" : [ "message" ],
-            "properties" : {
-                "message" : {
-                    "type" : "string"
-                },
-                "stackTrace" : {
-                    "type" : "string"
-                },
-                "innerException" : {
-                    "$ref" : "#/definitions/Exception"
-                }
-            },
-            "description" : "A technical exception"
+    "/repos/{repoId}/chains/{chainId}" : {
+      "get" : {
+        "summary" : "get all informnation about a job chain",
+        "tags" : [ "Chains" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "activityId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/repos/{repoId}/histories" : {
+      "get" : {
+        "summary" : "get all histories",
+        "tags" : [ "Activities" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "activityId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/repos/{repoId}/chains/{chainId}/jobs" : {
+      "get" : {
+        "summary" : "get all jobs in a job chain",
+        "tags" : [ "Chains" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "activityId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/repos/{repoId}/jobs" : {
+      "get" : {
+        "summary" : "get a list of all jobs",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ {
+          "name" : "jobName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "applicationCode",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "description" : "Application code",
+          "minLength" : 3,
+          "maxLength" : 3
+        }, {
+          "name" : "applicationName",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "environment",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "x-example" : "T,P,D"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/job"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Add a new job",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
+          }
+        }
+      }
+    },
+    "/repos/{repoId}/jobs/{jobId}" : {
+      "get" : {
+        "summary" : "get information for a job",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "$ref" : "#/definitions/job"
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Update a job",
+        "tags" : [ "Jobs" ],
+        "consumes" : [ ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/job"
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Status 202"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete a job",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "204" : {
+            "description" : "Status 204"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "jobId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/repos/{repoId}/jobs/{jobId}/runs" : {
+      "get" : {
+        "summary" : "Get all executions for a job",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/run"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Add a new run",
+        "tags" : [ "Jobs" ],
+        "consumes" : [ ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/run"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Status 201"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "jobId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/repos/{repoId}/jobs/{jobId}/runs/{runId}" : {
+      "get" : {
+        "summary" : "get information for a run",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Status 200",
+            "schema" : {
+              "$ref" : "#/definitions/run"
+            }
+          },
+          "404" : {
+            "description" : "The job does not exist"
+          },
+          "500" : {
+            "description" : "Status 500"
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Update a run",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "202" : {
+            "description" : "Status 202"
+          },
+          "403" : {
+            "description" : "No permission to add a run"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete a run",
+        "tags" : [ "Jobs" ],
+        "parameters" : [ ],
+        "responses" : {
+          "204" : {
+            "description" : "Status 204"
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "jobId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      }, {
+        "name" : "runId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string"
+      } ]
+    },
+    "/repos/{repoId}/runs" : {
+      "get" : {
+        "summary" : "get a list of all runs",
+        "tags" : [ "Runs" ],
+        "parameters" : [ {
+          "name" : "repoId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "default" : "ojs_db"
         },
+        {
+          "name" : "from",
+          "in" : "query",
+          "required" : false,
+          "type" : "datetime"
+        },
+        {
+          "name" : "to",
+          "in" : "query",
+          "required" : false,
+          "type" : "datetime"
+        },
+        {
+          "name" : "sort",
+          "in" : "query",                        
+          "required" : false,
+          "default": "latest",
+          "type" : "string",
+          "example": [ "latest", "oldest" ]                      
+        },
+        {
+          "name" : "limit",
+          "in" : "query",                        
+          "required" : false,
+          "default": 10,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/run"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repos/{repoId}/runs/{runId}" : {
+      "delete" : {
+        "summary" : "Delete a run",
+        "tags" : [ "Runs" ],
+        "parameters" : [ 
+        {
+          "name" : "retentionDays",
+          "required" : false,
+          "type" : "integer"
+        }                
+        ],
+        "responses" : {
+          "204" : {
+            "description" : "Status 204"
+          }
+        }
+      }
+    },
+    "/repos/{repoId}/archive/orders" : {
+      "get" : {
+        "summary" : "get a list of all runs",
+        "tags" : [ "Archive" ],
+        "parameters" : [ {
+          "name" : "repoId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "default" : "ojs_db"
+        },
+        {
+          "name" : "from",
+          "in" : "query",
+          "required" : false,
+          "type" : "datetime"
+        },
+        {
+          "name" : "to",
+          "in" : "query",
+          "required" : false,
+          "type" : "datetime"
+        },
+        {
+          "name" : "sort",
+          "in" : "query",                        
+          "required" : false,
+          "default": "latest",
+          "type" : "string",
+          "example": [ "latest", "oldest" ]                      
+        },
+        {
+          "name" : "limit",
+          "in" : "query",                        
+          "required" : false,
+          "default": 10,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/run"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repos/{repoId}/archive/runs" : {
+      "get" : {
+        "summary" : "get a list of all runs",
+        "tags" : [ "Archive" ],
+        "parameters" : [ {
+          "name" : "repoId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "default" : "ojs_db"
+        },
+        {
+          "name" : "limit",
+          "in" : "query",                        
+          "required" : false,
+          "default": 10,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/run"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Exception" : {
+      "type" : "object",
+      "required" : [ "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        },
+        "stackTrace" : {
+          "type" : "string"
+        },
+        "innerException" : {
+          "$ref" : "#/definitions/Exception"
+        }
+      },
+      "description" : "A technical exception"
+    },
     "Error" : {
-        "type" : "object",
-        "required" : [ "code", "message" ],
-        "properties" : {
-            "message" : {
-                "type" : "string",
-                "description" : "A technical message"
+      "type" : "object",
+      "required" : [ "code", "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string",
+          "description" : "A technical message"
         },
         "display" : {
           "type" : "string",
@@ -891,42 +604,25 @@
       "description" : "A list of entity validation problems"
     },
     "repo" : {
-        "type" : "object",
-        "properties" : {
-            "id" : {
-                "type" : "integer",
-                "description" : "Id of the object in the database."
-            },
-            "name" : {
-                "type" : "string",
-                "description" : "Unique name of the repo.",
-                "example": "ojs_db"
-            },
-            "title" : {
-                "type" : "string",
-                "format" : "Display name of the repo."
-            },
-            "description" : {
-                "type" : "string",
-                "format" : "Description of the repo."
-            }
-        }
+      "type" : "object",
+      "properties" : {
+      }
     },
     "spooler" : {
-        "type" : "object",
-        "properties" : {
-            "start_time" : {
-                "type" : "string",
-                "format" : "date-time"
-            },
-            "end_time" : {
-                "type" : "string",
-                "format" : "date-time"
-            },
-            "status" : {
-                "type" : "string"
-            }
+      "type" : "object",
+      "properties" : {
+        "start_time" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "end_time" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "status" : {
+          "type" : "string"
         }
+      }
     },    
     "job" : {
       "type" : "object",
@@ -949,107 +645,34 @@
       }
     },
     "order" : {
-        "type" : "object",
-        "properties" : {
-            "orderId" : {
-                "type" : "string",
-                "description" : "Order"
-            },        
-            "jobChain" : {
-                "type" : "string",
-                "description" : "Job chain"
-            },
-            "step" : {
-                "type" : "integer",
-                "description" : "Step"
-            },
-            "title" : {
-                "type" : "string",
-                "description" : "Title"
-            },
-            "state" : {
-                "type" : "string",
-                "description" : "State"
-            },
-            "stateText" : {
-                "type" : "string",
-                "description" : "State text"
-            }
-        }
-    },
-    "instance" : {
       "type" : "object",
       "properties" : {
-        "schedulerId" : {
-            "type" : "string",
-            "description" : "Spooler name"
-        },
-        "hostname" : {
-            "type" : "string",
-            "description" : "Hostname"
-        },
-        "tcpPort" : {
-            "type" : "string",
-            "description" : "TCP port"
-        },
-        "supervisorHostname" : {
-            "type" : "string",
-            "description" : "Host name of the suprvisor."
-        },
-        "supervisorTcpPort" : {
-            "type" : "integer",
-            "description" : "TCP Port of the supervisor"
-        },
-        "dbName" : {
-            "type" : "string",
-            "description" : "Name of the DB"
-        },
-        "liveDirectory" : {
-            "type" : "string",
-            "description" : "Location of job definitions"
-        },
-        "logDir" : {
-            "type" : "integer",
-            "description" : "Location of log files"
-        },
-        "includePath" : {
-            "type" : "string",
-            "description" : ""
-        },
-        "iniPath" : {
-            "type" : "string",
-            "description" : ""
-        },
-        "isService" : {
-            "type" : "boolean",
-            "description" : "True if it is a service"
-        },
-        "isRunning" : {
-            "type" : "boolean",
-            "description" : "True if the service is running"
-        },
-        "isPaused" : {
-            "type" : "boolean",
-            "description" : "True if the engine is paused"
-        },
-        "isCluster" : {
-          "type" : "boolean",
-          "description" : "True if it is a part of cluster"
-        },
-        "isAgent" : {
-          "type" : "boolean",
-          "description" : "True if it is an agent"
+        "orderId" : {
+          "type" : "string",
+          "description" : "Order"
         },        
-        "isSosCommandWebservice" : {
-          "type" : "boolean",
-          "description" : "True if th command web service is available"
+        "jobChain" : {
+          "type" : "string",
+          "description" : "Job chain"
         },
-        "param" : {
-          "type" : "boolean",
-          "description" : "Parameters"
+        "step" : {
+          "type" : "integer",
+          "description" : "Step"
+        },
+        "title" : {
+          "type" : "string",
+          "description" : "Job chain"
+        },
+        "state" : {
+          "type" : "string",
+          "description" : "Job chain"
+        },
+        "stateText" : {
+          "type" : "string",
+          "description" : "Job chain"
         }
       }
-    },  
+    },
     "run" : {
       "type" : "object",
       "properties" : {
@@ -1060,14 +683,6 @@
         "taskId" : {
           "type" : "integer",
           "description" : "Id in jobscheduler database"
-        },
-        "order_name" : {
-          "type" : "string",
-          "description" : "Order name"
-        },
-        "state" : {
-          "type" : "string",
-          "description" : "Order state"
         },
         "spooler" : {
           "type" : "string",
@@ -1134,11 +749,15 @@
         },
         "title" : {
           "type" : "string",
-          "description" : "Title"
+          "description" : "Job chain"
+        },
+        "state" : {
+          "type" : "string",
+          "description" : "Job chain"
         },
         "stateText" : {
           "type" : "string",
-          "description" : "State"
+          "description" : "Job chain"
         }
       }
     }

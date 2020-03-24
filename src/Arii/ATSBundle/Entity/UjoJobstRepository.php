@@ -12,21 +12,58 @@ use Doctrine\ORM\EntityRepository;
  */
 class UjoJobstRepository extends EntityRepository
 {
+    public function findStatusByJobId($jobId,$Filter) {
+        $q = $this->createQueryBuilder('e')
+        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.pid')
+        # Filtrage 
+        ->where('e.isCurrver = 1')
+        ->andWhere('e.joid = :jobId')
+        ->setParameter('jobId',$jobId); 
+/* DEBUG        
+        print $q->getQuery()->getSQL();
+        print $q->getQuery()->getParameters();
+*/        
+        return $q->getQuery()
+        ->getSingleResult();
+    }
+    
     public function findStatus($Filter) {
         $q = $this
         ->createQueryBuilder('e')
-        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.owner,e.permission,e.nRetrys,e.autoHold,e.command,e.dateConditions,e.daysOfWeek,e.runCalendar,e.excludeCalendar,e.startTimes,e.startMins,e.runWindow,e.termRunTime,e.boxTerminator,e.boxName,e.hasNotification,e.timezone,e.jobTerminator,e.watchFile,e.watchFileMinSize,e.watchInterval,e.maxRunAlarm,e.minRunAlarm,e.alarmIfFail,e.chkFiles,e.profile,e.heartbeatInterval,e.jobLoad,e.priority,e.autoDelete,e.numero,e.maxExitSuccess,e.jobVer,e.runPriority,e.nextPriority,e.pid,e.runPriority,e.timeOk')
+        ->select('e.status as statusName,e.status as statusId,e.statusTime,e.jobName,e.joid as jobId,e.jobType,e.description,e.runNum,e.ntry,e.lastStart,e.lastEnd,e.exitCode,e.runMachine,e.nextStart,e.boxName,e.boxJoid as boxId,e.pid')
         # Filtrage 
         ->where('e.isCurrver = 1');
-        if (isset($Filter['job_name']) and ($Filter['job_name']!='%') and ($Filter['job_name']!='ALL')) {
+        if (isset($Filter['jobId']) and ($Filter['jobId']>0)) {
+            $q->andWhere('e.joid = :jobId')
+            ->setParameter('jobId',$Filter['jobId']); 
+        }  
+        if (isset($Filter['jobName']) and ($Filter['jobName']!='%') and ($Filter['jobName']!='ALL')) {
             $q->andWhere('e.jobName like :jobName')
-            ->setParameter('jobName',$Filter['job_name']); 
+            ->setParameter('jobName',$Filter['jobName']); 
         }  
         if (isset($Filter['status'])) {
             $q->andWhere('e.status in ( :status )')
             ->setParameter('status',$Filter['status']); 
         }
-        return $q->orderBy('e.boxName,e.jobName')
+/* DEBUG        
+        print $q->getQuery()->getSQL();
+        print $q->getQuery()->getParameters();
+*/        
+        return $q->orderBy('e.jobName')
+        ->getQuery()
+        ->setMaxResults(100)
+        ->getResult();
+    }
+
+    public function findChildren($boxJoid) {
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.jobName,e.joid as jobId,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.owner,e.permission,e.nRetrys,e.autoHold,e.command,e.dateConditions,e.daysOfWeek,e.runCalendar,e.excludeCalendar,e.startTimes,e.startMins,e.runWindow,e.termRunTime,e.boxTerminator,e.boxName,e.hasNotification,e.timezone,e.jobTerminator,e.watchFile,e.watchFileMinSize,e.watchInterval,e.maxRunAlarm,e.minRunAlarm,e.alarmIfFail,e.chkFiles,e.profile,e.heartbeatInterval,e.jobLoad,e.priority,e.autoDelete,e.numero,e.maxExitSuccess,e.jobVer,e.runPriority,e.nextPriority,e.pid,e.runPriority,e.timeOk,e.runMachine')
+        ->where('e.boxJoid like :boxJoid')
+        ->andWhere('e.isCurrver = 1')                
+        ->setParameter('boxJoid',$boxJoid); 
+
+        return $q->orderBy('e.hasCondition,e.jobName')
         ->getQuery()
         ->setMaxResults(100)
         ->getResult();
@@ -35,18 +72,62 @@ class UjoJobstRepository extends EntityRepository
     public function findJobs($Filter) {
         $q = $this
         ->createQueryBuilder('e')
-        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.owner,e.permission,e.nRetrys,e.autoHold,e.command,e.dateConditions,e.daysOfWeek,e.runCalendar,e.excludeCalendar,e.startTimes,e.startMins,e.runWindow,e.termRunTime,e.boxTerminator,e.boxName,e.hasNotification,e.timezone,e.jobTerminator,e.watchFile,e.watchFileMinSize,e.watchInterval,e.maxRunAlarm,e.minRunAlarm,e.alarmIfFail,e.chkFiles,e.profile,e.heartbeatInterval,e.jobLoad,e.priority,e.autoDelete,e.numero,e.maxExitSuccess,e.jobVer,e.runPriority,e.nextPriority,e.pid,e.runPriority,e.timeOk');
-# Filtrage 
-        if (isset($Filter['job_name'])) {
+        ->select('e.jobName,e.joid,e.description,e.status,e.statusTime,e.runNum,e.ntry,e.applNtry,e.lastStart,e.lastEnd,e.nextStart,e.exitCode,e.runMachine,e.queName,e.jobType,e.boxJoid,e.owner,e.permission,e.nRetrys,e.autoHold,e.command,e.dateConditions,e.daysOfWeek,e.runCalendar,e.excludeCalendar,e.startTimes,e.startMins,e.runWindow,e.termRunTime,e.boxTerminator,e.boxName,e.hasNotification,e.timezone,e.jobTerminator,e.watchFile,e.watchFileMinSize,e.watchInterval,e.maxRunAlarm,e.minRunAlarm,e.alarmIfFail,e.chkFiles,e.profile,e.heartbeatInterval,e.jobLoad,e.priority,e.autoDelete,e.numero,e.maxExitSuccess,e.jobVer,e.runPriority,e.nextPriority,e.pid,e.runPriority,e.timeOk,e.hasOverride');
+
+        # Filtrage 
+        if (isset($Filter['jobName'])) {
             $q->andWhere('e.jobName like :jobName')
-            ->setParameter('jobName',$Filter['job_name']); 
-        }        
+            ->setParameter('jobName',$Filter['jobName']); 
+        }   
+        if (isset($Filter['status'])) {
+                $q->andWhere('e.status in (:status)')
+                ->setParameter('status',$Filter['status']); 
+        }                
+        if (isset($Filter['jobType']) and ($Filter['jobType']!='')) {
+            $q->andWhere('e.jobType = :jobType')
+            ->setParameter('jobType',$Filter['jobType']);            
+        }
+        if (isset($Filter['hasOverride']) and ($Filter['hasOverride']=='true')) {
+            $q->andWhere('e.hasOverride = 1');            
+        }
         return $q->orderBy('e.boxName,e.jobName')
         ->getQuery()
         ->setMaxResults(100)
         ->getResult();
     }
 
+    public function findJobsByCalendar($calendarName,$Filter) {
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.jobName,e.runCalendar,e.excludeCalendar,e.nextStart')
+        ->Where('e.runCalendar = :calendarName OR e.excludeCalendar = :calendarName ')
+        ->setParameter('calendarName',$calendarName); 
+           
+        return $q->orderBy('e.jobName')
+        ->getQuery()
+        ->setMaxResults(100)
+        ->getResult();
+    }
+
+    public function findBoxes($Filter) { 
+        $q = $this
+        ->createQueryBuilder('c')
+        ->select('c.jobName as boxName')
+        ->groupBy('c.jobName')
+        ->orderBy('c.jobName')
+        ->setMaxResults(1000);    
+        if (isset($Filter['runCalendar'])) {
+            $q->andWhere('c.runCalendar = :runCalendar')
+            ->setParameter('runCalendar',$Filter['runCalendar']); 
+        }
+        if (isset($Filter['excludeCalendar'])) {
+            $q->andWhere('c.excludeCalendar = :excludeCalendar')
+            ->setParameter('excludeCalendar',$Filter['excludeCalendar']); 
+        }
+        return $q->getQuery()
+                ->getResult();
+    }
+        
     public function findProcesses() {
         $q = $this
         ->createQueryBuilder('e')

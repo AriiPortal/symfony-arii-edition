@@ -46,6 +46,12 @@ api_MFT_transfers_get:
     path:  /transfers/{transferId}
     defaults: { _controller: AriiMFTBundle:API\Transfer:get }
 
+# --------------------------------------------------------------------------
+# Transmissions
+# --------------------------------------------------------------------------
+api_MFT_transmissions_list:
+    path:  /transmissions{outputFormat}
+    defaults: { _controller: AriiMFTBundle:API\Transmissions:list, outputFormat: ~ }
 
 # --------------------------------------------------------------------------
 # Operations

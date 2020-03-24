@@ -15,19 +15,16 @@ use JMS\Serializer\SerializationContext;
 
 class ReposController extends Controller
 {
-    public function listAction(Request $request)
+    public function listAction( $outputFormat, Request $request)
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
-
-        if ($request->get('type')) 
-            $filter = [ "type" => $request->get('type')];
-        else 
-            $filter = [];
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
         
         $portal = $this->container->get('arii_core.portal'); 
-        $Repos = $portal->getRepos($filter);
+        $Repos = $portal->getRepos($Filter);
 
-        switch ($Filters['outputFormat']) {
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
             case 'dhtmlxGrid':
                 $data = $this->container->get('arii_core.render'); 
                 return $data->grid($Repos,'name,title,description,type');        

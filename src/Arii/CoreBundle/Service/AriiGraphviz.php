@@ -82,6 +82,9 @@ bgcolor=white
         elseif ($output == 'dot') {
             $response->setContent(trim($digraph));
         }
+        elseif ($output == 'cmap') {
+            return $response->setContent( $out );
+        }
         else {
             $response->headers->set('Content-Type', 'image/'.$output);
             $response->setContent($out);

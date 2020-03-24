@@ -1,0 +1,27 @@
+{% extends "AriiACKBundle::layout.html.twig" %}
+{% block body %}
+<script language="javascript">
+function Init() {
+//    myLayout = globalLayout.cells("a").attachLayout('2U');        
+    myJobs =  globalLayout.cells("b").attachChart({
+            view:"donut",
+            value:"#NB#",
+            label:"",
+            tooltip: "#NAME#",
+            color: "#COLOR#",
+            border:false,
+            pieInnerText: "#NB#",
+            shadow: 0,
+            legend:{
+                width: 0,
+                template: "#NAME#",
+                valign:"top",
+                align:"left"
+            } 
+    });
+//    myJobs.load( "{ { url('xml_ACK_jobs_pie') }}" );
+}
+
+function PageRefresh() {};
+</script>
+{% endblock %}

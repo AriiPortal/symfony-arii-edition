@@ -1,0 +1,32 @@
+# --------------------------------------------------------------------------
+# Traited
+# --------------------------------------------------------------------------
+api_PRT_documents:
+    path:  /repo/{repoName}/documents{outputFormat}
+    defaults: { _controller: AriiPRTBundle:API\Documents:list, repoName: xxatlas, outputFormat: ~  }
+
+api_PRT_document_detail:
+    path:  /repo/{repoName}/documents/{documentId}{outputFormat}
+    defaults: { _controller: AriiPRTBundle:API\Documents:list, repoName: xxatlas, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Log
+# --------------------------------------------------------------------------
+api_PRT_log:
+    path:  /repo/{repoName}/logs{outputFormat}
+    defaults: { _controller: AriiPRTBundle:API\Logs:list, repoName: xxatlas, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Failed
+# --------------------------------------------------------------------------
+api_PRT_errors:
+    path:  /repo/{repoName}/errors{outputFormat}
+    defaults: { _controller: AriiPRTBundle:API\Errors:list, repoName: xxatlas, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Xml
+# --------------------------------------------------------------------------
+api_PRT_files:
+    path:  /repo/{repoName}/files{outputFormat}
+    defaults: { _controller: AriiPRTBundle:API\Files:list, repoName: xxatlas, outputFormat: ~  }
+

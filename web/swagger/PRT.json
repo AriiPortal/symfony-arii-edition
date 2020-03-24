@@ -1,0 +1,385 @@
+{
+    "swagger" : "2.0",
+    "info" : {
+        "title" : "Print Servers API",
+        "description" : "An API for Print Servers (an ephemeral project...)",
+        "version" : "1.0.0",
+        "contact" : {
+            "name" : "Arii",
+            "url" : "https://localhost/api/v1/bundles/prt",
+            "email" : "eat@vaudoise.ch"
+        }
+    },
+    "basePath": "/api/v1/bundles/prt",
+    "schemes": [
+        "http"
+    ],
+    "consumes" : [ 
+        "application/json"
+    ],
+    "produces" : [ 
+        "application/json"
+    ],
+    "parameters" : {
+        "repoName" : {
+            "name" : "repoName",
+            "in" : "path",
+            "required" : true,
+            "description": "Name of the repo.",
+            "type" : "array",
+            "items" : {
+                "enum": [ "xxatlas", "xxpolaris" ]
+            },
+            "default": "xxatlas"
+        },
+        "documentId" : {
+            "name" : "documentId",
+            "in" : "path",
+            "required" : true,
+            "description": "Id of the document",
+            "type" : "string"
+        },
+        "fileType" : {
+            "name" : "fileType",
+            "in" : "query",
+            "required" : true,
+            "description": "Extension of the file",
+            "items" : {
+                "enum": [ "log", "res", "err" ]
+            },
+            "default": "err"
+        },
+        "environment" : {
+            "name" : "environment",
+            "in" : "query",
+            "description": "Environment",
+            "type" : "string",
+            "default": "prod"
+        },
+        "spoolerName" : {
+            "name" : "spoolerName",
+            "in" : "query",
+            "type" : "array",
+            "items" : {
+                "enum": [ 
+                    "xxelara", "xxtelesto", "xxthebe", "xxtitan",
+                    "sgpriva1", "sgpriva2", "sgpriva3", "sgpriva4",
+                    "xxkessel", "xxkiribi", "xxkessel", "xxskaro"
+                ]
+            }
+        },
+        "userName" : {
+            "name" : "userName",
+            "in" : "query",
+            "description": "Name of the user.",
+            "type" : "array",
+            "items" : {
+                "enum": [ "s-print-va1", "s-print-va2" ]
+            }
+        },
+        "fromDate" : {
+            "name" : "fromDate",
+            "in" : "query",
+            "description": "Get information older than this date.",
+            "type" : "datetime"
+        },
+        "toDate" : {
+            "name" : "toDate",
+            "in" : "query",
+            "description": "Get information until this date.",
+            "type" : "datetime"
+        },
+        "getContent" : {
+            "name" : "getContent",
+            "in" : "query",
+            "description": "Get the content of the document.",
+            "type" : "boolean",
+            "default": "false"
+        }
+    },
+    "paths" : {
+        "/repo/{repoName}/documents" : {
+            "get" : {
+                "summary" : "get the files in the 'treated' directory.",
+                "tags" : [ "Documents" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoName"
+                    },
+                    {
+                        "$ref" : "#/parameters/documentId"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    },
+                    {
+                        "$ref" : "#/parameters/spoolerName"
+                    },
+                    {
+                        "$ref" : "#/parameters/userName"
+                    },
+                    {
+                        "$ref" : "#/parameters/fromDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/toDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/getContent"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "log" : {
+                                    "type" : "string",
+                                    "description": "Log file",
+                                    "example": "ats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repo/{repoName}/documents/{documentId}" : {
+            "get" : {
+                "summary" : "extract information ",
+                "tags" : [ "Documents" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoName"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    },
+                    {
+                        "$ref" : "#/parameters/spoolerName"
+                    },
+                    {
+                        "$ref" : "#/parameters/userName"
+                    },
+                    {
+                        "$ref" : "#/parameters/fromDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/toDate"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "log" : {
+                                    "type" : "string",
+                                    "description": "Log file",
+                                    "example": "ats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repo/{repoName}/errors" : {
+            "get" : {
+                "summary" : "get the files in the 'failed' directory.",
+                "tags" : [ "Status" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoName"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    },
+                    {
+                        "$ref" : "#/parameters/spoolerName"
+                    },
+                    {
+                        "$ref" : "#/parameters/userName"
+                    },
+                    {
+                        "$ref" : "#/parameters/fromDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/toDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/getContent"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "log" : {
+                                    "type" : "string",
+                                    "description": "Log file",
+                                    "example": "ats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repo/{repoName}/files" : {
+            "get" : {
+                "summary" : "get the list of files",
+                "tags" : [ "Queue" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoName"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    },
+                    {
+                        "$ref" : "#/parameters/spoolerName"
+                    },
+                    {
+                        "$ref" : "#/parameters/userName"
+                    },
+                    {
+                        "$ref" : "#/parameters/fromDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/toDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/getContent"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "log" : {
+                                    "type" : "string",
+                                    "description": "Log file",
+                                    "example": "ats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/repo/{repoName}/logs" : {
+            "get" : {
+                "summary" : "get the list of failed files.",
+                "tags" : [ "Logs" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/repoName"
+                    },
+                    {
+                        "$ref" : "#/parameters/environment"
+                    },
+                    {
+                        "$ref" : "#/parameters/spoolerName"
+                    },
+                    {
+                        "$ref" : "#/parameters/userName"
+                    },
+                    {
+                        "$ref" : "#/parameters/fromDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/toDate"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "log" : {
+                                    "type" : "string",
+                                    "description": "Log file",
+                                    "example": "ats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions" : {
+        "Exception" : {
+                "type" : "object",
+                "required" : [ "message" ],
+                "properties" : {
+                    "message" : {
+                        "type" : "string"
+                    },
+                    "stackTrace" : {
+                        "type" : "string"
+                    },
+                    "innerException" : {
+                        "$ref" : "#/definitions/Exception"
+                    }
+                },
+          "description" : "A technical exception"
+        },
+        "Error" : {
+            "type" : "object",
+            "required" : [ "code", "message" ],
+            "properties" : {
+                "message" : {
+                    "type" : "string",
+                    "description" : "A technical message"
+                },
+                "display" : {
+                    "type" : "string",
+                    "description" : "A user friendly displayable message"
+                },
+                "code" : {
+                    "type" : "string",
+                    "description" : "An error code"
+                }
+            },
+            "description" : "A business error"
+        },
+        "Validation" : {
+            "type" : "object",
+            "properties" : {
+                "validations" : {
+                    "type" : "array",
+                    "items" : {
+                        "type" : "object",
+                        "properties" : {
+                            "display" : {
+                                "type" : "string"
+                            },
+                            "code" : {
+                                "type" : "string"
+                            },
+                            "fields" : {
+                                "type" : "array",
+                                "items" : {
+                                    "type" : "string"
+                                }
+                            },
+                            "valParams" : {
+                                "type" : "object"
+                            }
+                        }
+                    }
+                }
+            },
+            "description" : "A list of entity validation problems"
+        }
+    }
+}

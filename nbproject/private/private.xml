@@ -17,33 +17,43 @@
             <file>file:/C:/xampp56/arii/src/Arii/ACKBundle/Resources/views/Hosts/index.html.old.twig</file>
         </group>
         <group>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Transmissions.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Partners.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Status.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Schedules.php</file>
+            <file>file:/C:/Arii/Symfony/workspace/Builder/EXST/TransacSpe1.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Entity/ZonesRepository.php</file>
+            <file>file:/C:/Arii/Symfony/app/config/routing.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Controller/API/ZonesController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Service/AriiTimeCode.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Resources/views/Docs/index.html.twig</file>
+            <file>file:/C:/Arii/Symfony/workspace/Builder/EXST/GeneDocs.txt</file>
             <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Controller/API/JobController.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Transfers.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/RUNDay.php</file>
-            <file>file:/C:/Arii/Symfony/web/samples/calendar.html</file>
-            <file>file:/C:/Arii/Symfony/web/samples/gauge.html</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/JOB.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoJob.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Entity/Zones.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Controller/API/RulesController.php</file>
+            <file>file:/C:/Arii/Symfony/app/config/parameters.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Resources/config/services.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Controller/API/RunsController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Resources/config/routing_api.yml</file>
+            <file>file:/C:/Arii/Symfony/web/swagger/Time.json</file>
+            <file>file:/C:/Arii/Symfony/workspace/Builder/EXST/Transac.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoAlamode.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Controller/DocsController.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Service/AriiTimeDB.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoCalendar.php</file>
             <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Resources/config/routing_api.yml</file>
-            <file>file:/C:/Arii/Symfony/web/samples/sankey.html</file>
-            <file>file:/C:/Arii/Symfony/web/samples/annotation.html</file>
-            <file>file:/C:/Arii/Symfony/web/samples/gantt.html</file>
+            <file>file:/C:/Arii/Symfony/web/swagger/Report.json</file>
             <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Deliveries.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/JOBDay.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ReportBundle/Entity/RUN.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Service/AriiState2.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoEventvu.php</file>
+            <file>file:/C:/Arii/Symfony/app/config/config.yml</file>
+            <file>file:/C:/Arii/Symfony/web/diagnostic.html</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Controller/JobsController.php</file>
+            <file>file:/C:/Arii/Symfony/web/index.html</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Entity/Rules.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/TimeBundle/Entity/RulesRepository.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Service/AriiRequests.php</file>
             <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoJobRepository.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/History.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Controller/API/JobsController.php</file>
             <file>file:/C:/Arii/Symfony/web/swagger/ATS.json</file>
-            <file>file:/C:/Arii/Symfony/web/samples/timelines.html</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Summary.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/CoreBundle/Service/AriiGD.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/MFTBundle/Entity/Operations.php</file>
-            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoEvent.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Resources/config/services.yml</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Entity/UjoCalendarRepository.php</file>
+            <file>file:/C:/Arii/Symfony/src/Arii/ATSBundle/Service/AriiJobDB.php</file>
         </group>
     </open-files>
 </project-private>

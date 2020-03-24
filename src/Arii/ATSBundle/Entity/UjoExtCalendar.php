@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * UjoExtCalendar
  *
  * @ORM\Table(name="UJO_EXT_CALENDAR")
- * @ORM\Entity
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\ATSBundle\Entity\UjoExtCalendarRepository")
  */
 class UjoExtCalendar
 {

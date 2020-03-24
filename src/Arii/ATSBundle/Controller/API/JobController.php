@@ -11,28 +11,169 @@ use JMS\Serializer\SerializationContext;
 class JobController extends Controller
 {
 
-    public function runsAction($repoId='ats_db',$jobId,$outputFormat )
+        public function alarmsAction($instanceId='ACE', $jobName, $outputFormat, Request $request )
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
         
-        // pour les urls sans accept
-        if ($outputFormat!='')
-            $Filters['outputFormat'] = substr($outputFormat,1);
+        # On retouve le bon repo
+        $state = $this->container->get('arii_ats.jobdb'); 
+        $repoId = $state->getRepo($instanceId);
+        $em = $this->getDoctrine()->getManager($repoId);             
+        $Runs = $state->Alarms($em,$jobName,$Filter);
 
-        $em = $this->getDoctrine()->getManager($repoId);        
-        $state = $this->container->get('arii_ats.state2');        
-        $Runs = $state->JobRuns($em,$jobId,$Filters);
-        
-        switch ($Filters['outputFormat']) {
-            case 'dhtmlx':
-                $type = 'xml';
-                $dhtmlx = $this->container->get('arii_core.render'); 
-                return $dhtmlx->grid($Runs,'alarmTime,alarm,jobName,stateGrid,status,theUser,eventComment,nb,stateTime,state,firstTime,description','state');        
-                break;
-            case 'xml':
-                $data = $this->get('jms_serializer')->serialize($Runs, 'xml', SerializationContext::create()->setGroups(array('default')));
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $data = $this->get('jms_serializer')->serialize($Runs, 'json', SerializationContext::create()->setGroups(array('list')));
                 $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/xml');
+                $response->headers->set('Content-Type', 'application/json');
+                break;                
+        }
+        return $response;
+    }
+
+    public function statusAction($instanceId='ACE', $jobName, $outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+        
+        # On retouve le bon repo
+        $state = $this->container->get('arii_ats.jobdb'); 
+        $repoId = $state->getRepo($instanceId);
+        $em = $this->getDoctrine()->getManager($repoId);             
+        $Runs = $state->Status($em,$jobName,$Filter);
+
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $data = $this->get('jms_serializer')->serialize($Runs, 'json', SerializationContext::create()->setGroups(array('list')));
+                $response = new Response($data);
+                $response->headers->set('Content-Type', 'application/json');
+                break;                
+        }
+        return $response;
+    }
+
+    public function detailAction($instanceId='ACE', $jobName, $outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+    
+        $client = $this->container->get('arii_ats.client');   
+        $Filter['instanceId'] = $instanceId;
+        $Filter['jobName'] = $jobName;        
+        $Code = $client->Autorep_d($Filter);
+
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $response = new Response($Code);
+                $response->headers->set('Content-Type', 'text/plain');
+                break;                
+        }
+        return $response;
+    }
+    
+    public function logsAction($instanceId='ACE', $jobName, $logType, $outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+    
+        $client = $this->container->get('arii_ats.client');  
+        $Filter['instanceId'] = $instanceId;
+        $Filter['jobName'] = $jobName;
+        $Filter['logType'] = $logType;
+        $Log = $client->Autosyslog($Filter);
+
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $response = new Response($Log);
+                $response->headers->set('Content-Type', 'text/plain');
+                break;                
+        }
+        return $response;
+    }
+
+    public function codeAction($instanceId='ACE', $jobName, $outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+    
+        $client = $this->container->get('arii_ats.client');   
+        $Filter['instanceId'] = $instanceId;
+        $Filter['jobName'] = $jobName;        
+        $Code = $client->Autorep_q($Filter);
+
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $response = new Response($Code);
+                $response->headers->set('Content-Type', 'text/plain');
+                break;                
+        }
+        return $response;
+    }
+
+    public function reportAction($instanceId='ACE', $jobName, $outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+    
+        $client = $this->container->get('arii_ats.client');   
+        $Filter['instanceId'] = $instanceId;
+        $Filter['jobName'] = $jobName;
+        $Report = $client->Autorep($Filter);
+
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $response = new Response($Report);
+                $response->headers->set('Content-Type', 'text/plain');
+                break;                
+        }
+        return $response;
+    }
+
+    public function auditAction($instanceId='ACE', $jobName, $outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+    
+        $client = $this->container->get('arii_ats.client');   
+        $Filter['instanceId'] = $instanceId;
+        $Filter['jobName'] = $jobName;
+        $Audit = $client->Autotrack($Filter);
+
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            default:
+                $response = new Response($Audit);
+                $response->headers->set('Content-Type', 'text/plain');
+                break;                
+        }
+        return $response;
+    }
+
+    public function runsAction($instanceId='ACE',$jobName,$outputFormat, Request $request )
+    {
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+        
+        # On retouve le bon repo
+        $state = $this->container->get('arii_ats.jobdb'); 
+        $repoId = $state->getRepo($instanceId);
+        $em = $this->getDoctrine()->getManager($repoId);             
+        $Runs = $state->Runs($em,$jobName,$Filter);        
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
+            case 'png':
+                $gd = $this->container->get('arii_core.gd');
+                $img = $gd->StatusByPeriod($Runs,24,24,5);
+                $response = new Response();
+                $response->headers->set('Content-Type', 'image/png');                
+                $response->sendHeaders();   
                 break;
             default:
                 $data = $this->get('jms_serializer')->serialize($Runs, 'json', SerializationContext::create()->setGroups(array('list')));
@@ -43,100 +184,32 @@ class JobController extends Controller
         return $response;
     }
     
-    public function graphsAction($repoId='ats_db',$jobId,$outputFormat )
+    public function runtimesAction($instanceId='ACE',$jobName,$outputFormat, Request $request )
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
         
-        // pour les urls sans accept
-        if ($outputFormat!='')
-            $Filters['outputFormat'] = substr($outputFormat,1);
-
-        $Graphs = [
-            [
-                "id" => 1,
-                "name" => "StatusByPeriod",
-                "description" => "Give a status for a period of time"
-            ]
-        ];
-        
-        switch ($Filters['outputFormat']) {
-            case 'xml':
-                $data = $this->get('jms_serializer')->serialize($Graphs, 'xml', SerializationContext::create()->setGroups(array('default')));
-                $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/xml');
-                break;
-            default:
-                $data = $this->get('jms_serializer')->serialize($Graphs, 'json', SerializationContext::create()->setGroups(array('list')));
-                $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/json');
-                break;                
-        }
-        return $response;
-    }
-    
-    public function generateAction($repoId='ats_db',$jobId,$graphId,$outputFormat )
-    {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
-        
-        // pour les urls sans accept
-        if ($outputFormat!='')
-            $Filters['outputFormat'] = substr($outputFormat,1);
-
-        $em = $this->getDoctrine()->getManager($repoId);        
-        $state = $this->container->get('arii_ats.state2');        
-        $jobId = $state->JobIdByName($em,$jobId);
-
-        if (!isset($jobId))
-            return;
-        $Runs = $state->JobRuns($em,$jobId,$Filters);
-
-        // Specifique au graphique
-        $Request = Request::createFromGlobals();
-        $period = ($Request->query->get('period')>0?$Request->query->get('period'):6);
-        $height = ($Request->query->get('height')>0?$Request->query->get('height'):24);
-        $col    = ($Request->query->get('col_width')>0?$Request->query->get('col_width'):4);
-
-        $Data = [];
-        // Ajout de offset 
-        foreach ($Runs as $Run) {
-            array_push($Data,
-                array(  'startTime' => $Run['starttime'],
-                        'DateTime'  => $Run['startTime'],
-                        'runTime'   => $Run['runtime'],
-                        'success'   => $Run['success']
-                    )
-            );
-        }        
-        switch ($Filters['outputFormat']) {
+        # On retouve le bon repo
+        $state = $this->container->get('arii_ats.jobdb'); 
+        $repoId = $state->getRepo($instanceId);
+        $em = $this->getDoctrine()->getManager($repoId);             
+        $Runs = $state->Runtimes($em,$jobName,$Filter);
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
             case 'png':
                 $gd = $this->container->get('arii_core.gd');
-                switch (strtolower($graphId)) {
-                    case '1':
-                    case 'statusbyperiod':
-                        $img = $gd->StatusByPeriod($Data,$period,$height,$col);
-                        break;
-                    default:
-                        $img = $gd->StatusByPeriod($Data,$period,$height,$col);
-                        break;
-                }
+                $img = $gd->runtimes($Runs,200,30,5);
                 $response = new Response();
-                $response->headers->set('Content-Type', 'image/png');
-                $response->sendHeaders();
-                imagepng($img);
-                imagedestroy($img);
-                break;
-            case 'xml':
-                $data = $this->get('jms_serializer')->serialize($Data, 'xml', SerializationContext::create()->setGroups(array('default')));
-                $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/xml');
+                $response->headers->set('Content-Type', 'image/png');                
+                $response->sendHeaders();   
                 break;
             default:
-                $data = $this->get('jms_serializer')->serialize($Data, 'json', SerializationContext::create()->setGroups(array('list')));
+                $data = $this->get('jms_serializer')->serialize($Runs, 'json', SerializationContext::create()->setGroups(array('list')));
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/json');
                 break;                
         }
         return $response;
     }
-    
+
 }

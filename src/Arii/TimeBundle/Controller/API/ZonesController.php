@@ -10,11 +10,14 @@ use JMS\Serializer\SerializationContext;
 class ZonesController extends Controller
 {
 
-    public function listAction() {
+    public function listAction($outputFormat, Request $request) {
         
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
         
         $em = $this->getDoctrine()->getManager();        
+
         $db = $this->container->get('arii_time.db');        
         $Zones = $db->Zones($em); 
 
@@ -24,18 +27,13 @@ class ZonesController extends Controller
                 $dhtmlx = $this->container->get('arii_core.render'); 
                 return $dhtmlx->grid($Zones,'name,title,description,latitude,longitude');        
                 break;
-            case 'xml':
-                $type = 'xml';
-                $data = $this->get('jms_serializer')->serialize($Zones, $type, SerializationContext::create()->setGroups(array('list')));
-                break;
             default:
                 $type = 'json';
                 $data = $this->get('jms_serializer')->serialize($Zones, $type, SerializationContext::create()->setGroups(array('list')));
+                $response = new Response($data);
+                $response->headers->set('Content-Type', 'application/'.$type);
                 break;
-        }
-        
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/'.$type);
+        }        
         return $response;    
     }
 }

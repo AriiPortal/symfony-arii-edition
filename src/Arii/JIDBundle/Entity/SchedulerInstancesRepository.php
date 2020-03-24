@@ -16,13 +16,22 @@ class SchedulerInstancesRepository extends EntityRepository
    public function findInstances($Filter)
    {
         $q = $this->createQueryBuilder('e')
-            ->select('e.id,e.schedulerId as spoolerName,e.hostname,e.tcpPort,e.udpPort,e.supervisorHostname,e.supervisorTcpPort,e.startTime,e.stopTime,e.dbName,e.workingDirectory,e.liveDirectory,e.logDir,e.includePath,e.iniPath,e.isService,e.isRunning,e.isPaused,e.isCluster,e.isAgent,e.isSosCommandWebservice,e.param,e.releaseNumber')
+            ->select('e.id,e.schedulerId as spoolerName,e.hostname,e.tcpPort,e.udpPort,e.supervisorHostname as supervisorHostName,e.supervisorTcpPort,e.startTime,e.stopTime,e.dbName,e.workingDirectory,e.liveDirectory,e.logDir,e.includePath,e.iniPath,e.isService,e.isRunning,e.isPaused,e.isCluster,e.isAgent,e.isSosCommandWebservice,e.param,e.releaseNumber')
             ->orderBy('e.hostname,e.tcpPort')
             ->setMaxResults(1000);
 
         # Filtrage
         if (isset($Filter['limit']))
             $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['spoolerName']))
+            $q->andWhere('e.schedulerId like :spoolerName')
+                ->setParameter('spoolerName',$Filter['spoolerName']);           
+        if (isset($Filter['supervisorHostName']))
+            $q->andWhere('e.supervisorHostname like :supervisorHostName')
+                ->setParameter('supervisorHostName',$Filter['supervisorHostName']);           
+        if (isset($Filter['supervisorTcpPort']))
+            $q->andWhere('e.supervisorTcpPort like :supervisorTcpPort')
+                ->setParameter('supervisorTcpPort',$Filter['supervisorTcpPort']);           
         if (isset($Filter['hostName']))
             $q->andWhere('e.hostname like :hostName')
                 ->setParameter('hostName',$Filter['hostName']);           

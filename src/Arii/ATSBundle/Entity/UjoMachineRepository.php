@@ -12,7 +12,34 @@ use Doctrine\ORM\EntityRepository;
  */
 class UjoMachineRepository extends EntityRepository
 {
+    public function findPools($Filter) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.parentName,e.queName as queueName,e.type,e.agentName,e.machName as machineName,e.nodeName,e.machStatus,e.maxLoad,e.description,e.factor,e.heartbeatAttempts,e.heartbeatFreq,e.opsys,e.characterCode,e.port,e.prepjobid,e.provision')
+        ->where('e.port > 0');
+        if (isset($Filter['poolName']) and ($Filter['poolName']!='%') and ($Filter['poolName']!='ALL')) {
+            $q->andWhere('e.parentName like :poolName')
+            ->setParameter('poolName',$Filter['poolName']); 
+        }  
+        return $q->orderBy('e.machName')
+                ->setMaxResults(1000)
+                ->getQuery()
+                ->getResult();
+    }
 
+    public function findMachines($Filter) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.machName as machineName,e.description,e.agentName,e.nodeName as hostName,e.port as hostPort,e.machStatus as machineStatus,e.maxLoad,e.factor,e.opsys as operatingSystem,e.characterCode')
+        ->where('e.port > 0');
+        if (isset($Filter['machineName']) and ($Filter['machineName']!='%') and ($Filter['machineName']!='ALL')) {
+            $q->andWhere('e.machName like :machineName')
+            ->setParameter('machineName',$Filter['machineName']); 
+        }  
+        return $q->orderBy('e.machName')
+                ->setMaxResults(1000)
+                ->getQuery()
+                ->getResult();
+    }
+    
     public function findAgents() { 
         $q = $this->createQueryBuilder('e')
         ->select('e.parentName,e.queName,e.type,e.agentName,e.machName,e.nodeName,e.machStatus,e.maxLoad,e.description,e.factor,e.heartbeatAttempts,e.heartbeatFreq,e.opsys,e.characterCode,e.port,e.prepjobid,e.provision')

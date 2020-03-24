@@ -4,15 +4,25 @@ services:
 #        arguments: [@service_id, "plain_value", %parameter%]
     arii_ats.autosys:
         class: Arii\ATSBundle\Service\AriiAutosys 
-        arguments: [ "@arii_core.portal" ]
+        arguments: [ "@arii_core.portal", "%ats%" ]
         
+    arii_ats.client:
+        class: Arii\ATSBundle\Service\AriiClient
+        arguments: [ "@arii_core.exec",  "%ats%" ]
+
+    # Portal est deja dans Autosys
+    arii_ats.jobdb:
+        class: Arii\ATSBundle\Service\AriiJobDB
+        arguments: [ "@arii_ats.autosys", "@arii_core.tools" ]
+
+    arii_ats.job:
+        class: Arii\ATSBundle\Service\AriiJob
+        arguments: [ "@doctrine.orm.default_entity_manager", "@arii_ats.jobdb" ]
+
+    # Portal est deja dans Autosys
     arii_ats.state:
         class: Arii\ATSBundle\Service\AriiState
-        arguments: [ "@arii_core.dhtmlx", "@arii_core.sql", "@arii_core.date", "@arii_core.tools"]
-
-    arii_ats.state2:
-        class: Arii\ATSBundle\Service\AriiState2
-        arguments: [ "@arii_core.portal", "@arii_core.tools", "@arii_ats.autosys" ]
+        arguments: [ "@arii_ats.autosys", "@arii_core.tools" ]
 
     arii_ats.Runs:
         class: Arii\ATSBundle\Service\AriiRuns
@@ -22,9 +32,18 @@ services:
         class: Arii\ATSBundle\Service\AriiStatus
         arguments: [ "@arii_core.portal", "@arii_ats.autosys" ]
 
+    arii_ats.Events:
+        class: Arii\ATSBundle\Service\AriiEvents
+        arguments: [ "@arii_core.portal", "@arii_ats.autosys", @translator ]
+
     arii_ats.exec:
         class: Arii\ATSBundle\Service\AriiExec
         arguments: [ "@arii_core.exec" ]
+
+    arii_ats.Graphviz:
+        class: Arii\ATSBundle\Service\AriiGraphviz
+        arguments: [ "@arii_core.graphviz", "%kernel.root_dir%" ]
+
 
     arii_ats.twig_string_loader:
         class:        "Twig_Loader_String"

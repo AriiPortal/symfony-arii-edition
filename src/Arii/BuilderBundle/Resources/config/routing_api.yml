@@ -1,0 +1,42 @@
+# --------------------------------------------------------------------------
+# Domains
+# --------------------------------------------------------------------------
+api_Builder_domains_list:
+    path:  /domains
+    defaults: { _controller: AriiBuilderBundle:API\Domains:list }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Templates
+# --------------------------------------------------------------------------
+api_Builder_templates_list:
+    path:  /domains/{domainName}/templates
+    defaults: { _controller: AriiBuilderBundle:API\Templates:list, domainName: ~ }
+    methods: [GET]
+
+api_Builder_template_get:
+    path:  /domains/{domainName}/templates/{templateName}
+    defaults: { _controller: AriiBuilderBundle:API\Template:get, domainName: ~, templateName: ~ }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Lists
+# --------------------------------------------------------------------------
+api_Builder_lists_list:
+    path:  /domains/{domainName}/lists
+    defaults: { _controller: AriiBuilderBundle:API\Lists:list, domainName: ~, templateName: ~, listName: ~ }
+    methods: [GET]
+
+api_Builder_list_get:
+    path:  /domains/{domainName}/lists/{listName}
+    defaults: { _controller: AriiBuilderBundle:API\List:get, domainName: ~, templateName: ~, listName: ~ }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Documents
+# --------------------------------------------------------------------------
+api_Builder_document_get:
+    path:  /domains/{domainName}/document
+    defaults: { _controller: AriiBuilderBundle:API\Document:get, domainName: ~, templateName: ~, listName: ~ }
+    methods: [GET]
+

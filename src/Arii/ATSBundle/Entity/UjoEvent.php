@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * UjoEvent
  *
  * @ORM\Table(name="UJO_EVENT", uniqueConstraints={@ORM\UniqueConstraint(name="xpkujo_event", columns={"EOID"})}, indexes={@ORM\Index(name="xak2ujo_event", columns={"EVENT", "STATUS", "JOID", "RUN_NUM", "NTRY"}), @ORM\Index(name="xak1ujo_event", columns={"EVENT_TIME_GMT"})})
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\ATSBundle\Entity\UjoEventRepository")
  */
 class UjoEvent
 {

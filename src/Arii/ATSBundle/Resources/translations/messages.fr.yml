@@ -45,3 +45,6 @@ Use template: Utiliser un modèle
 Is a template: Est un modèle
 No doc found: Aucune documentation trouvée
 No suggestion: Aucune suggestion
+# Status
+MACH_ONLINE: Machine en ligne
+MACH_OFFLINE: Machine hors ligne

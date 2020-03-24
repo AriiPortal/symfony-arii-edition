@@ -12,12 +12,12 @@ use Doctrine\ORM\EntityRepository;
  */
 class ZonesRepository extends EntityRepository
 {
-    
+
    public function findZones()
    {
-       return $this->createQueryBuilder('tz')
-            ->Select('tz.id,tz.name,tz.title,tz.description,(tz.country) as country_id,tz.latitude,tz.longitude')
-            ->orderBy('tz.name','ASC')
+       return $this->createQueryBuilder('z')
+            ->Select('z.id,z.name,z.title,z.description,(z.country) as country_id,z.latitude,z.longitude')
+            ->orderBy('z.name','ASC')
             ->getQuery()
             ->getResult();
    }

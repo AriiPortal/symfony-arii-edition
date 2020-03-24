@@ -1,0 +1,9 @@
+module.ACK: Acquittements
+summary.ACK: Suivi des incidents
+text.ACK: Escalade les alertes, route les messages et met à jour les instructions pour les exploitants. 
+Author: E. Angenault
+Issue:
+    state:
+        - 0:   OPEN
+        - 64:  ACK.
+        - 128: CLOSE

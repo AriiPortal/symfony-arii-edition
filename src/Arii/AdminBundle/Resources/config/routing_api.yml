@@ -1,0 +1,10 @@
+# ========================================
+# Instructions
+# ----------------------------------------
+api_Admin_instructions:
+    path:  /instructions{outputFormat}
+    defaults: { _controller: AriiAdminBundle:API\Instructions:list, outputFormat: ~ }
+
+api_Admin_job_instructions:
+    path:  /jobs/{jobName}/instructions{outputFormat}
+    defaults: { _controller: AriiAdminBundle:API\Job:instructions, jobName: ~, outputFormat: ~ }

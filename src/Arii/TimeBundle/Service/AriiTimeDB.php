@@ -11,6 +11,16 @@ class AriiTimeDB
     }
  
 /*********************************************************************
+ * Rules
+ *********************************************************************/
+    public function Rules($em) {
+
+        // On se base sur l'historique
+        $Rules = $em->getRepository("AriiTimeBundle:Rules")->findRules();
+        return $Rules;
+    }
+
+/*********************************************************************
  * Zones
  *********************************************************************/
     public function Zones($em) {

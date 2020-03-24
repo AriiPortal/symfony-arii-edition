@@ -12,6 +12,10 @@ arii_home:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp
 
+arii_default:
+    path:  /index.html
+    defaults: {_controller: AriiCoreBundle:Default:information }
+
 # ========================================
 # Arii common
 # Utilisé par tous les modules
@@ -34,7 +38,24 @@ arii_api:
 arii_api_REST:
     resource: "@AriiAPIBundle/Resources/config/routing_api.yml"
     prefix:   /api/v1
-            
+
+# ========================================
+# Autosys
+# ----------------------------------------
+arii_ATS:
+    resource: "@AriiATSBundle/Resources/config/routing.yml"
+    prefix:   /{_locale}/ats
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_ATS_API:
+    resource: "@AriiATSBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/ats
+
+arii_ATS_DB_API:
+    resource: "@AriiATSBundle/Resources/config/routing_db.yml"
+    prefix:   /api/v1/bundles/ats
+
 # ========================================
 # Core Bundle
 # ----------------------------------------
@@ -57,6 +78,10 @@ arii_Admin:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_Admin_API:
+    resource: "@AriiAdminBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/admin
+
 # ========================================
 # JOB
 # ----------------------------------------
@@ -75,6 +100,11 @@ arii_ACK:
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
+arii_ACK_API:
+    resource: "@AriiACKBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/ack
+        
+# A supprimer pour un POST
 arii_ACK_import:
     resource: "@AriiACKBundle/Resources/config/routing_import.yml"
     prefix:   /import/ack
@@ -168,6 +198,19 @@ arii_JOC:
 arii_JOC_API:
     resource: "@AriiJOCBundle/Resources/config/routing_api.yml"
     prefix:   /api/v1/bundles/joc
+
+# ========================================
+# JAPI
+# ----------------------------------------
+arii_JAPI:
+    resource: "@AriiJAPIBundle/Resources/config/routing.yml"
+    prefix:   /{_locale}/japi
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_JAPI_API:
+    resource: "@AriiJAPIBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/japi
         
 # ========================================
 # Report
@@ -185,19 +228,6 @@ arii_Report_API:
 arii_Report_import:
     resource: "@AriiReportBundle/Resources/config/routing_import.yml"
     prefix:   /import/report
-
-# ========================================
-# Autosys
-# ----------------------------------------
-arii_ATS:
-    resource: "@AriiATSBundle/Resources/config/routing.yml"
-    prefix:   /{_locale}/ats
-    requirements:
-        _locale: en|fr|es|de|cn|ar|ru|jp 
-
-arii_ATS_API:
-    resource: "@AriiATSBundle/Resources/config/routing_api.yml"
-    prefix:   /api/v1/bundles/ats
 
 # ----------------------------------------
 # Housekeeping
@@ -300,6 +330,19 @@ arii_Blockly:
         _locale: en|fr|es|de|cn|ar|ru|jp 
 
 # ========================================
+# Builder
+# ----------------------------------------
+arii_Builder:
+    resource: "@AriiBuilderBundle/Resources/config/routing.yml"
+    prefix:   /{_locale}/builder
+    requirements:
+        _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_Builder_API:
+    resource: "@AriiBuilderBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/builder
+        
+# ========================================
 # Print serveurs
 # ----------------------------------------
 arii_Print:
@@ -307,3 +350,8 @@ arii_Print:
     prefix:   /{_locale}/prt
     requirements:
         _locale: en|fr|es|de|cn|ar|ru|jp 
+
+arii_Print_API:
+    resource: "@AriiPRTBundle/Resources/config/routing_api.yml"
+    prefix:   /api/v1/bundles/prt
+        

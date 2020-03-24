@@ -2,7 +2,7 @@
 // src/Sdz/BlogBundle/Service/AriiSQL.php
  
 namespace Arii\CoreBundle\Service;
-use Arii\CoreBundle\Service\AriiSession;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AriiDate

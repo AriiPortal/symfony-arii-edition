@@ -1,41 +1,15 @@
 # --------------------------------------------------------------------------
-# Clusters
-# --------------------------------------------------------------------------
-api_JOC_clusters_list:
-    path:  /clusters
-    defaults: { _controller: AriiJOCBundle:API\Clusters:list }
-    methods: [GET]
-
-api_JOC_clusters_get:
-    path:  /clusters/{schedulerId}/members
-    defaults: { _controller: AriiJOCBundle:API\Clusters:get }
-    methods: [GET]
-
-# --------------------------------------------------------------------------
-# Instances
-# --------------------------------------------------------------------------
-api_JOC_instances_list:
-    path:  /instances
-    defaults: { _controller: AriiJOCBundle:API\Instances:list }
-    methods: [GET]
-
-api_JOC_inventory_instances_list:
-    path:  /inventory_instances
-    defaults: { _controller: AriiJOCBundle:API\Inventory\Instances:list }
-    methods: [GET]
-
-# --------------------------------------------------------------------------
-# Spoolers
+# Spooler
 # --------------------------------------------------------------------------
 api_JOC_spoolers_list:
-    path:  /spoolers
-    defaults: { _controller: AriiJOCBundle:API\Spoolers:list }
+    path:  /spoolers{outputFormat}
+    defaults: { _controller: AriiJOCBundle:API\Spoolers:list, outputFormat: ~ }
     methods: [GET]
 
-api_JOC_repos_create:
-    path:  /spoolers
-    defaults: { _controller: AriiJOCBundle:API\Spoolers:create }
-    methods: [POST]
+api_JOC_spoolers_get:
+    path:  /spoolers/{spoolerId}
+    defaults: { _controller: AriiJOCBundle:API\Spoolers:get }
+    methods: [GET]
 
 # --------------------------------------------------------------------------
 # Orders
@@ -80,4 +54,3 @@ api_JOC_runs_create:
     path:  /runs
     defaults: { _controller: AriiJOCBundle:API\Runs:create }
     methods: [POST]
-

@@ -32,10 +32,12 @@ class AppKernel extends Kernel
         new Arii\TimeBundle\AriiTimeBundle(),
         new Arii\SelfBundle\AriiSelfBundle(),
         new Arii\JOBBundle\AriiJOBBundle(),
+        new Arii\JAPIBundle\AriiJAPIBundle(),
         new Arii\ACKBundle\AriiACKBundle(),
         new Arii\PRTBundle\AriiPRTBundle(),
         new Arii\PlumbBundle\AriiPlumbBundle(),
-        new Arii\BlocklyBundle\AriiBlocklyBundle()
+        new Arii\BlocklyBundle\AriiBlocklyBundle(),
+        new Arii\BuilderBundle\AriiBuilderBundle()            
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

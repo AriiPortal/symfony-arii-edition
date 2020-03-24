@@ -10,87 +10,26 @@ use JMS\Serializer\SerializationContext;
 
 class JobsController extends Controller
 {
-    public function listAction($repoId='ats_db')
+
+    public function listAction($instanceId='ACE', $outputFormat, Request $request )
     {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();        
+        $http = $this->container->get('arii_core.http');    
+        $Accept = $http->Accept($request);
+        $Filter = $http->Filter($request);
+    
+        $state = $this->container->get('arii_ats.state');
+        $repoId = $state->getRepo($instanceId);
+        $em = $this->getDoctrine()->getManager($repoId);             
+        $Jobs = $state->Jobs($em,$Filter);
 
-        $em = $this->getDoctrine()->getManager($repoId);        
-        $state = $this->container->get('arii_ats.state2');        
-        $Jobs = $state->Jobs($em,$Filters);
-
-        $time = time();
-        switch ($Filters['outputFormat']) {
-            case 'dhtmlx':
-                $type = 'xml';
-                $dhtmlx = $this->container->get('arii_core.render'); 
-                return $dhtmlx->grid($Jobs,'alarmTime,alarm,jobName,stateGrid,status,theUser,eventComment,nb,stateTime,state,firstTime,description','state');        
-                break;
-            case 'xml':
-                $data = $this->get('jms_serializer')->serialize($Jobs, 'xml', SerializationContext::create()->setGroups(array('default')));
-                $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/xml');
-                break;
+        switch ($outputFormat==''?$Accept['outputFormat']:substr($outputFormat,1)) {
             default:
-                $data = $this->get('jms_serializer')->serialize($Jobs, 'json', SerializationContext::create()->setGroups(array('list')));
+                $data = $this->get('jms_serializer')->serialize($Jobs, 'json');
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/json');
                 break;                
         }
         return $response;
     }
-
-    public function getAction($repoId='ats_db',$eventId=-1 )
-    {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();        
-        if (isset($Filters['repoId'])) 
-            $repoId = $Filters['repoId'];        
-        
-        $em = $this->getDoctrine()->getManager($repoId);        
-        $state = $this->container->get('arii_ats.state2');        
-        list($Alarm) = $em->getRepository("AriiATSBundle:UjoAlarm")->findAlarm( $eventId );
-        
-        $autosys = $this->container->get('arii_ats.autosys');
-        
-        $xml = "<?xml version='1.0' encoding='iso-8859-1'?>";
-        $xml .= '<data>';
-        foreach(array('response','jobName') as $k) {
-            if (isset($Alarm[$k]))
-                $xml .= '<'.$k.'>'.$Alarm[$k].'</'.$k.'>';
-        }
-        $xml .= '<status>'.$autosys->Status($Alarm['status']).'</status>';
-        $xml .= "</data>\n";
-        
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml');
-        $response->setContent( $xml );
-        return $response;     
-    }
-
-    public function runsAction($repoId='ats_db',$eventId=-1 )
-    {
-        $Filters = $this->container->get('arii.filter')->getRequestFilter();        
-        if (isset($Filters['repoId'])) 
-            $repoId = $Filters['repoId'];        
-        
-        $em = $this->getDoctrine()->getManager($repoId);        
-        $state = $this->container->get('arii_ats.state2');        
-        list($Alarm) = $em->getRepository("AriiATSBundle:UjoAlarm")->findAlarm( $eventId );
-        
-        $autosys = $this->container->get('arii_ats.autosys');
-        
-        $xml = "<?xml version='1.0' encoding='iso-8859-1'?>";
-        $xml .= '<data>';
-        foreach(array('response','jobName') as $k) {
-            if (isset($Alarm[$k]))
-                $xml .= '<'.$k.'>'.$Alarm[$k].'</'.$k.'>';
-        }
-        $xml .= '<status>'.$autosys->Status($Alarm['status']).'</status>';
-        $xml .= "</data>\n";
-        
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml');
-        $response->setContent( $xml );
-        return $response;     
-    }
-    
+   
 }

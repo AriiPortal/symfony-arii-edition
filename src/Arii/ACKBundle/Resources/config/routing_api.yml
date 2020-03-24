@@ -1,0 +1,38 @@
+# ========================================
+# Instructions
+# ----------------------------------------
+api_Admin_instructions:
+    path:  /instructions{outputFormat}
+    defaults: { _controller: AriiACKBundle:API\Instructions:list, outputFormat: ~ }
+
+api_Admin_job_instructions:
+    path:  /jobs/{jobName}/instructions{outputFormat}
+    defaults: { _controller: AriiACKBundle:API\Job:instructions, jobName: ~, outputFormat: ~ }
+
+# --------------------------------------------------------------------------
+# Alerts
+# --------------------------------------------------------------------------
+api_ACK_alerts_list:
+    path:  /alerts{outputFormat}
+    defaults: { _controller: AriiACKBundle:API\Alerts:list, outputFormat: ~ }
+    methods: [GET]
+
+api_ACK_alerts_new:
+    path:  /alerts{outputFormat}
+    defaults: { _controller: AriiACKBundle:API\Alerts:new, outputFormat: ~ }
+    methods: [POST]
+
+api_ACK_alerts_get:
+    path:  /alerts/{appName}{outputFormat}
+    defaults: { _controller: AriiACKBundle:API\Alerts:get, outputFormat: ~ }
+    methods: [GET]
+
+api_ACK_alerts_update:
+    path:  /alerts/{appName}
+    defaults: { _controller: AriiACKBundle:API\Alerts:update }
+    methods: [PUT]
+    
+api_ACK_alerts_delete:
+    path:  /alerts/{appName}
+    defaults: { _controller: AriiACKBundle:API\Alerts:delete }
+    methods: [DELETE]

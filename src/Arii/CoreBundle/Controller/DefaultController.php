@@ -26,6 +26,12 @@ class DefaultController extends Controller
         return $this->redirect($this->generateUrl('arii_home'));
     }
 
+    public function informationAction()
+    {   
+        // simple page
+        return $this->render('AriiCoreBundle:Default:readme.html.twig');
+    }
+    
     // On passe les modules dans l'index pour construire la page
     public function indexAction()
     {           

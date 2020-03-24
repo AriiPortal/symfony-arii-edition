@@ -1,0 +1,71 @@
+# --------------------------------------------------------------------------
+# Instances
+# --------------------------------------------------------------------------
+api_JAPI_instance_get:
+    path:  /instances/{instanceId}
+    defaults: { _controller: AriiJAPIBundle:API\Instance:get, outputFormat: ~  }
+    methods: [GET]
+
+api_JAPI_instance_put:
+    path:  /instances/{instanceId}
+    defaults: { _controller: AriiJAPIBundle:API\Instance:put, outputFormat: ~  }
+    methods: [PUT]
+
+# --------------------------------------------------------------------------
+# Orders
+# --------------------------------------------------------------------------
+api_JAPI_orders_list:
+    path:  /instances/{instanceId}/orders
+    defaults: { _controller: AriiJAPIBundle:API\Orders:list, instanceId: "localhost:44444", outputFormat: ~  }
+    methods: [GET]
+
+api_JAPI_orders_post:
+    path:  /instances/{instanceId}/orders
+    defaults: { _controller: AriiJAPIBundle:API\Orders:post, instanceId: "localhost:44444", outputFormat: ~  }
+    methods: [POST]
+
+api_JAPI_order_get:
+    path:  /instances/{instanceId}/orders/{orderId}
+    defaults: { _controller: AriiJAPIBundle:API\Order:get, instanceId: "localhost:44444", orderId: ~ , outputFormat: ~  }
+    methods: [GET]
+
+api_JAPI_order_put:
+    path:  /instances/{instanceId}/orders/{orderId}
+    defaults: { _controller: AriiJAPIBundle:API\Order:put, instanceId: "localhost:44444", orderId: ~ , outputFormat: ~  }
+    methods: [PUT]
+
+api_JAPI_order_delete:
+    path:  /instances/{instanceId}/orders/{orderId}
+    defaults: { _controller: AriiJAPIBundle:API\Order:delete, instanceId: "localhost:44444", orderId: ~ , outputFormat: ~  }
+    methods: [DELETE]
+
+api_JAPI_orderlog_get:
+    path:  /instances/{instanceId}/orders/{orderName}/logs/{logId}{outputFormat}
+    defaults: { _controller: AriiJAPIBundle:API\Order:log, instanceId: "localhost:44444", orderName: ~ , logId: ~ , outputFormat: ~  }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Chains
+# --------------------------------------------------------------------------
+api_JAPI_chains_list:
+    path:  /instances/{instanceId}/chains
+    defaults: { _controller: AriiJAPIBundle:API\Chains:list, instanceId: "localhost:44444", outputFormat: ~  }
+    methods: [GET]
+
+api_JAPI_chain_get:
+    path:  /instances/{instanceId}/chains/{chainName}
+    defaults: { _controller: AriiJAPIBundle:API\Chain:get, instanceId: "localhost:44444", chainName: ~, outputFormat: ~  }
+    methods: [GET]
+
+api_JAPI_chain_put:
+    path:  /instances/{instanceId}/chains/{chainName}
+    defaults: { _controller: AriiJAPIBundle:API\Chain:put, instanceId: "localhost:44444", chainName: ~, outputFormat: ~  }
+    methods: [PUT]
+
+# --------------------------------------------------------------------------
+# Remote schedulers
+# --------------------------------------------------------------------------
+api_JAPI_remoteschedulers_list:
+    path:  /instances/{instanceId}/remoteSchedulers
+    defaults: { _controller: AriiJAPIBundle:API\RemoteSchedulers:list, instanceId: "localhost:44444", outputFormat: ~  }
+    methods: [GET]

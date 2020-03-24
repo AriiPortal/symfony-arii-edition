@@ -26,7 +26,7 @@ class DeliveriesRepository extends EntityRepository
         ->leftjoin('AriiCoreBundle:Connection','s',\Doctrine\ORM\Query\Expr\Join::WITH,'o.source = s.id')                
         ->leftjoin('AriiCoreBundle:Connection','t',\Doctrine\ORM\Query\Expr\Join::WITH,'o.target = t.id')                
         ->orderBy('e.start_time','desc')
-        ->setMaxResults(1000);
+        ->setMaxResults(100);
         # Filtrage
         if (isset($Filter['source_host']))
             $q->andWhere('s.host = :sourceHost')
@@ -37,7 +37,7 @@ class DeliveriesRepository extends EntityRepository
         return $q->getQuery()->getResult();
     }
 
-    # Echenge par transfers
+    # Echange par transfers
     public function findFlows($Filter=[]) {
         $q = $this->createQueryBuilder('e')
         ->select( 'p.name as partner_name,'

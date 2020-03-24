@@ -1,0 +1,208 @@
+# --------------------------------------------------------------------------
+# Repos
+# --------------------------------------------------------------------------
+api_ATSDB_repos:
+    path:  /repos
+    defaults: { _controller: AriiATSBundle:APIDB\Repos:list }
+
+api_ATSDB_repos_get:
+    path:  /repos/{repoId}{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Repo:get, repoId: ats_db, outputFormat: ~ }
+    methods: [GET]
+    
+# --------------------------------------------------------------------------
+# Actions
+# --------------------------------------------------------------------------
+api_ATSDB_actions_list:
+    path:  /repos/{repoId}/actions
+    defaults: { _controller: AriiATSBundle:APIDB\Actions:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Agents
+# --------------------------------------------------------------------------
+api_ATSDB_agents_list:
+    path:  /repos/{repoId}/agents
+    defaults: { _controller: AriiATSBundle:APIDB\Agents:list, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Alarms
+# --------------------------------------------------------------------------
+api_ATSDB_alarms_list:
+    path:  /repos/{repoId}/alarms
+    defaults: { _controller: AriiATSBundle:APIDB\Alarms:list, repoId: ats_db }
+
+api_ATSDB_alarms_infos:
+    path:  /repos/{repoId}/alarms/infos
+    defaults: { _controller: AriiATSBundle:APIDB\Alarms:infos, repoId: ats_db }
+
+api_ATSDB_alarms_get:
+    path:  /repos/{repoId}/alarms/{eventId}
+    defaults: { _controller: AriiATSBundle:APIDB\Alarms:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Calendars
+# --------------------------------------------------------------------------
+api_ATSDB_calendars_list:
+    path:  /repos/{repoId}/calendars{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Calendars:list, repoId: ats_db, outputFormat: ~  }
+    methods: [GET]
+
+api_ATSDB_repos_post:
+    path:  /repos/{repoId}{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Calendars:create, repoId: ats_db, outputFormat: ~ }
+    methods: [POST]
+
+api_ATSDB_calendar_get:
+    path:  /repos/{repoId}/calendars{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Calendar:get, repoId: ats_db, outputFormat: ~  }
+    methods: [GET]
+
+api_ATSDB_calendar_days_list:
+    path:  /repos/{repoId}/calendars/{calendarName}/days{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Calendar:getDays, repoId: ats_db, calendarName: ~, outputFormat: ~  }
+    methods: [GET]
+
+api_ATSDB_calendar_jobs_list:
+    path:  /repos/{repoId}/calendars/{calendarName}/jobs{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Calendar:getJobs, repoId: ats_db, calendarName: ~, outputFormat: ~  }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
+# Days
+# --------------------------------------------------------------------------
+api_ATSDB_days_list:
+    path:  /repos/{repoId}/days{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Calendars:listDays, repoId: ats_db, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Changes
+# --------------------------------------------------------------------------
+api_ATSDB_changes_list:
+    path:  /repos/{repoId}/changes
+    defaults: { _controller: AriiATSBundle:APIDB\Changes:list, repoId: ats_db }
+
+api_ATSDB_changes_get:
+    path:  /repos/{repoId}/changes/{auditId}
+    defaults: { _controller: AriiATSBundle:APIDB\Changes:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Boxes
+# --------------------------------------------------------------------------
+api_ATSDB_boxes_list:
+    path:  /repos/{repoId}/boxes{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Boxes:list, repoId: ats_db, outputFormat: ~  }
+
+api_ATSDB_boxes_get:
+    path:  /repos/{repoId}/boxes/{jobId}
+    defaults: { _controller: AriiATSBundle:APIDB\Boxes:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Box
+# --------------------------------------------------------------------------
+api_ATSDB_box_status:
+    path:  /repos/{repoId}/boxes/{jobId}/status{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Box:status, repoId: ats_db, outputFormat: ~ }
+
+api_ATSDB_box_googleGantt:
+    path:  /repos/{repoId}/boxes/{jobId}/gantt{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Box:googleGantt, repoId: ats_db, outputFormat: ~ }
+
+# --------------------------------------------------------------------------
+# Jobs
+# --------------------------------------------------------------------------
+api_ATSDB_jobs_list:
+    path:  /repos/{repoId}/jobs{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Jobs:list, repoId: ats_db, outputFormat: ~ }
+
+api_ATSDB_jobs_get:
+    path:  /repos/{repoId}/jobs/{jobId}{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Jobs:get, repoId: ats_db, outputFormat: ~ }
+
+# --------------------------------------------------------------------------
+# Job
+# --------------------------------------------------------------------------
+api_ATSDB_job_runs:
+    path:  /repos/{repoId}/jobs/{jobId}/runs{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Job:runs, repoId: ats_db, outputFormat: ~ }
+
+api_ATSDB_job_status:
+    path:  /repos/{repoId}/jobs/{jobId}/status{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Job:status, repoId: ats_db, jobId: ~, outputFormat: .json }
+
+api_ATSDB_job_graphs:
+    path:  /repos/{repoId}/jobs/{jobId}/graphs{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Job:graphs, repoId: ats_db, outputFormat: ~ }
+
+api_ATSDB_job_graphs_generate:
+    path:  /repos/{repoId}/jobs/{jobId}/graphs/{graphId}/generate{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Job:generate, repoId: ats_db, jobId: 1, graphId: 1, outputFormat: ~ }
+
+# --------------------------------------------------------------------------
+# Processes
+# --------------------------------------------------------------------------
+api_ATSDB_processes_list:
+    path:  /repos/{repoId}/processes{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Processes:list, repoId: ats_db, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Queues
+# --------------------------------------------------------------------------
+api_ATSDB_queues_list:
+    path:  /repos/{repoId}/queues{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Queues:list, repoId: ats_db, outputFormat: ~  }
+
+api_ATSDB_queues_get:
+    path:  /repos/{repoId}/queues/{queueName}
+    defaults: { _controller: AriiATSBundle:APIDB\Queues:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# Runs
+# --------------------------------------------------------------------------
+api_ATSDB_runs_list:
+    path:  /repos/{repoId}/runs{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Runs:list, repoId: ats_db, outputFormat: ~ }
+
+api_ATSDB_runs_get:
+    path:  /repos/{repoId}/runs/{runId}/get
+    defaults: { _controller: AriiATSBundle:APIDB\Runs:get, repoId: ats_db }
+
+# --------------------------------------------------------------------------
+# WaitQueues
+# --------------------------------------------------------------------------
+api_ATSDB_waitqueues_list:
+    path:  /repos/{repoId}/wait_queues{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\WaitQueues:list, repoId: ats_db, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Schedulers
+# --------------------------------------------------------------------------
+api_ATSDB_schedulers_list:
+    path:  /repos/{repoId}/schedulers{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Schedulers:list, repoId: ats_db, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# AppServers
+# --------------------------------------------------------------------------
+api_ATSDB_appservers_list:
+    path:  /repos/{repoId}/appservers{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\AppServers:list, repoId: ats_db, outputFormat: ~  }
+
+# --------------------------------------------------------------------------
+# Events
+# --------------------------------------------------------------------------
+api_ATSDB_all_events_list:
+    path:  /repos/{repoId}/all_events{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Events:listAll, repoId: ats_db, outputFormat: ~  }
+
+api_ATSDB_machine_events_list:
+    path:  /repos/{repoId}/machine_events{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Events:listMachine, repoId: ats_db, outputFormat: ~  }
+
+api_ATSDB_job_events_list:
+    path:  /repos/{repoId}/job_events{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Events:listJob, repoId: ats_db, outputFormat: ~  }
+
+api_ATSDB_server_events_list:
+    path:  /repos/{repoId}/server_events{outputFormat}
+    defaults: { _controller: AriiATSBundle:APIDB\Events:listServer, repoId: ats_db, outputFormat: ~  }
+

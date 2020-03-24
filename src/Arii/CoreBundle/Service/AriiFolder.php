@@ -10,13 +10,13 @@ class AriiFolder {
         $this->session = $session;
     }
 
-    public function FilesList($basedir,$dir='',$Ext=array(),$Files=array() ) {
+    public function Files($basedir,$dir='',$Ext=array(),$Files=array() ) {
         if ($dh = @opendir($basedir.'/'.$dir)) {
             while (($file = readdir($dh)) !== false) {
                 if (substr($file,0,1) != '.') {
                     $sub = $basedir.'/'.$dir.'/'.$file;  
                     if (is_dir($sub)) {
-                        $Files = $this->FilesList($basedir,"$dir/$file",$Ext,$Files);
+                        $Files = $this->Files($basedir,"$dir/$file",$Ext,$Files);
                     }
                     else {
                         if ($this->CheckExt($file,$Ext)==1) {

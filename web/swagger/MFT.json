@@ -46,11 +46,20 @@
             "type" : "string",
             "default": "prod"
         },
+        "startTime" : {
+            "name" : "startTime",
+            "in" : "query",
+            "description" : "Start time.",
+            "type" : "date"
+        },
         "status" : {
             "name" : "status",
             "in" : "query",
             "description" : "Filtering by status",
-            "type" : "string"
+            "type" : "array",
+            "items" : {
+                "enum": [ "RUNNING", "STARTING", "SUCCESS", "FAILURE", "TERMINATED", "ON_ICE", "INACTIVE", "ACTIVATED", "RESTART", "ON_HOLD", "QUEUE_WAIT", "WAIT_REPLY", "PEND_MACH", "RES_WAIT", "NO_EXE" ]                
+            }
         },
         "source_host" : {
             "name" : "source_host",
@@ -666,6 +675,47 @@
                                         "$ref" : "#/definitions/run"
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transmissions" : {
+            "get" : {
+                "summary" : "Get the list of transmissions",
+                "tags" : [ "Transmissions" ],
+                "parameters" : [
+                    {
+                        "name" : "limit",
+                        "in" : "query",
+                        "required" : false,
+                        "default" : 100,
+                        "type" : "integer"
+                    },
+                    {
+                        "name" : "sourceFile",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "string"
+                    },
+                    {
+                        "$ref" : "#/parameters/status"
+                    },
+                    {
+                        "$ref" : "#/parameters/startTime"
+                    },
+                    {
+                        "$ref" : "#/parameters/endTime"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/transfer"
                             }
                         }
                     }

@@ -25,23 +25,23 @@ api_Core_session_get:
 # Referentiels
 # --------------------------------------------------------------------------
 api_Core_repos_list:
-    path:  /repos
-    defaults: { _controller: AriiCoreBundle:API\Repos:list }
+    path:  /repos{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Repos:list, outputFormat: ~ }
     methods: [GET]
 
 api_Core_repos_get:
-    path:  /repos/{repoId}
-    defaults: { _controller: AriiCoreBundle:API\Repos:get, repoId: default }
+    path:  /repos/{repoId}{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Repos:get, repoId: default, outputFormat: ~  }
     methods: [GET]
 
 api_Core_repos_create:
-    path:  /repos
-    defaults: { _controller: AriiCoreBundle:API\Repos:create }
+    path:  /repos{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Repos:create, outputFormat: ~  }
     methods: [POST]
 
 api_Core_repos_update:
-    path:  /repos/{repoId}
-    defaults: { _controller: AriiCoreBundle:API\Repos:update, repoId: ojs_db }
+    path:  /repos/{repoId}{outputFormat}
+    defaults: { _controller: AriiCoreBundle:API\Repos:update, repoId: ojs_db, outputFormat: ~  }
     methods: [PUT,PATCH]
 
 # --------------------------------------------------------------------------

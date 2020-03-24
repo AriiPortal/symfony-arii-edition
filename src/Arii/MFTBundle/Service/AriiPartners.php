@@ -69,6 +69,8 @@ class AriiPartners
         $Connections = [];
         foreach ($Operations as $k=>$Operation) {
             $sourceId = $Operation['source_id'];
+            if (is_null($sourceId))
+                continue;
             if (isset($Connections[$sourceId]))
                 $Source = $Connections[$sourceId];
             else 

@@ -7,11 +7,19 @@ api_Time_code_list:
     methods: [GET]
 
 # --------------------------------------------------------------------------
+# Rules
+# --------------------------------------------------------------------------
+api_Time_rules_list:
+    path:  /rules{outputFormat}
+    defaults: { _controller: AriiTimeBundle:API\Rules:list, outputFormat: ~ }
+    methods: [GET]
+
+# --------------------------------------------------------------------------
 # Zones
 # --------------------------------------------------------------------------
 api_Time_zones_list:
-    path:  /zones
-    defaults: { _controller: AriiTimeBundle:API\Zones:list }
+    path:  /zones{outputFormat}
+    defaults: { _controller: AriiTimeBundle:API\Zones:list, outputFormat: ~ }
     methods: [GET]
 
 api_Time_zones_create:

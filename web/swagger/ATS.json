@@ -6,23 +6,30 @@
         "title" : "Autosys API",
         "contact" : {
             "name" : "Arii",
-            "url" : "https://localhost/api/v1/bundles/ats",
+            "url" : "https://devc8138fkl/api/v1/bundles/ats",
             "email" : "arii@sos-paris.com"
         }
     },
-    "basePath": "/api/v1/bundles/ats",
-    "schemes": [
-        "http"
-    ],
-    "consumes" : [ 
-        "application/json",
-        "application/xml"
-    ],
+    "host": "devc8138fkl/app_dev.php/api/v1/bundles/ats",  
+    "consumes" : [ "application/json" ],
     "produces" : [ 
-        "application/json",
-        "application/xml"
+        "application/json"
     ],
     "parameters" : {
+        
+    "_COMMENT_0" : "Parameters in HEADER",
+        "Accept-Language" : {
+            "name": "Accept-Language",
+            "in": "header",
+            "required": false,
+            "description" : "Language",
+            "type" : "array",
+            "items" : {
+                "enum": [ "EN", "FR" ]                
+            }
+            
+        },
+    "_COMMENT_1" : "Parameters in PATH",
         "alarmId" : {
             "name" : "alarmId",
             "in" : "path",
@@ -31,6 +38,21 @@
             "description": "Id for an alarm.",
             "default": "1"
         },
+        "auditId" : {
+            "name" : "auditId",
+            "in" : "path",
+            "required" : true,
+            "type" : "integer",
+            "description": "Id for an event.",
+            "default": "1"
+        },
+        "calendarName" : {
+            "name" : "calendarName",
+            "in" : "path",
+            "type" : "string",
+            "required" : true,
+            "description": "Name of the calendar."
+        },
         "graphId" : {
             "name" : "graphId",
             "in" : "path",
@@ -38,6 +60,14 @@
             "type" : "string",
             "description": "Id for a graph given by a list (Graph name is allowed).",
             "default": "1"
+        },
+        "instanceName" : {
+            "name" : "instanceName",
+            "in" : "path",
+            "required" : true,
+            "type" : "string",
+            "description": "Name of Autosys instance",
+            "default": "VA1"
         },
         "jobId" : {
             "name" : "jobId",
@@ -54,16 +84,75 @@
             "type" : "string",
             "default" : "ats_db"
         },
-        "job_name" : {
-            "name" : "job_name",
+    "_COMMENT_2" : "Parameters in QUERY",        
+        "domainName" : {
+            "name" : "domainName",
+            "in" : "query",
+            "type" : "string",
+            "description": "Domain of the user."
+        },
+        "endTime" : {
+            "name" : "endTime",
+            "in" : "query",
+            "description" : "End time.",
+            "type" : "date"
+        },
+        "excludeCalendar" : {
+            "name" : "excludeCalendar",
+            "in" : "query",
+            "type" : "string",
+            "description": "Name of the calendar."
+        },
+        "machineEvent" : {
+            "name" : "eventType",
+            "in" : "query",
+            "description" : "Filtering by type of event.",
+            "type" : "array",
+            "items" : {
+                "enum": [ "MACH_ONLINE", "MACH_OFFLINE", "MACH_PROVISION" ]                
+            }
+        },
+        "minDate": {
+            "name": "minDate",
+            "in": "query",
+            "required": false,
+            "description" : "First date contained in the calendar."
+        },
+        "maxDate": {
+            "name": "maxDate",
+            "in": "query",
+            "required": false,
+            "description" : "Last date contained in the calendar."
+        },        
+        "isActive" : {
+            "name" : "isActive",
+            "in" : "query",
+            "required" : true,
+            "type" : "string",
+            "description": ""
+        },
+        "runCalendar" : {
+            "name" : "runCalendar",
+            "in" : "query",
+            "type" : "string",
+            "description": "Name of the calendar."
+        },
+        "jobName" : {
+            "name" : "jobName",
             "in" : "query",
             "description" : "Filtering by job name\n% is allowed\n'ALL' allows to get all jobs",
             "type" : "string"
         },
-        "box_name" : {
-            "name" : "box_name",
+        "boxName" : {
+            "name" : "boxName",
             "in" : "query",
             "description" : "Filtering by jobs inside a box",
+            "type" : "string"
+        },
+        "machineName" : {
+            "name" : "machineName",
+            "in" : "query",
+            "description" : "Name of the machine (physic or virtuel)",
             "type" : "string"
         },
         "recursive" : {
@@ -72,14 +161,974 @@
             "description" : "Deepth of the search",
             "type" : "string"
         },
+        "startTime" : {
+            "name" : "startTime",
+            "in" : "query",
+            "description" : "Start time.",
+            "type" : "date"
+        },
         "status" : {
             "name" : "status",
             "in" : "query",
-            "description" : "Filtering by status,\nAvailable status are RUNNING, STARTING, SUCCESS, FAILURE, TERMINATED, ON_ICE, INACTIVE, ACTIVATED, RESTART, ON_HOLD, QUEUE_WAIT, WAIT_REPLY, PEND_MACH, RES_WAIT, NO_EXEC\nMultiplALLe status can be provided with the pipe (|) as separator",
+            "description" : "Filtering by status",
+            "type" : "array",
+            "items" : {
+                "enum": [ "RUNNING", "STARTING", "SUCCESS", "FAILURE", "TERMINATED", "ON_ICE", "INACTIVE", "ACTIVATED", "RESTART", "ON_HOLD", "QUEUE_WAIT", "WAIT_REPLY", "PEND_MACH", "RES_WAIT", "NO_EXE" ]                
+            }
+        },
+        "userName" : {
+            "name" : "userName",
+            "in" : "query",
+            "description" : "name of the user defined in the database.",
             "type" : "string"
         }
     },
     "paths" : {
+        "/instances" : {
+            "get" : {
+                "summary" : "get a list of defined autosys instances",
+                "tags" : [ "Instances" ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/instance"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No Content"
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }                
+                }
+            }
+        },
+        "/instances/{instanceName}/alarmStates" : {
+            "get" : {
+                "summary" : "give an overview on alarms for each status.",
+                "tags" : [ "Alarms" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "string"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/alarm"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No alarm on the alert manager."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/alarmStates/{alarmState}" : {
+            "get" : {
+                "summary" : "give an overview on alarms for a specifi state.",
+                "tags" : [ "Alarms" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "string"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/alarm"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No alarm on the alert manager."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/alarms" : {
+            "get" : {
+                "summary" : "get a list of alarms",
+                "tags" : [ "Alarms" ],
+                "parameters" : [
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "string"
+                    },
+                    {
+                        "name" : "alarmTime",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "datetime"
+                    },
+                    {
+                        "name" : "state",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "array",
+                        "items" : {
+                            "enum": [ "OPEN", "ACKNOWLEDGED", "CLOSED" ]
+                        }
+                    }                     
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/alarm"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No Content"
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/status" : {
+            "get" : {
+                "summary" : "get the list of status",
+                "tags" : [ "Status" ],
+                "produces" : [ 
+                    "application/json"
+                ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "$ref" : "#/parameters/jobName"
+                    },
+                    {
+                        "$ref" : "#/parameters/status"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "An array of the last status.",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/status"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No Content."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/boxes/{boxName}/jobs" : {
+            "get" : {
+                "summary" : "get a list of jobs inside the box",
+                "tags" : [ "Boxes" ],
+                "produces": [ 
+                    "application/json",
+                    "text/vnd.graphviz",
+                    "image/png",
+                    "image/svg+xml",                    
+                    "text/cmap"
+                ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "boxName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    },
+                    {
+                        "name" : "dependencies",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "integer",
+                        "default" : 1
+                    },
+                    {
+                        "name" : "depth",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "integer",
+                        "default" : 99
+                    }        
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs" : {
+            "get" : {
+                "summary" : "get a list of jobs",
+                "tags" : [ "Jobs" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "string"
+                    },
+                    {
+                        "name" : "status",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "array",
+                        "items" : {
+                            "enum": [ "RUNNING", "STARTING", "SUCCESS", "FAILURE", "TERMINATED", "ON_ICE", "INACTIVE", "ACTIVATED", "RESTART", "ON_HOLD", "QUEUE_WAIT", "WAIT_REPLY", "PEND_MACH", "RES_WAIT", "NO_EXE" ]                
+                        }                    },
+                    {
+                        "name" : "jobType",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "array",
+                        "items" : {
+                            "enum": [ "CMD", "BOX", "FW" ]                
+                        }
+                    },
+                    {
+                        "name" : "hasOverride",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "boolean"
+                    }        
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/audit" : {
+            "get" : {
+                "summary" : "get the audit of the job",
+                "tags" : [ "Job" ],
+                "produces": [ "text/plain" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/code" : {
+            "get" : {
+                "summary" : "get the definition of the job",
+                "tags" : [ "Job" ],
+                "produces": [ "text/plain" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/detail" : {
+            "get" : {
+                "summary" : "get the detail of the run",
+                "tags" : [ "Job" ],
+                "produces": [ "text/plain" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    },
+                    {
+                        "name" : "runNum",
+                        "in" : "query",
+                        "required" : true,
+                        "type" : "integer"
+                    }
+                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/report" : {
+            "get" : {
+                "summary" : "get the report of the job",
+                "tags" : [ "Job" ],
+                "produces": [ "text/plain" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/runs" : {
+            "get" : {
+                "summary" : "get the last runs of the job",
+                "tags" : [ "Job" ],
+                "produces": [ "application/json" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/runtimes" : {
+            "get" : {
+                "summary" : "get the duration of the executions",
+                "tags" : [ "Job" ],
+                "produces": [ "application/json", "image/png" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/status" : {
+            "get" : {
+                "summary" : "get the current status of the job",
+                "tags" : [ "Job" ],
+                "produces": [ "application/json" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/jobs/{jobName}/logs/{logType}" : {
+            "get" : {
+                "summary" : "get the report of the job",
+                "tags" : [ "Job" ],
+                "produces": [ "text/plain" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "jobName",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    },
+                    {
+                        "name" : "logType",
+                        "in" : "path",
+                        "required" : true,
+                        "type" : "string"
+                    },
+                    {
+                        "name" : "runNum",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "integer"
+                    },
+                    {
+                        "name" : "nTry",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "integer"
+                    }
+
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/job"
+                            }
+                        }
+                    }        
+                }
+            }
+        },
+        "/instances/{instanceName}/users" : {
+            "get" : {
+                "summary" : "get a list of users",
+                "tags" : [ "Users" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    }       
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/user"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No user defined in the database."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/machines" : {
+            "get" : {
+                "summary" : "get a list of machines",
+                "tags" : [ "Machines" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    }      
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/machine"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No machine defined in the database."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/calendars" : {
+            "get" : {
+                "summary" : "get a list of calendars",
+                "tags" : [ "Calendars" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    }    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/calendar"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No calendar defined in the database."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }
+                }
+            }
+        },
+        "/instances/{instanceName}/calendars/{calendarName}/days" : {
+            "get" : {
+                "summary" : "get a list of days for a calendar",
+                "tags" : [ "Calendars" ],
+                "produces": [ "application/json" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/Accept-Language"
+                    },
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "$ref" : "#/parameters/calendarName"
+                    },
+                    {
+                        "$ref" : "#/parameters/minDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/maxDate"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "$ref" : "#/definitions/day"
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No days defined in the the calendar for this range."
+                    },
+                    "404" : {
+                        "description" : "The calendar does not exist.",
+                        "schema" : {
+                            "$ref" : "#/errors/CalendarNotFound"
+                        }
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }     
+                }
+            }
+        },
+        "/instances/{instanceName}/calendars/{calendarName}/jobs" : {
+            "get" : {
+                "summary" : "get a list of jobs using a calendar",
+                "tags" : [ "Calendars" ],
+                "produces": [ "application/json" ],
+                "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/Accept-Language"
+                    },
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "$ref" : "#/parameters/calendarName"
+                    }        
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "jobName" : {
+                                        "type" : "string",
+                                        "description" : "Name of the job using the calendar."
+                                    },
+                                    "runCalendar" : {
+                                        "type" : "string",
+                                        "description" : "Name of the calendar with dates for running job."
+                                    },
+                                    "excludeCalendar" : {
+                                        "type" : "string",
+                                        "description" : "Name of the calendar with excluding dates.",
+                                        "example": "holydays"
+                                    },
+                                    "nextStart" : {
+                                        "type" : "string",
+                                        "format": "date-time",
+                                        "description" : "Date of the next start."
+                                    },
+                                    "useCalendar" : {
+                                        "type" : "string",
+                                        "description" : "How the job uses the calendar (run or exclude)",
+                                        "example": "exclude"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No days defined in the the calendar for this range."
+                    },
+                    "404" : {
+                        "description" : "The calendar does not exist.",
+                        "schema" : {
+                            "$ref" : "#/errors/CalendarNotFound"
+                        }
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }     
+                }
+            }
+        },
+        "/instances/{instanceName}/extended_calendars" : {
+            "get" : {
+                "summary" : "get a list of extended calendar definitions.",
+                "tags" : [ "Calendars" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "name" : "hasEmptyConditions",
+                        "in" : "query",
+                        "required" : false,
+                        "description": "If this field is empty, an error must be raised.",
+                        "type" : "boolean",
+                        "default": false
+                    }                 
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "calendarName" : {
+                                        "type" : "string",
+                                        "description" : "Name of the calendar",
+                                        "example": "holydays"
+                                    },
+                                    "dateConditions" : {
+                                        "type" : "string",
+                                        "description" : "Rule to apply for calculating a date.",
+                                        "example": "MON#3"
+                                    },
+                                    "holidayCalendar" : {
+                                        "type" : "string",
+                                        "format": "string",
+                                        "description" : "Name of the calendar containing holydays."
+                                    },
+                                    "dateAdjustment" : {
+                                        "type" : "string",
+                                        "format": "date-time",
+                                        "description" : "(Try to offer a more understandable interface)"
+                                    },
+                                    "holidayAction" : {
+                                        "type" : "string",
+                                        "description" : "(Try to offer a more understandable interface)",
+                                        "example": true
+                                    },
+                                    "nonHolidayAction" : {
+                                        "type" : "boolean",
+                                        "description" : "(Try to offer a more understandable interface)",
+                                        "example": true
+                                    },
+                                    "workDays" : {
+                                        "type" : "string",
+                                        "description" : "(Try to offer a more understandable interface)",
+                                        "example": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No days defined in the the calendar for this range."
+                    },
+                    "404" : {
+                        "description" : "The calendar does not exist.",
+                        "schema" : {
+                            "$ref" : "#/errors/CalendarNotFound"
+                        }
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }                         
+                }
+            }
+        },
+        "/instances/{instanceName}/audit" : {
+            "get" : {
+                "summary" : "get a list of extended calendars",
+                "tags" : [ "Audit" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "$ref" : "#/parameters/jobName"
+                    },
+                    {
+                        "name" : "eventType",
+                        "in" : "query",
+                        "required" : false,
+                        "type" : "array",
+                        "items" : {
+                            "enum": [ "Calendar", "Job", "Machine", "Override", "Sendevent"  ]                
+                        }
+                    },
+                    {
+                        "$ref" : "#/parameters/minDate"
+                    },
+                    {
+                        "$ref" : "#/parameters/maxDate"
+                    }                    
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "auditId" : {
+                                        "type" : "integer",
+                                        "description" : "Name of the job using the calendar."
+                                    },
+                                    "entity" : {
+                                        "type" : "string",
+                                        "description" : "User acting the change.",
+                                        "example": "autosys@vaudoise"
+                                    },
+                                    "eventTime" : {
+                                        "type" : "string",
+                                        "format": "date-time",
+                                        "description" : "Time of the event"
+                                    },
+                                    "eventType" : {
+                                        "type" : "string",
+                                        "description" : "Type of event (Job, Machine, Calendar, Override)",
+                                        "example": "SendEvent"
+                                    },
+                                    "seqNo" : {
+                                        "type" : "integer",
+                                        "description" : "Location of this information in the message",
+                                        "example": 2
+                                    },
+                                    "attribute" : {
+                                        "type" : "string",
+                                        "description" : "Type of object",
+                                        "example": "job_name"
+                                    },
+                                    "value" : {
+                                        "type" : "string",
+                                        "description" : "Value of the attribute.",
+                                        "example": "JOBNAME"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "204" : {
+                        "description" : "No change found."
+                    },
+                    "500" : {
+                        "description" : "Unexpected error."
+                    }                    
+                }
+            }
+        },
+        "/instances/{instanceName}/audit/{auditId}" : {
+            "get" : {
+                "summary" : "get a list of changes for jobs",
+                "tags" : [ "Audit" ],
+                "produces": [ "application/json" ],
+                    "parameters" : [ 
+                    {
+                        "$ref" : "#/parameters/instanceName"
+                    },
+                    {
+                        "$ref" : "#/parameters/auditId"
+                    }
+                ],
+                "responses" : {
+                    "200" : {
+                        "description" : "OK",
+                        "schema" : {
+                            "type" : "array",
+                            "items" : {
+                                "type" : "object",
+                                "properties" : {
+                                    "seqNo" : {
+                                        "type" : "string",
+                                        "description" : "Name of the job using the calendar."
+                                    },
+                                    "attribute" : {
+                                        "type" : "string",
+                                        "description" : "Name of the calendar with dates for running job."
+                                    },
+                                    "value" : {
+                                        "type" : "string",
+                                        "description" : "Name of the calendar with excluding dates.",
+                                        "example": "holydays"
+                                    },
+                                    "isEdit" : {
+                                        "type" : "string",
+                                        "description" : "If true, this line has changed",
+                                        "example": "exclude"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/repos" : {
             "get" : {
                 "summary" : "get a list of all repos",
@@ -126,10 +1175,10 @@
                 }
             }
         },        
-        "/repos/{repoId}/alarms" : {
+        "/repos/{repoId}" : {
             "get" : {
-                "summary" : "get a list of alarms",
-                "tags" : [ "Alarms" ],
+                "summary" : "Get the configuration of the instance.",
+                "tags" : [ "Repos" ],
                 "parameters" : [ {
                     "$ref" : "#/parameters/repoId"
                 } ],
@@ -139,334 +1188,52 @@
                         "schema" : {
                             "type" : "array",
                             "items" : {
-                                "$ref" : "#/definitions/alarm"
+                                "$ref" : "#/definitions/alamode"
                             }
                         }
                     }
                 }
             }
-        }, 
-        "/repos/{repoId}/alarms/{alarmId}" : {
-            "get" : {
-                "summary" : "get an alarm",
-                "tags" : [ "Alarms" ],
-                "parameters" : [ {
-                    "$ref" : "#/parameters/repoId"
+        }        
+    },
+    "errors" : {
+        "CalendarNotFound": {
+            "type" : "object",
+            "properties" : {
+                "code" : {
+                    "type" : "string",
+                    "description" : "HTTP error code",
+                    "example": "HTTP_NOT_FOUND"
                 },
-                {
-                    "$ref" : "#/parameters/alarmId"
-
-                } ],
-                "responses" : {
-                    "200" : {
-                        "description" : "OK",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/alarm"
-                            }
-                        }
-                    }
-                }
-            }
-        }, 
-        "/repos/{repoId}/boxes" : {
-            "get" : {
-                "summary" : "get a list of the last executions",
-                "tags" : [ "Boxes" ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/jobId"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the last executions.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/job"
-                            }
-                        }
-                    }
-                }
-            }
-        }, 
-        "/repos/{repoId}/boxes/{jobId}/status" : {
-            "get" : {
-                "summary" : "get a list of status of the jobs in a box",
-                "tags" : [ "Boxes" ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/jobId"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of status",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/status"
-                            }
-                        }
-                    }
-                }
-            }
-        }, 
-        "/repos/{repoId}/jobs" : {
-            "get" : {
-                "summary" : "get a list of all jobs",
-                "tags" : [ "Jobs" ],
-                "parameters" : [ {
-                    "$ref" : "#/parameters/repoId"
+                "message" : {
+                    "type" : "string",
+                    "description" : "Error message",
+                    "example": "This calendar does not exist."
                 },
-                {
-                    "$ref" : "#/parameters/job_name"
-                },
-                {
-                    "$ref" : "#/parameters/status"
-                }
-            ],
-            "responses" : {
-              "200" : {
-                "description" : "OK",
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/job"
-                  }
-                }
-              }
+                "display" : {
+                    "type" : "string",
+                    "description" : "Message displayed for user translated in the requested language.",
+                    "example": "The calendar \"calendarName\" does not exist."
+                }                                    
             }
-          },
-          "post" : {
-            "summary" : "Add a new job",
-            "tags" : [ "Jobs" ],             
-            "parameters" : [ ],
-            "responses" : {
-              "201" : {
-                "description" : "Status 201"
-              }
-            }
-          }
-        },
-        "/repos/{repoId}/jobs/{jobId}" : {
-            "delete" : {
-                "summary" : "Delete a job",
-                "tags" : [ "Jobs" ],                
-                "parameters" : [ ],
-                "responses" : {
-                    "201" : {
-                        "description" : "Status 201"
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/jobs/{jobId}/graphs" : {
-            "get" : {
-                "summary" : "Get a list of available graphs",
-                "tags" : [ "Jobs" ],
-                "produces" : [ 
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters" : [ ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the available graphs.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/graph"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/jobs/{jobId}/graphs/{graphId}/generate" : {
-            "get" : {
-                "summary" : "Get a graph",
-                "tags" : [ "Jobs" ],
-                "produces" : [ 
-                    "image/png",
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/jobId"
-                    },
-                    {
-                        "$ref" : "#/parameters/graphId"
-                    },
-                    {
-                        "name" : "period",
-                        "in" : "query",
-                        "description" : "Period for aggregated status (by default: 6 hours means 6 periods for the day 00:00-05:59,06:00-11:59,12:00-17:59,18:00-23:59)",
-                        "default": 6,
-                        "type" : "float"
-                    },
-                    {
-                        "name" : "height",
-                        "in" : "query",
-                        "description" : "Height of the graph.",
-                        "default": 24,
-                        "type" : "integer"
-                    },
-                    {
-                        "name" : "col_width",
-                        "in" : "query",
-                        "description" : "Width of each column (a column represents a day).",
-                        "default": 10,
-                        "type" : "integer"
-                    } 
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the last executions.",
-                        "content" : {
-                            "application/json": {
-                                "schema" : {
-                                    "type" : "array",
-                                    "items" : {
-                                        "$ref" : "#/definitions/run"
-                                    }
-                                }
-                            },
-                            "application/xml": {
-                                "schema" : {
-                                    "type" : "array",
-                                    "items" : {
-                                        "$ref" : "#/definitions/run"
-                                    }
-                                }
-                            },
-                            "image/png": {
-                                "schema" : {
-                                    "type" : "string",
-                                    "format" : "binary"    
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/jobs/{jobId}/runs" : {
-            "get" : {
-                "summary" : "get a list of the last executions",
-                "tags" : [ "Jobs" ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/jobId"
-                    } 
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the last executions.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/run"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/runs" : {
-            "get" : {
-                "summary" : "get a list of the last executions",
-                "tags" : [ "Runs" ],
-                "produces" : [ 
-                    "application/json",
-                    "application/xml",
-                    "image/png"
-                ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/job_name"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the last executions.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/run"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/repos/{repoId}/status" : {
-            "get" : {
-                "summary" : "get the current status of the jobs",
-                "tags" : [ "Status" ],
-                "produces" : [ 
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters" : [ 
-                    {
-                        "$ref" : "#/parameters/repoId"
-                    },
-                    {
-                        "$ref" : "#/parameters/job_name"
-                    },
-                    {
-                        "$ref" : "#/parameters/status"
-                    }
-                ],
-                "responses" : {
-                    "200" : {
-                        "description" : "An array of the last status.",
-                        "schema" : {
-                            "type" : "array",
-                            "items" : {
-                                "$ref" : "#/definitions/status"
-                            }
-                        }
-                    }
-                }
-            }
-        }         
+        }
     },
     "definitions" : {
         "Exception" : {
-                "type" : "object",
-                "required" : [ "message" ],
-                "properties" : {
-                    "message" : {
-                        "type" : "string"
-                    },
-                    "stackTrace" : {
-                        "type" : "string"
-                    },
-                    "innerException" : {
-                        "$ref" : "#/definitions/Exception"
-                    }
+            "type" : "object",
+            "required" : [ "message" ],
+            "properties" : {
+                "message" : {
+                    "type" : "string"
                 },
-          "description" : "A technical exception"
+                "stackTrace" : {
+                    "type" : "string"
+                },
+                "innerException" : {
+                    "$ref" : "#/definitions/Exception"
+                }
+            },
+            "description" : "A technical exception"
         },
         "Error" : {
             "type" : "object",
@@ -508,7 +1275,7 @@
                                 }
                             },
                             "valParams" : {
-                                "type" : "object"
+                              "type" : "object"
                             }
                         }
                     }
@@ -520,74 +1287,120 @@
             "type" : "object",
             "properties" : {
                 "eoid" : {
+              "type" : "string",
+              "description" : "Event id"
+            },
+            "joid" : {
+              "type" : "integer",
+              "format" : "date-time"
+            },
+            "alarm" : {
+              "type" : "string"
+            },
+            "alarmTime" : {
+              "type" : "string",
+              "format" : "date-time"
+            },
+            "state" : {
+              "type" : "string"
+            },
+            "stateTime" : {
+              "type" : "string",
+              "format" : "date-time"
+            },
+            "response" : {
+              "type" : "string"
+            },
+            "theUser" : {
+              "type" : "string"
+            },
+            "jobName" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "status" : {
+              "type" : "string"
+            },
+            "color" : {
+              "type" : "string"
+            },
+            "stateGrid" : {
+              "type" : "string"
+            },
+            "nb" : {
+              "type" : "integer"
+            },
+            "firstTime" : {
+              "type" : "string",
+              "format" : "date-time"
+            }
+          }
+        },
+        "calendar" : {
+            "type" : "object",
+            "properties" : {
+                "calendarName" : {
                     "type" : "string",
-                    "description" : "Event id"
+                    "description" : "Name of the calendar",
+                    "example": "holydays"
                 },
-                "joid" : {
+                "daysCount" : {
                     "type" : "integer",
-                    "format" : "date-time"
+                    "description" : "Number of dates in the calendar.",
+                    "example": 52
                 },
-                "alarm" : {
-                    "type" : "string"
-                },
-                "alarmTime" : {
+                "minDate" : {
                     "type" : "string",
-                    "format" : "date-time"
+                    "format": "date-time",
+                    "description" : "First date in the calendar."
                 },
-                "state" : {
-                    "type" : "string"
-                },
-                "stateTime" : {
+                "maxDate" : {
                     "type" : "string",
-                    "format" : "date-time"
+                    "format": "date-time",
+                    "description" : "Last date in the calendar."
                 },
-                "response" : {
-                    "type" : "string"
-                },
-                "theUser" : {
-                    "type" : "string"
-                },
-                "jobName" : {
-                    "type" : "string"
-                },
-                "description" : {
-                    "type" : "string"
-                },
-                "status" : {
-                    "type" : "string"
-                },
-                "color" : {
-                    "type" : "string"
-                },
-                "stateGrid" : {
-                    "type" : "string"
-                },
-                "nb" : {
-                    "type" : "integer"
-                },
-                "firstTime" : {
-                    "type" : "string",
-                    "format" : "date-time"
+                "isActive" : {
+                    "type" : "boolean",
+                    "description" : "True if the last date is in the future.",
+                    "example": true
                 }
             }
         },
-        "graph" : {
+        "day" : {
             "type" : "object",
             "properties" : {
-                "id" : {
-                    "type" : "integer",
-                    "description" : "Internal Id",
-                    "example": "1"
-                },
-                "name" : {
-                    "type" : "integer",
-                    "description" : "name of the graph",
-                    "example": "StatusByPeriod"
-                },
-                "Description" : {
+                "day" : {
                     "type" : "string",
-                    "description" : "Description of the graph",
-                    "example": "Give a status for a period of time"
+                    "format": "date-time",
+                    "description" : "Date in the calendar.",
+                    "example": "2018-01-02T00:00:00+00:00"
+                }
+            }
+        },
+        "instance" : {
+            "type" : "object",
+            "properties" : {
+                "instanceName" : {
+                    "type" : "string",
+                    "description": "Unique name of the instance",
+                    "example": "ACE"
+                },
+                "title" : {
+                    "type" : "string",
+                    "description": "Display name for the instance",
+                    "example": "Autosys production"
+                },
+                "event_servers_1" : {
+                    "type" : "string",
+                    "description": "Arii alias for primary database",
+                    "example": "Primary database"
+                },
+                "event_servers_2" : {
+                    "type" : "string",
+                    "description": "Arii alias for backup database",
+                    "example": "Secondary database"
                 }
             }
         },
@@ -596,11 +1409,11 @@
             "properties" : {
                 "jobName" : {
                     "type" : "string",
-                    "description" : "Name of the job"
+                    "description" : "Job name"
                 },
                 "jobType" : {
                     "type" : "string",
-                    "description" : "Type of job (BOX,CMD,FW)"
+                    "description" : "Type of job (command, file_watcher, file transfer...)"
                 },
                 "Command" : {
                     "type" : "string",
@@ -611,13 +1424,65 @@
                 }
             }
         },
+        "machine" : {
+            "type" : "object",
+            "properties" : {
+                "machineName" : {
+                    "type" : "string",
+                    "description" : "Name used for the job definitiom",
+                    "example": "SGAUTO1"
+                },
+                "description" : {
+                    "type" : "string",
+                    "description" : "Use of the machine",
+                    "example": "Agent Windows 64bits 2012"
+                },
+                "agentName" : {
+                    "type" : "string",
+                    "description" : "Name of installed agent",
+                    "example": "SGAUTO1"
+                },
+                "hostName" : {
+                    "type" : "string",
+                    "description" : "Name or address for network connection",
+                    "example": "sgauto1.vaudoise.ch"
+                },
+                "hostPort" : {
+                    "type" : "integer",
+                    "description" : "Port used for network connection",
+                    "example": 7520
+                },
+                "machineStatus" : {
+                    "type" : "string",
+                    "description" : "Status of the machine (oinline, offline)",
+                    "example": "online"
+                },
+                "maxLoad" : {
+                    "type" : "integer",
+                    "description" : "Status of the machine (oinline, offline)",
+                    "example": 100
+                },
+                "factor" : {
+                    "type" : "float",
+                    "description" : "You can use the factor attribute to determine the relative processing power for a machine.",
+                    "example": "0.5"
+                },
+                "operatingSystem" : {
+                    "type" : "string",
+                    "description" : "Operating system (windows,linux)",
+                    "example": "online"
+                },
+                "characterCode" : {
+                    "type" : "string",
+                    "description" : "Operating system (windows,linux)",
+                    "example": "ASCII"
+                }
+
+            }
+        },
         "run" : {
             "type" : "object",
             "properties" : {
-                "runNum" : {
-                    "type" : "integer",
-                    "description" : "Run number"
-                },
                 "start_time" : {
                     "type" : "string",
                     "format" : "date-time"
@@ -631,39 +1496,118 @@
                 }
             }
         },
-        "repo" : {
+        "user" : {
             "type" : "object",
             "properties" : {
-                "name" : {
+                "userName" : {
                     "type" : "string",
-                    "description": "Unique name of the repo",
-                    "example": "ats_prod"
+                    "description" : "Name of the user.",
+                    "example": "autosys"
                 },
-                "title" : {
+                "domainName" : {
                     "type" : "string",
-                    "description": "Title of the repo",
-                    "example": "Autosys production"
+                    "description" : "Name of the domain.",
+                    "example": "vaudoise"
                 },
-                "description" : {
+                "credDomain" : {
                     "type" : "string",
-                    "description": "Description of the repo",
-                    "example": "Production database"
-                }
+                    "description" : "NT for NT Domain.",
+                    "example": "NT"
+                }            
             }
         },
         "status" : {
             "type" : "object",
             "properties" : {
-                "start_time" : {
+                "statusName" : {
                     "type" : "string",
-                    "format" : "date-time"
+                    "format" : "date-time",
+                    "description" : "Name of the status.",
+                    "example": "SUCCESS"
                 },
-                "end_time" : {
+                "statusId" : {
+                    "type" : "integer",
+                    "description" : "Internal Id for the status.",
+                    "example": 12867   
+                },
+                "statusTime": {
                     "type" : "string",
-                    "format" : "date-time"
+                    "format" : "date-time",
+                    "description" : "Start time of the last execution.",
+                    "example": "2019-06-18T10:13:01+02:00"
                 },
-                "status" : {
-                    "type" : "string"
+                "jobName" : {
+                    "type" : "string",
+                    "description" : "Unique name for the job.",
+                    "example": "IMOT.SFTP.BOX.Immopac_CROT_ready"
+                },
+                "jobId" : {
+                    "type" : "integer",
+                    "description" : "Internal Id for the job.",
+                    "example": 12867
+                },
+                "jobType": {
+                    "type" : "string",
+                    "description" : "Type of the job (CMD,BOX,FW).",
+                    "example": "BOX"
+                },
+                "jobDescription": {
+                    "type" : "string",
+                    "description" : "Description of the job.",
+                    "example": "BOX"
+                },
+                "runNum": {
+                    "type" : "integer",
+                    "description" : "Execution numbder",
+                    "example": 6731023
+                },                   
+                "ntry": {
+                    "type" : "integer",
+                    "description" : "Number of try.",
+                    "example": 1
+                },                    
+                "lastStart": {
+                    "type" : "string",
+                    "format" : "date-time",
+                    "description" : "Start time of the last execution.",
+                    "example": "2019-06-18T10:12:37+02:00"
+                },
+                "lastEnd": {
+                    "type" : "string",
+                    "format" : "date-time",
+                    "description" : "End time of the last execution.",
+                    "example": "2019-06-18T10:13:01+02:00"
+                },
+                "exitCode": {
+                    "type" : "integer",
+                    "description" : "Return code fir the last execution.",
+                    "example": 9
+                },
+                "runMachine": {
+                    "type" : "string",
+                    "description" : "Machine where the job runs. Nothing if the job type is a BOX.",
+                    "example": "myhost"
+                },
+                "nextStart": {
+                    "type" : "string",
+                    "format" : "date-time",
+                    "description" : "Time for the next execution.",
+                    "example": "1970-01-01T01:00:00+01:00"
+                },
+                "boxName": {
+                    "type" : "string",
+                    "description" : "Name of the container where the job is.",
+                    "example": "IMOT.SFTP.BOX.Immopac_CROT"
+                },
+                "boxId": {
+                    "type" : "string",
+                    "description" : "Unique Id for the container.",
+                    "example": 192335
+                },
+                "pid": {
+                    "type" : "string",
+                    "description" : "Unique name for the job. Nothing if the job type is a BOX.",
+                    "example": 100
                 }
             }
         }

@@ -1,0 +1,8 @@
+services:
+     arii_builder.build:
+         class: Arii\BuilderBundle\Service\AriiBuild
+         arguments: [ "@arii_core.portal" ]
+
+     arii_builder.files:
+         class: Arii\BuilderBundle\Service\AriiFiles
+         arguments: [ "@arii_core.portal" ]

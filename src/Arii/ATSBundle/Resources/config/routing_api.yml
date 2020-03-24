@@ -1,158 +1,146 @@
-# --------------------------------------------------------------------------
-# PAGES PRINCIPALES
-# --------------------------------------------------------------------------
-api_ATS_repos:
-    path:  /repos
-    defaults: { _controller: AriiATSBundle:API\Repos:list }
+# ========================================
+# Instances
+# ----------------------------------------
+api_ATS_instances:
+    path:  /instances{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Instances:list, outputFormat: ~ }
 
-# --------------------------------------------------------------------------
-# Actions
-# --------------------------------------------------------------------------
-api_ATS_actions_list:
-    path:  /repos/{repoId}/actions
-    defaults: { _controller: AriiATSBundle:API\Actions:list, repoId: ats_db }
+# ========================================
+# AlarmStates
+# ----------------------------------------
+api_ATS_alarmstates_list:
+    path:  /instances/{instanceId}/alarmStates{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\alarmStates:list, instanceId: ACE, outputFormat: ~ }
 
-# --------------------------------------------------------------------------
-# Agents
-# --------------------------------------------------------------------------
-api_ATS_agents_list:
-    path:  /repos/{repoId}/agents
-    defaults: { _controller: AriiATSBundle:API\Agents:list, repoId: ats_db }
+api_ATS_alarmstates_state:
+    path:  /instances/{instanceId}/alarmStates/{alarmState}{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\alarmStates:state, instanceId: ACE, outputFormat: ~ }
 
-# --------------------------------------------------------------------------
+# ========================================
 # Alarms
-# --------------------------------------------------------------------------
+# ----------------------------------------
 api_ATS_alarms_list:
-    path:  /repos/{repoId}/alarms
-    defaults: { _controller: AriiATSBundle:API\Alarms:list, repoId: ats_db }
+    path:  /instances/{instanceId}/alarms{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Alarms:list, instanceId: ACE, outputFormat: ~ }
 
-api_ATS_alarms_infos:
-    path:  /repos/{repoId}/alarms/infos
-    defaults: { _controller: AriiATSBundle:API\Alarms:infos, repoId: ats_db }
+# ========================================
+# Audit
+# ----------------------------------------
+api_ATS_audit_list:
+    path:  /instances/{instanceId}/audit
+    defaults: { _controller: AriiATSBundle:API\audit:list, instanceId: ACE, outputFormat: ~ }
 
-api_ATS_alarms_get:
-    path:  /repos/{repoId}/alarms/{eventId}
-    defaults: { _controller: AriiATSBundle:API\Alarms:get, repoId: ats_db }
+api_ATS_audit_get:
+    path:  /instances/{instanceId}/audit/{auditId}
+    defaults: { _controller: AriiATSBundle:API\audit:get, instanceId: ACE, auditId: 1, outputFormat: ~ }
 
-# --------------------------------------------------------------------------
-# Changes
-# --------------------------------------------------------------------------
-api_ATS_changes_list:
-    path:  /repos/{repoId}/changes
-    defaults: { _controller: AriiATSBundle:API\Changes:list, repoId: ats_db }
+api_ATS_audit_jobs:
+    path:  /instances/{instanceId}/audit/jobs
+    defaults: { _controller: AriiATSBundle:API\audit:jobs, instanceId: ACE, outputFormat: ~ }
 
-api_ATS_changes_get:
-    path:  /repos/{repoId}/changes/{auditId}
-    defaults: { _controller: AriiATSBundle:API\Changes:get, repoId: ats_db }
 
-# --------------------------------------------------------------------------
+# ========================================
 # Boxes
-# --------------------------------------------------------------------------
+# ----------------------------------------
 api_ATS_boxes_list:
-    path:  /repos/{repoId}/boxes
-    defaults: { _controller: AriiATSBundle:API\Boxes:list, repoId: ats_db }
+    path:  /instances/{instanceId}/boxes
+    defaults: { _controller: AriiATSBundle:API\Boxes:list, instanceId: ACE, outputFormat: ~ }
 
-api_ATS_boxes_get:
-    path:  /repos/{repoId}/boxes/{jobId}
-    defaults: { _controller: AriiATSBundle:API\Boxes:get, repoId: ats_db }
-
-# --------------------------------------------------------------------------
+# ========================================
 # Box
-# --------------------------------------------------------------------------
-api_ATS_box_status:
-    path:  /repos/{repoId}/boxes/{jobId}/status{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Box:status, repoId: ats_db, outputFormat: ~ }
+# ----------------------------------------
+api_ATS_box_list:
+    path:  /instances/{instanceId}/boxes/{jobName}/jobs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Box:jobs, instanceId: ACE, jobName: ~, outputFormat: ~ }
 
-api_ATS_box_googleGantt:
-    path:  /repos/{repoId}/boxes/{jobId}/gantt{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Box:googleGantt, repoId: ats_db, outputFormat: ~ }
-
-# --------------------------------------------------------------------------
+# ========================================
 # Jobs
-# --------------------------------------------------------------------------
+# ----------------------------------------
 api_ATS_jobs_list:
-    path:  /repos/{repoId}/jobs
-    defaults: { _controller: AriiATSBundle:API\Jobs:list, repoId: ats_db }
+    path:  /instances/{instanceId}/jobs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Jobs:list, instanceId: ACE, outputFormat: ~ }
 
-api_ATS_jobs_get:
-    path:  /repos/{repoId}/jobs/{jobId}
-    defaults: { _controller: AriiATSBundle:API\Jobs:get, repoId: ats_db }
-
-# --------------------------------------------------------------------------
+# ========================================
 # Job
-# --------------------------------------------------------------------------
+# ----------------------------------------
+api_ATS_job_audit:
+    path:  /instances/{instanceId}/jobs/{jobName}/audit{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:audit, instanceId: ACE, jobName: ~, outputFormat: ~ }
+
+api_ATS_job_code:
+    path:  /instances/{instanceId}/jobs/{jobName}/code{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:code, instanceId: ACE, jobName: ~, outputFormat: ~ }
+
+api_ATS_job_detail:
+    path:  /instances/{instanceId}/jobs/{jobName}/detail{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:detail, instanceId: ACE, jobName: ~, outputFormat: ~ }
+
+api_ATS_job_status:
+    path:  /instances/{instanceId}/jobs/{jobName}/status{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:status, instanceId: ACE, jobName: ~, outputFormat: ~ }
+
+api_ATS_job_logs:
+    path:  /instances/{instanceId}/jobs/{jobName}/logs/{logType}{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:logs, instanceId: ACE, jobName: ~, logType: Out, outputFormat: ~ }
+
+api_ATS_job_report:
+    path:  /instances/{instanceId}/jobs/{jobName}/report{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:report, instanceId: ACE, jobName: ~, outputFormat: ~ }
+
 api_ATS_job_runs:
-    path:  /repos/{repoId}/jobs/{jobId}/runs{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Job:runs, repoId: ats_db, outputFormat: ~ }
+    path:  /instances/{instanceId}/jobs/{jobName}/runs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:runs, instanceId: ACE, jobName: ~, outputFormat: ~ }
 
-api_ATS_job_graphs:
-    path:  /repos/{repoId}/jobs/{jobId}/graphs{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Job:graphs, repoId: ats_db, outputFormat: ~ }
+api_ATS_job_runtimes:
+    path:  /instances/{instanceId}/jobs/{jobName}/runtimes{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:runtimes, instanceId: ACE, jobName: ~, outputFormat: ~ }
 
-api_ATS_job_graphs_generate:
-    path:  /repos/{repoId}/jobs/{jobId}/graphs/{graphId}/generate{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Job:generate, repoId: ats_db, jobId: 1, graphId: 1, outputFormat: ~ }
+api_ATS_job_events:
+    path:  /instances/{instanceId}/jobs/{jobName}/events{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Job:events, instanceId: ACE, jobName: ~, outputFormat: ~ }
+
+# ========================================
+# Calendars
+# ----------------------------------------
+api_ATS_calendars_list:
+    path:  /instances/{instanceId}/calendars{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Calendars:list, instanceId: ACE, outputFormat: ~ }
+
+# ========================================
+# Calendar
+# ----------------------------------------
+api_ATS_calendar_days:
+    path:  /instances/{instanceId}/calendars/{calendarName}/days{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Calendar:days, instanceId: ACE, outputFormat: ~ }
+
+api_ATS_calendar_jobs:
+    path:  /instances/{instanceId}/calendars/{calendarName}/jobs{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Calendar:jobs, instanceId: ACE, outputFormat: ~ }
+    
+# ========================================
+# Extended calendars
+# ----------------------------------------
+api_ATS_extendedcalendars_list:
+    path:  /instances/{instanceId}/extended_calendars{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\ExtendedCalendars:list, instanceId: ACE, outputFormat: ~ }
+
+# --------------------------------------------------------------------------
+# Users
+# --------------------------------------------------------------------------
+api_ATSDB_users_list:
+    path:  /instances/{instanceId}/users{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Users:list, instanceId: ACE, outputFormat: ~ }
 
 # --------------------------------------------------------------------------
 # Machines
 # --------------------------------------------------------------------------
-api_ATS_machines_list:
-    path:  /repos/{repoId}/machines
-    defaults: { _controller: AriiATSBundle:API\Machines:list, repoId: ats_db }
-
-# --------------------------------------------------------------------------
-# Processes
-# --------------------------------------------------------------------------
-api_ATS_processes_list:
-    path:  /repos/{repoId}/processes
-    defaults: { _controller: AriiATSBundle:API\Processes:list, repoId: ats_db }
-
-# --------------------------------------------------------------------------
-# Queues
-# --------------------------------------------------------------------------
-api_ATS_queues_list:
-    path:  /repos/{repoId}/queues
-    defaults: { _controller: AriiATSBundle:API\Queues:list, repoId: ats_db }
-
-api_ATS_queues_get:
-    path:  /repos/{repoId}/queues/{queueName}
-    defaults: { _controller: AriiATSBundle:API\Queues:get, repoId: ats_db }
-
-# --------------------------------------------------------------------------
-# Runs
-# --------------------------------------------------------------------------
-api_ATS_runs_list:
-    path:  /repos/{repoId}/runs{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Runs:list, repoId: ats_db, outputFormat: ~ }
-
-api_ATS_runs_get:
-    path:  /repos/{repoId}/runs/{runId}/get
-    defaults: { _controller: AriiATSBundle:API\Runs:get, repoId: ats_db }
+api_ATSDB_machines_list:
+    path:  /instances/{instanceId}/machines{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Machines:list, instanceId: ACE, outputFormat: ~ }
 
 # --------------------------------------------------------------------------
 # Status
 # --------------------------------------------------------------------------
-api_ATS_status_list:
-    path:  /repos/{repoId}/status{outputFormat}
-    defaults: { _controller: AriiATSBundle:API\Status:list, repoId: ats_db, outputFormat: ~ }
-
-# --------------------------------------------------------------------------
-# WaitQueues
-# --------------------------------------------------------------------------
-api_ATS_waitqueues_list:
-    path:  /repos/{repoId}/wait_queues
-    defaults: { _controller: AriiATSBundle:API\WaitQueues:list, repoId: ats_db }
-
-# --------------------------------------------------------------------------
-# Schedulers
-# --------------------------------------------------------------------------
-api_ATS_schedulers_list:
-    path:  /repos/{repoId}/schedulers
-    defaults: { _controller: AriiATSBundle:API\Schedulers:list, repoId: ats_db }
-
-# --------------------------------------------------------------------------
-# AppServers
-# --------------------------------------------------------------------------
-api_ATS_appservers_list:
-    path:  /repos/{repoId}/appservers
-    defaults: { _controller: AriiATSBundle:API\AppServers:list, repoId: ats_db }
+api_ATSDB_status_list:
+    path:  /instances/{instanceId}/status{outputFormat}
+    defaults: { _controller: AriiATSBundle:API\Status:list, instanceId: ACE, outputFormat: ~ }

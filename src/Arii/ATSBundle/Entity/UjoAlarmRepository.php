@@ -12,6 +12,36 @@ use Doctrine\ORM\EntityRepository;
  */
 class UjoAlarmRepository extends EntityRepository
 {
+
+    // Pour la synchronisation des historique
+    public function findAlarms($Filter=[]) { 
+        $q = $this->createQueryBuilder('a')
+        ->select('a.eoid,a.joid,a.alarm,a.alarmTime,a.state,a.stateTime,a.response,a.theUser,a.eventComment,'
+                . 'j.jobName,j.description,j.status,'
+                . 'e.runNum,e.ntry,e.machName')
+        ->leftjoin('AriiATSBundle:UjoJobst','j',\Doctrine\ORM\Query\Expr\Join::WITH,'a.joid = j.joid')
+        ->leftjoin('AriiATSBundle:UjoProcEvent','e',\Doctrine\ORM\Query\Expr\Join::WITH,'a.eoid = e.eoid');
+        if (isset($Filter['jobName'])) {
+            $q->andWhere('j.jobName = :jobName')
+            ->setParameter('jobName',$Filter['jobName']);
+        }          
+        // A la minute
+        if (isset($Filter['alarmTime'])) {
+            $q->andWhere('a.alarmTime >= :alarmTime')
+            ->andWhere('a.alarmTime <= :alarmTime2')        
+            ->setParameter('alarmTime',$Filter['alarmTime']-> format('U'))
+            ->setParameter('alarmTime2',$Filter['alarmTime']-> format('U')+60);
+        }          
+        if (isset($Filter['state']) and ($Filter['state']>0)) {
+            $q->andWhere('a.state = :state')
+            ->setParameter('state',$Filter['state']);
+        }          
+        return $q->orderBy('a.eoid','desc')
+            ->setMaxResults(1000)
+            ->getQuery()
+            ->getResult();
+    }
+
     // Pour la synchronisation des historique
     public function findOpenIssues() { 
         $q = $this->createQueryBuilder('e')

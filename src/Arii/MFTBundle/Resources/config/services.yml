@@ -22,6 +22,10 @@ services:
         class: Arii\MFTBundle\Service\AriiTransfers
         arguments: ["@arii_core.portal" ]
         
+    arii_mft.Transmissions:
+        class: Arii\MFTBundle\Service\AriiTransmissions
+        arguments: ["@arii_core.portal" ]
+        
     arii_mft.Operations:
         class: Arii\MFTBundle\Service\AriiOperations
         arguments: ["@arii_core.portal" ]

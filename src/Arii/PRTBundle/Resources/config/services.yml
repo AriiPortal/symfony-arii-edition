@@ -1,0 +1,4 @@
+services:
+    arii_prt.files:
+        class: Arii\PRTBundle\Service\AriiFiles 
+        arguments: [ ]

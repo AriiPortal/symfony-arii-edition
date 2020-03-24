@@ -12,6 +12,50 @@ use Doctrine\ORM\EntityRepository;
  */
 class AlertRepository extends EntityRepository
 {
+    
+    /**
+    * @ORM\ManyToOne(targetEntity="Arii\CoreBundle\Entity\Application")
+    * @ORM\JoinColumn(nullable=true)
+    */
+    //private $application;
+    
+    /**
+    * @ORM\ManyToOne(targetEntity="Arii\CoreBundle\Entity\Note")
+    * @ORM\JoinColumn(nullable=true)
+    */
+    //private $note;
+
+    public function findAlerts($Filter) {        
+        $q = $this
+        ->createQueryBuilder('e')
+        ->select('e.id,a.name as appName,a.title as appTitle,e.name,e.title,e.description,e.pattern,e.origin,e.status,e.time_slot as timeSlot,e.exit_codes as exitCodes,e.message,e.msg_type as msgType,e.msg_to as msgTo,e.msg_cc as msgCC,e.to_do as toDo,e.action,e.active as isActive')
+        ->leftjoin('AriiCoreBundle:Application','a',\Doctrine\ORM\Query\Expr\Join::WITH,'e.application = a.id');
+        
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);
+        if (isset($Filter['appName']))
+            $q->andWhere("a.name like :appName")
+            ->setParameter('appName',$Filter['appName']);
+        if (isset($Filter['appTitle']))
+            $q->andWhere("a.name like :appTitle")
+            ->setParameter('appTitle',$Filter['appTitle']);
+        
+        if (isset($Filter['pattern']))
+            $q->andWhere("e.pattern like :pattern")
+            ->setParameter('pattern',$Filter['pattern']);
+        if (isset($Filter['exitCode']))
+            $q->andWhere("e.exit_code like :exitCode")
+            ->setParameter('exitCode',$Filter['exitCode']);
+        
+        if (isset($Filter['msgTo']))
+            $q->andWhere("e.msg_to like :msgTo")
+            ->setParameter('msgTo',$Filter['msgTo']);
+        if (isset($Filter['isActive']))
+            $q->andWhere("e.active = :isActive")
+            ->setParameter('isActive',($Filter['isActive']=='true'?1:0));
+        return $q->getQuery()->getResult();
+    }
+
     public function listState($state) {        
         $q = $this
         ->createQueryBuilder('e')

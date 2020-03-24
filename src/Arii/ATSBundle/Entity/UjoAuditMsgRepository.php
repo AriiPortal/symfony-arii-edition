@@ -12,6 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class UjoAuditMsgRepository extends EntityRepository
 {
+    public function findAudit($auditId, $Filter) {        
+        $q = $this
+        ->createQueryBuilder('m')
+        ->select('m.seqNo','m.attribute','m.value1 as value','m.value2','m.isEdit')
+        ->where('m.auditInfoNum = :id')
+        ->orderBy('m.seqNo')
+        ->setParameter('id', $auditId)
+        ->getQuery();
+        return $q->getResult();
+    }    
 
     public function findJob($id) {        
         $q = $this
@@ -24,5 +34,6 @@ class UjoAuditMsgRepository extends EntityRepository
         ->getQuery();
         return $q->getResult();
     }    
-        
+
+
 }

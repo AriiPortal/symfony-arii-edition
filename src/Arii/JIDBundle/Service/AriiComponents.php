@@ -100,10 +100,13 @@ class AriiComponents
         $Instances = $em->getRepository("AriiJIDBundle:SchedulerInstances")->findInstances($Filter);
         foreach ($Instances as $k=>$Instance) {
             // Suppression des connexions
-            $db = $Instance['dbName'];
+/*            $db = $Instance['dbName'];
             $db = str_replace('jdbc -class=','',$db);
             $db = substr($db,0,strpos($db,' -user='));
             $Instances[$k]['dbName'] = $db;
+*/            foreach (array('isService','isPaused','isRunning','isCluster','isAgent') as $f ) {
+                $Instances[$k][$f] = ($Instance[$f]==1?true:false);
+            }
         }
         return $Instances;
     }

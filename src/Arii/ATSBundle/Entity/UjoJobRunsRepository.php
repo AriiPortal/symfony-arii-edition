@@ -14,26 +14,38 @@ class UjoJobRunsRepository extends EntityRepository
 {
     public function findJobRuns($joid,$Filter) { 
         $q = $this->createQueryBuilder('e')
-        ->select('e.runNum,e.ntry,e.startime,e.endtime,e.evtNum,e.runMachine,e.runtime,e.exitCode,e.status,e.hasExtendedInfo,e.jobVer,e.replyMessage,e.replyResponse,e.stdErrFile,e.stdOutFile')
+        ->select('e.runNum,e.ntry,e.startime,e.endtime,e.evtNum,e.runMachine,e.runtime,e.exitCode,e.status,e.hasExtendedInfo,e.jobVer,e.replyMessage,e.replyResponse,e.stdErrFile,e.stdOutFile,(e.endtime-e.startime) as duration')
         ->where('e.joid = :joid')
         ->setParameter('joid',$joid)
-        ->orderBy('e.runNum,e.ntry')
-        ->getQuery();        
-        return $q->getResult();
+        ->orderBy('e.startime','DESC');
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);                  
+        return $q->getQuery()->getResult();
     }
 
+    public function findJobRuntimes($joid,$Filter) { 
+        $q = $this->createQueryBuilder('e')
+        ->select('e.startime,e.endtime,e.status,(e.endtime-e.startime) as duration')
+        ->where('e.joid = :joid')
+        ->setParameter('joid',$joid)
+        ->orderBy('e.startime','DESC');
+        if (isset($Filter['limit']))
+            $q->setMaxResults($Filter['limit']);                  
+        return $q->getQuery()->getResult();
+    }
+    
     public function findRuns($Filter) {
         $q = $this->createQueryBuilder('e')
         ->select('e.runNum,e.ntry,e.startime,e.endtime,e.evtNum,e.runMachine,e.runtime,e.exitCode,e.status,e.hasExtendedInfo,e.jobVer,e.replyMessage,e.replyResponse,e.stdErrFile,e.stdOutFile,'
                 . 'j.jobName,j.isCurrver')
         ->leftjoin('AriiATSBundle:UjoJob','j',\Doctrine\ORM\Query\Expr\Join::WITH,'e.joid = j.joid') 
         ->where('j.isCurrver = 1')
-        ->orderBy('e.runNum,e.ntry')
+        ->orderBy('e.runNum,e.ntry','DESC')
         ->setMaxResults(1000);
         # Filtrage
-        if (isset($Filter['job_name']))
-            $q->andWhere('j.jobName like :job_name')
-                ->setParameter('job_name',$Filter['job_name']);           
+        if (isset($Filter['jobName']))
+            $q->andWhere('j.jobName like :jobName')
+                ->setParameter('jobName',$Filter['jobName']);           
         return $q->getQuery()->getResult();
     }
     

@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+<meta name="generator" content="Jekyll v3.8.6">
+<title>Alarm</title>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<!-- script src="dashboard.js"></script -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+
+<!-- Favicons -->
+<style>
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+    }
+}
+</style>
+<!-- Custom styles for this template -->
+<link href="dashboard.css" rel="stylesheet">
+
+</head>
+<body data-spy="scroll">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Batch & Processing</a>
+        <input class="form-control form-control-dark w-100" type="text" value="ARIP.OSJS.JOB.InventaireCMDBCheck" placeholder="jobName" aria-label="Search" id="jobName">
+        <input class="form-control form-control-dark w-100" type="text" value="VA1" placeholder="" aria-label="Search" id="instanceId">
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <button type="button" class="btn btn-info" id="Info">Info</button>
+            </li>
+        </ul>
+    </nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="#STATUS">
+                  <span data-feather="activity"></span>
+                  Status 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#LOGS">
+                  <span data-feather="file-text"></span>
+                  Logs
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#EVENTS">
+                  <span data-feather="clock"></span>
+                  Events
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#RUNS">
+                  <span data-feather="bar-chart-2"></span>
+                  Runs
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#CONFIG">
+                  <span data-feather="edit"></span>
+                  Config 
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#AUDIT">
+                  <span data-feather="shield"></span>
+                  Audit
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#BOX">
+                  <span data-feather="box"></span>
+                  Box
+                </a>
+              </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div id="STATUS" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Status</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group mr-2">
+                    <div id="ContentButton">?</div>                    
+                </div>
+            </div>
+        </div>
+            <form id="formStatus">
+                <div class="form-group row">
+                    <label for="alarmTime" class="col-sm-1 col-form-label">Alarm Time</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="alarmTime" value="">
+                    </div>
+                    <label for="alarmName" class="col-sm-1 col-form-label">Alarm name</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="alarmName" value="">
+                    </div>
+                    <label for="alarmState" class="col-sm-1 col-form-label">Alarm state</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="alarmState" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="alarmComment" class="col-sm-1 col-form-label">Comment</label>
+                    <div class="col-sm-11">
+                        <input type="input" class="form-control" id="alarmComment">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="alarmResponse" class="col-sm-1 col-form-label">Response</label>
+                    <div class="col-sm-11">
+                        <input type="input" class="form-control" id="alarmResponse">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="theUser" class="col-sm-1 col-form-label">user</label>
+                    <div class="col-sm-11">
+                        <input type="input" class="form-control" id="theUser">
+                    </div>
+                </div>
+                <hr/>
+                <div class="form-group row">
+                    <label for="runMachine" class="col-sm-1 col-form-label">Run machine</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="runMachine" value="">
+                    </div>
+                    <label for="runNum" class="col-sm-1 col-form-label">Run</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="runNum" value="">
+                    </div>
+                    <label for="try" class="col-sm-1 col-form-label">Try</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="try" value="">
+                    </div>
+                </div>
+            </form>
+	  
+        <div id="DETAIL" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Detail</h1>
+        </div>
+        <div id="ContentDetail"></div> 
+
+        <div id="LOGS" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Logs</h1>
+        </div>
+        <div id="ContentAgent"></div>              
+        <div id="ContentOUT"></div>              
+        <div id="ContentERR"></div>              
+        
+        <div id="EVENTS" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Events</h1>
+        </div>
+        <div id="ContentReport"></div> 
+        <!-- canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas -->
+
+        <div id="RUNS" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Runs</h1>
+        <div id="ContentRuntimes"></div> 
+        </div>
+        <div id="ContentRuns"></div> 
+
+        <div id="CONFIG" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Config</h1>
+        </div>
+        <div id="ContentCode"></div> 
+
+        <div id="AUDIT" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Audit</h1>
+        </div>
+        <div id="ContentAudit"></div> 
+
+        <div id="BOX" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"></h1>
+        </div>	  
+    </main>
+</div>
+</div>
+<script type="text/javascript">
+feather.replace();
+const urlParams = new URLSearchParams(window.location.search);
+const jobName = urlParams.get('jobName');
+const instanceId = urlParams.get('instanceId');
+const alarmTime = urlParams.get('alarmTime');
+const alarmState = urlParams.get('alarmState');
+const alarmName = urlParams.get('alarmName');
+const alarmComment = urlParams.get('alarmComment');
+const alarmResponse = urlParams.get('alarmResponse');
+$('#jobName').val(jobName);
+$('#instanceId').val(instanceId);
+$('#alarmState').val(alarmState);
+$('#alarmName').val(alarmName);
+$('#alarmTime').val(alarmTime);
+
+var api = "http://"+window.location.hostname+"/api/v1/bundles/ats/instances/"+instanceId;
+
+// Contexte de l'alarme
+$.ajax({
+        url: api+"/alarms.json?jobName="+jobName+"&alarmTime="+alarmTime,
+        dataType: "text",
+        type: 'GET',
+        jsonpCallback: 'callback',
+        crossDomain: true,
+        success: function(response) {
+            var data = JSON.parse(response);
+            console.log(data);
+            $('#alarmComment').val(data[0].eventComment);
+            $('#alarmResponse').val(data[0].response);
+            $('#runNum').val(data[0].runNum);
+            $('#try').val(data[0].ntry);
+            $('#runMachine').val(data[0].machName);
+            Diag(data[0]);
+        }
+});
+
+function colorStatus(response) {
+    switch (response) {
+            case 'FAILURE':
+                    status = 'danger';
+                    break;
+            default:
+                    status = response.toLowerCase();
+    }
+    return status;
+}
+
+
+function Diag(data) {
+    
+    $.ajax({
+            url: api+"/jobs/"+data.jobName+"/detail.txt?runNum="+data.runNum,
+            dataType: "text",
+            type: 'GET',
+            jsonpCallback: 'callback',
+            crossDomain: true,
+            success: function(response) {
+                $('#ContentDetail').html('<pre>'+response+'</pre>');
+            }
+    });
+    
+    
+    $.ajax({
+            url: api+"/jobs/"+data.jobName+"/logs/Agent.txt?runNum="+data.runNum+"&nTry="+data.ntry,
+            dataType: "text",
+            type: 'GET',
+            jsonpCallback: 'callback',
+            crossDomain: true,
+            success: function(response) {
+                $('#ContentAgent').html('<pre>'+response+'</pre>');
+            }
+    });
+
+    // Logs
+    $.ajax({
+            url: api+"/jobs/"+jobName+"/logs/Out.txt?runNum="+data.runNum+"&nTry="+data.ntry,
+            dataType: "text",
+            type: 'GET',
+            jsonpCallback: 'callback',
+            crossDomain: true,
+            success: function(response) {
+                out = response;
+                $('#ContentOUT').html('<pre>'+out+'</pre>');
+                $.ajax({
+                        url: api+"/jobs/"+jobName+"/logs/Error.txt",
+                        dataType: "text",
+                        type: 'GET',
+                        jsonpCallback: 'callback',
+                        crossDomain: true,
+                        success: function(response) {
+                            if (response !== out)
+                                $('#ContentERR').html('<h2>Error</h2><pre>'+response+'</pre>');
+                        }
+                });
+            }
+    });
+
+    // Config
+    $.ajax({
+            url: api+"/jobs/"+jobName+"/code.txt",
+            dataType: "text",
+            type: 'GET',
+            jsonpCallback: 'callback',
+            crossDomain: true,
+            success: function(response) {
+                    $('#ContentCode').html('<pre>'+response+'</pre>');
+            }
+    });
+    
+    // Runtimes
+    $('#ContentRuntimes').html('<img src="'+api+"/jobs/"+jobName+"/runtimes.png"+'"/>');
+    
+    // Runs
+    $.ajax({
+            url: api+"/jobs/"+jobName+"/runs.txt",
+            dataType: "json",
+            type: 'GET',
+            jsonpCallback: 'callback',
+            crossDomain: true,
+            success: function(response) {
+                    var Runs = '<table class="table table-striped table-sm"><thead><tr><th>Start</th><th>End</th><th>Status</th><th>Duration</th><th>Machine</th><th>Exit</th></tr></thead><tbody>';
+                    $.each(response, function(index, element) {
+                            // Attention au NOEXEC
+                            if (element.runMachine=='** NOEXEC **') 
+                                status = 'warning';
+                            else 
+                                status = element.status;
+                            Runs += '<tr class="table-'+colorStatus(status)+'">'
+                            +'<td>'+element.startTime+'</td>'
+                            +'<td>'+element.endTime+'</td>'
+                            +'<td>'+element.status+'</td>'
+                            +'<td>'+element.duration+'</td>'
+                            +'<td>'+element.runMachine+'</td>'
+                            +'<td>'+element.exitCode+'</td></tr>'
+                    });
+                    Runs += '</tbody></table>';
+                    $('#ContentRuns').html(Runs);				
+            }
+    });
+    
+    // Audit
+    $.ajax({
+            url: api+"/jobs/"+jobName+"/audit.txt",
+            dataType: "text",
+            type: 'GET',
+            jsonpCallback: 'callback',
+            crossDomain: true,
+            success: function(response) {
+                $('#ContentAudit').html('<pre>'+response+'</pre>');
+            }
+    });
+    
+};
+</script>
+</body>
+</html>

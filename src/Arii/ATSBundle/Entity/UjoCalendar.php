@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * UjoCalendar
  *
  * @ORM\Table(name="UJO_CALENDAR")
- * @ORM\Entity(readOnly=true)
+ * @ORM\Entity(readOnly=true,repositoryClass="Arii\ATSBundle\Entity\UjoCalendarRepository")
  */
 class UjoCalendar
 {
@@ -36,8 +36,6 @@ class UjoCalendar
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $name;
-
-
 
     /**
      * Set calId

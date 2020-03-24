@@ -50,7 +50,7 @@ class UjoJob
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="CREATE_STAMP", type="date", nullable=true)
+     * @ORM\Column(name="CREATE_STAMP", type="datetime", nullable=true)
      */
     private $createStamp;
 
@@ -301,7 +301,7 @@ class UjoJob
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="UPDATE_STAMP", type="date", nullable=true)
+     * @ORM\Column(name="UPDATE_STAMP", type="datetime", nullable=true)
      */
     private $updateStamp;
 
@@ -324,7 +324,7 @@ class UjoJob
      *
      * @ORM\Column(name="HAS_NR_COND", type="smallint", nullable=true)
      */
-    private $hasNrCond;
+//    private $hasNrCond;
 
 
 

@@ -1,0 +1,24 @@
+parameters:
+#    arii_japi.example.class: Arii\JAPIBundle\Example
+
+services:
+    arii_japi.convert:
+        class: Arii\JAPIBundle\Service\AriiConvert
+        arguments: ["@arii_core.tools" ]
+
+    arii_japi.get:
+        class: Arii\JAPIBundle\Service\AriiGet
+        arguments: ["@arii_core.tools", "@arii_japi.convert" ]
+
+    arii_japi.log:
+        class: Arii\JAPIBundle\Service\AriiLog
+        arguments: ["@arii_core.tools", "@arii_japi.convert" ]
+
+    arii_japi.state:
+        class: Arii\JAPIBundle\Service\AriiState
+        arguments: ["@arii_core.tools", "@arii_japi.convert"  ]
+
+    arii_japi.post:
+        class: Arii\JAPIBundle\Service\AriiPost
+        arguments: ["@arii_core.tools"]
+        
